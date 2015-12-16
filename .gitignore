@@ -1,0 +1,14 @@
+/.idea
+/simple-typerdd.iml
+target/
+/.project
+/.classpath
+/.cache
+/data/
+/src/main/resources/log4j.properties
+/.settings/
+/spark.log
+*~
+src/test/resources/log4j.properties
+project/target
+project/project

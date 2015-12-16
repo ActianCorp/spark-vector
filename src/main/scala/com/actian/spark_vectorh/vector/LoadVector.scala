@@ -1,0 +1,70 @@
+package com.actian.spark_vectorh.vector
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
+import org.apache.spark.Logging
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.types.StructType
+
+import com.actian.spark_vectorh.util.{ RDDUtil, ResourceUtil }
+import com.actian.spark_vectorh.vector.Vector._
+import com.actian.spark_vectorh.writer.{ DataStreamRDD, DataStreamWriter, RowWriter }
+
+object LoadVector extends Logging {
+
+  import RDDUtil._
+  import ResourceUtil._
+
+  def loadVectorH(rdd: RDD[Seq[Any]],
+    schema: StructType,
+    targetTable: String,
+    vectorProps: VectorConnectionProperties,
+    preSQL: Option[Seq[String]],
+    postSQL: Option[Seq[String]],
+    fieldMap: Option[Map[String, String]],
+    createTable: Option[Boolean]): Long = {
+    val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
+    val optCreateTableSQL = createTable.filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
+    val tableSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
+    val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
+
+    // Apply the given field map return a sequence of field name, column name tuples
+    val field2Columns = applyFieldMap(resolvedFieldMap, schema, tableStructTypeSchema)
+    // Validate the list of columns are OK to load
+    validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
+
+    // If a subset of input fields are needed to load, select only the fields needed
+    val (inputRDD, inputType) =
+      if (field2Columns.length < schema.fields.length) {
+        selectFields(rdd, schema, field2Columns.map(_.fieldName))
+      } else {
+        (rdd, schema)
+      }
+    val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
+      field2Columns.map(i => i.columnName -> i.fieldName).toMap)
+
+    val rowWriter = RowWriter(tableSchema)
+    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, rowWriter)
+
+    closeResourceOnFailure(writer.client) {
+      preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+    }
+
+    val datastreamRDD = new DataStreamRDD(finalRDD, writer.writeConf)
+    val result = writer.initiateLoad
+    datastreamRDD.sparkContext.runJob(datastreamRDD, writer.write _)
+    // FIX ME
+    val rowCount = Await.result(result, Duration.Inf)
+    if (rowCount >= 0) {
+      // Run post-load SQL
+      closeResourceOnFailure(writer.client) {
+        postSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+      }
+      writer.commit
+    }
+    writer.client.getJdbc.close
+
+    rowCount
+  }
+}
