@@ -13,9 +13,8 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
 
   import com.actian.spark_vectorh.vector.VectorOps._
 
-  override def schema: StructType = {
+  override def schema: StructType =
     userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
-  }
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     log.info("vector: insert")
@@ -29,7 +28,7 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
     log.info(s"Trying to insert rdd: $data into vectorH table")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
     // TODO could expose other options in Spark parameters
-    val rowCount = anySeqRDD.loadVectorH(schema, tableRef.table, tableRef.toConnectionProps)
+    val rowCount = anySeqRDD.loadVectorH(data.schema, tableRef.table, tableRef.toConnectionProps)
     log.info(s"loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -64,6 +63,7 @@ object VectorRelation {
     new VectorRelation(tableRef, None, sqlContext)
   }
 
+  /** Obtain the structType containing the schema for the table referred by tableRef */
   def structType(tableRef: TableRef): StructType = {
     VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
       val structFields = cxn.columnMetadata(tableRef.table).map(_.structField)
@@ -71,8 +71,14 @@ object VectorRelation {
     }
   }
 
+  /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = "\"" + name + "\""
 
+  /**
+   * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
+   *  used directly with Vector jdbc. The parameters are stored in the second element of the
+   *  returned tuple
+   */
   def convertFilter(filter: Filter): (String, Seq[Any]) = {
     filter match {
       case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))
@@ -88,6 +94,10 @@ object VectorRelation {
     }
   }
 
+  /**
+   * Given a sequence of filters, generate the where clause that can be used in the prepared statement. TODO(Andrei): verify if
+   * this actually works since we convert a seq of (String, Seq[Any]) into a string using mkString
+   */
   def generateWhereClause(filters: Array[Filter]): String = {
     filters.map(convertFilter).mkString(" and ")
   }

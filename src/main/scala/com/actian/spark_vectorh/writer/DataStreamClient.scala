@@ -10,6 +10,12 @@ import org.apache.spark.Logging
 import com.actian.spark_vectorh.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vectorh.vector.{ VectorConnectionProperties, VectorJDBC }
 
+/**
+ * A client for to prepare loading and issue the load `SQL` query to Vector
+ *
+ *  @param vectorProps connection information
+ *  @param table to which table this client will load data
+ */
 case class DataStreamClient(vectorProps: VectorConnectionProperties,
     table: String) extends Serializable with Logging {
   private lazy val jdbc = {
@@ -21,24 +27,29 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
   private def startLoadSql(table: String) = s"copy table $table from external"
   private def prepareLoadSql(table: String) = s"prepare for x100 copy into $table"
 
+  /** The `JDBC` connection used by this client to communicate with `Vector(H)` */
   def getJdbc(): VectorJDBC = jdbc
 
+  /** Abort sending data to Vector(H) rolling back the open transaction and closing the `JDBC` connection */
   def close(): Unit = {
     jdbc.rollback()
     jdbc.close
   }
 
-  def prepareDataStreams: Unit = {
-    //log.trace("Preparing data streams...")
-    jdbc.executeStatement(prepareLoadSql(table))
-  }
+  /** Prepare loading data to Vector(H). This step may not be necessary anymore in the future */
+  def prepareDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
 
+  /**
+   * Obtain the information about how many `DataStream`s Vector(H) expects together with
+   *  locality information and authentication roles and tokens
+   */
   def getWriteConf(): WriteConf = {
     val ret = WriteConf(jdbc)
     log.debug(s"Got ${ret.vectorEndPoints.length} datastreams")
     ret
   }
 
+  /** Start loading data to Vector(H) */
   def startLoad(): Future[Int] = Future {
     val ret = try {
       closeResourceOnFailure(this) {
@@ -54,5 +65,6 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
     ret
   }
 
+  /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit
 }

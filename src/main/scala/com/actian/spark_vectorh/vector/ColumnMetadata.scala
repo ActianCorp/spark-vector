@@ -8,8 +8,8 @@ import org.apache.spark.sql.types._
 case class ColumnMetadata(val name: String, val typeName: String, val nullable: Boolean, val precision: Int, val scale: Int) extends Serializable {
 
   /**
-   * Convert the given column metadata into a <code>StructField</code> representing the column
-   * @return a new <code>StructField</code> instance
+   * Convert the given column metadata into a `StructField` representing the column
+   * @return a new `StructField` instance
    */
   val structField: StructField = StructField(name, dataType, nullable)
 

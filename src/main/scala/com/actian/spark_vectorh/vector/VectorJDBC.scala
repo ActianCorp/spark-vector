@@ -24,18 +24,25 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     DriverManager.getConnection(cxnProps.toJdbcUrl, props)
   }
 
+  /** Execute a `JDBC` statement closing resources on failures, using scala-arm's `resource` package */
   def withStatement[T](op: Statement => T): T = {
     managed(dbCxn.createStatement()).map(op).resolve()
   }
 
+  /**
+   * Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
+   *  mapping the `ResultSet` to a new type as specified by `op`
+   */
   def executeQuery[T](sql: String)(op: ResultSet => T): T = {
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
   }
 
+  /** Execute the update `SQL` query specified by `sql` */
   def executeStatement(sql: String): Int = {
     withStatement(_.executeUpdate(sql))
   }
 
+  /** Return true if there is a table named `tableName` in Vector(H) */
   def tableExists(tableName: String): Boolean = {
     if (!tableName.isEmpty) {
       val sql = s"SELECT COUNT(*) FROM ${tableNameDelimiter}${tableName}${tableNameDelimiter} WHERE 1=0"
@@ -55,6 +62,11 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     }
   }
 
+  /**
+   * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
+   *  as there are columns in the table. Each element contains the name, type, nullability, precision
+   *  and scale of its corresponding column in `tableName`
+   */
   def columnMetadata(tableName: String): Seq[ColumnMetadata] = {
     val sql = s"SELECT * FROM ${tableName}  WHERE 1=0"
     try {
@@ -74,6 +86,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     }
   }
 
+  /** Parse the result of a JDBC statement as at most a single value (possibly none) */
   def querySingleResult[T](sql: String): Option[T] = {
     executeQuery(sql)(resultSet => {
       if (resultSet.next()) {
@@ -89,6 +102,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     override def next(): T = extractor(result)
   }
 
+  /** Execute a select query on Vector and return the results as a matrix of elements */
   def query(sql: String): Seq[Seq[Any]] = {
     def toRow(numColumns: Int)(result: ResultSet): Seq[Any] =
       (1 to numColumns).map(result.getObject)
@@ -98,6 +112,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     })
   }
 
+  /** Drop the Vector(H) table `tableName` if it exists */
   def dropTable(tableName: String): Unit = {
     try {
       executeStatement(s"drop table if exists ${tableName}")
@@ -106,23 +121,29 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     }
   }
 
+  /** Return true if the table `tableName` is empty */
   def isTableEmpty(tableName: String): Boolean = {
     val rowCount = querySingleResult[Int](s"select count(*) from ${tableName}")
     rowCount.map(_ == 0).getOrElse(throw new Exception(s"No result for count on table '${tableName}'"))
   }
 
+  /** Close the Vector(H) `JDBC` connection */
   def close(): Unit = {
     dbCxn.close()
   }
 
+  /** Set auto-commit to ON/OFF for this `JDBC` connection */
   def autoCommit(value: Boolean): Unit = {
     dbCxn.setAutoCommit(value)
   }
 
+  /** Commit the last transaction */
   def commit(): Unit = dbCxn.commit()
 
+  /** Rollback the last transaction */
   def rollback(): Unit = dbCxn.rollback()
 
+  /** Return the hostname of where the ingres frontend of Vector is located (usually on the leader node) */
   def getIngresHost(): String = cxnProps.host
 }
 
@@ -131,6 +152,7 @@ object VectorJDBC extends Logging {
   import resource._
   import ResourceUtil._
 
+  /** Create a `VectorJDBC`, execute the statements specified by `op` and close the `JDBC` connections when finished */
   def withJDBC[T](cxnProps: VectorConnectionProperties)(op: VectorJDBC => T): T = {
     managed(new VectorJDBC(cxnProps)).map(op).resolve()
   }

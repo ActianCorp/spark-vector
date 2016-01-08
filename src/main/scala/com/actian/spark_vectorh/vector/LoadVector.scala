@@ -11,11 +11,21 @@ import com.actian.spark_vectorh.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vectorh.vector.Vector._
 import com.actian.spark_vectorh.writer.{ DataStreamRDD, DataStreamWriter, RowWriter }
 
+/** Utility object that defines methods for loading data into Vector(H) */
 object LoadVector extends Logging {
 
   import RDDUtil._
   import ResourceUtil._
 
+  /**
+   * Given an `rdd` with datatypes specified by `schema`, try to load it to the Vector table `targetTable`
+   *  using the connection information stored in `vectorProps`.
+   *
+   *  @param preSQL specify some queries to be executed before loading, in the same transaction
+   *  @param postSQL specify some queries to be executed after loading, in the same transaction
+   *  @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
+   *  @param createTable specify if the table should be created if it does not exist
+   */
   def loadVectorH(rdd: RDD[Seq[Any]],
     schema: StructType,
     targetTable: String,

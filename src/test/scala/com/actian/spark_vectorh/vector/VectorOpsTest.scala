@@ -1,16 +1,15 @@
 package com.actian.spark_vectorh.vector
 
 import java.sql.{ Date, Timestamp }
-
 import org.apache.spark.{ Logging, SparkException }
 import org.apache.spark.sql.types._
 import org.scalatest.{ Inspectors, Matchers, fixture }
 import org.scalatest.prop.PropertyChecks
-
 import com.actian.spark_vectorh.{ DataGens, RDDFixtures, SparkContextFixture }
 import com.actian.spark_vectorh.test.IntegrationTest
 import com.actian.spark_vectorh.test.tags.RandomizedTest
-import com.actian.spark_vectorh.util.{ RDDUtil, StructTypeUtil }
+import com.actian.spark_vectorh.util.{ RDDUtil }
+import com.actian.spark_vectorh.test.util.StructTypeUtil
 import com.actian.spark_vectorh.vector.ErrorCodes._
 import com.actian.spark_vectorh.vector.VectorFixture.withTable
 import com.actian.spark_vectorh.vector.VectorOps.VectorRDDOps

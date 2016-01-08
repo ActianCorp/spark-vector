@@ -7,7 +7,7 @@ import org.scalatest.{ FunSuite, Matchers }
 import org.scalatest.prop.PropertyChecks
 
 import com.actian.spark_vectorh.test.tags.IntegrationTest
-import com.actian.spark_vectorh.util.StructTypeUtil
+import com.actian.spark_vectorh.test.util.StructTypeUtil
 import com.actian.spark_vectorh.vector.ErrorCodes._
 import com.actian.spark_vectorh.vector.Vector.Field2Column
 import com.actian.spark_vectorh.vector.VectorFixture.withTable

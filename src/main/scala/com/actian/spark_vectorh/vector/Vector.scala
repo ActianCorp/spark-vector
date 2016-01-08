@@ -15,11 +15,11 @@ import com.actian.spark_vectorh.vector.VectorJDBC.withJDBC
 private[vector] object Vector extends Logging {
 
   /**
-   * Return the table schema as a <code>StructType</code> for the given table.
+   * Return the table schema as a `StructType` for the given table.
    *
    * @param vectorProps VectorH connection properties
    * @param targetTable name of the target table
-   * @return schema of the table as a StructType
+   * @return schema of the table as a `StructType`
    * @throws VectorException if the target table does not exist or if there are connection failures
    */
   def getTableSchema(vectorProps: VectorConnectionProperties, targetTable: String, createTableSQL: Option[String] = None): Seq[ColumnMetadata] = {
@@ -52,10 +52,10 @@ private[vector] object Vector extends Logging {
    *
    * @param fieldMap map of input field names to target column names
    * @param rddSchema schema of the input data
-   * @param tableSchema schema of the target column
-   * @return sequence of tuples of type (field name, column name)
-   * @throws VectorException if a target column does not exist or a map is not provided and the
-   *                         cardinality of the input and target table are not equal
+   * @param tableSchema schema of the target table
+   * @return sequence of tuples of type (field name, column name) enclosed in `Field2Column` case classes
+   * @throws VectorException if a target table does not exist or a map is not provided and the
+   *  cardinality of the input and target table are not equal
    */
   def applyFieldMap(fieldMap: Map[String, String], rddSchema: StructType, tableSchema: StructType): Seq[Field2Column] = {
     if (fieldMap.size > 0) {

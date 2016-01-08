@@ -4,6 +4,32 @@ import scala.collection.mutable.{ ArrayBuffer, IndexedSeq => mutableISeq, Stack 
 
 import org.apache.spark.Logging
 
+/**
+ * Class that contains the matching algorithm used to assign `RDD` partitions to Vector hosts, based on `affinities`.
+ *
+ * The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
+ * that have affinity to at least one host enter are matched here, the others are assigned to a random node. Also, this algorithm
+ * aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
+ *
+ * This algorithm is very similar to Hopcroft-Karp's matching algorithm in bipartite graphs.
+ *  - Construct the bipartite graph where on the left side we have the partitions, on the right the hosts
+ *  and the edges represent an affinity of a partition to a particular node
+ *  - create an initial matching
+ *  - define as `target` the ideal solution, i.e. `target` = `numPartitions / numHosts` rounded up
+ *  - for each host, define as `g(host)` as the number of partitions currently assigned to `host`
+ *  - separate the hosts into three classes: hosts with `g(host) > target, = target and < target`
+ *  - At each iteration try to find an alternating path starting from a node with `g(host) > target` to a node that has `g(host) < target`.
+ *  By negating this alternate path, each partition is still assigned to a node it has affinity to, but the sum of `|g(host) - target|`
+ *  is smaller.
+ *  - When there is no such alternating path anymore, we have reached the optimal solution
+ *  - By trying to find more than one alternating path at each iteration, the complexity of the algorithm is improved to
+ *  `|affinities|sqrt(numPartitions + numHosts)`. Since there is usually a constant number of hosts a partition has affinity to, e.g.
+ *  replication factor, and numHosts is usually << numPartitions, the complexity of this algorithm is in fact `O(numPartitions sqrt(numPartitions))`
+ *
+ *  @param numPartitions Number of partitions of input RDD
+ *  @param numHosts Number of hosts (Vector hosts)
+ *  @param affinities Affinities of each partition to hosts (represented by their integer index from `[0, numHosts)`)
+ */
 class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinities: IndexedSeq[IndexedSeq[Int]]) extends Logging {
   private[this] val matchingHost = mutableISeq.fill(numPartitions)(-1)
   private[this] val numPartitionsPerHost = mutableISeq.fill(numHosts)(0)
@@ -58,6 +84,11 @@ class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinitie
     foundPath
   }
 
+  /**
+   * Get an assignment of partitions to hosts satisfying the properties described in the header
+   *
+   *  @return One sequence of partition indexes assigned to each host
+   */
   def get: IndexedSeq[IndexedSeq[Int]] = {
     implicit val accs = profileInit("first assignment", "flow", "ret")
     profile("first assignment")
