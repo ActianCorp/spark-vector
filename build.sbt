@@ -10,17 +10,15 @@ EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
 scalacOptions ++= Seq( "-unchecked", "-deprecation" , "-feature")
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "1.5.1" // % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "1.5.1" % "provided"
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.5.1" // % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "1.5.1"  % "provided"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.3" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.2" % "test"
 
 libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "test"
-
-libraryDependencies += "com.ingres.jdbc" % "iijdbc" % "4.1.8"
 
 libraryDependencies += "org.apache.sshd" % "sshd-core" % "0.11.0"
 

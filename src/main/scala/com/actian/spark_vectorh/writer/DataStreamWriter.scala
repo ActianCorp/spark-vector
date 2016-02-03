@@ -44,7 +44,7 @@ class DataStreamWriter[T <% Seq[Any]](
       }
       profileEnd
       profile("flushing")
-      writeInt(rowWriter.bytesToBeFlushed(headerSize))
+      writeInt(rowWriter.bytesToBeFlushed(headerSize, i))
       writeInt(binaryDataCode)
       writeInt(i) // write actual number of tuples
       sink.pos = headerSize

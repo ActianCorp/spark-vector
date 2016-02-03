@@ -37,10 +37,7 @@ class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializabl
   }
 
   def skipTableInfo(implicit socket: SocketChannel): Unit = {
-    readWithByteBuffer { in => } // column definition header
-    readWithByteBuffer { in => } // actual data
-    readWithByteBuffer { in => } // number of tuples
-    readWithByteBuffer { in => } // ready for data message
+    readWithByteBuffer { in => } // skip table information message. TODO(andrei): read at least the expected vectorsize
   }
 }
 

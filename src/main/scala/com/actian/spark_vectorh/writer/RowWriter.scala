@@ -64,9 +64,11 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
     }
   }
 
-  def bytesToBeFlushed(headerSize: Int): Int = columnBufs.foldLeft(headerSize) {
-    case (pos, buf) =>
-      pos + padding(pos, buf.getAlignReq) + buf.getBufferSize
+  def bytesToBeFlushed(headerSize: Int, n: Int): Int = (0 until tableSchema.size).foldLeft(headerSize) {
+    case (pos, idx) =>
+      val buf = columnBufs(idx)
+      log.info(s"Aligning position $pos to ${padding(pos, buf.getAlignReq)} and adding buffer size ${buf.getBufferSize}")
+      pos + padding(pos + (if (tableSchema(idx).nullable) n else 0), buf.getAlignReq) + buf.getBufferSize
   }
 
   def flushToSink(sink: DataStreamSink): Unit = {

@@ -9,13 +9,14 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   import DataStreamWriter._
   var pos: Int = 0
 
-  def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    writeByteBuffer(values)
-    pos = pos + values.limit()
+  def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
     if (markers != null) {
       writeByteBuffer(markers)
       pos = pos + markers.limit()
     }
+    align(align_size)
+    writeByteBuffer(values)
+    pos = pos + values.limit()
   }
 
   private def align(typeSize: Int): Unit = {
@@ -28,40 +29,27 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   }
   // scalastyle:off magic.number
   def writeByteColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers)
+    writeColumn(columnIndex, values, markers, 1)
 
-  def writeShortColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(2)
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeShortColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 2)
 
-  def writeIntColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(4)
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeIntColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 4)
 
-  def writeLongColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(8)
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeLongColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 8)
 
-  def write128BitColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(16)
-    writeColumn(columnIndex, values, markers)
-  }
+  def write128BitColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 16)
 
-  def writeFloatColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(4)
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeFloatColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 4)
 
-  def writeDoubleColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    align(8)
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeDoubleColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 8)
 
-  def writeStringColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit = {
-    writeColumn(columnIndex, values, markers)
-  }
+  def writeStringColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
+    writeColumn(columnIndex, values, markers, 1)
   // scalastyle:on magic.number
 }
