@@ -1,14 +1,13 @@
 package com.actian.spark_vectorh.writer
 
 import java.sql.SQLException
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 import org.apache.spark.Logging
-
 import com.actian.spark_vectorh.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vectorh.vector.{ VectorConnectionProperties, VectorJDBC }
+import com.actian.spark_vectorh.vector.VectorException
+import com.actian.spark_vectorh.vector.ErrorCodes
 
 /**
  * A client for to prepare loading and issue the load `SQL` query to Vector
@@ -57,10 +56,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
       }
     } catch {
       case e: SQLException =>
-        log.info(s"Vector raised exception")
-
-        e.printStackTrace()
-        -1
+        throw new VectorException(e.getErrorCode, e.getMessage, e)
     }
     ret
   }

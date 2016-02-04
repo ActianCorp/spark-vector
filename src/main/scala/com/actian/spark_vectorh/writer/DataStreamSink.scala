@@ -5,28 +5,32 @@ import java.nio.channels.SocketChannel
 
 import buffer.VectorSink
 
+/** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector(H) DataStream` */ 
 case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   import DataStreamWriter._
+  /** The write position (how many bytes have already been written to `socket`). Used to
+    *  calculate data type alignments */
   var pos: Int = 0
 
-  def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
+  private def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
     if (markers != null) {
-      writeByteBuffer(markers)
+      writeByteBufferNoFlip(markers)
       pos = pos + markers.limit()
     }
     align(align_size)
-    writeByteBuffer(values)
+    writeByteBufferNoFlip(values)
     pos = pos + values.limit()
   }
 
   private def align(typeSize: Int): Unit = {
     RowWriter.padding(pos, typeSize) match {
       case x if x > 0 =>
-        writeByteBuffer(ByteBuffer.allocateDirect(x))
+        writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
         pos = pos + x
       case _ =>
     }
   }
+  
   // scalastyle:off magic.number
   def writeByteColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
     writeColumn(columnIndex, values, markers, 1)

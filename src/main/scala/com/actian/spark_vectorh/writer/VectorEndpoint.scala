@@ -6,20 +6,26 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vectorh.vector.VectorJDBC
 
+/** Information to connect to a VectorEndpoint (DataStream) */
 case class VectorEndPoint(host: String,
   port: Int,
   username: String,
   password: String) extends Serializable
 
+/**
+ * Contains helpers to obtain VectorEndpoint information from `Vector(H)`'s SQL interface.
+ *
+ *  @note The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future
+ */
 object VectorEndPoint extends Logging {
-  val hostDbColumn = "host"
-  val portDbColumn = "port"
-  val usernameDbColumn = "username"
-  val passwordDbColumn = "password"
+  private val hostDbColumn = "host"
+  private val portDbColumn = "port"
+  private val usernameDbColumn = "username"
+  private val passwordDbColumn = "password"
 
-  val dataStreamsTable = "iivwtable_datastreams"
+  private val dataStreamsTable = "iivwtable_datastreams"
 
-  def getVectorEndPointSql: String = s"select $hostDbColumn, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
+  private val getVectorEndPointSql: String = s"select $hostDbColumn, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
 
   def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndPoint] = {
     seq match {
@@ -35,6 +41,7 @@ object VectorEndPoint extends Logging {
     }
   }
 
+  /** Issues a query through JDBC to obtain connection information from the `DataStreams` system table */
   def fromDataStreamsTable(cxn: VectorJDBC): IndexedSeq[VectorEndPoint] = {
     val resultSet = cxn.query(getVectorEndPointSql)
     val ret = resultSet

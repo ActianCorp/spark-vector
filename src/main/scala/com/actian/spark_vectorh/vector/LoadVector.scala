@@ -18,7 +18,7 @@ object LoadVector extends Logging {
   import ResourceUtil._
 
   /**
-   * Given an `rdd` with datatypes specified by `schema`, try to load it to the Vector table `targetTable`
+   * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
    *  using the connection information stored in `vectorProps`.
    *
    *  @param preSQL specify some queries to be executed before loading, in the same transaction

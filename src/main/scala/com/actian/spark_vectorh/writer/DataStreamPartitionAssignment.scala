@@ -8,7 +8,7 @@ import org.apache.spark.Logging
  * Class that contains the matching algorithm used to assign `RDD` partitions to Vector hosts, based on `affinities`.
  *
  * The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
- * that have affinity to at least one host enter are matched here, the others are assigned to a random node. Also, this algorithm
+ * that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
  * aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
  *
  * This algorithm is very similar to Hopcroft-Karp's matching algorithm in bipartite graphs.
@@ -20,7 +20,7 @@ import org.apache.spark.Logging
  *  - separate the hosts into three classes: hosts with `g(host) > target, = target and < target`
  *  - At each iteration try to find an alternating path starting from a node with `g(host) > target` to a node that has `g(host) < target`.
  *  By negating this alternate path, each partition is still assigned to a node it has affinity to, but the sum of `|g(host) - target|`
- *  is smaller.
+ *  for every `host` is smaller.
  *  - When there is no such alternating path anymore, we have reached the optimal solution
  *  - By trying to find more than one alternating path at each iteration, the complexity of the algorithm is improved to
  *  `|affinities|sqrt(numPartitions + numHosts)`. Since there is usually a constant number of hosts a partition has affinity to, e.g.

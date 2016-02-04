@@ -8,13 +8,22 @@ import org.apache.spark.rdd.RDD
 
 import com.actian.spark_vectorh.vector.DataStreamPartition
 
+/**
+ * `Vector(H)` RDD to load data into `Vector(H)` through its `DataStream API`
+ *
+ *   @param rdd `RDD` to be loaded
+ *   @param writeConf contains the write configuration needed to connect to `Vector(H) DataStream`s
+ */
 class DataStreamRDD[R: ClassTag](
     @transient val rdd: RDD[R],
     writeConf: WriteConf) extends RDD[R](rdd.context, Nil) with Logging {
 
+  /** All hosts where `VectorH` expects data to be loaded */
   private val vectorHosts = writeConf.vectorEndPoints.map(_.host).toSet
+  /** Used for logging what partitions are assigned to which `DataStream` */
   private val partitionsPerDataStreamToPrint = 10
 
+  /** Obtain the preferred locations of a partition, eventually looking into grand children `RDD`s as long as the dependencies traversed are OneToOne */
   @tailrec
   private def getPreferredLocationsRec(rdd: RDD[R], partition: Partition): Seq[String] = {
     val locations = rdd.preferredLocations(partition)
@@ -34,6 +43,7 @@ class DataStreamRDD[R: ClassTag](
     }
   }
 
+  /** Optimally assign RDD partitions to DataStreams, taking into account partition affinities */
   private val endPointsToParentPartitionsMap = {
     val affinities = rdd.partitions.map {
       case partition =>
