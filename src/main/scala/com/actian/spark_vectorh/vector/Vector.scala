@@ -38,7 +38,9 @@ private[vector] object Vector extends Logging {
         dbCxn.columnMetadata(targetTable)
       }
     } catch {
-      case e: SQLException => throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance", e)
+      case e: SQLException =>
+        logError(s" Error connecting to Vector instance.", e)
+        throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance")
     }
   }
 

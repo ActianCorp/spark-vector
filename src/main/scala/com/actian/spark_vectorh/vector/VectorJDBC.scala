@@ -52,7 +52,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         case exc: Exception =>
           val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
           if (!message.contains("does not exist or is not owned by you")) {
-            throw new VectorException(NoSuchTable, s"SQL exception encountered while checking for existence of table ${tableName}: ${message}", exc)
+            throw new VectorException(NoSuchTable, s"SQL exception encountered while checking for existence of table ${tableName}: ${message}")
           } else {
             false
           }
@@ -82,7 +82,9 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         }
       })
     } catch {
-      case exc: Exception => throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}", exc)
+      case exc: Exception =>
+        logError("Unable to retrieve metadata for table '${tableName}'", exc)
+        throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}")
     }
   }
 
@@ -117,7 +119,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     try {
       executeStatement(s"drop table if exists ${tableName}")
     } catch {
-      case exc: Exception => throw new VectorException(SqlException, s"Unable to drop table '${tableName}'", exc)
+      case exc: Exception => throw new VectorException(SqlException, s"Unable to drop table '${tableName}. Got message: ${exc.getMessage}'")
     }
   }
 
@@ -176,7 +178,7 @@ object VectorJDBC extends Logging {
           case exc: Exception =>
             cxn.rollback()
             logError(s"error executing SQL statement: '${statement}'", exc)
-            throw VectorException(SqlExecutionError, s"Error executing SQL statement: '${statement}'", cause = exc)
+            throw VectorException(SqlExecutionError, s"Error executing SQL statement: '${statement}'")
         })
       // Commit since all SQL statements ran OK
       cxn.commit()

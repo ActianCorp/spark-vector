@@ -5,7 +5,7 @@ import java.util.Date
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.{FloatType, IntegerType, ShortType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 /**
  * Test utilities
@@ -90,7 +90,7 @@ trait VectorFixture {
       StructField("gpa", FloatType),
       StructField("rank", ShortType)))
 
-    (sparkContext.parallelize(data, 2), schema))
+    (sparkContext.parallelize(data, 2), schema)
   }
 }
 
