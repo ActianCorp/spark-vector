@@ -24,7 +24,7 @@ object TableSchemaGenerator {
 
   /**
    * Given SparkSQL datatypes specified by `schema`, generate the VectorSQL create table
-   *  statement that matches the datatypes
+   * statement that matches the datatypes
    */
   def generateTableSQL(name: String, schema: StructType): String = {
     val columnSpecs = schema.fields.map(columnSpec)

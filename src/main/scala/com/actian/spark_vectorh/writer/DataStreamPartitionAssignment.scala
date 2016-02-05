@@ -1,8 +1,9 @@
 package com.actian.spark_vectorh.writer
 
 import scala.collection.mutable.{ ArrayBuffer, IndexedSeq => mutableISeq, Stack }
-
 import org.apache.spark.Logging
+import com.actian.spark_vectorh.Profiling
+import com.actian.spark_vectorh.Profiling
 
 /**
  * Class that contains the matching algorithm used to assign `RDD` partitions to Vector hosts, based on `affinities`.
@@ -26,11 +27,11 @@ import org.apache.spark.Logging
  *  `|affinities|sqrt(numPartitions + numHosts)`. Since there is usually a constant number of hosts a partition has affinity to, e.g.
  *  replication factor, and numHosts is usually << numPartitions, the complexity of this algorithm is in fact `O(numPartitions sqrt(numPartitions))`
  *
- *  @param numPartitions Number of partitions of input RDD
- *  @param numHosts Number of hosts (Vector hosts)
- *  @param affinities Affinities of each partition to hosts (represented by their integer index from `[0, numHosts)`)
+ * @param numPartitions Number of partitions of input RDD
+ * @param numHosts Number of hosts (Vector hosts)
+ * @param affinities Affinities of each partition to hosts (represented by their integer index from `[0, numHosts)`)
  */
-class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinities: IndexedSeq[IndexedSeq[Int]]) extends Logging {
+class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinities: IndexedSeq[IndexedSeq[Int]]) extends Logging with Profiling {
   private[this] val matchingHost = mutableISeq.fill(numPartitions)(-1)
   private[this] val numPartitionsPerHost = mutableISeq.fill(numHosts)(0)
   private[this] val hostToPartitions = {
@@ -87,7 +88,7 @@ class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinitie
   /**
    * Get an assignment of partitions to hosts satisfying the properties described in the header
    *
-   *  @return One sequence of partition indexes assigned to each host
+   * @return One sequence of partition indexes assigned to each host
    */
   def get: IndexedSeq[IndexedSeq[Int]] = {
     implicit val accs = profileInit("first assignment", "flow", "ret")
@@ -126,17 +127,17 @@ class DataStreamPartitionAssignment(numPartitions: Int, numHosts: Int, affinitie
       }
     }
     profileEnd
-    log.debug(s"Matching algorithm took $iterations iterations")
+    logDebug(s"Matching algorithm took $iterations iterations")
     profile("ret")
     val hostsWithPartitions = (0 until numPartitions).view.groupBy(matchingHost(_)).mapValues(_.force)
     val ret = (0 until numHosts).map(host => hostsWithPartitions.get(host).getOrElse(IndexedSeq.empty[Int]))
     profileEnd
-    profilePrint(log)
+    profilePrint
     ret
   }
 }
 
-object DataStreamPartitionAssignment extends Logging {
+object DataStreamPartitionAssignment extends Logging with Profiling {
   def getAssignmentToVectorEndpoints(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndPoint]): IndexedSeq[IndexedSeq[Int]] = {
     implicit val accs = profileInit("preparing structures", "assignment to hosts", "translating to assignment to endpoints", "assigning partitions without affinity")
     profile("preparing structures")
@@ -150,8 +151,8 @@ object DataStreamPartitionAssignment extends Logging {
     }
     profileEnd
 
-    log.debug(s"data stream partition assignment: trying to assign ${affinities.size} partitions to ${endpoints.size} endpoints")
-    log.debug(s"data stream partition assignment: ${partitionsWithAffinity.size} partitions have affinity, ${partitionsWithoutAffinity.size} don't")
+    logDebug(s"data stream partition assignment: trying to assign ${affinities.size} partitions to ${endpoints.size} endpoints")
+    logDebug(s"data stream partition assignment: ${partitionsWithAffinity.size} partitions have affinity, ${partitionsWithoutAffinity.size} don't")
 
     profile("assignment to hosts")
     var partitionsPerHost = (new DataStreamPartitionAssignment(numPartitions, hosts.size, affinitiesToHosts)).get
@@ -164,7 +165,7 @@ object DataStreamPartitionAssignment extends Logging {
             if (affinities(partition).find(hosts(_) == host).isEmpty) sanity += 1
         }
     }
-    log.debug(s"After matching algorithm, $sanity partitions are read remotely")
+    logDebug(s"After matching algorithm, $sanity partitions are read remotely")
     profileEnd
 
     profile("translating to assignment to endpoints")
@@ -204,9 +205,9 @@ object DataStreamPartitionAssignment extends Logging {
     }
     sanity = 0
     (0 to endpoints.size - 1).view.foreach { endpoint => ret(endpoint).foreach { case partition => if (affinities(partition).find(endpoints(endpoint).host == _).isEmpty) sanity += 1 } }
-    log.debug(s"After computing assignment, $sanity partitions are read remotely")
+    logDebug(s"After computing assignment, $sanity partitions are read remotely")
     profileEnd
-    profilePrint(log)
+    profilePrint
     ret
   }
 }

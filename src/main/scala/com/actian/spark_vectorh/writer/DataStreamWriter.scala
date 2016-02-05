@@ -8,26 +8,27 @@ import com.actian.spark_vectorh.vector.VectorConnectionProperties
 import java.io.DataOutputStream
 import java.io.ByteArrayOutputStream
 import scala.annotation.tailrec
+import com.actian.spark_vectorh.Profiling
 
 /**
  * Entry point for loading with spark-vectorh connector.
  *
- *  @param vectorProps connection information to the leader node's SQL interface
- *  @param table The table loaded to
- *  @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector(H)`
+ * @param vectorProps connection information to the leader node's SQL interface
+ * @param table The table loaded to
+ * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector(H)`
  */
 class DataStreamWriter[T <% Seq[Any]](
     vectorProps: VectorConnectionProperties,
     table: String,
-    rowWriter: RowWriter) extends Logging with Serializable {
+    rowWriter: RowWriter) extends Logging with Serializable with Profiling {
 
   import DataStreamWriter._
 
   /**
    * A client to connect to the `Vector(H)`'s SQL interface through JDBC. Currently used to
-   *   obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
+   * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
    *
-   *   @note Available only on the driver.
+   * @note Available only on the driver.
    */
   @transient
   val client = DataStreamClient(vectorProps, table)
@@ -41,7 +42,7 @@ class DataStreamWriter[T <% Seq[Any]](
 
   /**
    * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
-   *  the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
+   * the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
    */
   private def writeSplittingInVectors(data: Iterator[T])(implicit sink: DataStreamSink) = {
     implicit val socket = sink.socket
@@ -71,12 +72,12 @@ class DataStreamWriter[T <% Seq[Any]](
       profileEnd
     } while (i != 0)
     profileEnd
-    profilePrint(log)
+    profilePrint
   }
 
   /**
    * This function is executed once for each partition of `DataStreamRDD` and it will open a socket connection, process all data
-   *  assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
+   * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = {
     connector.withConnection(taskContext.partitionId)(implicit channel => {
@@ -89,14 +90,14 @@ class DataStreamWriter[T <% Seq[Any]](
   /**
    * Initiate the load, i.e. submit the SQL query to start loading from an external source.
    *
-   *  @note should only be called on the driver.
+   * @note should only be called on the driver.
    */
   def initiateLoad: Future[Int] = client.startLoad
 
   /**
    * Commit the last transaction started by this `DataStreamWriter`'s client.
    *
-   *  @note should only be called on the driver.
+   * @note should only be called on the driver.
    */
   def commit: Unit = client.commit
 }
@@ -110,7 +111,7 @@ object DataStreamWriter {
   /** Write the length `len` of a variable length message to `out` */
   @tailrec
   def writeLength(out: DataOutputStream, len: Long): Unit = {
-    //log.trace("Writing length..")
+    //logTrace("Writing length..")
     len match {
       case x if x < 255 => out.writeByte(x.toInt)
       case _ =>
@@ -131,7 +132,7 @@ object DataStreamWriter {
 
   /**
    * Writes `buffer` to `socket`. Note this method assumes that the buffer is in read mode, i.e.
-   *  the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
+   * the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
    */
   def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     while (buffer.hasRemaining())
@@ -154,7 +155,7 @@ object DataStreamWriter {
 
   /**
    * Write a `ByteBuffer` to `socket`. Note this method flips the byteBuffer before writing. For writing
-   *  a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
+   * a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
    */
   def writeByteBuffer(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     buffer.flip()
@@ -164,12 +165,12 @@ object DataStreamWriter {
   /** Write a `ByteBuffer` preceded by its length to `socket` */
   def writeByteBufferWithLength(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     val lenByteBuffer = ByteBuffer.allocateDirect(4)
-    //log.trace(s"Trying to write a byte buffer with total length of ${buffer.limit()}")
+    //logTrace(s"Trying to write a byte buffer with total length of ${buffer.limit()}")
     lenByteBuffer.putInt(buffer.limit() + 4)
     writeByteBuffer(lenByteBuffer)
     buffer.position(buffer.limit())
     writeByteBuffer(buffer)
-    //log.trace("Finished writing byte buffer")
+    //logTrace("Finished writing byte buffer")
   }
 
   /** Write using a `ByteBuffer` to `socket`, exposing to the user a `DataOutputStream` */

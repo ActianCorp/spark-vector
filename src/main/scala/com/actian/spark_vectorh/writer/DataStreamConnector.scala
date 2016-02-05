@@ -15,13 +15,13 @@ import com.actian.spark_vectorh.writer.srp.VectorSRPClient
 /**
  * Class containing methods to open connections to Vector(H)'s `DataStream` API
  *
- *  @param writeConf `DataStream` information containing at least the number of connections expected, the names and
- *  ports of the hosts where they are expected and authentication information
+ * @param writeConf `DataStream` information containing at least the number of connections expected, the names and
+ * ports of the hosts where they are expected and authentication information
  */
 class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializable {
   private def openConnection(idx: Int): SocketChannel = {
     val host: VectorEndPoint = writeConf.vectorEndPoints(idx)
-    log.info(s"Opening a socket to $host")
+    logInfo(s"Opening a socket to $host")
     implicit val socket = SocketChannel.open()
     socket.connect(new InetSocketAddress(host.host, host.port))
     val srpClient = new VectorSRPClient(host.username, host.password)
@@ -31,7 +31,8 @@ class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializabl
 
   /** Open a connection to Vector(H) and execute the code specified by `op` */
   def withConnection[T](idx: Int)(op: SocketChannel => T): T = {
-    closeResourceAfterUse(openConnection(idx))(op)
+    val socket = openConnection(idx)
+    closeResourceAfterUse(socket) { op(socket) }
   }
 
   def skipTableInfo(implicit socket: SocketChannel): Unit = {

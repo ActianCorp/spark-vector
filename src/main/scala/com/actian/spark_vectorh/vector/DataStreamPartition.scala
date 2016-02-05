@@ -14,7 +14,7 @@ import org.apache.spark.rdd.RDD
  * subsequently be serialized and sent through a single connection
  */
 case class DataStreamPartition(index: Int, @transient rdd: RDD[_], parentIndices: Seq[Int]) extends Partition {
-  /** An array of parent partitions to be mapped (through a `NarrowDependency` to this `DataStreamPartition` */
+  /** An array of parent partitions to be mapped (through a `NarrowDependency` to this `DataStreamPartition`) */
   var parents = parentIndices.map(rdd.partitions(_))
 
   @throws(classOf[IOException])

@@ -17,24 +17,22 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
     userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
-    log.info("vector: insert")
-
     if (overwrite) {
       VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
         cxn.executeStatement(s"delete from ${tableRef.table}")
       }
     }
 
-    log.info(s"Trying to insert rdd: $data into vectorH table")
+    logInfo(s"Trying to insert rdd: $data into vectorH table")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
     // TODO could expose other options in Spark parameters
     val rowCount = anySeqRDD.loadVectorH(data.schema, tableRef.table, tableRef.toConnectionProps)
-    log.info(s"loaded ${rowCount} records into table ${tableRef.table}")
+    logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    log.info("vector: buildScan: columns: " + requiredColumns.mkString(", "))
-    log.info("vector: buildScan: filters: " + filters.mkString(", "))
+    logInfo("vector: buildScan: columns: " + requiredColumns.mkString(", "))
+    logInfo("vector: buildScan: filters: " + filters.mkString(", "))
 
     val columns =
       if (requiredColumns.isEmpty) {
@@ -44,6 +42,7 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
       }
 
     val whereClause = VectorRelation.generateWhereClause(filters)
+    /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector(H)` in parallel */
     val results = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
       cxn.query(s"select $columns from ${tableRef.table} $whereClause");
     }

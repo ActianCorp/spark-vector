@@ -11,8 +11,8 @@ import com.actian.spark_vectorh.vector.DataStreamPartition
 /**
  * `Vector(H)` RDD to load data into `Vector(H)` through its `DataStream API`
  *
- *   @param rdd `RDD` to be loaded
- *   @param writeConf contains the write configuration needed to connect to `Vector(H) DataStream`s
+ *  @param rdd `RDD` to be loaded
+ *  @param writeConf contains the write configuration needed to connect to `Vector(H) DataStream`s
  */
 class DataStreamRDD[R: ClassTag](
     @transient val rdd: RDD[R],
@@ -52,7 +52,7 @@ class DataStreamRDD[R: ClassTag](
 
     val ret = DataStreamPartitionAssignment.getAssignmentToVectorEndpoints(affinities, writeConf.vectorEndPoints)
 
-    log.debug(s"Computed endPointsToParentPartitionsMap and got ..." +
+    logDebug(s"Computed endPointsToParentPartitionsMap and got ..." +
       s"""${
         (0 until ret.length).map {
           case idx =>
@@ -68,12 +68,12 @@ class DataStreamRDD[R: ClassTag](
     .toArray
 
   override protected def getPreferredLocations(split: Partition) = {
-    log.debug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndPoints(split.index).host}")
+    logDebug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndPoints(split.index).host}")
     Seq(writeConf.vectorEndPoints(split.index).host)
   }
 
   override def compute(split: Partition, task: TaskContext): Iterator[R] = {
-    //log.trace(s"Computing partition ${split.index} = ${task.partitionId}")
+    //logTrace(s"Computing partition ${split.index} = ${task.partitionId}")
     split.asInstanceOf[DataStreamPartition].parents.toIterator.flatMap(firstParent[R].iterator(_, task))
   }
 

@@ -33,7 +33,6 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
         }
       case SaveMode.Append =>
         table.insert(data, false)
-
       case SaveMode.Ignore =>
         val isEmpty = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
           cxn.isTableEmpty(tableRef.table)

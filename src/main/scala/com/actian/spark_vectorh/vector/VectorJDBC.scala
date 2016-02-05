@@ -31,7 +31,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
   /**
    * Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
-   *  mapping the `ResultSet` to a new type as specified by `op`
+   * mapping the `ResultSet` to a new type as specified by `op`
    */
   def executeQuery[T](sql: String)(op: ResultSet => T): T = {
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
@@ -64,8 +64,8 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
   /**
    * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
-   *  as there are columns in the table. Each element contains the name, type, nullability, precision
-   *  and scale of its corresponding column in `tableName`
+   * as there are columns in the table. Each element contains the name, type, nullability, precision
+   * and scale of its corresponding column in `tableName`
    */
   def columnMetadata(tableName: String): Seq[ColumnMetadata] = {
     val sql = s"SELECT * FROM ${tableName}  WHERE 1=0"
@@ -177,7 +177,7 @@ object VectorJDBC extends Logging {
         } catch {
           case exc: Exception =>
             cxn.rollback()
-            log.error(s"error executing SQL statement: '${statement}'; error: ${exc.getLocalizedMessage}")
+            logError(s"error executing SQL statement: '${statement}'; error: ${exc.getLocalizedMessage}")
             throw VectorException(sqlExecutionError, s"Error executing SQL statement: '${statement}'", cause = exc)
         })
       // Commit since all SQL statements ran OK

@@ -11,7 +11,7 @@ import buffer.{ ColumnBuffer, ColumnBufferFactoriesRegistry }
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector(H)` through a `VectorSink`
  *
- *  @param tableSchema schema information for the `Vector(H)` table/relation being loaded to
+ * @param tableSchema schema information for the `Vector(H)` table/relation being loaded to
  */
 class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logging {
   import RowWriter._
@@ -21,13 +21,13 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
 
   /**
    * A list of column buffers, one for each column of the table inserted to that will be used to serialize input `RDD` rows into the
-   *  buffer for the appropriate table column
+   * buffer for the appropriate table column
    */
   private lazy val columnBufs =
     tableSchema.zipWithIndex
       .map {
         case (col, idx) =>
-          log.debug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}," +
+          logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}," +
             s"nullable=${col.nullable} vectorsize=${DataStreamWriter.vectorSize}")
           val factory = registry.findFactoryForColumn(col.typeName, col.precision, col.scale, col.nullable)
           if (factory == null) {
@@ -40,8 +40,8 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
   /**
    * A list of functions (one per column buffer) to write values (Any for now) into its corresponding column buffer, and performing the necessary type casts.
    *
-   *  @note since the column buffers are exposed only through the interface `ColumnBuf[_]`. Since we need to cast the value(Any) to the `ColumnBuf`'s expected type,
-   *  we make use of runtime reflection to determine the type of the generic parameter of the ColumnBuf
+   * @note since the column buffers are exposed only through the interface `ColumnBuf[_]`. Since we need to cast the value(Any) to the `ColumnBuf`'s expected type,
+   * we make use of runtime reflection to determine the type of the generic parameter of the ColumnBuf
    */
   private lazy val writeValFcns: Seq[(Any, ColumnBuffer[_]) => Unit] = columnBufs.map {
     case buf =>
@@ -83,7 +83,7 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
 
   /**
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
-   *  the total amount of data buffered + a header size + some trash bytes used to properly align data types
+   * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
   def bytesToBeFlushed(headerSize: Int, n: Int): Int = (0 until tableSchema.size).foldLeft(headerSize) {
     case (pos, idx) =>

@@ -19,12 +19,12 @@ object LoadVector extends Logging {
 
   /**
    * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
-   *  using the connection information stored in `vectorProps`.
+   * using the connection information stored in `vectorProps`.
    *
-   *  @param preSQL specify some queries to be executed before loading, in the same transaction
-   *  @param postSQL specify some queries to be executed after loading, in the same transaction
-   *  @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
-   *  @param createTable specify if the table should be created if it does not exist
+   * @param preSQL specify some queries to be executed before loading, in the same transaction
+   * @param postSQL specify some queries to be executed after loading, in the same transaction
+   * @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
+   * @param createTable specify if the table should be created if it does not exist
    */
   def loadVectorH(rdd: RDD[Seq[Any]],
     schema: StructType,
@@ -33,9 +33,9 @@ object LoadVector extends Logging {
     preSQL: Option[Seq[String]],
     postSQL: Option[Seq[String]],
     fieldMap: Option[Map[String, String]],
-    createTable: Option[Boolean]): Long = {
+    createTable: Boolean = false): Long = {
     val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
-    val optCreateTableSQL = createTable.filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
+    val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
     val tableSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
     val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
 

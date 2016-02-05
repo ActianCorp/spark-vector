@@ -15,7 +15,7 @@ case class VectorEndPoint(host: String,
 /**
  * Contains helpers to obtain VectorEndpoint information from `Vector(H)`'s SQL interface.
  *
- *  @note The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future
+ * @note The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future
  */
 object VectorEndPoint extends Logging {
   private val hostDbColumn = "host"
@@ -47,7 +47,7 @@ object VectorEndPoint extends Logging {
     val ret = resultSet
       .map(VectorEndPoint(_, cxn.getIngresHost))
       .flatten
-    log.debug(s"Got the following VectorEndPoints from the datastreams table: ${ret.map(_.toString).mkString(",")}")
+    logDebug(s"Got the following VectorEndPoints from the datastreams table: ${ret.map(_.toString).mkString(",")}")
     ret.toIndexedSeq
   }
 }

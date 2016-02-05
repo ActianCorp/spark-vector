@@ -5,16 +5,13 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.Logging
 
-/**
- * Add vector operations to RecordRDD.
- *
- */
+/** Add vector operations to RecordRDD. */
 trait VectorOps {
 
   /**
    * Wrapper class to expose Vector operations on RDDs
    *
-   *  @param rdd input RDD
+   * @param rdd input RDD
    */
   implicit class VectorRDDOps(rdd: RDD[Seq[Any]]) extends Logging {
 
@@ -38,7 +35,7 @@ trait VectorOps {
       preSQL: Option[Seq[String]] = None,
       postSQL: Option[Seq[String]] = None,
       fieldMap: Option[Map[String, String]] = None,
-      createTable: Option[Boolean] = None): Long = {
+      createTable: Boolean = false): Long = {
       LoadVector.loadVectorH(rdd, schema, targetTable, vectorProps,
         preSQL, postSQL, fieldMap, createTable)
     }

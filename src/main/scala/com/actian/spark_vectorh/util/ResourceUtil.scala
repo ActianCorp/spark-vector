@@ -8,15 +8,15 @@ object ResourceUtil {
 
   /**
    * Wrap an `ExtractableManagedResource[T]` into a new class providing the capability to map errors using an
-   *  function specified by `excMapper`
+   * function specified by `excMapper`
    */
   implicit class RichExtractableManagedResource[T](val res: ExtractableManagedResource[T]) extends AnyVal {
     def resolve(excMapper: Throwable => Throwable = identity): T = res.either.fold(e => throw excMapper(e.head), identity)
   }
 
   /** Close a resource after using it, regardless of whether an exception was thrown or not */
-  def closeResourceAfterUse[T, C <: { def close() }](closeable: C)(code: C => T): T =
-    try code(closeable) finally {
+  def closeResourceAfterUse[T, C <: { def close() }](closeable: C)(code: => T): T =
+    try code finally {
       closeable.close()
     }
 

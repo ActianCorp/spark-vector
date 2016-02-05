@@ -12,8 +12,8 @@ import com.actian.spark_vectorh.vector.ErrorCodes
 /**
  * A client for to prepare loading and issue the load `SQL` query to Vector
  *
- *  @param vectorProps connection information
- *  @param table to which table this client will load data
+ * @param vectorProps connection information
+ * @param table to which table this client will load data
  */
 case class DataStreamClient(vectorProps: VectorConnectionProperties,
     table: String) extends Serializable with Logging {
@@ -31,6 +31,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
 
   /** Abort sending data to Vector(H) rolling back the open transaction and closing the `JDBC` connection */
   def close(): Unit = {
+    logDebug("Closing DataStrealClient")
     jdbc.rollback()
     jdbc.close
   }
@@ -40,11 +41,11 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
 
   /**
    * Obtain the information about how many `DataStream`s Vector(H) expects together with
-   *  locality information and authentication roles and tokens
+   * locality information and authentication roles and tokens
    */
   def getWriteConf(): WriteConf = {
     val ret = WriteConf(jdbc)
-    log.debug(s"Got ${ret.vectorEndPoints.length} datastreams")
+    logDebug(s"Got ${ret.vectorEndPoints.length} datastreams")
     ret
   }
 

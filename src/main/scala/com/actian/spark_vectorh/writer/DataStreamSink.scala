@@ -9,7 +9,7 @@ import buffer.VectorSink
 case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   import DataStreamWriter._
   /** The write position (how many bytes have already been written to `socket`). Used to
-    *  calculate data type alignments */
+    * calculate data type alignments */
   var pos: Int = 0
 
   private def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
