@@ -27,8 +27,7 @@ object DataTypeGens {
       const(DoubleType),
       const(DateType),
       const(TimestampType),
-      const(StringType)
-    )
+      const(StringType))
 
   val fieldGen: Gen[StructField] =
     for {
@@ -46,10 +45,9 @@ object DataTypeGens {
       numFields = uniqueFieldNames.size
       fieldTypes <- listOfN(numFields, dataTypeGen)
       nullables <- listOfN(numFields, arbitrary[Boolean])
-    }
-    yield {
+    } yield {
       val fields =
-        for(idx <- 0 until numFields)
+        for (idx <- 0 until numFields)
           yield StructField(uniqueFieldNames(idx), fieldTypes(idx), nullables(idx))
       StructType(fields)
     }

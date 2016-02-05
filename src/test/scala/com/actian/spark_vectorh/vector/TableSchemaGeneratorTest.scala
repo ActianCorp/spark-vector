@@ -1,18 +1,19 @@
 package com.actian.spark_vectorh.vector
 
 import org.apache.spark.sql.types._
-import org.scalacheck.{ Gen, Shrink }
-import org.scalatest.{ FunSuite, Inspectors, Matchers }
+import org.scalacheck.Gen.identifier
+import org.scalacheck.Shrink
+import org.scalatest.{FunSuite, Inspectors, Matchers}
 import org.scalatest.prop.PropertyChecks
 
-import com.actian.spark_vectorh.DataTypeGens
+import com.actian.spark_vectorh.DataTypeGens.schemaGen
 import com.actian.spark_vectorh.test.IntegrationTest
 import com.actian.spark_vectorh.test.tags.RandomizedTest
+import com.actian.spark_vectorh.vector.TableSchemaGenerator.generateTableSQL
 import com.actian.spark_vectorh.vector.VectorJDBC.withJDBC
 
 @IntegrationTest
 class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyChecks with VectorFixture {
-
   import com.actian.spark_vectorh.DataTypeGens._
   import com.actian.spark_vectorh.vector.TableSchemaGenerator._
   import org.scalacheck.Gen._
@@ -28,19 +29,18 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
     StructField("h", DecimalType(10, 2), false),
     StructField("i", DateType, true),
     StructField("j", TimestampType, false),
-    StructField("k", StringType, true)
-  )
+    StructField("k", StringType, true))
   val defaultSchema = StructType(defaultFields)
 
   test("table schema") {
-    withJDBC(connectionProps) (cxn => {
+    withJDBC(connectionProps)(cxn => {
       cxn.autoCommit(false)
       assertSchemaGeneration(cxn, "testtable", defaultSchema)
     })
   }
 
   test("table schema/gen", RandomizedTest) {
-    withJDBC(connectionProps) (cxn => {
+    withJDBC(connectionProps)(cxn => {
       cxn.autoCommit(false)
       forAll(identifier, schemaGen)((name, schema) => {
         assertSchemaGeneration(cxn, name, schema)
@@ -53,18 +53,17 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
     try {
       cxn.executeStatement(sql)
       val columnsAsFields = cxn.columnMetadata(name).map(_.structField)
-      columnsAsFields.size should be (schema.fields.length)
+      columnsAsFields.size should be(schema.fields.length)
       Inspectors.forAll(columnsAsFields.zip(schema.fields)) {
         case (columnField, origField) => {
-          columnField.name should be (origField.name.toLowerCase)
-          columnField.dataType should be (origField.dataType)
-          columnField.nullable should be (origField.nullable)
+          columnField.name should be(origField.name.toLowerCase)
+          columnField.dataType should be(origField.dataType)
+          columnField.nullable should be(origField.nullable)
           // TODO ensure field metadata consistency
         }
       }
       cxn.dropTable(name)
-    }
-    finally {
+    } finally {
       cxn.rollback()
     }
   }

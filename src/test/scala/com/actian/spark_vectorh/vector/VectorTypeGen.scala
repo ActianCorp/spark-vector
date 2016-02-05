@@ -1,11 +1,9 @@
 package com.actian.spark_vectorh.vector
 
 import org.scalacheck.Gen
-import org.scalacheck.Gen._
-
+import org.scalacheck.Gen.oneOf
 
 object VectorTypeGen {
-
   // Generate JDBC types returned by Vector
   val vectorJdbcTypeGen: Gen[String] =
     oneOf(
@@ -30,6 +28,5 @@ object VectorTypeGen {
       "timestamp with time zone",
       "timestamp with local time zone",
       "interval year to month",
-      "interval day to year"
-    )
+      "interval day to year")
 }

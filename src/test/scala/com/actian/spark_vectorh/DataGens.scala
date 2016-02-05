@@ -10,9 +10,7 @@ import scala.util.Try
 import org.apache.spark.sql.types._
 import org.scalacheck.{ Arbitrary, Gen }
 
-
 object DataGens {
-
   import com.actian.spark_vectorh.DataTypeGens._
   import org.scalacheck.Arbitrary._
   import org.scalacheck.Gen._
@@ -33,15 +31,14 @@ object DataGens {
 
   // FIXME allow arbitrary doubles (and filter externally for vector tests)
   val floatGen: Gen[Float] =
-    arbitrary[Float].map(f => if(f.abs > 1e-38) f else 0.0f)
+    arbitrary[Float].map(f => if (f.abs > 1e-38) f else 0.0f)
 
   // FIXME allow arbitrary doubles (and filter externally for vector tests)
   val doubleGen: Gen[Double] =
     for {
       neg <- arbitrary[Boolean]
       digits <- listOfN(12, choose(0, 9))
-    } yield s"${if(neg) "-" else ""}1.${digits.mkString("")}".toDouble
-
+    } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
   val decimalGen: Gen[BigDecimal] =
     arbitrary[BigDecimal].filter(bd => (Try { BigDecimal(bd.toString) }).isSuccess)
@@ -52,7 +49,7 @@ object DataGens {
   val dateGen: Gen[jsql.Date] = new jsql.Date(Calendar.getInstance().getTime().getTime())
 
   val timestampGen: Gen[jsql.Timestamp] =
-    for(ms <- dateValueGen) yield new jsql.Timestamp(ms)
+    for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
 
   // FIXME allow empty strings (and filter externally for vector tests)
   val stringGen: Gen[String] =
@@ -74,18 +71,18 @@ object DataGens {
 
   def nullableValueGen(field: StructField): Gen[Any] = {
     val gen = valueGen(field.dataType)
-    if(field.nullable)
+    if (field.nullable)
       gen //frequency(9 -> gen, 1 -> const(null)) TODO
     else
       gen
   }
 
   def rowGen(schema: StructType): Gen[Seq[Any]] =
-    sequence(schema.fields.map(f => nullableValueGen(f))).map(l => Seq[Any](l.asScala:_*)) // TODO Huh? Why ju.ArrayList?!?
+    sequence(schema.fields.map(f => nullableValueGen(f))).map(l => Seq[Any](l.asScala: _*)) // TODO Huh? Why ju.ArrayList?!?
 
   def dataGenFor(schema: StructType, maxRows: Int): Gen[Seq[Seq[Any]]] =
     for {
-      numRows <- choose(1  , maxRows)
+      numRows <- choose(1, maxRows)
       rows <- listOfN(numRows, rowGen(schema))
     } yield rows
 
@@ -96,5 +93,4 @@ object DataGens {
       schema <- schemaGen
       data <- dataGenFor(schema, DefaultMaxRows)
     } yield TypedData(schema, data)
-
 }

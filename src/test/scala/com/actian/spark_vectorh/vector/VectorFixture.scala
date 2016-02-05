@@ -5,13 +5,12 @@ import java.util.Date
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{FloatType, IntegerType, ShortType, StructField, StructType}
 
 /**
  * Test utilities
  */
 trait VectorFixture {
-
   def connectionProps: VectorConnectionProperties = {
     val host = System.getProperty("vector.host", "hornet")
     val instance = System.getProperty("vector.instance", "VH")
@@ -91,7 +90,7 @@ trait VectorFixture {
       StructField("gpa", FloatType),
       StructField("rank", ShortType)))
 
-    (sparkContext.parallelize(data, 2), schema)
+    (sparkContext.parallelize(data, 2), schema))
   }
 }
 

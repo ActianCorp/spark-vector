@@ -52,7 +52,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         case exc: Exception =>
           val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
           if (!message.contains("does not exist or is not owned by you")) {
-            throw new VectorException(NoSuchTable , s"SQL exception encountered while checking for existence of table ${tableName}: ${message}", exc)
+            throw new VectorException(NoSuchTable, s"SQL exception encountered while checking for existence of table ${tableName}: ${message}", exc)
           } else {
             false
           }
@@ -82,7 +82,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         }
       })
     } catch {
-      case exc: Exception => throw new VectorException(NoSuchTable , s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}", exc)
+      case exc: Exception => throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}", exc)
     }
   }
 
@@ -127,7 +127,6 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     rowCount.map(_ == 0).getOrElse(throw new VectorException(SqlException, s"No result for count on table '${tableName}'"))
   }
 
-  
   /** Close the Vector(H) `JDBC` connection */
   def close(): Unit = dbCxn.close
 

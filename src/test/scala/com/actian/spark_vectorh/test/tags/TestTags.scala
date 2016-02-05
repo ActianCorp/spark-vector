@@ -8,4 +8,4 @@ import org.scalatest.Tag
 
 object IntegrationTest extends Tag("com.actian.dataflow.test.tags.IntegrationTest")
 
-object RandomizedTest  extends Tag("com.actian.dataflow.test.tags.RandomizedTest")
+object RandomizedTest extends Tag("com.actian.dataflow.test.tags.RandomizedTest")

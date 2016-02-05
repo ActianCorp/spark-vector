@@ -12,7 +12,6 @@ import com.actian.spark_vectorh.test.util.StructTypeUtil.createSchema
  * Set of test RDD functions.
  */
 trait RDDFixtures {
-
   // poor man's fixture, for other approaches see:
   // http://www.scalatest.org/user_guide/sharing_fixtures
   def createRecordRdd(sc: SparkContext): (RDD[Seq[Any]], StructType) = {

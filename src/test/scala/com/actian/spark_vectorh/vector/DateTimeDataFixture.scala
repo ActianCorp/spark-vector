@@ -4,21 +4,20 @@ import java.util.TimeZone
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{DateType, StructField, StructType, TimestampType}
 
-import com.actian.spark_vectorh.test.util.DateHelper.{ ansiDateFor, timestampFor }
+import com.actian.spark_vectorh.test.util.DateHelper.{ansiDateFor, timestampFor}
 
 object DateTimeDataFixture {
-
   def timeRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = {
     createTimeRDD(sparkContext, timeData)
   }
 
-  private [vector] val tz = TimeZone.getTimeZone("GMT-06:00")
+  private[vector] val tz = TimeZone.getTimeZone("GMT-06:00")
 
-  private [vector] val utc = TimeZone.getTimeZone("UTC")
+  private[vector] val utc = TimeZone.getTimeZone("UTC")
 
-  private [vector] val timeData = Seq(
+  private[vector] val timeData = Seq(
     Seq[Any](
       timestampFor(1995, 1, 22, 18, 3, 29, 234, tz),
       timestampFor(1996, 2, 22, 18, 3, 29, 234),
@@ -27,9 +26,8 @@ object DateTimeDataFixture {
       timestampFor(1999, 2, 22, 18, 3, 29, 234),
       timestampFor(2000, 2, 22, 18, 3, 29, 234),
       timestampFor(2015, 11, 23, 18, 3, 29, 123, tz),
-      timestampFor(2015,11, 23, 18, 3, 29, 123),
-      ansiDateFor(1995, 2, 22)
-    ),
+      timestampFor(2015, 11, 23, 18, 3, 29, 123),
+      ansiDateFor(1995, 2, 22)),
     Seq[Any](
       timestampFor(2015, 3, 2, 17, 52, 12, 678, tz),
       timestampFor(2015, 4, 2, 17, 52, 12, 678),
@@ -38,9 +36,7 @@ object DateTimeDataFixture {
       timestampFor(2015, 4, 2, 17, 52, 12, 678),
       timestampFor(2015, 4, 2, 17, 52, 12, 678),
       timestampFor(2015, 11, 13, 17, 52, 12, 123, tz),
-      ansiDateFor(2015, 4, 2)
-    )
-  )
+      ansiDateFor(2015, 4, 2)))
 
   private def createTimeRDD(sparkContext: SparkContext, data: Seq[Seq[Any]]): (RDD[Seq[Any]], StructType) = {
 
@@ -83,6 +79,4 @@ object DateTimeDataFixture {
             |)""".stripMargin)
     }
   }
-
-
 }

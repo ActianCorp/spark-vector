@@ -1,8 +1,7 @@
 package com.actian.spark_vectorh.vector
 
-import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FunSuite, Matchers}
-
+import org.scalatest.prop.PropertyChecks
 
 class VectorConnectionPropertiesTest extends FunSuite with Matchers with PropertyChecks {
   val validCombos = Table(
@@ -33,19 +32,19 @@ class VectorConnectionPropertiesTest extends FunSuite with Matchers with Propert
   }
 
   test("invalid vector properties") {
-    forAll(invalidCombos) {(host: String, instance: String, database: String) =>
-      a [IllegalArgumentException] should be thrownBy {
+    forAll(invalidCombos) { (host: String, instance: String, database: String) =>
+      a[IllegalArgumentException] should be thrownBy {
         VectorConnectionProperties(host, instance, database)
       }
     }
   }
 
-  private def validate(props: VectorConnectionProperties, host: String, instance: String, database: String, user: Option[String], password: Option[String], expectedURL: String ): Unit = {
-    props.toJdbcUrl should be (expectedURL)
-    props.host should be (host)
-    props.instance should be (instance)
-    props.database should be (database)
-    props.user should be (user)
-    props.password should be (password)
+  private def validate(props: VectorConnectionProperties, host: String, instance: String, database: String, user: Option[String], password: Option[String], expectedURL: String): Unit = {
+    props.toJdbcUrl should be(expectedURL)
+    props.host should be(host)
+    props.instance should be(instance)
+    props.database should be(database)
+    props.user should be(user)
+    props.password should be(password)
   }
 }

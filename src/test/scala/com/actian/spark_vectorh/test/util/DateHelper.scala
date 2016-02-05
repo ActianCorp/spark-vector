@@ -4,7 +4,6 @@ import java.sql.{ Date => sqlDate, Timestamp }
 import java.util.{ Calendar, Date, GregorianCalendar, TimeZone }
 
 object DateHelper {
-
   def dateFor(year: Int, month: Int, day: Int, hours: Int = 0, minutes: Int = 0, seconds: Int = 0, millis: Int = 0, tz: TimeZone = TimeZone.getDefault): Date = {
     import java.util.Calendar._
     val cal = new GregorianCalendar()

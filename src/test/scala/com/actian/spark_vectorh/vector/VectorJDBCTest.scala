@@ -14,7 +14,6 @@ import com.actian.spark_vectorh.vector.VectorJDBC._
  */
 @IntegrationTest
 class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with VectorFixture {
-
   private val doesNotExistTable = "this_table_does_not_exist"
   private val typeTable = "test_types"
   private val testTable = "test_vector"
@@ -30,9 +29,9 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   }
 
   test("tableExists for non-existant table") {
-    withJDBC(connectionProps) {cxn =>
+    withJDBC(connectionProps) { cxn =>
       val exists = cxn.tableExists(doesNotExistTable)
-      exists should be (false)
+      exists should be(false)
     }
   }
 
@@ -47,13 +46,13 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   test("tableExists for existing table") {
     withJDBC(connectionProps) { cxn =>
       val exists = cxn.tableExists(typeTable)
-      exists should be (true)
+      exists should be(true)
     }
   }
 
   test("get column metadata for an existing table") {
     withJDBC(connectionProps) { cxn =>
-        cxn.columnMetadata(typeTable) should be (allTypesColumnMD)
+      cxn.columnMetadata(typeTable) should be(allTypesColumnMD)
     }
   }
 
@@ -75,20 +74,19 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
 
     VectorJDBC.withJDBC(connectionProps) { cxn =>
       val rowCount = cxn.querySingleResult(s"select count(*) from $testTable")
-      rowCount should be (Some(1))
+      rowCount should be(Some(1))
     }
   }
 
   test("multiple SQL statements") {
     val statements = Seq(
       s"insert into $testTable values (1)",
-      s"insert into $testTable values (2)"
-    )
+      s"insert into $testTable values (2)")
     executeStatements(connectionProps)(statements)
 
     VectorJDBC.withJDBC(connectionProps) { cxn =>
       val rowCount = cxn.querySingleResult("select count(*) from " + testTable)
-      rowCount should be (Some(2))
+      rowCount should be(Some(2))
     }
   }
 
@@ -97,7 +95,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
     val statements = Seq(
       s"insert into $testTable values (1)", // this works
       s"insert into $testTable values ('hello there')" // this doesn't
-    )
+      )
 
     val ex = intercept[VectorException] {
       executeStatements(connectionProps)(statements)

@@ -9,7 +9,6 @@ import org.scalatest.{ fixture, Outcome }
  * to create a unique event log also as needed for later analysis.
  */
 trait SparkContextFixture { this: fixture.Suite =>
-
   case class FixtureParam(sc: SparkContext)
 
   // Give test suite opportunity to set up config
