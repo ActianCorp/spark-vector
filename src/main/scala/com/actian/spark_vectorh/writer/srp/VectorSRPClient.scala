@@ -82,7 +82,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
     val (s, b) =
       readWithByteBuffer[(Array[Byte], Array[Byte])] { in =>
         if (!readCode(in, sBCode)) {
-          throw new VectorException(authError, "Unable to read Ok code after exchanging username and A")
+          throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
         }
         (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
       }
@@ -98,12 +98,12 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
     }
     val serverM = readWithByteBuffer[Array[Byte]] { in =>
       if (!readCode(in, serverMCode)) {
-        throw new VectorException(authError, "Unable to read code before verification of server M key")
+        throw new VectorException(AuthError, "Unable to read code before verification of server M key")
       }
       readByteArray(in)
     }
     if (!H(A ++ clientM ++ K).sameElements(serverM)) {
-      throw new VectorException(authError, "M and serverM differ")
+      throw new VectorException(AuthError, "M and serverM differ")
     }
   }
 }

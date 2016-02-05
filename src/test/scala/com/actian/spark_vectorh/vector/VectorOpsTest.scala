@@ -148,7 +148,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       rdd.loadVectorH(schema, doesNotExistTable, connectionProps)
     }
 
-    ex.errorCode should be(noSuchTable)
+    ex.errorCode should be(NoSuchTable)
   }
 
   test("exclude non null column") { sparkFixture =>
@@ -158,7 +158,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         rdd.loadVectorH(schema, tableName, connectionProps, fieldMap = Some(Map("admit" -> "a_admit", "rank" -> "a_rank")))
       }
 
-      ex.errorCode should be(missingNonNullColumn)
+      ex.errorCode should be(MissingNonNullColumn)
     }
   }
 
@@ -170,7 +170,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         rddToLoad.loadVectorH(inputType, tableName, connectionProps)
       }
 
-      ex.errorCode should be(invalidNumberOfInputs)
+      ex.errorCode should be(InvalidNumberOfInputs)
     }
   }
 
@@ -181,7 +181,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         rdd.loadVectorH(schema, tableName, connectionProps)
       }
 
-      ex.errorCode should be(invalidNumberOfInputs)
+      ex.errorCode should be(InvalidNumberOfInputs)
     }
   }
 
@@ -192,7 +192,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         rdd.loadVectorH(schema, tableName, connectionProps, fieldMap = Some(Map("admit" -> "not-a-column")))
       }
 
-      ex.errorCode should be(noSuchColumn)
+      ex.errorCode should be(NoSuchColumn)
     }
   }
 
@@ -203,7 +203,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         rdd.loadVectorH(schema, tableName, connectionProps, fieldMap = Some(Map("foo" -> "bar")))
       }
 
-      ex.errorCode should be(noSuchSourceField)
+      ex.errorCode should be(NoSuchSourceField)
     }
   }
 

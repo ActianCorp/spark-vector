@@ -42,7 +42,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
         Vector.getTableSchema(VectorConnectionProperties("host", "instance", "db"), tableName)
       }
 
-      ex.errorCode should be (sqlException)
+      ex.errorCode should be (SqlException)
     }
   }
 
@@ -79,7 +79,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
       Vector.applyFieldMap(Map(), sourceSchema, targetSchema)
     }
 
-    ex.errorCode should be (invalidNumberOfInputs)
+    ex.errorCode should be (InvalidNumberOfInputs)
   }
 
   test("applyFieldMap with too many inputs") {
@@ -91,7 +91,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
       Vector.applyFieldMap(Map("a"->"A", "b"->"B", "c"->"C"), sourceSchema, targetSchema)
     }
 
-    ex.errorCode should be (invalidNumberOfInputs)
+    ex.errorCode should be (InvalidNumberOfInputs)
   }
 
   test("applyFieldMap to non-existing column") {
@@ -103,7 +103,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
       Vector.applyFieldMap(Map("a"->"A", "b"->"B", "c"->"C", "d"->"D"), sourceSchema, targetSchema)
     }
 
-    ex.errorCode should be (noSuchColumn)
+    ex.errorCode should be (NoSuchColumn)
   }
 
   test("applyFieldMap map has reference to non-existing field") {
@@ -115,7 +115,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
       Vector.applyFieldMap(Map("a"->"A"), sourceSchema, targetSchema)
     }
 
-    ex.errorCode should be (noSuchSourceField)
+    ex.errorCode should be (NoSuchSourceField)
   }
 
   private val testColumns = StructType(Seq(
@@ -136,6 +136,6 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
       Vector.validateColumns(testColumns, Seq("b"))
     }
 
-    ex.errorCode should be (missingNonNullColumn)
+    ex.errorCode should be (MissingNonNullColumn)
   }
 }

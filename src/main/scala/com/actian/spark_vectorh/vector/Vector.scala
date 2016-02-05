@@ -30,7 +30,7 @@ private[vector] object Vector extends Logging {
             createTableSQL.foreach(dbCxn.executeStatement)
           } else {
             logError(s"$targetTable: target table does not exist")
-            throw new VectorException(noSuchTable, targetTable + ": target table does not exist")
+            throw new VectorException(NoSuchTable, targetTable + ": target table does not exist")
           }
         }
 
@@ -38,7 +38,7 @@ private[vector] object Vector extends Logging {
         dbCxn.columnMetadata(targetTable)
       }
     } catch {
-      case e: SQLException => throw new VectorException(sqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance", e)
+      case e: SQLException => throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance", e)
     }
   }
 
@@ -60,7 +60,7 @@ private[vector] object Vector extends Logging {
     if (fieldMap.isEmpty) {
       if (rddSchema.fields.length != tableSchema.fields.length) {
         throw VectorException(
-          invalidNumberOfInputs,
+          InvalidNumberOfInputs,
           "Without a field map, the number of input fields and target columns are expected to match. Specify a field mapping to map input fields to target columns.")
       }
 
@@ -69,7 +69,7 @@ private[vector] object Vector extends Logging {
     } else {
       if (fieldMap.size > tableSchema.fields.length) {
         throw VectorException(
-          invalidNumberOfInputs,
+          InvalidNumberOfInputs,
           "More input fields are defined in the field mapping than exist in the target table")
       }
 
@@ -77,7 +77,7 @@ private[vector] object Vector extends Logging {
       fieldMap.keys.foreach(fieldName => {
         if (!rddSchema.fieldNames.contains(fieldName)) {
           throw new VectorException(
-            noSuchSourceField,
+            NoSuchSourceField,
             s"$fieldName: source field in field mapping does not exist in the input. Available field names are: ${rddSchema.fieldNames.mkString(", ")}")
         }
       })
@@ -89,7 +89,7 @@ private[vector] object Vector extends Logging {
               columnNames :+ Field2Column(inputFieldName, targetColumnName)
             } else {
               throw VectorException(
-                noSuchColumn,
+                NoSuchColumn,
                 s"A column with name '$targetColumnName' does not exist in the target table. Available column names are: ${tableSchema.fieldNames.mkString(", ")}")
             }
           case None => columnNames
@@ -98,7 +98,7 @@ private[vector] object Vector extends Logging {
 
       if (fieldColumnNames.length == 0) {
         throw VectorException(
-          noColumnsMapped,
+          NoColumnsMapped,
           "The given field map does not map from any input fields to any target columns.")
       }
 
@@ -117,7 +117,7 @@ private[vector] object Vector extends Logging {
    */
   def validateColumns(tableSchema: StructType, columnNames: Seq[String]): Unit = {
     val ex = tableSchema.fields.find(field => !field.nullable && !columnNames.contains(field.name)).map(field =>
-      VectorException(missingNonNullColumn, s"Column ${field.name} is defined NOT NULL but is not being loaded."))
+      VectorException(MissingNonNullColumn, s"Column ${field.name} is defined NOT NULL but is not being loaded."))
     if (ex.isDefined) throw ex.get
   }
 }

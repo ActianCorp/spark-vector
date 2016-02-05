@@ -49,7 +49,7 @@ object DataStreamReader extends Logging {
     var i = 0
     while (i < len) {
       val j = socket.read(buffer)
-      if (j <= 0) throw new VectorException(ErrorCodes.communicationError,
+      if (j <= 0) throw new VectorException(ErrorCodes.CommunicationError,
         s"Connection to Vector(H) end point has been closed or amount of data communicated does not match the message length")
       i += j
     }

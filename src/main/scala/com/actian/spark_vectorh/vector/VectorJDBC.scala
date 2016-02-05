@@ -52,7 +52,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         case exc: Exception =>
           val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
           if (!message.contains("does not exist or is not owned by you")) {
-            throw new VectorException(noSuchTable , s"SQL exception encountered while checking for existence of table ${tableName}: ${message}", exc)
+            throw new VectorException(NoSuchTable , s"SQL exception encountered while checking for existence of table ${tableName}: ${message}", exc)
           } else {
             false
           }
@@ -82,7 +82,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
         }
       })
     } catch {
-      case exc: Exception => throw new VectorException(noSuchTable , s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}", exc)
+      case exc: Exception => throw new VectorException(NoSuchTable , s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}", exc)
     }
   }
 
@@ -117,14 +117,14 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     try {
       executeStatement(s"drop table if exists ${tableName}")
     } catch {
-      case exc: Exception => throw new VectorException(sqlException, s"Unable to drop table '${tableName}'", exc)
+      case exc: Exception => throw new VectorException(SqlException, s"Unable to drop table '${tableName}'", exc)
     }
   }
 
   /** Return true if the table `tableName` is empty */
   def isTableEmpty(tableName: String): Boolean = {
     val rowCount = querySingleResult[Int](s"select count(*) from ${tableName}")
-    rowCount.map(_ == 0).getOrElse(throw new VectorException(sqlException, s"No result for count on table '${tableName}'"))
+    rowCount.map(_ == 0).getOrElse(throw new VectorException(SqlException, s"No result for count on table '${tableName}'"))
   }
 
   
@@ -177,7 +177,7 @@ object VectorJDBC extends Logging {
           case exc: Exception =>
             cxn.rollback()
             logError(s"error executing SQL statement: '${statement}'", exc)
-            throw VectorException(sqlExecutionError, s"Error executing SQL statement: '${statement}'", cause = exc)
+            throw VectorException(SqlExecutionError, s"Error executing SQL statement: '${statement}'", cause = exc)
         })
       // Commit since all SQL statements ran OK
       cxn.commit()

@@ -104,7 +104,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
     }
 
     ex should not be null
-    ex.errorCode should be(sqlExecutionError)
+    ex.errorCode should be(SqlExecutionError)
 
     // Ensure no data was committed since once query failed
     VectorJDBC.withJDBC(connectionProps) { cxn =>
