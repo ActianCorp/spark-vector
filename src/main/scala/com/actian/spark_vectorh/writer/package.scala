@@ -18,5 +18,5 @@ package com.actian.spark_vectorh
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector(H)` yet.
  */
 package object writer {
-  val intSize = 4
+  val IntSize = 4
 }

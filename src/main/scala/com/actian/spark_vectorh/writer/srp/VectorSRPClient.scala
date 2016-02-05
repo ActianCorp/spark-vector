@@ -5,6 +5,8 @@ import scala.BigInt
 import scala.annotation.tailrec
 import org.apache.spark.Logging
 import com.actian.spark_vectorh.writer.{ DataStreamReader, DataStreamWriter }
+import com.actian.spark_vectorh.vector.ErrorCodes._
+import com.actian.spark_vectorh.vector.VectorException
 
 /** Performs authentication to `Vector(H)` with SRP (Secure Remote Password) protocol */
 // scalastyle:off magic.number
@@ -80,7 +82,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
     val (s, b) =
       readWithByteBuffer[(Array[Byte], Array[Byte])] { in =>
         if (!readCode(in, sBCode)) {
-          throw new Exception("Unable to read Ok code after exchanging username and A")
+          throw new VectorException(authError, "Unable to read Ok code after exchanging username and A")
         }
         (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
       }
@@ -96,12 +98,12 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
     }
     val serverM = readWithByteBuffer[Array[Byte]] { in =>
       if (!readCode(in, serverMCode)) {
-        throw new Exception("Unable to read code before verification of server M key")
+        throw new VectorException(authError, "Unable to read code before verification of server M key")
       }
       readByteArray(in)
     }
     if (!H(A ++ clientM ++ K).sameElements(serverM)) {
-      throw new Exception("M and serverM differ")
+      throw new VectorException(authError, "M and serverM differ")
     }
   }
 }

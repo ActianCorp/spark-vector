@@ -10,7 +10,7 @@ import org.apache.spark.sql.types._
 /**
  * Test utilities
  */
-trait VectorFixture  {
+trait VectorFixture {
 
   def connectionProps: VectorConnectionProperties = {
     val host = System.getProperty("vector.host", "hornet")
@@ -18,7 +18,6 @@ trait VectorFixture  {
     val database = System.getProperty("vector.database", "demo")
     val user = System.getProperty("vector.user", "actian")
     val password = System.getProperty("vector.password", "actian")
-
 
     VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty))
   }
@@ -57,8 +56,7 @@ trait VectorFixture  {
     ColumnMetadata("ts_ntz_type", "timestamp without time zone", true, 29, 6),
     ColumnMetadata("ts_ltz_type", "timestamp with local time zone", true, 29, 6),
     ColumnMetadata("iy2m_type", "interval year to month", true, 8, 0),
-    ColumnMetadata("id2s_type", "interval day to second", true, 24, 0)
-  )
+    ColumnMetadata("id2s_type", "interval day to second", true, 24, 0))
 
   def admitRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = {
     createAdmitRDD(sparkContext, admitData)
@@ -68,23 +66,21 @@ trait VectorFixture  {
     createAdmitRDD(sparkContext, admitDataWithNulls)
   }
 
-  private val admitData =  Seq(
+  private val admitData = Seq(
     Seq[Any](0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
     Seq[Any](1, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
     Seq[Any](2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
     Seq[Any](3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
     Seq[Any](4, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
-    Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort)
-  )
+    Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
 
-  private val admitDataWithNulls =  Seq(
-    Seq[Any](0,    0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
+  private val admitDataWithNulls = Seq(
+    Seq[Any](0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
     Seq[Any](null, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
-    Seq[Any](2,    1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
-    Seq[Any](3,    1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
+    Seq[Any](2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
+    Seq[Any](3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
     Seq[Any](null, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
-    Seq[Any](5,    1.toShort, 760.toShort, 3.0.toFloat, 2.toShort)
-  )
+    Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
 
   private def createAdmitRDD(sparkContext: SparkContext, data: Seq[Seq[Any]]): (RDD[Seq[Any]], StructType) = {
 
@@ -95,13 +91,11 @@ trait VectorFixture  {
       StructField("gpa", FloatType),
       StructField("rank", ShortType)))
 
-     (sparkContext.parallelize(data, 2), schema)
+    (sparkContext.parallelize(data, 2), schema)
   }
 }
 
-
 object VectorFixture extends VectorFixture {
-
   /**
    * Creates a unique table name and invokes the given function to create the table.
    * The given operation is then invoked. The created table will always be dropped
@@ -118,8 +112,7 @@ object VectorFixture extends VectorFixture {
     try {
       // Invoke user function
       op(tmpTableName)
-    }
-    finally {
+    } finally {
       VectorJDBC.withJDBC(connectionProps) { cxn =>
         cxn.dropTable(tmpTableName);
       }

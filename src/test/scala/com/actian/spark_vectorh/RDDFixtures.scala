@@ -18,8 +18,7 @@ trait RDDFixtures {
   def createRecordRdd(sc: SparkContext): (RDD[Seq[Any]], StructType) = {
     val input = Seq(
       Seq(42, "a"),
-      Seq(43, "b")
-    )
+      Seq(43, "b"))
     val inputRdd = sc.parallelize(input, 2)
     val inputSchema = createSchema("id" -> IntegerType, "name" -> StringType)
     (inputRdd, inputSchema)
@@ -28,15 +27,13 @@ trait RDDFixtures {
   def createRowRDD(sc: SparkContext): (RDD[Seq[Any]], StructType) = {
     val input = Seq(
       Seq[Any](42, "a", new Date(), new Date()),
-      Seq[Any](43, "b", new Date(), new Date())
-    )
+      Seq[Any](43, "b", new Date(), new Date()))
     val inputRdd = sc.parallelize(input, 2)
     val inputSchema = createSchema("id" -> IntegerType, "name" -> StringType, "date" -> DateType)
     (inputRdd, inputSchema)
   }
 
   def wideRDD(sc: SparkContext, columnCount: Int, rowCount: Int = 2): (RDD[Seq[Any]], StructType) = {
-
     val data: Seq[Int] = 1 to columnCount
 
     val fields = for (i <- 1 to rowCount) yield {

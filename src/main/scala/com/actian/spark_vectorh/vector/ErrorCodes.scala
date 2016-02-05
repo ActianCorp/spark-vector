@@ -36,5 +36,6 @@ object ErrorCodes {
   val fileSystemError = 15
   /** Mapping from a missing input field */
   val noSuchSourceField = 16
-
+  /** Authentication error */
+  val authError = 17
 }

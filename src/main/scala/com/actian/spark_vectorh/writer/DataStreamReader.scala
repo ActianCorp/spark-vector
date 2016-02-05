@@ -5,8 +5,9 @@ import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 import com.actian.spark_vectorh.vector.ErrorCodes
 import com.actian.spark_vectorh.vector.VectorException
+import org.apache.spark.Logging
 
-object DataStreamReader {
+object DataStreamReader extends Logging {
   // scalastyle:off magic.number
   /**
    * Read a Vector(H) `code` from `in` and return `false` if a different
@@ -31,7 +32,7 @@ object DataStreamReader {
   /** Read a `ByteArray` from `in` */
   def readByteArray(in: ByteBuffer): Array[Byte] = {
     val len = readLength(in)
-    //logTrace(s"Preparing to read an array of size $len")
+    logTrace(s"preparing to read an array of size $len")
     val ret = Array.ofDim[Byte](len.toInt)
     in.get(ret, 0, len.toInt)
     ret
@@ -59,7 +60,7 @@ object DataStreamReader {
   /** Read a byte buffer and its length integer from `socket` */
   def readByteBufferWithLength(implicit socket: SocketChannel): ByteBuffer = {
     val len = readByteBuffer(4).getInt()
-    //logTrace(s"Reading a byte buffer with length: Will be reading ${len - 4} bytes")
+    logTrace(s"peading a byte buffer with length: Will be reading ${len - 4} bytes")
     readByteBuffer(len - 4)
   }
 

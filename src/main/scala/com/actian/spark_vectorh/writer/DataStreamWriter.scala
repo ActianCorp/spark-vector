@@ -9,6 +9,8 @@ import java.io.DataOutputStream
 import java.io.ByteArrayOutputStream
 import scala.annotation.tailrec
 import com.actian.spark_vectorh.Profiling
+import org.apache.spark.Logging
+import com.actian.spark_vectorh.util.ResourceUtil._
 
 /**
  * Entry point for loading with spark-vectorh connector.
@@ -103,7 +105,7 @@ class DataStreamWriter[T <% Seq[Any]](
 }
 
 /** Contains helpers to write binary data, conforming to `Vector(H)`'s binary protocol */
-object DataStreamWriter {
+object DataStreamWriter extends Logging {
   /** Default vector size to use while loading. i.e. the number of rows that will be transmitted with each message sent to `Vector(H)` */
   val vectorSize = 1024
 
@@ -111,7 +113,6 @@ object DataStreamWriter {
   /** Write the length `len` of a variable length message to `out` */
   @tailrec
   def writeLength(out: DataOutputStream, len: Long): Unit = {
-    //logTrace("Writing length..")
     len match {
       case x if x < 255 => out.writeByte(x.toInt)
       case _ =>
@@ -141,7 +142,7 @@ object DataStreamWriter {
 
   /** Writes an integer to the socket */
   def writeInt(x: Int)(implicit socket: SocketChannel): Unit = {
-    val buffer = ByteBuffer.allocateDirect(intSize)
+    val buffer = ByteBuffer.allocateDirect(IntSize)
     buffer.putInt(x)
     writeByteBuffer(buffer)
   }
@@ -165,23 +166,22 @@ object DataStreamWriter {
   /** Write a `ByteBuffer` preceded by its length to `socket` */
   def writeByteBufferWithLength(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     val lenByteBuffer = ByteBuffer.allocateDirect(4)
-    //logTrace(s"Trying to write a byte buffer with total length of ${buffer.limit()}")
+    logTrace(s"trying to write a byte buffer with total length of ${buffer.limit()}")
     lenByteBuffer.putInt(buffer.limit() + 4)
     writeByteBuffer(lenByteBuffer)
     buffer.position(buffer.limit())
     writeByteBuffer(buffer)
-    //logTrace("Finished writing byte buffer")
   }
 
   /** Write using a `ByteBuffer` to `socket`, exposing to the user a `DataOutputStream` */
   def writeWithByteBuffer(code: DataOutputStream => Unit)(implicit socket: SocketChannel): Unit = {
     val bos = new ByteArrayOutputStream()
     val out = new DataOutputStream(bos)
-    code(out)
-    out.flush()
-    writeByteBufferWithLength(ByteBuffer.wrap(bos.toByteArray()))
-    out.close()
-    bos.close()
+    closeResourceAfterUse(out, bos) {
+        code(out)
+        out.flush()
+        writeByteBufferWithLength(ByteBuffer.wrap(bos.toByteArray()))
+    }
   }
   // scalastyle:on magic.number
 }

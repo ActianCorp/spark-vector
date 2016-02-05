@@ -10,7 +10,7 @@ import com.actian.spark_vectorh.vector.VectorException
 import com.actian.spark_vectorh.vector.ErrorCodes
 
 /**
- * A client for to prepare loading and issue the load `SQL` query to Vector
+ * A client to prepare loading and issue the load `SQL` query to Vector
  *
  * @param vectorProps connection information
  * @param table to which table this client will load data
@@ -31,8 +31,8 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
 
   /** Abort sending data to Vector(H) rolling back the open transaction and closing the `JDBC` connection */
   def close(): Unit = {
-    logDebug("Closing DataStrealClient")
-    jdbc.rollback()
+    logDebug("Closing DataStreamClient")
+    jdbc.rollback
     jdbc.close
   }
 

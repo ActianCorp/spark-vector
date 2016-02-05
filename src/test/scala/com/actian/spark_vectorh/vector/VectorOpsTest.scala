@@ -97,7 +97,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val postSQL = Seq(s"delete from $tableName where a_student_id > 0")
       val (rdd, schema) = admitRDD(sparkFixture.sc)
       val result = rdd.loadVectorH(schema, tableName, connectionProps, postSQL = Some(postSQL))
-      println(s"tableName is $tableName")
       result should be(6)
 
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -232,7 +231,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   test("generate table/gen", RandomizedTest) { fixture =>
     {
       forAll(DataGens.dataGen, minSuccessful(3))(typedData => {
-        //println(typedData)
         val (dataType, data) = (typedData.dataType, typedData.data)
         assertTableGeneration(fixture, dataType, data, Map.empty)
       })

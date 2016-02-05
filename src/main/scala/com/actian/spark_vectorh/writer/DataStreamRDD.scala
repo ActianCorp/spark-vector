@@ -26,8 +26,7 @@ class DataStreamRDD[R: ClassTag](
   /** Obtain the preferred locations of a partition, eventually looking into grand children `RDD`s as long as the dependencies traversed are OneToOne */
   @tailrec
   private def getPreferredLocationsRec(rdd: RDD[R], partition: Partition): Seq[String] = {
-    val locations = rdd.preferredLocations(partition)
-      .filter(vectorHosts.contains(_))
+    val locations = rdd.preferredLocations(partition).filter(vectorHosts.contains(_))
 
     if (!locations.isEmpty) {
       locations
@@ -50,7 +49,7 @@ class DataStreamRDD[R: ClassTag](
         getPreferredLocationsRec(rdd, partition)
     }
 
-    val ret = DataStreamPartitionAssignment.getAssignmentToVectorEndpoints(affinities, writeConf.vectorEndPoints)
+    val ret = DataStreamPartitionAssignment(affinities, writeConf.vectorEndPoints)
 
     logDebug(s"Computed endPointsToParentPartitionsMap and got ..." +
       s"""${
@@ -63,9 +62,8 @@ class DataStreamRDD[R: ClassTag](
     ret.map(_.map(rdd.partitions(_).index))
   }
 
-  override protected def getPartitions = (0 to writeConf.vectorEndPoints.length - 1)
-    .map(x => DataStreamPartition(x, rdd, endPointsToParentPartitionsMap(x)))
-    .toArray
+  override protected def getPartitions = (0 until writeConf.vectorEndPoints.length)
+    .map(x => DataStreamPartition(x, rdd, endPointsToParentPartitionsMap(x))).toArray
 
   override protected def getPreferredLocations(split: Partition) = {
     logDebug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndPoints(split.index).host}")

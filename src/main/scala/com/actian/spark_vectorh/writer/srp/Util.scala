@@ -235,6 +235,5 @@ trait SRPServer extends ServerSRPParameter {
    * Finder method to get the s and v for the given user with userName
    */
   def findSV(userName: String): Option[Tuple2[Array[Byte], Array[Byte]]]
-
 }
 // scalastyle:off

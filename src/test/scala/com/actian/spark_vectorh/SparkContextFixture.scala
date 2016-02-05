@@ -31,25 +31,21 @@ trait SparkContextFixture { this: fixture.Suite =>
     try {
       // Run the test
       withFixture(test.toNoArgTest(contextFixture))
-    }
-    finally sc.stop() // shut down spark context
+    } finally sc.stop() // shut down spark context
   }
 
 }
 
 object SparkContextFixture {
-
   // Useful for test suites where a subset of tests require Spark
   def withSpark(appName: String = "test", master: String = "local[*]")(op: SparkContext => Unit): Unit = {
+    val config = new SparkConf(false)
 
-    val conf = new SparkConf(false)
-
-    val sc = new SparkContext(master, appName, conf)
+    val sc = new SparkContext(master, appName, config)
 
     try {
       op(sc)
-    }
-    finally {
+    } finally {
       // Shut down Spark context after every test
       sc.stop()
     }
