@@ -18,9 +18,9 @@ import com.actian.spark_vectorh.Profiling
  * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector(H)`
  */
 class DataStreamWriter[T <% Seq[Any]](
-    vectorProps: VectorConnectionProperties,
-    table: String,
-    rowWriter: RowWriter) extends Logging with Serializable with Profiling {
+  vectorProps: VectorConnectionProperties,
+  table: String,
+  rowWriter: RowWriter) extends Logging with Serializable with Profiling {
 
   import DataStreamWriter._
 

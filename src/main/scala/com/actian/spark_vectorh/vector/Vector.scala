@@ -23,7 +23,6 @@ private[vector] object Vector extends Logging {
    * @throws VectorException if the target table does not exist or if there are connection failures
    */
   def getTableSchema(vectorProps: VectorConnectionProperties, targetTable: String, createTableSQL: Option[String] = None): Seq[ColumnMetadata] = {
-
     try {
       withJDBC(vectorProps) { dbCxn =>
         if (!dbCxn.tableExists(targetTable)) {
@@ -66,45 +65,45 @@ private[vector] object Vector extends Logging {
       }
 
       // Zip field names and columns names and convert to Field2Columns collection
-      return rddSchema.fieldNames.zip(tableSchema.fieldNames).map { case (x: String, y: String) => Field2Column(x, y) }
-    }
-
-    if (fieldMap.size > tableSchema.fields.length) {
-      throw VectorException(
-        invalidNumberOfInputs,
-        "More input fields are defined in the field mapping than exist in the target table")
-    }
-
-    // Validate that all entries in the field map reference existing source fields
-    fieldMap.keys.foreach(fieldName => {
-      if (!rddSchema.fieldNames.contains(fieldName)) {
-        throw new VectorException(
-          noSuchSourceField,
-          s"$fieldName: source field in field mapping does not exist in the input. Available field names are: ${rddSchema.fieldNames.mkString(", ")}")
+      rddSchema.fieldNames.zip(tableSchema.fieldNames).map { case (x: String, y: String) => Field2Column(x, y) }
+    } else {
+      if (fieldMap.size > tableSchema.fields.length) {
+        throw VectorException(
+          invalidNumberOfInputs,
+          "More input fields are defined in the field mapping than exist in the target table")
       }
-    })
 
-    val fieldColumnNames = rddSchema.fieldNames.foldLeft(Seq[Field2Column]())((columnNames, inputFieldName) => {
-      fieldMap.get(inputFieldName) match {
-        case Some(targetColumnName) =>
-          if (tableSchema.fieldNames.contains(targetColumnName)) {
-            columnNames :+ Field2Column(inputFieldName, targetColumnName)
-          } else {
-            throw VectorException(
-              noSuchColumn,
-              s"A column with name '$targetColumnName' does not exist in the target table. Available column names are: ${tableSchema.fieldNames.mkString(", ")}")
-          }
-        case None => columnNames
+      // Validate that all entries in the field map reference existing source fields
+      fieldMap.keys.foreach(fieldName => {
+        if (!rddSchema.fieldNames.contains(fieldName)) {
+          throw new VectorException(
+            noSuchSourceField,
+            s"$fieldName: source field in field mapping does not exist in the input. Available field names are: ${rddSchema.fieldNames.mkString(", ")}")
+        }
+      })
+
+      val fieldColumnNames = rddSchema.fieldNames.foldLeft(Seq[Field2Column]())((columnNames, inputFieldName) => {
+        fieldMap.get(inputFieldName) match {
+          case Some(targetColumnName) =>
+            if (tableSchema.fieldNames.contains(targetColumnName)) {
+              columnNames :+ Field2Column(inputFieldName, targetColumnName)
+            } else {
+              throw VectorException(
+                noSuchColumn,
+                s"A column with name '$targetColumnName' does not exist in the target table. Available column names are: ${tableSchema.fieldNames.mkString(", ")}")
+            }
+          case None => columnNames
+        }
+      })
+
+      if (fieldColumnNames.length == 0) {
+        throw VectorException(
+          noColumnsMapped,
+          "The given field map does not map from any input fields to any target columns.")
       }
-    })
 
-    if (fieldColumnNames.length == 0) {
-      throw VectorException(
-        noColumnsMapped,
-        "The given field map does not map from any input fields to any target columns.")
+      fieldColumnNames
     }
-
-    fieldColumnNames
   }
 
   /**

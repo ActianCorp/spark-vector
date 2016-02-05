@@ -16,7 +16,7 @@ import com.actian.spark_vectorh.vector.ErrorCodes
  * @param table to which table this client will load data
  */
 case class DataStreamClient(vectorProps: VectorConnectionProperties,
-    table: String) extends Serializable with Logging {
+  table: String) extends Serializable with Logging {
   private lazy val jdbc = {
     val ret = new VectorJDBC(vectorProps)
     ret.autoCommit(false)

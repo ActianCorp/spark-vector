@@ -4,10 +4,10 @@ package com.actian.spark_vectorh.vector
  * Container for VectorH connection properties.
  */
 case class VectorConnectionProperties(host: String,
-    instance: String,
-    database: String,
-    user: Option[String] = None,
-    password: Option[String] = None) extends Serializable {
+  instance: String,
+  database: String,
+  user: Option[String] = None,
+  password: Option[String] = None) extends Serializable {
 
   require(host != null && host.length > 0, "The host property is required and cannot be null or empty")
   require(instance != null && instance.length > 0, "The instance property is required and cannot be null or empty")

@@ -6,5 +6,4 @@ package com.actian.spark_vectorh
  * loading to `Vector(H)` tables.
  */
 package object vector {
-
 }

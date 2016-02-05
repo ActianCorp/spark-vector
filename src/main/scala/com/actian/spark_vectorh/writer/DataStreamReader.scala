@@ -19,7 +19,7 @@ object DataStreamReader {
     }
     code.length == 1 || readCode(in, code.tail)
   }
-  
+
   /** Read a variable length message's length from `in` */
   def readLength(in: ByteBuffer): Long = {
     in.get() match {
@@ -27,7 +27,7 @@ object DataStreamReader {
       case _ => 255 + readLength(in)
     }
   }
-  
+
   /** Read a `ByteArray` from `in` */
   def readByteArray(in: ByteBuffer): Array[Byte] = {
     val len = readLength(in)
@@ -36,12 +36,12 @@ object DataStreamReader {
     in.get(ret, 0, len.toInt)
     ret
   }
-  
+
   /** Read an ASCII string from `in` */
   def readString(in: ByteBuffer): String = {
     new String(readByteArray(in), "ASCII")
   }
-  
+
   /** Read a byte buffer of length `len from `socket` */
   def readByteBuffer(len: Int)(implicit socket: SocketChannel): ByteBuffer = {
     val buffer = ByteBuffer.allocate(len)
@@ -49,20 +49,20 @@ object DataStreamReader {
     while (i < len) {
       val j = socket.read(buffer)
       if (j <= 0) throw new VectorException(ErrorCodes.communicationError,
-          s"Connection to Vector(H) end point has been closed or amount of data communicated does not match the message length")
+        s"Connection to Vector(H) end point has been closed or amount of data communicated does not match the message length")
       i += j
     }
     buffer.flip()
     buffer
   }
-  
+
   /** Read a byte buffer and its length integer from `socket` */
   def readByteBufferWithLength(implicit socket: SocketChannel): ByteBuffer = {
     val len = readByteBuffer(4).getInt()
     //logTrace(s"Reading a byte buffer with length: Will be reading ${len - 4} bytes")
     readByteBuffer(len - 4)
   }
-  
+
   /** Read data from `socket`, store it in a `ByteBuffer` and execute the `code` that reads from it */
   def readWithByteBuffer[T](code: ByteBuffer => T)(implicit socket: SocketChannel): T = {
     val buffer = readByteBufferWithLength

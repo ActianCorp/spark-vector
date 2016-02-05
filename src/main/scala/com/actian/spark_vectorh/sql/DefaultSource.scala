@@ -1,8 +1,8 @@
 package com.actian.spark_vectorh.sql
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
-import org.apache.spark.sql.sources.{ BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider }
+import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
+import org.apache.spark.sql.sources.{BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider}
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vectorh.vector.VectorJDBC

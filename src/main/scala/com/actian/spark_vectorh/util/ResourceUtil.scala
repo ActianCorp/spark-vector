@@ -2,8 +2,9 @@ package com.actian.spark_vectorh.util
 
 import scala.language.reflectiveCalls
 
-object ResourceUtil {
+import resource.ExtractableManagedResource
 
+object ResourceUtil {
   import resource._
 
   /**

@@ -2,14 +2,15 @@ package com.actian.spark_vectorh.sql
 
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
-import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
+import org.apache.spark.sql.{DataFrame, Row, SQLContext, sources}
+import org.apache.spark.sql.sources.{BaseRelation, Filter, InsertableRelation, PrunedFilteredScan}
 import org.apache.spark.sql.types.StructType
 
-import com.actian.spark_vectorh.vector.{ VectorJDBC, VectorOps }
+import com.actian.spark_vectorh.vector.VectorJDBC
+import com.actian.spark_vectorh.vector.VectorOps.VectorRDDOps
 
 private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
-    extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+  extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
 
   import com.actian.spark_vectorh.vector.VectorOps._
 

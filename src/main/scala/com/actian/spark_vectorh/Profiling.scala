@@ -2,6 +2,7 @@ package com.actian.spark_vectorh
 
 import scala.collection.mutable.Stack
 import scala.language.implicitConversions
+
 import org.apache.spark.Logging
 
 /** An accumulator for profiling, Contains a label and the number of milliseconds (`acc`) */

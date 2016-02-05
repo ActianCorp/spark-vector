@@ -4,7 +4,6 @@ package com.actian.spark_vectorh.vector
  * Error codes to return in exceptions from Vector ops
  */
 object ErrorCodes {
-
   /** A column is non null but not loaded */
   val missingNonNullColumn = 1
   /** Too many/few input fields for columns */
