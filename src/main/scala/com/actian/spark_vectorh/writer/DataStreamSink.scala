@@ -3,7 +3,7 @@ package com.actian.spark_vectorh.writer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
-import buffer.VectorSink
+import com.actian.spark_vectorh.buffer.VectorSink
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector(H) DataStream` */
 case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {

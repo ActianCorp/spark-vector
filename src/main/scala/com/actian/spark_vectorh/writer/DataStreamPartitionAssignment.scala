@@ -94,9 +94,9 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
     profile("first assignment")
     /* Start with some assignment, any assignment */
     (0 until nA).foreach { a =>
-        val b = edges(a).minBy(numAperB(_))
-        matchFor(a) = b
-        numAperB(b) += 1
+      val b = edges(a).minBy(numAperB(_))
+      matchFor(a) = b
+      numAperB(b) += 1
     }
     profileEnd
     val more = (0 until nB).filter(numAperB(_) > target)
@@ -113,14 +113,14 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
 
       repeat = false
       more.foreach { b =>
-          while (iterators(b).hasNext && numAperB(b) > target) {
-            val a = iterators(b).next
-            if (matchFor(a) == b &&
-              !visited(a) && findPath(a, iterators, visited)) {
-              numAperB(b) -= 1
-              repeat = true
-            }
+        while (iterators(b).hasNext && numAperB(b) > target) {
+          val a = iterators(b).next
+          if (matchFor(a) == b &&
+            !visited(a) && findPath(a, iterators, visited)) {
+            numAperB(b) -= 1
+            repeat = true
           }
+        }
       }
     }
     profileEnd
@@ -148,9 +148,9 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
   private def verifyMatching: Unit = {
     var sanity = 0
     (0 to hosts.size - 1).view.map { host =>
-        matching(host).view.map(partitionsWithAffinity(_)._2).foreach { partition =>
-            if (affinities(partition).find(hosts(_) == host).isEmpty) sanity += 1
-        }
+      matching(host).view.map(partitionsWithAffinity(_)._2).foreach { partition =>
+        if (affinities(partition).find(hosts(_) == host).isEmpty) sanity += 1
+      }
     }
     logDebug(s"After matching algorithm, $sanity partitions are read remotely")
   }
@@ -200,16 +200,16 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
     val maxPartPerEndpoint = assignment.map(_.size).reduce(_ max _)
     var i = 0
     assignment.foreach { partitions =>
-        if (partitions.size < maxPartPerEndpoint) {
-          val toAdd = Math.min(partitionsWithoutAffinity.size - i, maxPartPerEndpoint - partitions.size)
-          partitions ++= partitionsWithoutAffinity.slice(i, i + toAdd).map(_._2)
-          i += toAdd
-        }
+      if (partitions.size < maxPartPerEndpoint) {
+        val toAdd = Math.min(partitionsWithoutAffinity.size - i, maxPartPerEndpoint - partitions.size)
+        partitions ++= partitionsWithoutAffinity.slice(i, i + toAdd).map(_._2)
+        i += toAdd
+      }
     }
     var k = 0
     (i to partitionsWithoutAffinity.size - 1).foreach { idx =>
-        assignment(k) += partitionsWithoutAffinity(idx)._2
-        k = if (k + 1 >= assignment.size) 0 else k + 1
+      assignment(k) += partitionsWithoutAffinity(idx)._2
+      k = if (k + 1 >= assignment.size) 0 else k + 1
     }
     var sanity = 0
     (0 until endpoints.size).view.foreach { endpoint => assignment(endpoint).foreach { partition => if (affinities(partition).find(endpoints(endpoint).host == _).isEmpty) sanity += 1 } }
@@ -218,13 +218,13 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
   }
 
   implicit val accs = profileInit("prepare structures", "match partitions with affinity to hosts", "translate matching to assignment to endpoints", "assign partitions without affinity")
-  
+
   private val (partitionsWithAffinity, partitionsWithoutAffinity, hosts, affinitiesToHosts) = prepareStructures
 
   protected val nA = partitionsWithAffinity.size
   protected val nB = hosts.size
   protected val edges = affinitiesToHosts
-  
+
   matchPartitionsWithAffinity
   /** For each end point in `endpoints`, a sequence of partition indices that are assigned to that end point */
   val assignment: IndexedSeq[ArrayBuffer[Int]] = matchingToEndpoints

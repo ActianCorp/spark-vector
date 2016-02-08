@@ -50,3 +50,6 @@ publishMavenStyle := true
 val localMavenRepo = Resolver.file("file", new File(Path.userHome.absolutePath + "/.m2/repository"))
 
 publishTo := Some(localMavenRepo)
+
+compileOrder := CompileOrder.JavaThenScala
+javacOptions ++= Seq("-source", "1.7", "-target", "1.7")

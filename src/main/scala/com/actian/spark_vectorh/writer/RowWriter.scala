@@ -6,7 +6,7 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vectorh.vector.ColumnMetadata
 
-import buffer.{ ColumnBuffer, ColumnBufferFactoriesRegistry }
+import com.actian.spark_vectorh.buffer.{ ColumnBuffer, ColumnBufferFactoriesRegistry }
 
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector(H)` through a `VectorSink`
