@@ -16,8 +16,9 @@
 package com.actian.spark_vector.loader.parsers
 
 import com.actian.spark_vector.loader.options._
-import scopt.{ OptionDef, Read }
 import com.actian.spark_vector.vector.VectorConnectionProperties
+
+import scopt.{ OptionDef, Read }
 
 sealed class VectorArgDescription(val longName: String, val shortName: String, val description: String)
 
@@ -32,7 +33,7 @@ sealed case class VectorArgOption[T: Read, O](
     parser.opt[T](longName) abbr (shortName) action (injector) text (description)
 }
 
-object VectorHArgs {
+object VectorArgs {
   import UserOptions._
   implicit object ReadChar extends Read[Char] {
     override def arity: Int = 1
@@ -40,7 +41,7 @@ object VectorHArgs {
     override def reads: (String) => Char = _.head
   }
 
-  val load = new VectorArgDescription("load", "lh", "Read a file and load into VectorH")
+  val load = new VectorArgDescription("load", "lh", "Read a file and load into Vector")
   val csvLoad = new VectorArgDescription("csv", "csv", "Load a csv file")
   val parquetLoad = new VectorArgDescription("parquet", "parquet", "Load a parquet file")
 
@@ -94,13 +95,12 @@ object VectorHArgs {
   val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetArgs)
 }
 
-object VectorHParser extends scopt.OptionParser[UserOptions]("Spark VectorH load tool") {
+object VectorParser extends scopt.OptionParser[UserOptions]("Spark Vector load tool") {
+  import VectorArgs._
 
-  import VectorHArgs._
-
-  head("Spark VectorH load tool", "1.0.0")
-  note("Spark VectorH load")
-  help("help").text("This tool can be used to load CSV/Parquet files through Spark to VectorH")
+  head("Spark Vector load tool", "1.0.0")
+  note("Spark Vector load")
+  help("help").text("This tool can be used to load CSV/Parquet files through Spark to Vector")
   cmd(load.longName)
     .action((_, options) => options.copy(mode = load.longName))
     .abbr(load.shortName)

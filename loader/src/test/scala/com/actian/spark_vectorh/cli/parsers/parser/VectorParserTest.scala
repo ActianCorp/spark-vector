@@ -19,7 +19,7 @@ import com.actian.spark_vector.loader.options.UserOptions
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{ Matchers, Inspectors, FunSuite }
 
-object VectorHParserTest {
+object VectorParserTest {
   type ArgMap = Map[VectorArgOption[_, _], Any]
   type KeyMapper = VectorArgDescription => String
 
@@ -37,12 +37,12 @@ object VectorHParserTest {
   }
 }
 
-class VectorHParserTest extends FunSuite with Matchers with PropertyChecks {
+class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
 
-  import VectorHParserTest._
+  import VectorParserTest._
   import VectorArgOption._
   import scala.language.existentials
-  import VectorHArgs._
+  import VectorArgs._
 
   val requiredValues: ArgMap = Map(
     vectorHost -> "vector.test",
@@ -66,9 +66,9 @@ class VectorHParserTest extends FunSuite with Matchers with PropertyChecks {
     requiredValues ++ optionalValues
 
   test("metadata") {
-    val parser = VectorHParser
-    assert(parser.header.contains("Spark VectorH load tool"))
-    assert(parser.programName.matches("Spark VectorH load tool"))
+    val parser = VectorParser
+    assert(parser.header.contains("Spark Vector load tool"))
+    assert(parser.programName.matches("Spark Vector load tool"))
   }
 
   test("parse full") {
@@ -90,7 +90,7 @@ class VectorHParserTest extends FunSuite with Matchers with PropertyChecks {
   }
 
   test("parse required missing") {
-    val parser = VectorHParser
+    val parser = VectorParser
     val table = Table("arg", requiredValues.keys.toSeq: _*)
     forAll(table)(arg => {
       val input = inputFromArgs(requiredValues - arg, LongKeyMapper, "csv")
@@ -99,7 +99,7 @@ class VectorHParserTest extends FunSuite with Matchers with PropertyChecks {
   }
 
   test("windows file path") {
-    val parser = VectorHParser
+    val parser = VectorParser
     val args = Seq(
       load.longName,
       csvLoad.longName,
@@ -130,7 +130,7 @@ class VectorHParserTest extends FunSuite with Matchers with PropertyChecks {
 
   private def assertParseFull(data: ArgMap, keyMap: KeyMapper, loadType: String): Unit = {
     val input = inputFromArgs(data, keyMap, loadType)
-    val parser = VectorHParser
+    val parser = VectorParser
     parser.parse(input, UserOptions()) match {
       case Some(opts) =>
         opts.mode should be(loadType)

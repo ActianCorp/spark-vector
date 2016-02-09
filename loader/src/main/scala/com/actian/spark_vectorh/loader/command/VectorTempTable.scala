@@ -15,8 +15,9 @@
  */
 package com.actian.spark_vector.loader.command
 
-import com.actian.spark_vector.loader.options.UserOptions
 import org.apache.spark.sql.SQLContext
+
+import com.actian.spark_vector.loader.options.UserOptions
 
 object VectorTempTable {
   private def parseOptions(config: UserOptions): String = {

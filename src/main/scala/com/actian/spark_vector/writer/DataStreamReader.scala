@@ -25,7 +25,7 @@ import org.apache.spark.Logging
 object DataStreamReader extends Logging {
   // scalastyle:off magic.number
   /**
-   * Read a Vector(H) `code` from `in` and return `false` if a different
+   * Read a Vector `code` from `in` and return `false` if a different
    * code was read from the `ByteBuffer`
    */
   @tailrec
@@ -65,7 +65,7 @@ object DataStreamReader extends Logging {
     while (i < len) {
       val j = socket.read(buffer)
       if (j <= 0) throw new VectorException(ErrorCodes.CommunicationError,
-        s"Connection to Vector(H) end point has been closed or amount of data communicated does not match the message length")
+        s"Connection to Vector end point has been closed or amount of data communicated does not match the message length")
       i += j
     }
     buffer.flip()

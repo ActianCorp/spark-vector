@@ -28,7 +28,7 @@ case class VectorEndPoint(host: String,
   password: String) extends Serializable
 
 /**
- * Contains helpers to obtain VectorEndpoint information from `Vector(H)`'s SQL interface.
+ * Contains helpers to obtain VectorEndpoint information from `Vector`'s SQL interface.
  *
  * @note The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future
  */

@@ -26,7 +26,7 @@ import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.Vector._
 import com.actian.spark_vector.writer.{ DataStreamRDD, DataStreamWriter, RowWriter }
 
-/** Utility object that defines methods for loading data into Vector(H) */
+/** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {
 
   import RDDUtil._

@@ -23,7 +23,7 @@ import com.actian.spark_vector.writer.{ DataStreamReader, DataStreamWriter }
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorException
 
-/** Performs authentication to `Vector(H)` with SRP (Secure Remote Password) protocol */
+/** Performs authentication to `Vector` with SRP (Secure Remote Password) protocol */
 // scalastyle:off magic.number
 class VectorSRPClient(username: String, password: String) extends ClientSRPParameter with Logging {
   import VectorSRPClient._
@@ -31,7 +31,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
   import DataStreamWriter._
   import Util._
 
-  /* The following are taken from RFC 5054, 8192-bit group. Override to match the one on the `Vector(H)` side */
+  /* The following are taken from RFC 5054, 8192-bit group. Override to match the one on the `Vector` side */
   override def N: BigInt = BigInt("""
   |FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E08
   |8A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B
@@ -71,7 +71,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
   |FC026E479558E4475677E9AA9E3050E2765694DFC81F56E880B96E71
   |60C980DD98EDD3DFFFFFFFFFFFFFFFFF""".stripMargin.replaceAll("\n", ""), 16)
 
-  /** Override to match the one on the `Vector(H)` side */
+  /** Override to match the one on the `Vector` side */
   override def g: BigInt = BigInt("13", 16)
 
   def x(I: Array[Byte], s: Array[Byte], password: Array[Byte]): Array[Byte] =
@@ -123,7 +123,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
   }
 }
 
-/** Contains some `Vector(H)` codes to be used while authenticating and what algorithm to use */
+/** Contains some `Vector` codes to be used while authenticating and what algorithm to use */
 object VectorSRPClient {
   private val authCode = Array(4, 1, 0) /* srp */
   private val sBCode = Array(4, 1, 1)

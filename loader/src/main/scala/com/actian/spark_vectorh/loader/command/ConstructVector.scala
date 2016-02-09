@@ -15,33 +15,30 @@
  */
 package com.actian.spark_vector.loader.command
 
-import com.actian.spark_vector.loader.options._
-import com.actian.spark_vector.vector.{ LoadVector, VectorConnectionProperties }
-import org.apache.hadoop.fs.Path
-import org.apache.spark.sql.types._
-import org.apache.spark.{ SparkConf, SparkContext }
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
-import com.actian.spark_vector.loader.parsers.VectorHParser
-import com.actian.spark_vector.loader.parsers.VectorHArgs
+import org.apache.spark.sql.types.StructType
+
+import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.loader.parsers.VectorArgs
 
 object ConstructVector {
-
   def execute(config: UserOptions, schema: Option[StructType]): Unit = {
     val conf = new SparkConf()
-      .setAppName(s"Spark-VectorH ${config.mode} load into ${config.vector.targetTable}")
+      .setAppName(s"Spark-Vector ${config.mode} load into ${config.vector.targetTable}")
       .set("spark.task.maxFailures", "1")
     val sparkContext = new SparkContext(conf)
     val sqlContext = new SQLContext(sparkContext)
 
     val select = config.mode match {
-      case m if (m == VectorHArgs.csvLoad.longName) => CSVRead.registerTempTable(config, sqlContext)
-      case m if (m == VectorHArgs.parquetLoad.longName) => ParquetRead.registerTempTable(config, sqlContext)
+      case m if (m == VectorArgs.csvLoad.longName) => CSVRead.registerTempTable(config, sqlContext)
+      case m if (m == VectorArgs.parquetLoad.longName) => ParquetRead.registerTempTable(config, sqlContext)
       case m => throw new IllegalArgumentException("Invalid configuration mode: $m")
     }
 
     val targetTempTable = VectorTempTable.register(config, sqlContext)
 
-    // Load the line item data into VectorH
+    // Load the line item data into Vector
     sqlContext.sql(s"insert into table ${targetTempTable} ${select}")
   }
 }

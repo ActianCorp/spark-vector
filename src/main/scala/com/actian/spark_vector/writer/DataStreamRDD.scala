@@ -24,10 +24,10 @@ import org.apache.spark.rdd.RDD
 import com.actian.spark_vector.vector.DataStreamPartition
 
 /**
- * `Vector(H)` RDD to load data into `Vector(H)` through its `DataStream API`
+ * `Vector` RDD to load data into `Vector` through its `DataStream API`
  *
  *  @param rdd `RDD` to be loaded
- *  @param writeConf contains the write configuration needed to connect to `Vector(H) DataStream`s
+ *  @param writeConf contains the write configuration needed to connect to `Vector DataStream`s
  */
 class DataStreamRDD[R: ClassTag](
   @transient val rdd: RDD[R],

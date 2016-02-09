@@ -15,13 +15,14 @@
  */
 package com.actian.spark_vector.loader
 
+import org.apache.spark.sql.types.StructType
+
 import com.actian.spark_vector.loader.command.ConstructVector
 import com.actian.spark_vector.loader.options.UserOptions
-import com.actian.spark_vector.loader.parsers.VectorHParser
-import org.apache.spark.sql.types._
+import com.actian.spark_vector.loader.parsers.VectorParser
 
 object Main extends App {
-  val parser: scopt.OptionParser[UserOptions] = VectorHParser
+  val parser: scopt.OptionParser[UserOptions] = VectorParser
   //TODO: Phase2 - this should be pulled from a StructType JSON serialized file if passed from command line option.
   val schema: Option[StructType] = None
 

@@ -24,9 +24,9 @@ import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.buffer.{ ColumnBuffer, ColumnBufferFactoriesRegistry }
 
 /**
- * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector(H)` through a `VectorSink`
+ * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
  *
- * @param tableSchema schema information for the `Vector(H)` table/relation being loaded to
+ * @param tableSchema schema information for the `Vector` table/relation being loaded to
  */
 class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logging {
   import RowWriter._

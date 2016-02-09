@@ -28,7 +28,7 @@ import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.writer.srp.VectorSRPClient
 
 /**
- * Class containing methods to open connections to Vector(H)'s `DataStream` API
+ * Class containing methods to open connections to Vector's `DataStream` API
  *
  * @param writeConf `DataStream` information containing at least the number of connections expected, the names and
  * ports of the hosts where they are expected and authentication information
@@ -44,7 +44,7 @@ class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializabl
     socket
   }
 
-  /** Open a connection to Vector(H) and execute the code specified by `op` */
+  /** Open a connection to Vector and execute the code specified by `op` */
   def withConnection[T](idx: Int)(op: SocketChannel => T): T = {
     val socket = openConnection(idx)
     closeResourceAfterUse(socket) { op(socket) }
