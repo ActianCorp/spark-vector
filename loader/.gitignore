@@ -1,0 +1,8 @@
+target/
+/.idea/
+*~
+/src/test/resources/log4j.properties
+project/project
+project/target
+.classpath
+.settings

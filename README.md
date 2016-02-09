@@ -1,9 +1,10 @@
 
-# Spark VectorH Connector
+# Spark Vector Connector
 
-A library to integrate VectorH with Spark, allowing you to load Spark DataFrames/RDDs into VectorH in parallel and to consume results of VectorH based computations in Spark(SQL).
+A library to integrate Vector with Spark, allowing you to load Spark DataFrames/RDDs into Vector in parallel and to consume results of Vector based computations in Spark(SQL).
+This connector works with both Vector SMP and Vortex MPP.
 
-## Requirements
+## Requirements (1.0)
 
 This library requires:
 * Spark 1.5.1.
@@ -11,71 +12,117 @@ This library requires:
 
 ## Building (from source)
 
-Spark-VectorH connector is built with [sbt](http://www.scala-sbt.org/). To build, run:
+Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build, run:
 
-    sbt package
+    sbt assembly
 
 ## Using with Spark shell/submit
-This module can be added to Spark using the `--jars` command line option, together with the Actian Vector JDBC connector (`lib/iijdbc.jar`) and [scala-arm](https://github.com/jsuereth/scala-arm).
-Spark shell example (assuming `$SPARK_VECTORH` is the root directory of spark-vectorh):
-    
-    $SPARK_HOME/bin/spark-shell --jars $SPARK_VECTORH/target/target/spark_vectorh-1.0-SNAPSHOT.jar,$SPARK_VECTORH/lib/iijdbc.jar,$HOME/.ivy2/cache/com.jsuereth/scala-arm_2.10/jars/scala-arm_2.10-1.3.jar
+This module can be added to Spark using the `--jars` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
+
+    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.0.jar
 
 ## Usage
 
 ### SparkSQL
 
 ```
-sqlContext.sql("""CREATE TEMPORARY TABLE vectorh_table
-USING com.actian.spark_vectorh.sql.DefaultSource
+sqlContext.sql("""CREATE TEMPORARY TABLE vector_table
+USING com.actian.spark_vector.sql.DefaultSource
 OPTIONS (
     host "hostname",
-    instance "VH",
+    instance "VI",
     database "databasename",
     table "my_table"
 )""")
 ```
 
-and then to load data into VectorH:
-    
-    sqlContext.sql("insert into vectorh_table select * from spark_table")
+and then to load data into Vector:
 
-... or to read VectorH data in:
-    
-    sqlContext.sql("select * from vectorh_table")
+    sqlContext.sql("insert into vector_table select * from spark_table")
 
-### Spark-VectorH Loader
+... or to read Vector data in:
 
-The Spark-Vectorh loader is a command line client utility that provides the ability to load CSV and Parquet files through Spark into VectorH, using the Spark-VectorH connector.
+    sqlContext.sql("select * from vector_table")
+
+#### Options
+The `OPTIONS` clause of the SparkSQL statement can contain:
+<table cellpadding="3" cellspacing="3">
+ <tr>
+    <th>Parameter</th>
+    <th>Required</th>
+    <th>Default</th>
+    <th>Notes</th>
+ </tr>
+ <tr>
+    <td><tt>host</tt></td>
+    <td>Yes</td>
+    <td>none</td>
+    <td>Host name of where Vector is located</td>
+ </tr>
+ <tr>
+    <td><tt>instance</tt></td>
+    <td>Yes</td>
+    <td>none</td>
+    <td>Vector database instance identifier (two letters)</td>
+ </tr>
+ <tr>
+    <td><tt>database</tt></td>
+    <td>Yes</td>
+    <td>none</td>
+    <td>Vector database name</td>
+ </tr>
+ <tr>
+    <td><tt>user</tt></td>
+    <td>No</td>
+    <td>empty string</td>
+   <td>User name to use when connecting to Vector</td>
+ </tr>
+ <tr>
+    <td><tt>password</tt></td>
+    <td>No</td>
+    <td>empty string</td>
+    <td>Password to use when connecting to Vector</td>
+ </tr>
+ <tr>
+    <td><tt>table</tt></td>
+    <td>Yes</td>
+    <td>None</td>
+    <td>Vector target table</td>
+ </tr>
+</table>
+
+### Spark-Vector Loader
+
+The Spark-Vector loader is a command line client utility that provides the ability to load CSV and Parquet files through Spark into Vector, using the Spark-Vector connector.
 
 #### Building
 
-Since the loader depends on the connector, first publish locally the connector artifacts:
-    
-    cd $SPARK_VECTORH && sbt publish-local
-
-and then
-
-    cd $SPARK_VECTORH_LOADER && sbt assembly
+    sbt loader/assembly
 
 #### Usage
 
-Assuming that there is a VectorH Installation on leader node `leader`, instance `C1` and database `testDB`
+Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `testDB`
 
 #### CSV
 
 Loading CSV files:
-    
+
 ```
-spark-submit --class com.actian.spark_vectorh.cli.Main $SPARK_VECTORH_LOADER/target/scala-2.10/spark_vectorh_client-assembly-1.0-SNAPSHOT.jar load csv -sf hdfs://namenode:8020/tmp/file.csv
--vh leader -vi C1 -vd testDB -tt my_table -sc " "
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load csv -sf hdfs://namenode:8020/tmp/file.csv
+-vh vectorhost -vi VI -vd testDB -tt my_table -sc " "
 ```
 
 #### Parquet
 
 Loading Parquet files:
-    
+
 ```
-spark-submit --class com.actian.spark_vectorh.cli.Main $SPARK_VECTORH_LOADER/target/scala-2.10/spark_vectorh_client-assembly-1.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:8020/tmp/file.parquet
--vh leader -vi C1 -vd testDB -tt my_table -sc
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load parquet -sf hdfs://namenode:8020/tmp/file.csv
+-vh vectorhost -vi VI -vd testDB -tt my_table
+```
+
+The entire list of options can be retrieved with:
+
+```
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load csv --help
 ```
