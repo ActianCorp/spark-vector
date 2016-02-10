@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>parsers - com.actian.spark_vector.loader.parsers</title>
+          <meta name="description" content="parsers - com.actian.spark vector.loader.parsers" />
+          <meta name="keywords" content="parsers com.actian.spark vector.loader.parsers" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'com.actian.spark_vector.loader.parsers.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.loader">loader</a></p>
+        <h1>parsers</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">parsers</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.actian.spark_vector.loader.parsers.ArgDescription" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ArgDescriptionextendsAnyRef"></a>
+      <a id="ArgDescription:ArgDescription"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ArgDescription.html"><span class="name">ArgDescription</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.ArgOption" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ArgOption[T,O]extendsArgDescriptionwithProductwithSerializable"></a>
+      <a id="ArgOption[T,O]:ArgOption[T,O]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ArgOption.html"><span class="name">ArgOption</span></a><span class="tparams">[<span name="T">T</span>, <span name="O">O</span>]</span><span class="params">(<span name="lName">lName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sName">sName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="desc">desc: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="extractor">extractor: (<a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>) ⇒ <span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.O">O</span></span>, <span name="injector">injector: (<span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.T">T</span>, <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>) ⇒ <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a></span>, <span name="mandatory">mandatory: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="evidence$1">evidence$1: <span class="extype" name="scopt.Read">Read</span>[<span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.T">T</span>]</span>)</span><span class="result"> extends <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Option describing a command line argument.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.actian.spark_vector.loader.parsers.Args" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Args"></a>
+      <a id="Args:Args"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Args$.html"><span class="name">Args</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Object where all command line arguments are defined:</p>
+    </li><li name="com.actian.spark_vector.loader.parsers.Parser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Parser"></a>
+      <a id="Parser:Parser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Parser$.html"><span class="name">Parser</span></a><span class="result"> extends <span class="extype" name="scopt.OptionParser">OptionParser</span>[<a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>]</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+    </body>
+      </html>

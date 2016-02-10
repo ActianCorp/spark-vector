@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>spark_vector - com.actian.spark_vector</title>
+          <meta name="description" content="spark vector - com.actian.spark vector" />
+          <meta name="keywords" content="spark vector com.actian.spark vector" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'com.actian.spark_vector.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="com">com</a>.<a href="../package.html" class="extype" name="com.actian">actian</a></p>
+        <h1>spark_vector</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">spark_vector</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark-Vector connector.</p><p>With this connector, data can be loaded from Spark sources into <code>Vector</code> and results of <code>Vector</code> computations can be consumed in <code>Spark</code> and transformed into
+a <code>DataFrame</code>. The first part is done in parallel: data coming from every input <code>RDD</code> partition is serialized using <code>Vector's</code> binary protocol and transfered
+through socket connections to <code>Vector</code> end points. Although there is a chance that network communication is incurred at this point, most of the time this connector
+will try to assign only local <code>RDD</code> partitions to each <code>Vector</code> end point. On the other side, data is currently exported from <code>Vector</code> and ingested into <code>Spark</code>
+using a JDBC connection to the leader <code>Vector</code> node. The code that also permits this second part to be executed in parallel will soon be added.</p><p>Throughout the documentation we will use <code>DataStream</code> and <code>Vector</code> end point interchangeably. A <code>Vector DataStream</code> is the logical stream of consuming binary data in
+<code>Vector</code>. Typically, these <code>DataStream</code>s will be executed in parallel (i.e. there will be as many threads as <code>DataStreams</code> allocated), but there will be cases when
+a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On the other hand, each connection to a <code>Vector</code> end point maps to exactly one <code>DataStream</code>.
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="com.actian.spark_vector"><span>spark_vector</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.actian.spark_vector.ProfAcc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProfAccextendsProductwithSerializable"></a>
+      <a id="ProfAcc:ProfAcc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ProfAcc.html"><span class="name">ProfAcc</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="acc">acc: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">An accumulator for profiling, Contains a label and the number of milliseconds (<code>acc</code>)</p>
+    </li><li name="com.actian.spark_vector.ProfAccMap" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProfAccMapextendsProductwithSerializable"></a>
+      <a id="ProfAccMap:ProfAccMap"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ProfAccMap.html"><span class="name">ProfAccMap</span></a><span class="params">(<span name="accs">accs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>]</span>, <span name="started">started: <span class="extype" name="scala.collection.mutable.Stack">Stack</span>[<a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>] = <span class="defval" name="scala.collection.mutable.Stack.empty[com.actian.spark_vector.ProfAcc]">...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Contains all <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>s defined and which of those are currently accumulating/measuring time (as a stack)</p>
+    </li><li name="com.actian.spark_vector.Profiling" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ProfilingextendsAnyRef"></a>
+      <a id="Profiling:Profiling"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Profiling.html"><span class="name">Profiling</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Trait to be used when profiling is needed.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.actian.spark_vector.buffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="buffer"></a>
+      <a id="buffer:buffer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="buffer/package.html"><span class="name">buffer</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.sql" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sql"></a>
+      <a id="sql:sql"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="sql/package.html"><span class="name">sql</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Implements <code>SparkSQL</code> API, including a <code>BaseRelation</code> and a <code>RelationProvider</code></p>
+    </li><li name="com.actian.spark_vector.util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="util"></a>
+      <a id="util:util"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="util/package.html"><span class="name">util</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.vector" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="vector"></a>
+      <a id="vector:vector"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="vector/package.html"><span class="name">vector</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">This package contains a series of helpers to create and manage JDBC connections to <code>Vector</code>, to define the equivalence of <code>SparkSQL</code> and <code>Vector</code> data types,
+to create tables when they do not exist (respecting input <code>DataFrame</code>'s schema), to obtain column metadata for <code>Vector</code> tables, and high level methods to initiate
+loading to <code>Vector</code> tables.</p>
+    </li><li name="com.actian.spark_vector.writer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="writer"></a>
+      <a id="writer:writer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="writer/package.html"><span class="name">writer</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Spark -&gt; Vector loading part</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../lib/template.js"></script>
+    </body>
+      </html>

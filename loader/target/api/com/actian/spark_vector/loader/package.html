@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>loader - com.actian.spark_vector.loader</title>
+          <meta name="description" content="loader - com.actian.spark vector.loader" />
+          <meta name="keywords" content="loader com.actian.spark vector.loader" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'com.actian.spark_vector.loader.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
+        <h1>loader</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loader</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p><code>Spark-Vector</code> loader</p><p>The <code>Spark-Vector</code> loader is a utility that facilitates loading files of different formats (for now <code>CSV</code> and <code>Parquet</code> only) into
+<code>Vector</code>, through <code>Spark</code> and using the <code>Spark-Vector</code> connector.</p><p>For CSV parsing, the Spark-Vector loader uses the <a href="https://github.com/databricks/spark-csv" target="_blank">spark-csv</a> library.</p><p>Example:</p><p>This scala code snippet (executed in spark-shell):</p><pre>sqlContext.sql(<span class="lit">""</span><span class="lit">"CREATE TEMPORARY TABLE large_table
+USING com.actian.spark_vector.sql.DefaultSource
+OPTIONS (
+ host "</span>vectorhost<span class="lit">",
+ instance "</span>VI<span class="lit">",
+ database "</span>dbName<span class="lit">",
+ table "</span>large_table<span class="lit">"
+)"</span><span class="lit">""</span>)
+
+sqlContext.sql(<span class="lit">""</span><span class="lit">"CREATE TEMPORARY TABLE csv_files
+USING com.databricks.spark.csv
+OPTIONS (path "</span>hdfs:<span class="cmt">//namenode:8020/data/csv_file*", header "false", delimiter "|", parserLib "univocity")</span>
+<span class="lit">""</span><span class="lit">")
+
+val results = sqlContext.sql("</span><span class="lit">""</span>insert into table large_table select * from csv_files<span class="lit">""</span><span class="lit">")</span></pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
+$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.0</span>-SNAPSHOT.jar load csv -sf <span class="lit">"hdfs://namenode:8020/data/csv_file*"</span>
+-sc <span class="lit">"|"</span> -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>and</p><pre>sqlContext.read.parquet(<span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>).registerTempTable(<span class="lit">"parquet_file"</span>)
+sqlContext.sql(<span class="lit">""</span><span class="lit">"insert into table large_table select * from parquet_file"</span><span class="lit">""</span>)</pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
+$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.0</span>-SNAPSHOT.jar load parquet -sf <span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>
+-vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>Of course, by using the <code>Spark-Vector</code> connector directly, one can load arbitrarily complex relations (not only files) into Vector and
+files of any format that <code>Spark</code> is able to read.</p><p>For a complete list of options available, see <a href="parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.
+</p></span></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="com.actian.spark_vector.loader"><span>loader</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.actian.spark_vector.loader.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Main"></a>
+      <a id="Main:Main"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Main$.html"><span class="name">Main</span></a><span class="result"> extends <span class="extype" name="scala.App">App</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Entry point for loader utility</p>
+    </li><li name="com.actian.spark_vector.loader.command" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="command"></a>
+      <a id="command:command"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="command/package.html"><span class="name">command</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.options" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="options"></a>
+      <a id="options:options"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="options/package.html"><span class="name">options</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="parsers"></a>
+      <a id="parsers:parsers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="parsers/package.html"><span class="name">parsers</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+    </body>
+      </html>
