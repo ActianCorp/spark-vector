@@ -4,6 +4,10 @@
 A library to integrate Vector with Spark, allowing you to load Spark DataFrames/RDDs into Vector in parallel and to consume results of Vector based computations in Spark(SQL).
 This connector works with both Vector SMP and VectorH MPP.
 
+## API documentation
+
+[Spark-Vector Connector](http://actiancorp.github.io/spark-vector) and [Spark-Vector Loader](http://actiancorp.github.io/spark-vector/loader) Scaladocs.
+
 ## Requirements
 
 This library requires:
