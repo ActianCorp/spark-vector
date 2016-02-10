@@ -57,7 +57,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     withStatement(_.executeUpdate(sql))
   }
 
-  /** Return true if there is a table named `tableName` in Vector(H) */
+  /** Return true if there is a table named `tableName` in Vector */
   def tableExists(tableName: String): Boolean = {
     if (!tableName.isEmpty) {
       val sql = s"SELECT COUNT(*) FROM ${tableNameDelimiter}${tableName}${tableNameDelimiter} WHERE 1=0"
@@ -129,7 +129,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     })
   }
 
-  /** Drop the Vector(H) table `tableName` if it exists */
+  /** Drop the Vector table `tableName` if it exists */
   def dropTable(tableName: String): Unit = {
     try {
       executeStatement(s"drop table if exists ${tableName}")
@@ -144,7 +144,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     rowCount.map(_ == 0).getOrElse(throw new VectorException(SqlException, s"No result for count on table '${tableName}'"))
   }
 
-  /** Close the Vector(H) `JDBC` connection */
+  /** Close the Vector `JDBC` connection */
   def close(): Unit = dbCxn.close
 
   /** Set auto-commit to ON/OFF for this `JDBC` connection */

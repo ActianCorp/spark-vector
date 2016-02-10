@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector
+package com.actian.spark_vector.loader.options
 
-/**
- * This package contains a series of helpers to create and manage JDBC connections to `Vector`, to define equivalence of `SparkSQL` and `Vector` data types,
- * to create tables when they not exist (respecting input `DataFrame`'s schema), to obtain column metadata for `Vector` tables, and high level methods to initiate
- * loading to `Vector` tables.
- */
-package object vector {
-}
+case class VectorOptions(
+  host: String = "",
+  instance: String = "",
+  database: String = "",
+  user: Option[String] = None,
+  password: Option[String] = None,
+  targetTable: String = "",
+  createTable: Option[Boolean] = None)

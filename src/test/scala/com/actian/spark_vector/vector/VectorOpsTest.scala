@@ -15,23 +15,21 @@
  */
 package com.actian.spark_vector.vector
 
-import java.sql.{Date, Timestamp}
+import java.sql.{ Date, Timestamp }
 
-import org.apache.spark.{Logging, SparkException}
-import org.apache.spark.sql.types.{BooleanType, IntegerType, StringType, StructField, StructType}
-import org.scalatest.{Inspectors, Matchers, fixture}
+import org.apache.spark.{ Logging, SparkException }
+import org.apache.spark.sql.types.{ BooleanType, IntegerType, StringType, StructField, StructType }
+import org.scalatest.{ Inspectors, Matchers, fixture }
 import org.scalatest.prop.PropertyChecks
 
-import com.actian.spark_vector.{DataGens, RDDFixtures, SparkContextFixture}
-import com.actian.spark_vector.vector.VectorJDBC;
-import com.actian.spark_vector.vector.ErrorCodes.*;
-import com.actian.spark_vector.vector.VectorOps.VectorRDDOps;
+import com.actian.spark_vector.{ DataGens, RDDFixtures, SparkContextFixture }
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.test.tags.RandomizedTest
 import com.actian.spark_vector.test.util.StructTypeUtil
 import com.actian.spark_vector.util.RDDUtil
-import com.actian.spark_vector.vector.ErrorCodes._
+import com.actian.spark_vector.vector.ErrorCodes._;
 import com.actian.spark_vector.vector.VectorFixture.withTable
+import com.actian.spark_vector.vector.VectorOps.VectorRDDOps
 
 /**
  * Test VectorOps

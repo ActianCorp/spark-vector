@@ -16,18 +16,15 @@
 package com.actian.spark_vector.vector
 
 import org.apache.hadoop.fs.Path
-import org.apache.spark.{Logging, SparkContext}
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.scalatest.{FunSuite, Matchers}
+import org.apache.spark.{ Logging, SparkContext }
+import org.apache.spark.sql.types.{ StringType, StructField, StructType }
+import org.scalatest.{ FunSuite, Matchers }
 import org.scalatest.prop.PropertyChecks
 
-import com.actian.spark_vector.vector.Vector;
-import com.actian.spark_vector.vector.VectorJDBC;
-import com.actian.spark_vector.vector.ErrorCodes.*;
-import com.actian.spark_vector.vector.Vector.Field2Column;
 import com.actian.spark_vector.test.tags.IntegrationTest
 import com.actian.spark_vector.test.util.StructTypeUtil
 import com.actian.spark_vector.vector.ErrorCodes._
+import com.actian.spark_vector.vector.Vector.Field2Column
 import com.actian.spark_vector.vector.VectorFixture.withTable
 
 class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorFixture with Logging {
@@ -69,7 +66,6 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
   }
 
   test("applyFieldMap") {
-
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType), ("b", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType))
 

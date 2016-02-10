@@ -41,21 +41,21 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
   private def startLoadSql(table: String) = s"copy table $table from external"
   private def prepareLoadSql(table: String) = s"prepare for x100 copy into $table"
 
-  /** The `JDBC` connection used by this client to communicate with `Vector(H)` */
+  /** The `JDBC` connection used by this client to communicate with `Vector` */
   def getJdbc(): VectorJDBC = jdbc
 
-  /** Abort sending data to Vector(H) rolling back the open transaction and closing the `JDBC` connection */
+  /** Abort sending data to Vector rolling back the open transaction and closing the `JDBC` connection */
   def close(): Unit = {
     logDebug("Closing DataStreamClient")
     jdbc.rollback
     jdbc.close
   }
 
-  /** Prepare loading data to Vector(H). This step may not be necessary anymore in the future */
+  /** Prepare loading data to Vector. This step may not be necessary anymore in the future */
   def prepareDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
 
   /**
-   * Obtain the information about how many `DataStream`s Vector(H) expects together with
+   * Obtain the information about how many `DataStream`s Vector expects together with
    * locality information and authentication roles and tokens
    */
   def getWriteConf(): WriteConf = {
@@ -64,7 +64,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
     ret
   }
 
-  /** Start loading data to Vector(H) */
+  /** Start loading data to Vector */
   def startLoad(): Future[Int] = Future {
     val ret = try {
       closeResourceOnFailure(this) {

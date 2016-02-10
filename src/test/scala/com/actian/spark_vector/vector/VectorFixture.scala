@@ -20,9 +20,7 @@ import java.util.Date
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
-
-import com.actian.spark_vector.vector.VectorJDBC;
+import org.apache.spark.sql.types.{ FloatType, IntegerType, ShortType, StructField, StructType }
 
 /**
  * Test utilities

@@ -15,24 +15,25 @@
  */
 package com.actian.spark_vector.writer
 
+import java.io.{ByteArrayOutputStream, DataOutputStream}
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
-import scala.concurrent.Future
-import org.apache.spark.{ Logging, TaskContext }
-import com.actian.spark_vector.vector.VectorConnectionProperties
-import java.io.DataOutputStream
-import java.io.ByteArrayOutputStream
+
 import scala.annotation.tailrec
+import scala.concurrent.Future
+
+import org.apache.spark.{Logging, TaskContext}
+
 import com.actian.spark_vector.Profiling
-import org.apache.spark.Logging
-import com.actian.spark_vector.util.ResourceUtil._
+import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
+import com.actian.spark_vector.vector.VectorConnectionProperties
 
 /**
  * Entry point for loading with spark-vector connector.
  *
  * @param vectorProps connection information to the leader node's SQL interface
  * @param table The table loaded to
- * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector(H)`
+ * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector`
  */
 class DataStreamWriter[T <% Seq[Any]](
   vectorProps: VectorConnectionProperties,
@@ -42,7 +43,7 @@ class DataStreamWriter[T <% Seq[Any]](
   import DataStreamWriter._
 
   /**
-   * A client to connect to the `Vector(H)`'s SQL interface through JDBC. Currently used to
+   * A client to connect to the `Vector`'s SQL interface through JDBC. Currently used to
    * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
    *
    * @note Available only on the driver.
@@ -119,9 +120,9 @@ class DataStreamWriter[T <% Seq[Any]](
   def commit: Unit = client.commit
 }
 
-/** Contains helpers to write binary data, conforming to `Vector(H)`'s binary protocol */
+/** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */
 object DataStreamWriter extends Logging {
-  /** Default vector size to use while loading. i.e. the number of rows that will be transmitted with each message sent to `Vector(H)` */
+  /** Default vector size to use while loading. i.e. the number of rows that will be transmitted with each message sent to `Vector` */
   val vectorSize = 1024
 
   // scalastyle:off magic.number
@@ -162,7 +163,7 @@ object DataStreamWriter extends Logging {
     writeByteBuffer(buffer)
   }
 
-  /** Write a Vector(H) code to `out`*/
+  /** Write a Vector code to `out`*/
   def writeCode(out: DataOutputStream, code: Array[Int]): Unit = {
     code.foreach {
       out.writeInt(_)
@@ -193,9 +194,9 @@ object DataStreamWriter extends Logging {
     val bos = new ByteArrayOutputStream()
     val out = new DataOutputStream(bos)
     closeResourceAfterUse(out, bos) {
-        code(out)
-        out.flush()
-        writeByteBufferWithLength(ByteBuffer.wrap(bos.toByteArray()))
+      code(out)
+      out.flush()
+      writeByteBufferWithLength(ByteBuffer.wrap(bos.toByteArray()))
     }
   }
   // scalastyle:on magic.number

@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector
+package com.actian.spark_vector.test;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.scalatest.TagAnnotation;
 
 /**
- * This package contains a series of helpers to create and manage JDBC connections to `Vector`, to define equivalence of `SparkSQL` and `Vector` data types,
- * to create tables when they not exist (respecting input `DataFrame`'s schema), to obtain column metadata for `Vector` tables, and high level methods to initiate
- * loading to `Vector` tables.
+ * Annotation to mark a test as a randomized (i.e. scalacheck gen based) test.
  */
-package object vector {
+@TagAnnotation
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface RandomizedTest {
 }

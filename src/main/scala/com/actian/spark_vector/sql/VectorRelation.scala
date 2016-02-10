@@ -56,7 +56,7 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
       }
 
     val whereClause = VectorRelation.generateWhereClause(filters)
-    /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector(H)` in parallel */
+    /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector` in parallel */
     val results = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
       cxn.query(s"select $columns from ${tableRef.table} $whereClause");
     }

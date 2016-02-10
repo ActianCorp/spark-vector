@@ -2,7 +2,7 @@
 # Spark Vector Connector
 
 A library to integrate Vector with Spark, allowing you to load Spark DataFrames/RDDs into Vector in parallel and to consume results of Vector based computations in Spark(SQL).
-This connector works with both Vector SMP and Vortex MPP.
+This connector works with both Vector SMP and VectorH MPP.
 
 ## Requirements (1.0)
 
@@ -19,7 +19,7 @@ Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build,
 ## Using with Spark shell/submit
 This module can be added to Spark using the `--jars` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.0.jar
+    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.0-SNAPSHOT.jar
 
 ## Usage
 
@@ -108,7 +108,7 @@ Assuming that there is a Vector Installation on node `vectorhost`, instance `VI`
 Loading CSV files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load csv -sf hdfs://namenode:8020/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv -sf hdfs://namenode:8020/tmp/file.csv
 -vh vectorhost -vi VI -vd testDB -tt my_table -sc " "
 ```
 
@@ -117,12 +117,14 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading Parquet files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load parquet -sf hdfs://namenode:8020/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:8020/tmp/file.parquet
 -vh vectorhost -vi VI -vd testDB -tt my_table
 ```
 
-The entire list of options can be retrieved with:
+The entire list of options for CSV loading can be retrieved with:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0.jar load csv/parquet --help
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv --help
 ```
+
+Replace csv with parquet to obtain Parquet specific options.

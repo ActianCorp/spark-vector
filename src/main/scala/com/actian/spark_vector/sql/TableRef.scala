@@ -17,7 +17,7 @@ package com.actian.spark_vector.sql
 
 import com.actian.spark_vector.vector.VectorConnectionProperties
 
-/** A reference to a `Vector(H)` table */
+/** A reference to a `Vector` table */
 case class TableRef(host: String, instance: String, database: String, user: Option[String], password: Option[String], table: String) {
   def toConnectionProps: VectorConnectionProperties = {
     VectorConnectionProperties(host, instance, database, user, password)

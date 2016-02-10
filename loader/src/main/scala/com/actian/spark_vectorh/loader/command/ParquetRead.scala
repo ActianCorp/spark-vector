@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector
+package com.actian.spark_vector.loader.command
 
-/**
- * This package contains a series of helpers to create and manage JDBC connections to `Vector`, to define equivalence of `SparkSQL` and `Vector` data types,
- * to create tables when they not exist (respecting input `DataFrame`'s schema), to obtain column metadata for `Vector` tables, and high level methods to initiate
- * loading to `Vector` tables.
- */
-package object vector {
+import org.apache.spark.sql.SQLContext
+
+import com.actian.spark_vector.loader.options.UserOptions
+
+object ParquetRead {
+  def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
+    val table = s"parquet_${options.vector.targetTable}"
+    sqlContext.read.parquet(options.general.sourceFile).registerTempTable(table)
+    s"select ${options.general.colsToLoad.map(_.mkString(",")).getOrElse("*")} from $table"
+  }
 }

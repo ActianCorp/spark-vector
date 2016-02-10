@@ -17,11 +17,8 @@ package com.actian.spark_vector.vector
 
 import java.sql.SQLNonTransientConnectionException
 
-import org.scalatest.{ BeforeAndAfter, FunSuite, Matchers }
+import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
-import com.actian.spark_vector.vector.VectorJDBC;
-import com.actian.spark_vector.vector.ErrorCodes.*;
-import com.actian.spark_vector.vector.VectorJDBC.*;
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture._
