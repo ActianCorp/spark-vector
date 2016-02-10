@@ -1,0 +1,4 @@
+This product includes software developed by Actian Corporation (http://www.actian.com/).
+
+In addition, this product includes the following software:
+SRP Scala(https://github.com/shreyaspurohit/SRPScala), a Scala implementation for the Secure Remote Password protocol (https://en.wikipedia.org/wiki/Secure_Remote_Password_protocol). It is licensed under MIT-license.
