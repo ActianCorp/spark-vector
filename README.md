@@ -13,7 +13,6 @@ This connector works with both Vector SMP and VectorH MPP.
 This library requires:
 * Vector(H) 4.3+
 * Spark 1.5.1
-* [scala-arm](https://github.com/jsuereth/scala-arm)
 
 ## Building (from source)
 
