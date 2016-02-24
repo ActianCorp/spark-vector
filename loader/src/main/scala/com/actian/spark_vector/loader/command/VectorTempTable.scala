@@ -30,6 +30,11 @@ object VectorTempTable {
     (basic ++ optional).mkString(",")
   }
 
+  /**
+   * Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
+   *
+   * @return The name of the registered temporary table (for now = <vectorTargetTable>)
+   */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
     val table = config.vector.targetTable
     sqlContext.sql(s"""CREATE TEMPORARY TABLE ${table}

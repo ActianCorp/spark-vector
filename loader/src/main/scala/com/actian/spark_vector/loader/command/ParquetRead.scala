@@ -20,6 +20,12 @@ import org.apache.spark.sql.SQLContext
 import com.actian.spark_vector.loader.options.UserOptions
 
 object ParquetRead {
+  /**
+   * Based on `options`, register a temporary table as the source of the `Parquet` input
+   *
+   * @return A string containing the `SELECT` statement that can be used to subsequently consume data from the temporary table
+   * @note The temporary table will be named "parquet_<vectorTargetTable>"
+   */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
     val table = s"parquet_${options.vector.targetTable}"
     sqlContext.read.parquet(options.general.sourceFile).registerTempTable(table)

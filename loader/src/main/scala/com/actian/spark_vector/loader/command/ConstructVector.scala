@@ -15,15 +15,20 @@
  */
 package com.actian.spark_vector.loader.command
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.loader.options.UserOptions
-import com.actian.spark_vector.loader.parsers.VectorArgs
+import com.actian.spark_vector.loader.parsers.Args
 
 object ConstructVector {
-  def execute(config: UserOptions, schema: Option[StructType]): Unit = {
+  /**
+   * Based on the options parsed from the command line, define the main body of the `Spark` job to be submitted
+   *
+   * @param config User options parsed from the command line
+   */
+  def execute(config: UserOptions): Unit = {
     val conf = new SparkConf()
       .setAppName(s"Spark-Vector ${config.mode} load into ${config.vector.targetTable}")
       .set("spark.task.maxFailures", "1")
@@ -31,8 +36,8 @@ object ConstructVector {
     val sqlContext = new SQLContext(sparkContext)
 
     val select = config.mode match {
-      case m if (m == VectorArgs.csvLoad.longName) => CSVRead.registerTempTable(config, sqlContext)
-      case m if (m == VectorArgs.parquetLoad.longName) => ParquetRead.registerTempTable(config, sqlContext)
+      case m if (m == Args.csvLoad.longName) => CSVRead.registerTempTable(config, sqlContext)
+      case m if (m == Args.parquetLoad.longName) => ParquetRead.registerTempTable(config, sqlContext)
       case m => throw new IllegalArgumentException("Invalid configuration mode: $m")
     }
 

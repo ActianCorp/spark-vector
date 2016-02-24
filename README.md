@@ -21,7 +21,7 @@ This module can be added to Spark using the `--jars` command line option. Spark 
 
     spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.0-SNAPSHOT.jar
 
-## Usage
+Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `databasename`
 
 ### SparkSQL
 
@@ -29,10 +29,10 @@ This module can be added to Spark using the `--jars` command line option. Spark 
 sqlContext.sql("""CREATE TEMPORARY TABLE vector_table
 USING com.actian.spark_vector.sql.DefaultSource
 OPTIONS (
-    host "hostname",
+    host "vectorhost",
     instance "VI",
     database "databasename",
-    table "my_table"
+    table "vector_table"
 )""")
 ```
 
@@ -99,32 +99,40 @@ The Spark-Vector loader is a command line client utility that provides the abili
 
     sbt loader/assembly
 
-#### Usage
-
-Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `testDB`
-
-#### CSV
+#### Usage: CSV
 
 Loading CSV files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv -sf hdfs://namenode:8020/tmp/file.csv
--vh vectorhost -vi VI -vd testDB -tt my_table -sc " "
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv -sf hdfs://namenode:port/tmp/file.csv
+-vh vectorhost -vi VI -vd databasename -tt vector_table -sc " "
 ```
 
-#### Parquet
+#### Usage: Parquet
 
 Loading Parquet files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:8020/tmp/file.parquet
--vh vectorhost -vi VI -vd testDB -tt my_table
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
+-vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
-The entire list of options for CSV loading can be retrieved with:
+The entire list of options can be retrieved with:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv --help
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load --help
 ```
 
-Replace csv with parquet to obtain Parquet specific options.
+## Running tests
+
+    sbt '; set javaOptions ++= "-Dvector.host=vectorhost -Dvector.instance=VI -Dvector.database=databasename -Dvector.user= -Dvector.password=".split(" ").toSeq; test'
+
+### Loader
+
+    sbt loader/test
+        
+## License
+
+Copyright 2016 Actian Corporation.
+
+Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

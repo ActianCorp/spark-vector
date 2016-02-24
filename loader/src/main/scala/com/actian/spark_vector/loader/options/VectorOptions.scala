@@ -15,16 +15,10 @@
  */
 package com.actian.spark_vector.loader.options
 
-case class CSVOptions(
-  headerRow: Option[Boolean] = None,
-  encoding: Option[String] = None,
-  nullPattern: Option[String] = None,
-  separatorChar: Option[Char] = None,
-  quoteChar: Option[Char] = None,
-  escapeChar: Option[Char] = None,
-  strictQuotes: Option[Boolean] = None,
-  skipLines: Option[Int] = None,
-  ignoreLeadingWhiteSpace: Option[Boolean] = None,
-  ignoreQuotations: Option[Boolean] = None,
-  header: Option[Seq[String]] = None,
-  parserLib: Option[String] = None)
+case class VectorOptions(
+  host: String = "",
+  instance: String = "",
+  database: String = "",
+  user: Option[String] = None,
+  password: Option[String] = None,
+  targetTable: String = "")

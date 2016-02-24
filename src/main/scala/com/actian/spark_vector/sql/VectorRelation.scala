@@ -45,8 +45,8 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    logInfo("vector: buildScan: columns: " + requiredColumns.mkString(", "))
-    logInfo("vector: buildScan: filters: " + filters.mkString(", "))
+    logDebug("vector: buildScan: columns: " + requiredColumns.mkString(", "))
+    logDebug("vector: buildScan: filters: " + filters.mkString(", "))
 
     val columns =
       if (requiredColumns.isEmpty) {
@@ -55,10 +55,12 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
         requiredColumns.mkString(",")
       }
 
-    val whereClause = VectorRelation.generateWhereClause(filters)
+    val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
+    val statement = s"select $columns from ${tableRef.table} where $whereClause"
+    logDebug(s"Executing Vector select statement: $statement")
     /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector` in parallel */
     val results = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-      cxn.query(s"select $columns from ${tableRef.table} $whereClause");
+      cxn.query(statement, whereParams);
     }
 
     val rows = results.map(Row.fromSeq(_))
@@ -108,10 +110,11 @@ object VectorRelation {
   }
 
   /**
-   * Given a sequence of filters, generate the where clause that can be used in the prepared statement. TODO(Andrei): verify if
-   * this actually works since we convert a seq of (String, Seq[Any]) into a string using mkString
+   * Given a sequence of filters, generate the where clause that can be used in the prepared statement
+   * together with its parameters
    */
-  def generateWhereClause(filters: Array[Filter]): String = {
-    filters.map(convertFilter).mkString(" and ")
+  def generateWhereClause(filters: Array[Filter]): (String, Seq[Any]) = {
+    val convertedFilters = filters.map(convertFilter)
+    (convertedFilters.map(_._1).mkString(" and "), convertedFilters.flatMap(_._2))
   }
 }

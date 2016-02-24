@@ -31,6 +31,14 @@ object CSVRead extends Logging {
       options.csv.escapeChar.map(c => if (c != '\'') s"""escape '$c'""" else s"""escape "$c"""")).flatten.mkString(",", ",", "")
   }
 
+  /**
+   * Based on `options`, register a temporary table as the source of the `CSV` input with the appropriate options introduced
+   * as required by `spark-csv`.
+   *
+   * @return A string containing the `SELECT` statement that can be used to subsequently consume data from the temporary
+   * table
+   * @note The temporary table will be named "csv_<vectorTargetTable>"
+   */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
     val table = s"csv_${options.vector.targetTable}"
     val baseQuery = s"""CREATE TEMPORARY TABLE ${table}${options.csv.header.map(_.mkString("(", ",", ")")).getOrElse("")}

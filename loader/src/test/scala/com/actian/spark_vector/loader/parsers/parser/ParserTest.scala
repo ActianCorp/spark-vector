@@ -19,30 +19,30 @@ import com.actian.spark_vector.loader.options.UserOptions
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{ Matchers, Inspectors, FunSuite }
 
-object VectorParserTest {
-  type ArgMap = Map[VectorArgOption[_, _], Any]
-  type KeyMapper = VectorArgDescription => String
+object ParserTest {
+  type ArgMap = Map[ArgOption[_, _], Any]
+  type KeyMapper = ArgDescription => String
 
-  def shortKey(opt: VectorArgDescription): String = s"-${opt.shortName}"
-  def longKey(opt: VectorArgDescription): String = s"--${opt.longName}"
+  def shortKey(opt: ArgDescription): String = s"-${opt.shortName}"
+  def longKey(opt: ArgDescription): String = s"--${opt.longName}"
 
   object ShortKeyMapper extends KeyMapper {
-    override def apply(arg: VectorArgDescription): String = shortKey(arg)
+    override def apply(arg: ArgDescription): String = shortKey(arg)
     override def toString(): String = getClass.getSimpleName
   }
 
   object LongKeyMapper extends KeyMapper {
-    override def apply(arg: VectorArgDescription): String = longKey(arg)
+    override def apply(arg: ArgDescription): String = longKey(arg)
     override def toString(): String = getClass.getSimpleName
   }
 }
 
-class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
+class ParserTest extends FunSuite with Matchers with PropertyChecks {
 
-  import VectorParserTest._
-  import VectorArgOption._
+  import ParserTest._
+  import ArgOption._
   import scala.language.existentials
-  import VectorArgs._
+  import Args._
 
   val requiredValues: ArgMap = Map(
     vectorHost -> "vector.test",
@@ -52,7 +52,6 @@ class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
     inputFile -> "/tmp/test.csv")
 
   val optionalValues: ArgMap = Map(
-    vectorCreateTable -> true,
     hRow -> true,
     encoding -> "UTF-16",
     nullPattern -> "N/A",
@@ -66,9 +65,9 @@ class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
     requiredValues ++ optionalValues
 
   test("metadata") {
-    val parser = VectorParser
+    val parser = Parser
     assert(parser.header.contains("Spark Vector load tool"))
-    assert(parser.programName.matches("Spark Vector load tool"))
+    assert(parser.programName.startsWith("spark-submit --class com.actian.spark_vector.loader.Main"))
   }
 
   test("parse full") {
@@ -90,7 +89,7 @@ class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
   }
 
   test("parse required missing") {
-    val parser = VectorParser
+    val parser = Parser
     val table = Table("arg", requiredValues.keys.toSeq: _*)
     forAll(table)(arg => {
       val input = inputFromArgs(requiredValues - arg, LongKeyMapper, "csv")
@@ -99,7 +98,7 @@ class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
   }
 
   test("windows file path") {
-    val parser = VectorParser
+    val parser = Parser
     val args = Seq(
       load.longName,
       csvLoad.longName,
@@ -130,7 +129,7 @@ class VectorParserTest extends FunSuite with Matchers with PropertyChecks {
 
   private def assertParseFull(data: ArgMap, keyMap: KeyMapper, loadType: String): Unit = {
     val input = inputFromArgs(data, keyMap, loadType)
-    val parser = VectorParser
+    val parser = Parser
     parser.parse(input, UserOptions()) match {
       case Some(opts) =>
         opts.mode should be(loadType)

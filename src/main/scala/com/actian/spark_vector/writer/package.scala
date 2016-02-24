@@ -18,8 +18,8 @@ package com.actian.spark_vector
 /**
  * Spark -> Vector loading part
  *
- *  Loading from `Spark` to `Vector` will be initiated with a call to [[vector.LoadVector.loadVector]], either directly or through the `SparkSQL`/`DataFrames` APIs. The sequence of operations
- *  is:
+ *  Loading from `Spark` to `Vector` will be initiated with a call to [[vector.LoadVector.loadVector loadVector]], either directly or through the `SparkSQL`/`DataFrames` APIs.
+ *  The sequence of operations is:
  *   - given an input `RDD` with its corresponding data type information, its fields will either be matched to existing table's columns or they will help generate a
  *  `create table` SQL statement that will be first submitted to `Vector`.
  *   - helpers [[RowWriter]] and [[DataStreamWriter]] objects are created and they contain all the needed information for a `Spark` worker to be able to process,

@@ -30,6 +30,29 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   import resource._
   import ResourceUtil._
 
+  private implicit class SparkPreparedStatement(statement: PreparedStatement) {
+    def setParams(params: Seq[Any]): PreparedStatement = {
+      (1 to params.size).foreach { idx =>
+        val param = params(idx - 1)
+        param match {
+          case x: Int => statement.setInt(idx, x)
+          case x: Short => statement.setShort(idx, x)
+          case x: Byte => statement.setByte(idx, x)
+          case x: Long => statement.setLong(idx, x)
+          case x: Float => statement.setFloat(idx, x)
+          case x: Double => statement.setDouble(idx, x)
+          case x: java.math.BigDecimal => statement.setBigDecimal(idx, x)
+          case x: String => statement.setString(idx, x)
+          case x: Boolean => statement.setBoolean(idx, x)
+          case x: java.sql.Timestamp => statement.setTimestamp(idx, x)
+          case x: java.sql.Date => statement.setDate(idx, x)
+          case _ => throw new VectorException(InvalidDataType, "Unexpected parameter type for preparing statement")
+        }
+      }
+      statement
+    }
+  }
+
   private val tableNameDelimiter = "\""
 
   private val dbCxn: Connection = {
@@ -44,13 +67,24 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     managed(dbCxn.createStatement()).map(op).resolve()
   }
 
+  /** Execute a `JDBC` prepared statement closing resources on failures, using scala-arm's `resource` package */
+  def withPreparedStatement[T](query: String, op: PreparedStatement => T): T = {
+    managed(dbCxn.prepareStatement(query)).map(op).resolve()
+  }
+
   /**
    * Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
    * mapping the `ResultSet` to a new type as specified by `op`
    */
-  def executeQuery[T](sql: String)(op: ResultSet => T): T = {
+  def executeQuery[T](sql: String)(op: ResultSet => T): T =
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
-  }
+
+  /**
+   * Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package,
+   * mapping the `ResultSet` to a new type as specified by `op`
+   */
+  def executePreparedQuery[T](sql: String, params: Seq[Any])(op: ResultSet => T): T =
+    withPreparedStatement(sql, statement => op(statement.setParams(params).executeQuery))
 
   /** Execute the update `SQL` query specified by `sql` */
   def executeStatement(sql: String): Int = {
@@ -119,15 +153,12 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     override def next(): T = extractor(result)
   }
 
+  private def toRow(result: ResultSet): Seq[Any] = (1 to result.getMetaData.getColumnCount).map(result.getObject)
+
   /** Execute a select query on Vector and return the results as a matrix of elements */
-  def query(sql: String): Seq[Seq[Any]] = {
-    def toRow(numColumns: Int)(result: ResultSet): Seq[Any] =
-      (1 to numColumns).map(result.getObject)
-    executeQuery(sql)(resultSet => {
-      val numColumns = resultSet.getMetaData.getColumnCount
-      new ResultSetIterator(resultSet)(toRow(numColumns)).toVector
-    })
-  }
+  def query(sql: String): Seq[Seq[Any]] = executeQuery(sql)(resultSet => new ResultSetIterator(resultSet)(toRow).toVector)
+
+  def query(sql: String, params: Seq[Any]): Seq[Seq[Any]] = executePreparedQuery(sql, params)(resultSet => new ResultSetIterator(resultSet)(toRow).toVector)
 
   /** Drop the Vector table `tableName` if it exists */
   def dropTable(tableName: String): Unit = {

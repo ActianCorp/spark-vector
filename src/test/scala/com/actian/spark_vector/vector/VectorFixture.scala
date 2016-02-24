@@ -27,11 +27,11 @@ import org.apache.spark.sql.types.{ FloatType, IntegerType, ShortType, StructFie
  */
 trait VectorFixture {
   def connectionProps: VectorConnectionProperties = {
-    val host = System.getProperty("vector.host", "hornet")
-    val instance = System.getProperty("vector.instance", "VH")
-    val database = System.getProperty("vector.database", "demo")
-    val user = System.getProperty("vector.user", "actian")
-    val password = System.getProperty("vector.password", "actian")
+    val host = System.getProperty("vector.host", "")
+    val instance = System.getProperty("vector.instance", "")
+    val database = System.getProperty("vector.database", "")
+    val user = System.getProperty("vector.user", "")
+    val password = System.getProperty("vector.password", "")
 
     VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty))
   }

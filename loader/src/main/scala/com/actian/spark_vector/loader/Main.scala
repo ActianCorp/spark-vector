@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.loader.options
+package com.actian.spark_vector.loader
 
-case class VectorOptions(
-  host: String = "",
-  instance: String = "",
-  database: String = "",
-  user: Option[String] = None,
-  password: Option[String] = None,
-  targetTable: String = "",
-  createTable: Option[Boolean] = None)
+import org.apache.spark.sql.types.StructType
+
+import com.actian.spark_vector.loader.command.ConstructVector
+import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.loader.parsers.Parser
+
+/** Entry point for loader utility */
+object Main extends App {
+  val parser: scopt.OptionParser[UserOptions] = Parser
+
+  parser.parse(args, UserOptions()) match {
+    case Some(options) => ConstructVector.execute(options)
+    case None =>
+  }
+}

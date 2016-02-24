@@ -53,4 +53,6 @@ object ErrorCodes {
   val NoSuchSourceField = 16
   /** Authentication error */
   val AuthError = 17
+  /** Invalid data type */
+  val InvalidDataType = 18
 }
