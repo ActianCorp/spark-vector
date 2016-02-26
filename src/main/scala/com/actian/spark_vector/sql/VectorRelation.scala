@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.StructType
 import com.actian.spark_vector.vector.VectorJDBC;
 
 private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
-  extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+    extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import com.actian.spark_vector.vector.VectorOps._
 
   override def schema: StructType =
@@ -56,7 +56,7 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
       }
 
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
-    val statement = s"select $columns from ${tableRef.table} where $whereClause"
+    val statement = s"select $columns from ${tableRef.table} $whereClause"
     logDebug(s"Executing Vector select statement: $statement")
     /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector` in parallel */
     val results = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
@@ -115,6 +115,9 @@ object VectorRelation {
    */
   def generateWhereClause(filters: Array[Filter]): (String, Seq[Any]) = {
     val convertedFilters = filters.map(convertFilter)
-    (convertedFilters.map(_._1).mkString(" and "), convertedFilters.flatMap(_._2))
+    if (!convertedFilters.isEmpty)
+      (convertedFilters.map(_._1).mkString("where ", " and ", ""), convertedFilters.flatMap(_._2))
+    else
+      ("", Nil)
   }
 }
