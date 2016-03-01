@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.loader.options
+package com.actian.spark_vector.colbuffer.string
 
-case class GeneralOptions(
-  sourceFile: String = "",
-  colsToLoad: Option[Seq[String]] = None)
+object VariableLengthByteStringColumnBuffer extends ByteLengthLimitedStringColumnBufferInstance {
+  private final val VARCHAR_TYPE_ID = "varchar"
+
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+    tpe.equalsIgnoreCase(VARCHAR_TYPE_ID) && precision > 0
+  }
+}

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.loader.options
+package com.actian.spark_vector.colbuffer.timestamp
 
-case class VectorOptions(
-  host: String = "",
-  instance: String = "",
-  database: String = "",
-  user: Option[String] = None,
-  password: Option[String] = None,
-  targetTable: String = "",
-  createTable: Option[Boolean] = None)
+object TimestampTZLongLongColumnBuffer extends TimestampTZColumnBufferInstance with TimestampLongLongColumnBufferInstance {
+  private final val MIN_TIMESTAMP_TZ_LONG_LONG_SCALE = 5
+  private final val MAX_TIMESTAMP_TZ_LONG_LONG_SCALE = 9
+
+  override protected def adjustToUTC: Boolean = false
+
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+    supportsTZColumnType(tpe, scale, MIN_TIMESTAMP_TZ_LONG_LONG_SCALE, MAX_TIMESTAMP_TZ_LONG_LONG_SCALE)
+  }
+}

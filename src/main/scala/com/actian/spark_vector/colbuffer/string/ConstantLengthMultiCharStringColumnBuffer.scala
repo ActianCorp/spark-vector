@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.loader.options
+package com.actian.spark_vector.colbuffer.string
 
-case class CSVOptions(
-  headerRow: Option[Boolean] = None,
-  encoding: Option[String] = None,
-  nullPattern: Option[String] = None,
-  separatorChar: Option[Char] = None,
-  quoteChar: Option[Char] = None,
-  escapeChar: Option[Char] = None,
-  strictQuotes: Option[Boolean] = None,
-  skipLines: Option[Int] = None,
-  ignoreLeadingWhiteSpace: Option[Boolean] = None,
-  ignoreQuotations: Option[Boolean] = None,
-  header: Option[Seq[String]] = None,
-  parserLib: Option[String] = None)
+object ConstantLengthMultiCharStringColumnBuffer extends CharLengthLimitedStringColumnBufferInstance {
+  private final val NCHAR_TYPE_ID = "nchar"
+
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+    tpe.equalsIgnoreCase(NCHAR_TYPE_ID) && precision > 1
+  }
+}

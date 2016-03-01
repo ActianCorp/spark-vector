@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.loader.command
+package com.actian.spark_vector.colbuffer.timestamp
 
-import org.apache.spark.sql.SQLContext
+object TimestampLZLongColumnBuffer extends TimestampLZColumnBufferInstance with TimestampLongColumnBufferInstance {
+  private final val MIN_TIMESTAMP_LZ_LONG_SCALE = 0
+  private final val MAX_TIMESTAMP_LZ_LONG_SCALE = 7
 
-import com.actian.spark_vector.loader.options.UserOptions
+  override protected def adjustToUTC: Boolean = false
 
-object ParquetRead {
-  def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"parquet_${options.vector.targetTable}"
-    sqlContext.read.parquet(options.general.sourceFile).registerTempTable(table)
-    s"select ${options.general.colsToLoad.map(_.mkString(",")).getOrElse("*")} from $table"
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+    supportsLZColumnType(tpe, scale, MIN_TIMESTAMP_LZ_LONG_SCALE, MAX_TIMESTAMP_LZ_LONG_SCALE)
   }
 }

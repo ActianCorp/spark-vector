@@ -15,10 +15,10 @@
  */
 package com.actian.spark_vector.writer
 
+import com.actian.spark_vector.colbuffer._
+
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
-
-import com.actian.spark_vector.buffer.VectorSink
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
 case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
@@ -29,18 +29,18 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
    */
   var pos: Int = 0
 
-  private def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
-    if (markers != null) {
+  private def writeColumn(values: ByteBuffer, markers: ByteBuffer, alignSize: Int, nullable: Boolean): Unit = {
+    if (nullable) {
       writeByteBufferNoFlip(markers)
       pos = pos + markers.limit()
     }
-    align(align_size)
+    align(alignSize)
     writeByteBufferNoFlip(values)
     pos = pos + values.limit()
   }
 
-  private def align(typeSize: Int): Unit = {
-    RowWriter.padding(pos, typeSize) match {
+  private def align(size: Int): Unit = {
+    RowWriter.padding(pos, size) match {
       case x if x > 0 =>
         writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
         pos = pos + x
@@ -49,28 +49,10 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   }
 
   // scalastyle:off magic.number
-  def writeByteColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 1)
-
-  def writeShortColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 2)
-
-  def writeIntColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 4)
-
-  def writeLongColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 8)
-
-  def write128BitColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 16)
-
-  def writeFloatColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 4)
-
-  def writeDoubleColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 8)
-
-  def writeStringColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer): Unit =
-    writeColumn(columnIndex, values, markers, 1)
+  override def write(columnBuf: ColumnBuffer[_]): Unit = {
+    columnBuf.flip()
+    writeColumn(columnBuf.values, columnBuf.markers, columnBuf.alignSize, columnBuf.nullable)
+    columnBuf.clear()
+  }
   // scalastyle:on magic.number
 }
