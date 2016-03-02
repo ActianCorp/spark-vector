@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.util
 
 import java.nio.charset.Charset;
 
+/** Helper functions and constants for `String` conversions. */
 object StringConversion {
   private final val UTF8CHARSET = Charset.forName("UTF-8")
   private final val HIGH_BIT_MASK = 0x80.toByte

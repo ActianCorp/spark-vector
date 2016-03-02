@@ -30,6 +30,7 @@ private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: 
   }
 }
 
+/** `ColumnBuffer` object for `nchar` types (with precision = 1). */
 object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance[String] {
   private final val NCHAR_TYPE_ID = "nchar"
 

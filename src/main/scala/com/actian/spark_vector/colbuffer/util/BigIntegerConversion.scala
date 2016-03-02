@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.util
 
 import java.math.BigInteger
 
+/** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
 
   final def convertToLongLongByteArray(value: BigInteger): Array[Byte] = {

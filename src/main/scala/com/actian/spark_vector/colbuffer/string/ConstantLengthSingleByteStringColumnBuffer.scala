@@ -30,6 +30,7 @@ private class ConstantLengthSingleByteStringColumnBuffer(valueCount: Int, name: 
   }
 }
 
+/** `ColumnBuffer` object for `char` types (with precision = 1). */
 object ConstantLengthSingleByteStringColumnBuffer extends ColumnBufferInstance[String] {
   private final val CHAR_TYPE_ID = "char"
 

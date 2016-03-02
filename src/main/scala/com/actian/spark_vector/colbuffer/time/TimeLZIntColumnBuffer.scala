@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector.colbuffer.time
 
+/** `ColumnBuffer` object for `time with local time zone` types (scale [0, 4]). */
 object TimeLZIntColumnBuffer extends TimeLZColumnBufferInstance with TimeIntColumnBufferInstance {
   private final val MIN_TIME_LZ_INT_SCALE = 0
   private final val MAX_TIME_LZ_INT_SCALE = 4

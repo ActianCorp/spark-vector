@@ -28,6 +28,7 @@ private class DecimalByteColumnBuffer(valueCount: Int, name: String, index: Int,
   }
 }
 
+/** `ColumnBuffer` object for `decimal(<byte>)` types. */
 object DecimalByteColumnBuffer extends DecimalColumnBufferInstance {
   private final val DECIMAL_BYTE_SIZE = 1
 

@@ -27,6 +27,7 @@ private class LongColumnBuffer(valueCount: Int, name: String, index: Int, nullab
   }
 }
 
+/** `ColumnBuffer` object for `bigint`, `integer8` types. */
 object LongColumnBuffer extends ColumnBufferInstance[Long] {
   private final val LONG_SIZE = 8
   private final val LONG_TYPE_ID_1 = "bigint"

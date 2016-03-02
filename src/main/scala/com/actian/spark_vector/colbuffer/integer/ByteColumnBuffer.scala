@@ -27,6 +27,7 @@ private class ByteColumnBuffer(valueCount: Int, name: String, index: Int, nullab
   }
 }
 
+/** `ColumnBuffer` object for `tinyint`, `integer1` types. */
 object ByteColumnBuffer extends ColumnBufferInstance[Byte] {
   private final val BYTE_SIZE = 1
   private final val BYTE_TYPE_ID_1 = "tinyint"

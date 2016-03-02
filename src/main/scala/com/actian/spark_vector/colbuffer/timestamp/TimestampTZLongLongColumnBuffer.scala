@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector.colbuffer.timestamp
 
+/** `ColumnBuffer` object for `time with time zone` types (scale [5, 9]). */
 object TimestampTZLongLongColumnBuffer extends TimestampTZColumnBufferInstance with TimestampLongLongColumnBufferInstance {
   private final val MIN_TIMESTAMP_TZ_LONG_LONG_SCALE = 5
   private final val MAX_TIMESTAMP_TZ_LONG_LONG_SCALE = 9

@@ -28,6 +28,7 @@ private class DecimalShortColumnBuffer(valueCount: Int, name: String, index: Int
   }
 }
 
+/** `ColumnBuffer` object for `decimal(<short>)` types. */
 object DecimalShortColumnBuffer extends DecimalColumnBufferInstance {
   private final val DECIMAL_SHORT_SIZE = 2
 

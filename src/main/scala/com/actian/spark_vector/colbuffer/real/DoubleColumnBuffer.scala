@@ -27,6 +27,7 @@ private class DoubleColumnBuffer(valueCount: Int, name: String, index: Int, null
   }
 }
 
+/** `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
 object DoubleColumnBuffer extends ColumnBufferInstance[Double] {
   private final val DOUBLE_SIZE = 8
   private final val DOUBLE_TYPE_ID_1 = "float"

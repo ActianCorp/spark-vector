@@ -27,6 +27,7 @@ private class FloatColumnBuffer(valueCount: Int, name: String, index: Int, nulla
   }
 }
 
+/** `ColumnBuffer` object for `real`, `float4` types. */
 object FloatColumnBuffer extends ColumnBufferInstance[Float] {
   private final val FLOAT_SIZE = 4
   private final val FLOAT_TYPE_ID_1 = "real"

@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector.colbuffer.string
 
+/** `ColumnBuffer` object for `nvarchar` types (with precision > 0). */
 object VariableLengthCharStringColumnBuffer extends CharLengthLimitedStringColumnBufferInstance {
   private final val NVARCHAR_TYPE_ID = "nvarchar"
 

@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector.colbuffer.string
 
+/** `ColumnBuffer` object for `char` types (with precision > 1). */
 object ConstantLengthMultiByteStringColumnBuffer extends ByteLengthLimitedStringColumnBufferInstance {
   private final val CHAR_TYPE_ID = "char"
 

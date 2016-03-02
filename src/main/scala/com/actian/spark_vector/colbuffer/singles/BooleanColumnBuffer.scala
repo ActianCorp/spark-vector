@@ -30,6 +30,7 @@ private class BooleanColumnBuffer(valueCount: Int, name: String, index: Int, nul
   }
 }
 
+/** `ColumnBuffer` object for `boolean` types. */
 object BooleanColumnBuffer extends ColumnBufferInstance[Boolean] {
   private final val BOOLEAN_SIZE = 1
   private final val BOOLEAN_TYPE_ID = "boolean"

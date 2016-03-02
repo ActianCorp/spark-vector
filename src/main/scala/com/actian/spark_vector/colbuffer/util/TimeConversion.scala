@@ -21,6 +21,7 @@ import java.util.Calendar
 
 import org.apache.spark.Logging
 
+/** Helper functions and constants for `Time` conversions. */
 object TimeConversion extends {
   final val MILLISECONDS_SCALE = 3
   final val MILLISECONDS_IN_MINUTE = 60 * 1000
@@ -70,6 +71,8 @@ object TimeConversion extends {
     time.setNanos(nanos)
   }
 
+  /** This trait should be used when implementing a type of time conversion,
+   *  for example a time-zone converter using the upper helper functions. */
   trait TimeConverter {
     def convert(source: Timestamp, scale: Int): Long = {
       convert(timeInNanos(source), scale)

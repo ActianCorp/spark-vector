@@ -20,6 +20,15 @@ import java.nio.ByteOrder
 import scala.reflect._
 import scala.throws._
 
+/**
+ * Abstract class to be used when implementing the class for a typed ColumnBuffer
+ * (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
+ *
+ * This class implements the base methods for buffering vectors of column values.
+ * The `put`, `flip`, `clear` methods are according to the Buffer interface.
+ * The column value serialization should be implemented within the concrete
+ * (typed) class instead.
+ */
 abstract class ColumnBuffer[@specialized T: ClassTag](valueCount: Int, valueWidth: Int, val alignSize: Int,
                                                       name:String, index:Int, val nullable: Boolean) {
   private final val NULL_MARKER = 1:Byte

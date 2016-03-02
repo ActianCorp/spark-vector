@@ -25,6 +25,7 @@ import com.actian.spark_vector.colbuffer.string._
 import com.actian.spark_vector.colbuffer.time._
 import com.actian.spark_vector.colbuffer.timestamp._
 
+/** This is a `Factory` implementation of `ColumnBuffers`. */
 object ColumnBufferFactory extends Logging {
   private final val columnBufs:List[ColumnBufferInstance[_]] = List(
     ByteColumnBuffer,
@@ -60,6 +61,9 @@ object ColumnBufferFactory extends Logging {
     TimestampTZLongLongColumnBuffer
   )
 
+  /** Get the `ColumnBuffer` object for the given params.
+   *  @return an Option embedding the `ColumnBuffer` object (or an empty option if a `ColumnBuffer` was not found)
+   */
   def apply(name: String, index: Int, tpe: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): Option[ColumnBuffer[_]] = {
     columnBufs.find(columnBuf => columnBuf.supportsColumnType(tpe, precision, scale, nullable))
               .map(columnBuf => columnBuf.getNewInstance(name, index, precision, scale, nullable, maxRowCount))

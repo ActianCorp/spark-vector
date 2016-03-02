@@ -27,6 +27,7 @@ private class ShortColumnBuffer(valueCount: Int, name: String, index: Int, nulla
   }
 }
 
+/** `ColumnBuffer` object for `smallint`, `integer2` types. */
 object ShortColumnBuffer extends ColumnBufferInstance[Short] {
   private final val SHORT_SIZE = 2
   private final val SHORT_TYPE_ID_1 = "smallint"

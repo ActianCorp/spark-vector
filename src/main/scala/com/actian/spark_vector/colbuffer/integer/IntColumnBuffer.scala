@@ -27,6 +27,7 @@ private class IntColumnBuffer(valueCount: Int, name: String, index: Int, nullabl
   }
 }
 
+/** `ColumnBuffer` object for `integer`, `integer4` types. */
 object IntColumnBuffer extends ColumnBufferInstance[Int] {
   private final val INT_SIZE = 4
   private final val INT_TYPE_ID_1 = "integer"

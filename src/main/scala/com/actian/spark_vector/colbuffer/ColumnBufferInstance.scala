@@ -15,14 +15,18 @@
  */
 package com.actian.spark_vector.colbuffer
 
+/**
+ * Trait to be used when implementing a companion object for a typed ColumnBuffer
+ * (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
+ */
 private[colbuffer] trait ColumnBufferInstance[T] {
-  /** Get a new instance of ColumnBuffer[T] only if it supports the column type */
+  /** Get a new instance of `ColumnBuffer` for the given column type params. */
   def apply(name: String, index: Int, tpe: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[T] = {
     assert(supportsColumnType(tpe, precision, scale, nullable))
     getNewInstance(name, index, precision, scale, nullable, maxRowCount)
   }
-  /** Get a new instance of ColumnBuffer[T] w/o checking for column type support */
+  /** Get a new instance of `ColumnBuffer` w/o checking for column type support. */
   private[colbuffer] def getNewInstance(name: String, index: Int, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[T]
-  /** Check before getting a new instance whether this ColumnBuffer[T] supports the column type */
+  /** Check before getting a new instance whether this `ColumnBuffer` supports the column type params. */
   private[colbuffer] def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean
 }

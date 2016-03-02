@@ -30,6 +30,7 @@ private class DateColumnBuffer(valueCount: Int, name: String, index: Int, nullab
   }
 }
 
+/** `ColumnBuffer` object for `ansidate` types. */
 object DateColumnBuffer extends ColumnBufferInstance[Date] {
   private final val DATE_SIZE = 4
   private final val DATE_TYPE_ID = "ansidate"

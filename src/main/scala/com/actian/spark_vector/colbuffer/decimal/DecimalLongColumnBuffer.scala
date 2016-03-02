@@ -28,6 +28,7 @@ private class DecimalLongColumnBuffer(valueCount: Int, name: String, index: Int,
   }
 }
 
+/** `ColumnBuffer` object for `decimal(<long>)` types. */
 object DecimalLongColumnBuffer extends DecimalColumnBufferInstance {
   private final val DECIMAL_LONG_SIZE = 8
 

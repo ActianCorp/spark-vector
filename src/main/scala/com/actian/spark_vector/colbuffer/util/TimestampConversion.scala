@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.util
 
 import java.math.BigInteger
 
+/** Helper functions and constants for `Timestamp` conversions. */
 object TimestampConversion {
   final val SECONDS_IN_MINUTE = 60
   final val SECONDS_BEFORE_EPOCH = 62167219200L
@@ -24,7 +25,7 @@ object TimestampConversion {
   final val NANOSECONDS_SCALE = 9
   final val NANOSECONDS_FACTOR_BI = BigInteger.valueOf(Math.pow(10, NANOSECONDS_SCALE).toLong)
 
-  def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger  = {
+  final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger  = {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(BigInteger.valueOf(offsetSeconds)).add(SECONDS_BEFORE_EPOCH_BI)
     val nanosTotal = secondsTotal.multiply(NANOSECONDS_FACTOR_BI).add(BigInteger.valueOf(subsecNanos))
     val adjustment = scale - NANOSECONDS_SCALE
@@ -37,6 +38,8 @@ object TimestampConversion {
     }
   }
 
+  /** This trait should be used when implementing a type of timestamp conversion,
+   *  for example a timestamp-zone converter using the upper helper functions. */
   trait TimestampConverter {
     def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger
   }

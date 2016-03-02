@@ -29,6 +29,7 @@ private class DecimalLongLongColumnBuffer(valueCount: Int, name: String, index: 
   }
 }
 
+/** `ColumnBuffer` object for `decimal(<long long>)` types. */
 object DecimalLongLongColumnBuffer extends DecimalColumnBufferInstance {
   private final val DECIMAL_LONG_LONG_SIZE = 16
 
