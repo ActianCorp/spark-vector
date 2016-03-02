@@ -1,0 +1,102 @@
+/*
+ * Copyright 2016 Actian Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.actian.spark_vector.colbuffer.time
+
+import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.colbuffer.util.TimeConversion
+
+import org.apache.spark.Logging
+
+import java.nio.ByteBuffer
+import java.sql.Timestamp
+
+private[colbuffer] abstract class TimeColumnBuffer(valueCount: Int, valueWidth: Int, name: String, index: Int, scale: Int, nullable: Boolean,
+                                                   converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends
+                                  ColumnBuffer[Timestamp](valueCount, valueWidth, valueWidth, name, index, nullable) {
+
+  override protected def put(source: Timestamp, buffer: ByteBuffer): Unit = {
+    if (adjustToUTC) {
+      TimeConversion.convertLocalTimestampToUTC(source)
+    }
+    val convertedSource = converter.convert(TimeConversion.normalizedTime(source), scale)
+    putConverted(convertedSource, buffer)
+  }
+
+  protected def putConverted(converted: Long, buffer: ByteBuffer): Unit
+}
+
+private[colbuffer] trait TimeColumnBufferInstance extends ColumnBufferInstance[Timestamp] {
+  protected def adjustToUTC: Boolean = true
+  protected def createConverter(): TimeConversion.TimeConverter
+}
+
+private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInstance {
+  private final val TIME_LZ_TYPE_ID = "time with local time zone"
+
+  protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+    tpe.equalsIgnoreCase(TIME_LZ_TYPE_ID) && minScale <= columnScale && columnScale <= maxScale
+  }
+
+  private class TimeLZConverter extends TimeConversion.TimeConverter {
+    override def convert(nanos: Long, scale: Int): Long = {
+      TimeConversion.scaledTime(nanos, scale)
+    }
+  }
+
+  override protected def createConverter(): TimeConversion.TimeConverter = {
+    new TimeLZConverter()
+  }
+}
+
+private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInstance {
+  private final val TIME_NZ_TYPE_ID_1 = "time"
+  private final val TIME_NZ_TYPE_ID_2 = "time without time zone"
+
+  protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+    (tpe.equalsIgnoreCase(TIME_NZ_TYPE_ID_1) || tpe.equalsIgnoreCase(TIME_NZ_TYPE_ID_2)) &&
+    minScale <= columnScale && columnScale <= maxScale
+  }
+
+  private class TimeNZConverter extends TimeConversion.TimeConverter {
+    override def convert(nanos: Long, scale: Int): Long = {
+      TimeConversion.scaledTime(nanos, scale)
+    }
+  }
+
+  override protected def createConverter(): TimeConversion.TimeConverter = {
+    new TimeNZConverter()
+  }
+}
+
+private[colbuffer] trait TimeTZColumnBufferInstance extends TimeColumnBufferInstance {
+  private final val TIME_TZ_TYPE_ID = "time with time zone"
+
+  protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+    tpe.equalsIgnoreCase(TIME_TZ_TYPE_ID) && minScale <= columnScale && columnScale <= maxScale
+  }
+
+  private class TimeTZConverter extends TimeConversion.TimeConverter {
+    private final val TIME_MASK = 0xFFFFFFFFFFFFF800L
+
+    override def convert(nanos: Long, scale: Int): Long = {
+      ((TimeConversion.scaledTime(nanos, scale) << 11) & (TIME_MASK))
+    }
+  }
+
+  override protected def createConverter(): TimeConversion.TimeConverter = {
+    new TimeTZConverter()
+  }
+}
