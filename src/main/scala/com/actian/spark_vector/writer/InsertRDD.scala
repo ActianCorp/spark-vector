@@ -29,7 +29,7 @@ import com.actian.spark_vector.vector.DataStreamPartition
  *  @param rdd `RDD` to be loaded
  *  @param writeConf contains the write configuration needed to connect to `Vector DataStream`s
  */
-class DataStreamRDD[R: ClassTag](
+class InsertRDD[R: ClassTag](
   @transient val rdd: RDD[R],
   writeConf: WriteConf) extends RDD[R](rdd.context, Nil) with Logging {
 

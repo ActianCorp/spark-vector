@@ -15,12 +15,49 @@
  */
 package com.actian.spark_vector.vector
 
-import java.sql._
+import java.sql.{ Connection, DriverManager, PreparedStatement, ResultSet, Statement }
 import java.util.Properties
-import com.actian.spark_vector.util.ResourceUtil
-import com.actian.spark_vector.vector.ErrorCodes._
+
 import org.apache.spark.Logging
-import com.actian.spark_vector.sql.VectorRelation
+import org.apache.spark.sql.Row
+
+import com.actian.spark_vector.Profiling
+import com.actian.spark_vector.util.ResourceUtil.RichExtractableManagedResource
+import com.actian.spark_vector.vector.ErrorCodes.{ InvalidDataType, NoSuchTable, SqlException, SqlExecutionError }
+
+import resource.managed
+
+/** Iterator over an ResultSet */
+abstract class ResultSetIterator[T](result: ResultSet) extends Iterator[T] {
+  def extractor: ResultSet => T
+  override def hasNext: Boolean = result.next()
+  override def next(): T = extractor(result)
+}
+
+object ResultSetIterator {
+  def apply[T](result: ResultSet)(ex: ResultSet => T): ResultSetIterator[T] = new ResultSetIterator[T](result) {
+    def extractor = ex
+  }
+}
+
+/** Extracts `Rows` out of a `ResultSet` */
+class ResultSetToRowIterator(result: ResultSet) extends ResultSetIterator[Row](result) with Logging with Profiling {
+  lazy val numColumns = result.getMetaData.getColumnCount
+  lazy val row = collection.mutable.IndexedSeq.fill[Any](numColumns)(null)
+  implicit lazy val prof_accs = profileInit("resultSet extraction")
+  var col = 0
+  def extractor: ResultSet => Row = { rs =>
+    profile("resultSet extraction")
+    col = 0
+    while (col < numColumns) {
+      row(col) = result.getObject(col + 1)
+      col += 1
+    }
+    val ret = Row.fromSeq(row)
+    profileEnd
+    ret
+  }
+}
 
 /**
  * Encapsulate functions for accessing Vector using JDBC
@@ -28,8 +65,8 @@ import com.actian.spark_vector.sql.VectorRelation
 class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
   import resource._
-  import ResourceUtil._
-  import VectorRelation._
+  import VectorJDBC._
+  import com.actian.spark_vector.sql.VectorRelation.quote
 
   private implicit class SparkPreparedStatement(statement: PreparedStatement) {
     def setParams(params: Seq[Any]): PreparedStatement = {
@@ -77,6 +114,13 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
    */
   def executeQuery[T](sql: String)(op: ResultSet => T): T =
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
+
+  /** Execute a SQL query, transferring closing responsibility of the `Statement` and `ResultSet` to the caller */
+  def executeUnmanagedPreparedQuery(sql: String, params: Seq[Any]): (Statement, ResultSet) = {
+    val stmt = dbCxn.prepareStatement(sql)
+    val rs = stmt.setParams(params).executeQuery
+    (stmt, rs)
+  }
 
   /**
    * Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package,
@@ -147,17 +191,10 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     })
   }
 
-  private class ResultSetIterator[T](result: ResultSet)(extractor: ResultSet => T) extends Iterator[T] {
-    override def hasNext: Boolean = result.next()
-    override def next(): T = extractor(result)
-  }
-
-  private def toRow(result: ResultSet): Seq[Any] = (1 to result.getMetaData.getColumnCount).map(result.getObject)
-
   /** Execute a select query on Vector and return the results as a matrix of elements */
-  def query(sql: String): Seq[Seq[Any]] = executeQuery(sql)(resultSet => new ResultSetIterator(resultSet)(toRow).toVector)
+  def query(sql: String): Seq[Seq[Any]] = executeQuery(sql)(ResultSetIterator(_)(toRow).toVector)
 
-  def query(sql: String, params: Seq[Any]): Seq[Seq[Any]] = executePreparedQuery(sql, params)(resultSet => new ResultSetIterator(resultSet)(toRow).toVector)
+  def query(sql: String, params: Seq[Any]): Seq[Seq[Any]] = executePreparedQuery(sql, params)(ResultSetIterator(_)(toRow).toVector)
 
   /** Drop the Vector table `tableName` if it exists */
   def dropTable(tableName: String): Unit = {
@@ -193,9 +230,11 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 }
 
 object VectorJDBC extends Logging {
-
   import resource._
-  import ResourceUtil._
+
+  final val DriverClassName = "com.ingres.jdbc.IngresDriver"
+
+  def toRow(result: ResultSet): Seq[Any] = (1 to result.getMetaData.getColumnCount).map(result.getObject)
 
   /** Create a `VectorJDBC`, execute the statements specified by `op` and close the `JDBC` connections when finished */
   def withJDBC[T](cxnProps: VectorConnectionProperties)(op: VectorJDBC => T): T = {

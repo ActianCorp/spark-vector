@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.Vector._
-import com.actian.spark_vector.writer.{ DataStreamRDD, DataStreamWriter, RowWriter }
+import com.actian.spark_vector.writer.{ DataStreamWriter, InsertRDD, RowWriter }
 
 /** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {
@@ -76,9 +76,9 @@ object LoadVector extends Logging {
       preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
     }
 
-    val datastreamRDD = new DataStreamRDD(finalRDD, writer.writeConf)
+    val insertRDD = new InsertRDD(finalRDD, writer.writeConf)
     val result = writer.initiateLoad
-    datastreamRDD.sparkContext.runJob(datastreamRDD, writer.write _)
+    insertRDD.sparkContext.runJob(insertRDD, writer.write _)
     // FIX ME
     val rowCount = Await.result(result, Duration.Inf)
     if (rowCount >= 0) {

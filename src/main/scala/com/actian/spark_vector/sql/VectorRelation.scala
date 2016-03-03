@@ -21,11 +21,12 @@ import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
 
-import com.actian.spark_vector.vector.VectorJDBC;
+import com.actian.spark_vector.reader.ScanRDD
+import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
 
 private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
     extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
-  import com.actian.spark_vector.vector.VectorOps._
+  import VectorOps._
 
   override def schema: StructType =
     userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
@@ -58,18 +59,11 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
     val statement = s"select $columns from ${tableRef.table} $whereClause"
     logDebug(s"Executing Vector select statement: $statement")
-    /** TODO: replace this JDBC call with creating a RDD that reads data in parallel from `Vector` in parallel */
-    val results = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-      cxn.query(statement, whereParams);
-    }
-
-    val rows = results.map(Row.fromSeq(_))
-    sqlContext.sparkContext.parallelize(rows)
+    new ScanRDD(sqlContext.sparkContext, tableRef.toConnectionProps, statement, whereParams)
   }
 }
 
 object VectorRelation {
-
   def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
     new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
   }
@@ -115,9 +109,10 @@ object VectorRelation {
    */
   def generateWhereClause(filters: Array[Filter]): (String, Seq[Any]) = {
     val convertedFilters = filters.map(convertFilter)
-    if (!convertedFilters.isEmpty)
+    if (!convertedFilters.isEmpty) {
       (convertedFilters.map(_._1).mkString("where ", " and ", ""), convertedFilters.flatMap(_._2))
-    else
+    } else {
       ("", Nil)
+    }
   }
 }
