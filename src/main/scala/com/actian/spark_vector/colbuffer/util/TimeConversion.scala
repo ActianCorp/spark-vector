@@ -23,16 +23,16 @@ import org.apache.spark.Logging
 
 /** Helper functions and constants for `Time` conversions. */
 object TimeConversion extends {
-  final val MILLISECONDS_SCALE = 3
-  final val MILLISECONDS_IN_MINUTE = 60 * 1000
-  final val MILLISECONDS_IN_DAY = 24 * 60 * MILLISECONDS_IN_MINUTE
-  final val NANOSECONDS_SCALE = 9;
-  final val NANOSECONDS_IN_MILLI = 1000000;
-  final val NANOSECONDS_IN_DAY = (MILLISECONDS_IN_DAY.toLong * NANOSECONDS_IN_MILLI)
-  private final val POWERS_OF_TEN = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
+  final val MillisecondsScale = 3
+  final val MillisecondsInMinute = 60 * 1000
+  final val MillisecondsInDay = 24 * 60 * MillisecondsInMinute
+  final val NanosecondsScale = 9;
+  final val NanosecondsInMilli = 1000000;
+  final val NanosecondsInDay = (MillisecondsInDay.toLong * NanosecondsInMilli)
+  private final val PowersOfTen = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
 
   final def timeInNanos(source: Timestamp): Long = {
-    (source.getTime() / POWERS_OF_TEN(MILLISECONDS_SCALE)) * POWERS_OF_TEN(NANOSECONDS_SCALE) + source.getNanos()
+    (source.getTime() / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos()
   }
 
   final def normalizedTime(source: Timestamp): Long = {
@@ -40,11 +40,11 @@ object TimeConversion extends {
   }
 
   final def normalizedTime(nanos: Long): Long = {
-    val remainder = nanos % NANOSECONDS_IN_DAY
+    val remainder = nanos % NanosecondsInDay
     if (remainder >= 0) {
       remainder
     } else {
-      remainder + NANOSECONDS_IN_DAY
+      remainder + NanosecondsInDay
     }
   }
 
@@ -53,8 +53,8 @@ object TimeConversion extends {
   }
 
   final def scaledTime(nanos: Long, scale: Int): Long = {
-    val adjustment = NANOSECONDS_SCALE  - scale
-    nanos / POWERS_OF_TEN(adjustment)
+    val adjustment = NanosecondsScale  - scale
+    nanos / PowersOfTen(adjustment)
   }
 
   final def convertLocalDateToUTC(date: Date): Unit = {

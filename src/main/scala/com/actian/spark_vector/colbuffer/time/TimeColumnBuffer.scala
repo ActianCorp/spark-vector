@@ -44,10 +44,10 @@ private[colbuffer] trait TimeColumnBufferInstance extends ColumnBufferInstance[T
 }
 
 private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TIME_LZ_TYPE_ID = "time with local time zone"
+  private final val TimeLZTypeId = "time with local time zone"
 
   protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
-    tpe.equalsIgnoreCase(TIME_LZ_TYPE_ID) && minScale <= columnScale && columnScale <= maxScale
+    tpe.equalsIgnoreCase(TimeLZTypeId) && minScale <= columnScale && columnScale <= maxScale
   }
 
   private class TimeLZConverter extends TimeConversion.TimeConverter {
@@ -62,11 +62,11 @@ private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInst
 }
 
 private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TIME_NZ_TYPE_ID_1 = "time"
-  private final val TIME_NZ_TYPE_ID_2 = "time without time zone"
+  private final val TimeNZTypeId1 = "time"
+  private final val TimeNZTypeId2 = "time without time zone"
 
   protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
-    (tpe.equalsIgnoreCase(TIME_NZ_TYPE_ID_1) || tpe.equalsIgnoreCase(TIME_NZ_TYPE_ID_2)) &&
+    (tpe.equalsIgnoreCase(TimeNZTypeId1) || tpe.equalsIgnoreCase(TimeNZTypeId2)) &&
     minScale <= columnScale && columnScale <= maxScale
   }
 
@@ -82,17 +82,17 @@ private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInst
 }
 
 private[colbuffer] trait TimeTZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TIME_TZ_TYPE_ID = "time with time zone"
+  private final val TimeTZTypeId = "time with time zone"
 
   protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
-    tpe.equalsIgnoreCase(TIME_TZ_TYPE_ID) && minScale <= columnScale && columnScale <= maxScale
+    tpe.equalsIgnoreCase(TimeTZTypeId) && minScale <= columnScale && columnScale <= maxScale
   }
 
   private class TimeTZConverter extends TimeConversion.TimeConverter {
-    private final val TIME_MASK = 0xFFFFFFFFFFFFF800L
+    private final val TimeMask = 0xFFFFFFFFFFFFF800L
 
     override def convert(nanos: Long, scale: Int): Long = {
-      ((TimeConversion.scaledTime(nanos, scale) << 11) & (TIME_MASK))
+      ((TimeConversion.scaledTime(nanos, scale) << 11) & (TimeMask))
     }
   }
 

@@ -20,7 +20,7 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class ByteColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Byte](valueCount, ByteColumnBuffer.BYTE_SIZE, ByteColumnBuffer.BYTE_SIZE, name, index, nullable) {
+              ColumnBuffer[Byte](valueCount, ByteColumnBuffer.ByteSize, ByteColumnBuffer.ByteSize, name, index, nullable) {
 
   override protected def put(source: Byte, buffer: ByteBuffer): Unit = {
     buffer.put(source)
@@ -29,9 +29,9 @@ private class ByteColumnBuffer(valueCount: Int, name: String, index: Int, nullab
 
 /** `ColumnBuffer` object for `tinyint`, `integer1` types. */
 object ByteColumnBuffer extends ColumnBufferInstance[Byte] {
-  private final val BYTE_SIZE = 1
-  private final val BYTE_TYPE_ID_1 = "tinyint"
-  private final val BYTE_TYPE_ID_2 = "integer1"
+  private final val ByteSize = 1
+  private final val ByteTypeId1 = "tinyint"
+  private final val ByteTypeId2 = "integer1"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Byte] = {
@@ -39,6 +39,6 @@ object ByteColumnBuffer extends ColumnBufferInstance[Byte] {
   }
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(BYTE_TYPE_ID_1) || tpe.equalsIgnoreCase(BYTE_TYPE_ID_2)
+    tpe.equalsIgnoreCase(ByteTypeId1) || tpe.equalsIgnoreCase(ByteTypeId2)
   }
 }

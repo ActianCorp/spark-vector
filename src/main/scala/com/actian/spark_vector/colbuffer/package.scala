@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector
 
-/** Implements the type based buffer serialization for `Vector` columns */
+/** Implements buffering (and value serialization) for
+ *  `Vector` columns of specific types */
 package object colbuffer {
 }

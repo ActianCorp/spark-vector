@@ -19,9 +19,9 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class ByteEncodedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision:Int,
+private[colbuffer] abstract class ByteEncodedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int,
                                                                 scale: Int, nullable: Boolean) extends
-                                  ColumnBuffer[String](valueCount, precision + 1, ByteEncodedStringColumnBuffer.BYTE_SIZE,
+                                  ColumnBuffer[String](valueCount, precision + 1, ByteEncodedStringColumnBuffer.ByteSize,
                                                        name, index, nullable) {
 
   override protected def put(source: String, buffer: ByteBuffer): Unit = {
@@ -33,5 +33,5 @@ private[colbuffer] abstract class ByteEncodedStringColumnBuffer(valueCount: Int,
 }
 
 private object ByteEncodedStringColumnBuffer {
-  final val BYTE_SIZE = 1
+  final val ByteSize = 1
 }

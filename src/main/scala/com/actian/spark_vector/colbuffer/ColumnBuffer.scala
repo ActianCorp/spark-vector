@@ -30,9 +30,9 @@ import scala.throws._
  * (typed) class instead.
  */
 abstract class ColumnBuffer[@specialized T: ClassTag](valueCount: Int, valueWidth: Int, val alignSize: Int,
-                                                      name:String, index:Int, val nullable: Boolean) {
-  private final val NULL_MARKER = 1:Byte
-  private final val NON_NULL_MARKER = 0:Byte
+                                                      name: String, index: Int, val nullable: Boolean) {
+  private final val NullMarker = 1:Byte
+  private final val NonNullMarker = 0:Byte
 
   val valueType = classTag[T]
   val values = ByteBuffer.allocateDirect(valueCount * valueWidth).order(ByteOrder.nativeOrder())
@@ -44,7 +44,7 @@ abstract class ColumnBuffer[@specialized T: ClassTag](valueCount: Int, valueWidt
   def put(source: T): Unit = {
     put(source, values)
     if (nullable) {
-      markers.put(NON_NULL_MARKER)
+      markers.put(NonNullMarker)
     }
   }
 
@@ -54,7 +54,7 @@ abstract class ColumnBuffer[@specialized T: ClassTag](valueCount: Int, valueWidt
       throw new IllegalArgumentException(
                 "Cannot store NULL values in a non-nullable column '" + name + "'.")
     }
-    markers.put(NULL_MARKER)
+    markers.put(NullMarker)
     values.put(nullValue)
   }
 

@@ -17,10 +17,10 @@ package com.actian.spark_vector.colbuffer.timestamp
 
 /** `ColumnBuffer` object for `time`, `time without time zone` types (scale [8, 9]). */
 object TimestampNZLongLongColumnBuffer extends TimestampNZColumnBufferInstance with TimestampLongLongColumnBufferInstance {
-  private final val MIN_TIMESTAMP_NZ_LONG_LONG_SCALE = 8
-  private final val MAX_TIMESTAMP_NZ_LONG_LONG_SCALE = 9
+  private final val MinTimestampNZLongLongScale = 8
+  private final val MaxTimestampNZLongLongScale = 9
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
-    supportsNZColumnType(tpe, scale, MIN_TIMESTAMP_NZ_LONG_LONG_SCALE, MAX_TIMESTAMP_NZ_LONG_LONG_SCALE)
+    supportsNZColumnType(tpe, scale, MinTimestampNZLongLongScale, MaxTimestampNZLongLongScale)
   }
 }

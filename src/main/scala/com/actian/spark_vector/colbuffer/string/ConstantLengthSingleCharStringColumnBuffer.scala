@@ -18,12 +18,12 @@ package com.actian.spark_vector.colbuffer.string
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 
-private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: String, index: Int, precision:Int, scale: Int, nullable: Boolean) extends
+private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
               IntegerEncodedStringColumnBuffer(valueCount, name, index, precision, scale, nullable) {
 
   override protected def encode(value: String): Int = {
     if (Character.isHighSurrogate(value.charAt(0))) {
-      IntegerEncodedStringColumnBuffer.WHITESPACE
+      IntegerEncodedStringColumnBuffer.Whitespace
     } else {
       value.codePointAt(0)
     }
@@ -32,7 +32,7 @@ private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: 
 
 /** `ColumnBuffer` object for `nchar` types (with precision = 1). */
 object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance[String] {
-  private final val NCHAR_TYPE_ID = "nchar"
+  private final val NcharTypeId = "nchar"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {
@@ -40,6 +40,6 @@ object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance[S
   }
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(NCHAR_TYPE_ID) && precision == 1
+    tpe.equalsIgnoreCase(NcharTypeId) && precision == 1
   }
 }

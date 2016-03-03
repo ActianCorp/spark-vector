@@ -19,16 +19,16 @@ import java.math.BigInteger
 
 /** Helper functions and constants for `Timestamp` conversions. */
 object TimestampConversion {
-  final val SECONDS_IN_MINUTE = 60
-  final val SECONDS_BEFORE_EPOCH = 62167219200L
-  final val SECONDS_BEFORE_EPOCH_BI = BigInteger.valueOf(SECONDS_BEFORE_EPOCH)
-  final val NANOSECONDS_SCALE = 9
-  final val NANOSECONDS_FACTOR_BI = BigInteger.valueOf(Math.pow(10, NANOSECONDS_SCALE).toLong)
+  final val SecondsInMinute = 60
+  final val SecondsBeforeEpoch = 62167219200L
+  final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
+  final val NanosecondsScale = 9
+  final val NanosecondsFactorBI = BigInteger.valueOf(Math.pow(10, NanosecondsScale).toLong)
 
   final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger  = {
-    val secondsTotal = BigInteger.valueOf(epochSeconds).add(BigInteger.valueOf(offsetSeconds)).add(SECONDS_BEFORE_EPOCH_BI)
-    val nanosTotal = secondsTotal.multiply(NANOSECONDS_FACTOR_BI).add(BigInteger.valueOf(subsecNanos))
-    val adjustment = scale - NANOSECONDS_SCALE
+    val secondsTotal = BigInteger.valueOf(epochSeconds).add(BigInteger.valueOf(offsetSeconds)).add(SecondsBeforeEpochBI)
+    val nanosTotal = secondsTotal.multiply(NanosecondsFactorBI).add(BigInteger.valueOf(subsecNanos))
+    val adjustment = scale - NanosecondsScale
     val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
 
     if (adjustment >= 0) {

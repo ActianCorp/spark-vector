@@ -20,22 +20,22 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class BooleanColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Boolean](valueCount, BooleanColumnBuffer.BOOLEAN_SIZE, BooleanColumnBuffer.BOOLEAN_SIZE, name, index, nullable) {
+              ColumnBuffer[Boolean](valueCount, BooleanColumnBuffer.BooleanSize, BooleanColumnBuffer.BooleanSize, name, index, nullable) {
 
   override protected def put(source: Boolean, buffer: ByteBuffer): Unit = {
     source.booleanValue() match {
-      case true => buffer.put(BooleanColumnBuffer.TRUE)
-      case false => buffer.put(BooleanColumnBuffer.FALSE)
+      case true => buffer.put(BooleanColumnBuffer.True)
+      case false => buffer.put(BooleanColumnBuffer.False)
     }
   }
 }
 
 /** `ColumnBuffer` object for `boolean` types. */
 object BooleanColumnBuffer extends ColumnBufferInstance[Boolean] {
-  private final val BOOLEAN_SIZE = 1
-  private final val BOOLEAN_TYPE_ID = "boolean"
-  private final val TRUE = 1:Byte
-  private final val FALSE = 0:Byte
+  private final val BooleanSize = 1
+  private final val BooleanTypeId = "boolean"
+  private final val True = 1:Byte
+  private final val False = 0:Byte
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Boolean] = {
@@ -43,6 +43,6 @@ object BooleanColumnBuffer extends ColumnBufferInstance[Boolean] {
   }
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(BOOLEAN_TYPE_ID)
+    tpe.equalsIgnoreCase(BooleanTypeId)
   }
 }

@@ -23,7 +23,7 @@ import java.sql.Timestamp
 
 private class TimeIntColumnBuffer(valueCount: Int, name: String, index: Int, scale: Int, nullable: Boolean,
                                   converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends
-              TimeColumnBuffer(valueCount, TimeIntColumnBuffer.TIME_INT_SIZE, name, index, scale, nullable, converter, adjustToUTC) {
+              TimeColumnBuffer(valueCount, TimeIntColumnBuffer.TimeIntSize, name, index, scale, nullable, converter, adjustToUTC) {
 
   override protected def putConverted(converted: Long, buffer: ByteBuffer): Unit = {
     buffer.putInt(converted.toInt)
@@ -31,7 +31,7 @@ private class TimeIntColumnBuffer(valueCount: Int, name: String, index: Int, sca
 }
 
 private object TimeIntColumnBuffer {
-  private final val TIME_INT_SIZE = 4
+  private final val TimeIntSize = 4
 }
 
 private[colbuffer] trait TimeIntColumnBufferInstance extends TimeColumnBufferInstance {

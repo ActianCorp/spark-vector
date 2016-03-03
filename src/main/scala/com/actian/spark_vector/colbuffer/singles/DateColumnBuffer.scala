@@ -22,19 +22,19 @@ import java.nio.ByteBuffer
 import java.sql.Date
 
 private class DateColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Date](valueCount, DateColumnBuffer.DATE_SIZE, DateColumnBuffer.DATE_SIZE, name, index, nullable) {
+              ColumnBuffer[Date](valueCount, DateColumnBuffer.DateSize, DateColumnBuffer.DateSize, name, index, nullable) {
 
   override protected def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
-    buffer.putInt((source.getTime() / TimeConversion.MILLISECONDS_IN_DAY + DateColumnBuffer.DAYS_BEFORE_EPOCH).toInt)
+    buffer.putInt((source.getTime() / TimeConversion.MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
 }
 
 /** `ColumnBuffer` object for `ansidate` types. */
 object DateColumnBuffer extends ColumnBufferInstance[Date] {
-  private final val DATE_SIZE = 4
-  private final val DATE_TYPE_ID = "ansidate"
-  private final val DAYS_BEFORE_EPOCH = 719528
+  private final val DateSize = 4
+  private final val DateTypeId = "ansidate"
+  private final val DaysBeforeEpoch = 719528
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Date] = {
@@ -42,6 +42,6 @@ object DateColumnBuffer extends ColumnBufferInstance[Date] {
   }
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(DATE_TYPE_ID)
+    tpe.equalsIgnoreCase(DateTypeId)
   }
 }

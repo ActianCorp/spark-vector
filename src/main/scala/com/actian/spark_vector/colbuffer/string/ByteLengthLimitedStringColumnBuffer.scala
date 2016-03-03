@@ -20,7 +20,7 @@ import com.actian.spark_vector.colbuffer.util.StringConversion
 
 import java.nio.ByteBuffer
 
-private class ByteLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision:Int, scale: Int, nullable: Boolean) extends
+private class ByteLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
               ByteEncodedStringColumnBuffer(valueCount, name, index, precision, scale, nullable) {
 
   override protected def encode(str: String): Array[Byte] = {

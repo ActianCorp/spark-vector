@@ -19,13 +19,13 @@ import java.nio.charset.Charset;
 
 /** Helper functions and constants for `String` conversions. */
 object StringConversion {
-  private final val UTF8CHARSET = Charset.forName("UTF-8")
-  private final val HIGH_BIT_MASK = 0x80.toByte
-  private final val MULTI_BYTE_START_MASK = 0xC0.toByte
-  private final val EMPTY_STRING = Array[Byte]()
+  private final val UTF8CharSet = Charset.forName("UTF-8")
+  private final val HighBitMask = 0x80.toByte
+  private final val MultiByteStartMask = 0xC0.toByte
+  private final val EmptyString = Array[Byte]()
 
   def truncateToUTF8Bytes(value: String, targetSize: Int): Array[Byte] = {
-    val bytes = value.getBytes(UTF8CHARSET)
+    val bytes = value.getBytes(UTF8CharSet)
 
     if (bytes.length <= targetSize) {
       /** Encoded bytes fit within wanted size */
@@ -35,8 +35,8 @@ object StringConversion {
        *  Find from the end of the array the first byte which is a single
        *  byte character or the start of a multi-byte character
        */
-      def condHigh(i: Int): Boolean = (bytes(i) & HIGH_BIT_MASK) != HIGH_BIT_MASK
-      def condMulti(i: Int): Boolean = (bytes(i) & MULTI_BYTE_START_MASK) == MULTI_BYTE_START_MASK
+      def condHigh(i: Int): Boolean = (bytes(i) & HighBitMask) != HighBitMask
+      def condMulti(i: Int): Boolean = (bytes(i) & MultiByteStartMask) == MultiByteStartMask
       val ret = (targetSize to 0 by -1).toList
                                        .find(i => condHigh(i) || condMulti(i))
                                        .map(i => if (condHigh(i)) bytes.slice(0, Math.min(targetSize, i + 1)) else bytes.slice(0, i))
@@ -44,19 +44,19 @@ object StringConversion {
         ret.get
       } else {
         /** No characters from the source fit in the target size buffer */
-        EMPTY_STRING
+        EmptyString
       }
     }
   }
 
   def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = {
     if (value.length() <= targetSize) {
-      value.getBytes(UTF8CHARSET);
+      value.getBytes(UTF8CharSet);
     } else {
       if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
-        value.substring(0, targetSize - 1).getBytes(UTF8CHARSET);
+        value.substring(0, targetSize - 1).getBytes(UTF8CharSet);
       } else {
-        value.substring(0, targetSize).getBytes(UTF8CHARSET);
+        value.substring(0, targetSize).getBytes(UTF8CharSet);
       }
     }
   }

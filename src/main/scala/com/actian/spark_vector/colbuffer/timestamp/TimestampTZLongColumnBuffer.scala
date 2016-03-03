@@ -17,12 +17,12 @@ package com.actian.spark_vector.colbuffer.timestamp
 
 /** `ColumnBuffer` object for `time with time zone` types (scale [0, 4]). */
 object TimestampTZLongColumnBuffer extends TimestampTZColumnBufferInstance with TimestampLongColumnBufferInstance {
-  private final val MIN_TIMESTAMP_TZ_LONG_SCALE = 0
-  private final val MAX_TIMESTAMP_TZ_LONG_SCALE = 4
+  private final val MinTimestampTZLongScale = 0
+  private final val MaxTimestampTZLongScale = 4
 
   override protected def adjustToUTC: Boolean = false
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
-    supportsTZColumnType(tpe, scale, MIN_TIMESTAMP_TZ_LONG_SCALE, MAX_TIMESTAMP_TZ_LONG_SCALE)
+    supportsTZColumnType(tpe, scale, MinTimestampTZLongScale, MaxTimestampTZLongScale)
   }
 }

@@ -17,9 +17,9 @@ package com.actian.spark_vector.colbuffer.string
 
 /** `ColumnBuffer` object for `nchar` types (with precision > 1). */
 object ConstantLengthMultiCharStringColumnBuffer extends CharLengthLimitedStringColumnBufferInstance {
-  private final val NCHAR_TYPE_ID = "nchar"
+  private final val NcharTypeId = "nchar"
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(NCHAR_TYPE_ID) && precision > 1
+    tpe.equalsIgnoreCase(NcharTypeId) && precision > 1
   }
 }

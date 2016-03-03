@@ -18,8 +18,8 @@ package com.actian.spark_vector.colbuffer.string
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 
-private class CharLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision:Int, scale: Int, nullable: Boolean) extends
-              ByteEncodedStringColumnBuffer(valueCount, name, index, precision * CharLengthLimitedStringColumnBuffer.MAX_UTF_8_CHAR_SIZE, scale, nullable) {
+private class CharLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
+              ByteEncodedStringColumnBuffer(valueCount, name, index, precision * CharLengthLimitedStringColumnBuffer.MaxUTF8CharSize, scale, nullable) {
 
   override protected def encode(str: String): Array[Byte] = {
     StringConversion.truncateToUTF16CodeUnits(str, precision)
@@ -27,7 +27,7 @@ private class CharLengthLimitedStringColumnBuffer(valueCount: Int, name: String,
 }
 
 private object CharLengthLimitedStringColumnBuffer {
-  private final val MAX_UTF_8_CHAR_SIZE = 4
+  private final val MaxUTF8CharSize = 4
 }
 
 private[colbuffer] trait CharLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance[String] {
