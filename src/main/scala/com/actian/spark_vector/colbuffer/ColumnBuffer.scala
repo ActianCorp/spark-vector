@@ -52,7 +52,7 @@ abstract class ColumnBuffer[@specialized T: ClassTag](valueCount: Int, valueWidt
   def putNull(): Unit = {
     if (!nullable) {
       throw new IllegalArgumentException(
-                "Cannot store NULL values in a non-nullable column '" + name + "'.")
+                s"Cannot store NULL values in a non-nullable column '${name}'.")
     }
     markers.put(NullMarker)
     values.put(nullValue)
