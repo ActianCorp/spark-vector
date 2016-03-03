@@ -20,7 +20,7 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class LongColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Long](valueCount, LongColumnBuffer.LongSize, LongColumnBuffer.LongSize, name, index, nullable) {
+              ColumnBuffer[Long](valueCount, LongSize, LongSize, name, index, nullable) {
 
   override protected def put(source: Long, buffer: ByteBuffer): Unit = {
     buffer.putLong(source)
@@ -29,9 +29,6 @@ private class LongColumnBuffer(valueCount: Int, name: String, index: Int, nullab
 
 /** `ColumnBuffer` object for `bigint`, `integer8` types. */
 object LongColumnBuffer extends ColumnBufferInstance[Long] {
-  private final val LongSize = 8
-  private final val LongTypeId1 = "bigint"
-  private final val LongTypeId2 = "integer8"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Long] = {

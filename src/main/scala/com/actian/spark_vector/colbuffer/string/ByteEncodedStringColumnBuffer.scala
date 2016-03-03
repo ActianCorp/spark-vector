@@ -21,8 +21,7 @@ import java.nio.ByteBuffer
 
 private[colbuffer] abstract class ByteEncodedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int,
                                                                 scale: Int, nullable: Boolean) extends
-                                  ColumnBuffer[String](valueCount, precision + 1, ByteEncodedStringColumnBuffer.ByteSize,
-                                                       name, index, nullable) {
+                                  ColumnBuffer[String](valueCount, precision + 1, ByteSize, name, index, nullable) {
 
   override protected def put(source: String, buffer: ByteBuffer): Unit = {
     buffer.put(encode(source))
@@ -30,8 +29,4 @@ private[colbuffer] abstract class ByteEncodedStringColumnBuffer(valueCount: Int,
   }
 
   protected def encode(str: String): Array[Byte]
-}
-
-private object ByteEncodedStringColumnBuffer {
-  final val ByteSize = 1
 }

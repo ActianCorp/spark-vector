@@ -19,13 +19,13 @@ import java.nio.charset.Charset;
 
 /** Helper functions and constants for `String` conversions. */
 object StringConversion {
-  private final val UTF8CharSet = Charset.forName("UTF-8")
+  private final val UTF8Charset = Charset.forName("UTF-8")
   private final val HighBitMask = 0x80.toByte
   private final val MultiByteStartMask = 0xC0.toByte
   private final val EmptyString = Array[Byte]()
 
   def truncateToUTF8Bytes(value: String, targetSize: Int): Array[Byte] = {
-    val bytes = value.getBytes(UTF8CharSet)
+    val bytes = value.getBytes(UTF8Charset)
 
     if (bytes.length <= targetSize) {
       /** Encoded bytes fit within wanted size */
@@ -51,12 +51,12 @@ object StringConversion {
 
   def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = {
     if (value.length() <= targetSize) {
-      value.getBytes(UTF8CharSet);
+      value.getBytes(UTF8Charset);
     } else {
       if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
-        value.substring(0, targetSize - 1).getBytes(UTF8CharSet);
+        value.substring(0, targetSize - 1).getBytes(UTF8Charset);
       } else {
-        value.substring(0, targetSize).getBytes(UTF8CharSet);
+        value.substring(0, targetSize).getBytes(UTF8Charset);
       }
     }
   }

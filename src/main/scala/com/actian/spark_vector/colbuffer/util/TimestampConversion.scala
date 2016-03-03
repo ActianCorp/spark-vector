@@ -19,11 +19,9 @@ import java.math.BigInteger
 
 /** Helper functions and constants for `Timestamp` conversions. */
 object TimestampConversion {
-  final val SecondsInMinute = 60
-  final val SecondsBeforeEpoch = 62167219200L
-  final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
-  final val NanosecondsScale = 9
-  final val NanosecondsFactorBI = BigInteger.valueOf(Math.pow(10, NanosecondsScale).toLong)
+  // scalastyle:off magic.number
+  private final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
+  private final val NanosecondsFactorBI = BigInteger.valueOf(Math.pow(10, NanosecondsScale).toLong)
 
   final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger  = {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(BigInteger.valueOf(offsetSeconds)).add(SecondsBeforeEpochBI)
@@ -43,4 +41,5 @@ object TimestampConversion {
   trait TimestampConverter {
     def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger
   }
+  // scalastyle:on magic.number
 }

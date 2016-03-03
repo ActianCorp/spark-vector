@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import java.math.BigDecimal
 
 private class DecimalLongColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
-              DecimalColumnBuffer(valueCount, DecimalLongColumnBuffer.DecimalLongSize, name, index, precision, scale, nullable) {
+              DecimalColumnBuffer(valueCount, LongSize, name, index, precision, scale, nullable) {
 
   override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = {
     buffer.putLong(scaledSource.longValue())
@@ -30,10 +30,10 @@ private class DecimalLongColumnBuffer(valueCount: Int, name: String, index: Int,
 
 /** `ColumnBuffer` object for `decimal(<long>)` types. */
 object DecimalLongColumnBuffer extends DecimalColumnBufferInstance {
-  private final val DecimalLongSize = 8
-
+  // scalastyle:off magic.number
   final override protected def minPrecision = 10
   final override protected def maxPrecision = 18
+  // scalastyle:on magic.number
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Number] = {

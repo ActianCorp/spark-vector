@@ -20,7 +20,7 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class DoubleColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Double](valueCount, DoubleColumnBuffer.DoubleSize, DoubleColumnBuffer.DoubleSize, name, index, nullable) {
+              ColumnBuffer[Double](valueCount, DoubleSize, DoubleSize, name, index, nullable) {
 
   override protected def put(source: Double, buffer: ByteBuffer): Unit = {
     buffer.putDouble(source)
@@ -29,10 +29,6 @@ private class DoubleColumnBuffer(valueCount: Int, name: String, index: Int, null
 
 /** `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
 object DoubleColumnBuffer extends ColumnBufferInstance[Double] {
-  private final val DoubleSize = 8
-  private final val DoubleTypeId1 = "float"
-  private final val DoubleTypeId2 = "float8";
-  private final val DoubleTypeId3 = "double precision"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[Double] = {

@@ -19,6 +19,7 @@ import java.math.BigInteger
 
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
+  // scalastyle:off magic.number
 
   final def convertToLongLongByteArray(value: BigInteger): Array[Byte] = {
     val source = value.toByteArray()
@@ -39,4 +40,5 @@ object BigIntegerConversion {
 
     target
   }
+  // scalastyle:on magic.number
 }

@@ -44,8 +44,6 @@ private[colbuffer] abstract class DecimalColumnBuffer(valueCount: Int, valueWidt
 }
 
 private[colbuffer] trait DecimalColumnBufferInstance extends ColumnBufferInstance[Number] {
-  private final val DecimalTypeId = "decimal"
-
   protected def minPrecision: Int
   protected def maxPrecision: Int
 

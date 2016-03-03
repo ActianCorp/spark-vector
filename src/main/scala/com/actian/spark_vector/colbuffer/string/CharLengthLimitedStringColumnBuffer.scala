@@ -27,7 +27,7 @@ private class CharLengthLimitedStringColumnBuffer(valueCount: Int, name: String,
 }
 
 private object CharLengthLimitedStringColumnBuffer {
-  private final val MaxUTF8CharSize = 4
+  private final val MaxUTF8CharSize = IntSize
 }
 
 private[colbuffer] trait CharLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance[String] {

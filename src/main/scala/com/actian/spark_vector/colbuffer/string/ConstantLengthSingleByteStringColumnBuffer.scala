@@ -32,7 +32,6 @@ private class ConstantLengthSingleByteStringColumnBuffer(valueCount: Int, name: 
 
 /** `ColumnBuffer` object for `char` types (with precision = 1). */
 object ConstantLengthSingleByteStringColumnBuffer extends ColumnBufferInstance[String] {
-  private final val CharTypeId = "char"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {

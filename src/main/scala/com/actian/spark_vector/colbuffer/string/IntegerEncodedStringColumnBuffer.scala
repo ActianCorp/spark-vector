@@ -21,8 +21,7 @@ import java.nio.ByteBuffer
 
 private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int,
                                                                    scale: Int, nullable: Boolean) extends
-                                  ColumnBuffer[String](valueCount, IntegerEncodedStringColumnBuffer.CharSize,
-                                                       IntegerEncodedStringColumnBuffer.CharSize, name, index, nullable) {
+                                  ColumnBuffer[String](valueCount, IntSize, IntSize, name, index, nullable) {
 
   override protected def put(source: String, buffer: ByteBuffer): Unit = {
     if (source.isEmpty()) {
@@ -36,6 +35,5 @@ private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(valueCount: I
 }
 
 private object IntegerEncodedStringColumnBuffer {
-  final val CharSize = 4
   final val Whitespace = '\u0020'
 }

@@ -22,14 +22,7 @@ import java.util.Calendar
 import org.apache.spark.Logging
 
 /** Helper functions and constants for `Time` conversions. */
-object TimeConversion extends {
-  final val MillisecondsScale = 3
-  final val MillisecondsInMinute = 60 * 1000
-  final val MillisecondsInDay = 24 * 60 * MillisecondsInMinute
-  final val NanosecondsScale = 9;
-  final val NanosecondsInMilli = 1000000;
-  final val NanosecondsInDay = (MillisecondsInDay.toLong * NanosecondsInMilli)
-  private final val PowersOfTen = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
+object TimeConversion {
 
   final def timeInNanos(source: Timestamp): Long = {
     (source.getTime() / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos()

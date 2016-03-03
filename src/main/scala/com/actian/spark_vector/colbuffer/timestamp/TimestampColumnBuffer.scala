@@ -16,8 +16,7 @@
 package com.actian.spark_vector.colbuffer.timestamp
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.TimeConversion
-import com.actian.spark_vector.colbuffer.util.TimestampConversion
+import com.actian.spark_vector.colbuffer.util._
 
 import org.apache.spark.Logging
 
@@ -33,7 +32,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(valueCount: Int, valueWi
     if (adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
     }
-    val convertedSource = converter.convert(source.getTime() / 1000, source.getNanos(), 0, scale)
+    val convertedSource = converter.convert(source.getTime() / PowersOfTen(MillisecondsScale), source.getNanos(), 0, scale)
     putConverted(convertedSource, buffer)
   }
 
@@ -46,7 +45,6 @@ private[colbuffer] trait TimestampColumnBufferInstance extends ColumnBufferInsta
 }
 
 private[colbuffer] trait TimestampLZColumnBufferInstance extends TimestampColumnBufferInstance {
-  private final val TimestampLZTypeId = "timestamp with local time zone"
 
   protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     tpe.equalsIgnoreCase(TimestampLZTypeId) && minScale <= columnScale && columnScale <= maxScale
@@ -64,8 +62,6 @@ private[colbuffer] trait TimestampLZColumnBufferInstance extends TimestampColumn
 }
 
 private[colbuffer] trait TimestampNZColumnBufferInstance extends TimestampColumnBufferInstance {
-  private final val TimestampNZTypeId1 = "timestamp"
-  private final val TimestampNZTypeId2 = "timestamp without time zone"
 
   protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     (tpe.equalsIgnoreCase(TimestampNZTypeId1) || tpe.equalsIgnoreCase(TimestampNZTypeId2)) &&
@@ -84,13 +80,13 @@ private[colbuffer] trait TimestampNZColumnBufferInstance extends TimestampColumn
 }
 
 private[colbuffer] trait TimestampTZColumnBufferInstance extends TimestampColumnBufferInstance {
-  private final val TimestampTZTypeId = "timestamp with time zone"
 
   protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     tpe.equalsIgnoreCase(TimestampTZTypeId) && minScale <= columnScale && columnScale <= maxScale
   }
 
   private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
+    // scalastyle:off magic.number
     private final val TimeMask = new BigInteger(timeMask)
     private final val ZoneMask = BigInteger.valueOf(0x7FF)
 
@@ -107,8 +103,9 @@ private[colbuffer] trait TimestampTZColumnBufferInstance extends TimestampColumn
 
     override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger = {
       val scaledTimestamp = TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, 0, scale)
-      scaledTimestamp.shiftLeft(11).and(TimeMask).or(BigInteger.valueOf(offsetSeconds / TimestampConversion.SecondsInMinute).and(ZoneMask))
+      scaledTimestamp.shiftLeft(11).and(TimeMask).or(BigInteger.valueOf(offsetSeconds / SecondsInMinute).and(ZoneMask))
     }
+    // scalastyle:off magic.number
   }
 
   override protected def createConverter(): TimestampConversion.TimestampConverter = {

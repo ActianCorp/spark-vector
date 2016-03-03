@@ -20,7 +20,7 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class BooleanColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Boolean](valueCount, BooleanColumnBuffer.BooleanSize, BooleanColumnBuffer.BooleanSize, name, index, nullable) {
+              ColumnBuffer[Boolean](valueCount, BooleanSize, BooleanSize, name, index, nullable) {
 
   override protected def put(source: Boolean, buffer: ByteBuffer): Unit = {
     source.booleanValue() match {
@@ -32,8 +32,6 @@ private class BooleanColumnBuffer(valueCount: Int, name: String, index: Int, nul
 
 /** `ColumnBuffer` object for `boolean` types. */
 object BooleanColumnBuffer extends ColumnBufferInstance[Boolean] {
-  private final val BooleanSize = 1
-  private final val BooleanTypeId = "boolean"
   private final val True = 1:Byte
   private final val False = 0:Byte
 

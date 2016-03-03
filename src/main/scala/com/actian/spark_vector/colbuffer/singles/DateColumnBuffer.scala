@@ -16,24 +16,22 @@
 package com.actian.spark_vector.colbuffer.singles
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.TimeConversion
+import com.actian.spark_vector.colbuffer.util._
 
 import java.nio.ByteBuffer
 import java.sql.Date
 
 private class DateColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Date](valueCount, DateColumnBuffer.DateSize, DateColumnBuffer.DateSize, name, index, nullable) {
+              ColumnBuffer[Date](valueCount, DateSize, DateSize, name, index, nullable) {
 
   override protected def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
-    buffer.putInt((source.getTime() / TimeConversion.MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
+    buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
 }
 
 /** `ColumnBuffer` object for `ansidate` types. */
 object DateColumnBuffer extends ColumnBufferInstance[Date] {
-  private final val DateSize = 4
-  private final val DateTypeId = "ansidate"
   private final val DaysBeforeEpoch = 719528
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,

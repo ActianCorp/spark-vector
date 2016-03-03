@@ -25,15 +25,11 @@ import java.sql.Timestamp
 
 private class TimestampLongLongColumnBuffer(valueCount: Int, name: String, index: Int, scale: Int, nullable: Boolean,
                                             converter: TimestampConversion.TimestampConverter, adjustToUTC: Boolean) extends
-              TimestampColumnBuffer(valueCount, TimestampLongLongColumnBuffer.TimestampLongLongSize, name, index, scale, nullable, converter, adjustToUTC) {
+              TimestampColumnBuffer(valueCount, LongLongSize, name, index, scale, nullable, converter, adjustToUTC) {
 
   override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = {
     buffer.put(BigIntegerConversion.convertToLongLongByteArray(converted))
   }
-}
-
-private object TimestampLongLongColumnBuffer {
-  private final val TimestampLongLongSize = 16
 }
 
 private[colbuffer] trait TimestampLongLongColumnBufferInstance extends TimestampColumnBufferInstance {

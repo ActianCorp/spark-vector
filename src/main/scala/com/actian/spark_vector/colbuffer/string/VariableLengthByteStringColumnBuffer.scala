@@ -15,9 +15,10 @@
  */
 package com.actian.spark_vector.colbuffer.string
 
+import com.actian.spark_vector.colbuffer._
+
 /** `ColumnBuffer` object for `varchar` types (with precision > 0). */
 object VariableLengthByteStringColumnBuffer extends ByteLengthLimitedStringColumnBufferInstance {
-  private final val VarcharTypeId = "varchar"
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
     tpe.equalsIgnoreCase(VarcharTypeId) && precision > 0

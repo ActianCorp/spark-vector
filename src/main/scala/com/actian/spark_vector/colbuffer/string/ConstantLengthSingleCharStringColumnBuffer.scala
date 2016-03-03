@@ -32,7 +32,6 @@ private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: 
 
 /** `ColumnBuffer` object for `nchar` types (with precision = 1). */
 object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance[String] {
-  private final val NcharTypeId = "nchar"
 
   private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
                                                  nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {

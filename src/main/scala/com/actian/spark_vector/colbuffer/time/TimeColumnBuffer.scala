@@ -44,7 +44,6 @@ private[colbuffer] trait TimeColumnBufferInstance extends ColumnBufferInstance[T
 }
 
 private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TimeLZTypeId = "time with local time zone"
 
   protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     tpe.equalsIgnoreCase(TimeLZTypeId) && minScale <= columnScale && columnScale <= maxScale
@@ -62,8 +61,6 @@ private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInst
 }
 
 private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TimeNZTypeId1 = "time"
-  private final val TimeNZTypeId2 = "time without time zone"
 
   protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     (tpe.equalsIgnoreCase(TimeNZTypeId1) || tpe.equalsIgnoreCase(TimeNZTypeId2)) &&
@@ -82,7 +79,6 @@ private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInst
 }
 
 private[colbuffer] trait TimeTZColumnBufferInstance extends TimeColumnBufferInstance {
-  private final val TimeTZTypeId = "time with time zone"
 
   protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
     tpe.equalsIgnoreCase(TimeTZTypeId) && minScale <= columnScale && columnScale <= maxScale
