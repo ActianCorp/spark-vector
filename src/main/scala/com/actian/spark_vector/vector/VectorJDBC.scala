@@ -29,26 +29,25 @@ import resource.managed
 
 /** Iterator over an ResultSet */
 abstract class ResultSetIterator[T](result: ResultSet) extends Iterator[T] {
-  def extractor: ResultSet => T
+  protected def extractor: ResultSet => T
   override def hasNext: Boolean = result.next()
   override def next(): T = extractor(result)
 }
 
 object ResultSetIterator {
   def apply[T](result: ResultSet)(ex: ResultSet => T): ResultSetIterator[T] = new ResultSetIterator[T](result) {
-    def extractor = ex
+    override protected def extractor = ex
   }
 }
 
 /** Extracts `Rows` out of a `ResultSet` */
-class ResultSetToRowIterator(result: ResultSet) extends ResultSetIterator[Row](result) with Logging with Profiling {
+class ResultSetRowIterator(result: ResultSet) extends ResultSetIterator[Row](result) with Logging with Profiling {
   lazy val numColumns = result.getMetaData.getColumnCount
   lazy val row = collection.mutable.IndexedSeq.fill[Any](numColumns)(null)
-  implicit lazy val prof_accs = profileInit("resultSet extraction")
-  var col = 0
-  def extractor: ResultSet => Row = { rs =>
+  implicit lazy val profAccs = profileInit("resultSet extraction")
+  override protected def extractor: ResultSet => Row = { _ =>
     profile("resultSet extraction")
-    col = 0
+    var col = 0
     while (col < numColumns) {
       row(col) = result.getObject(col + 1)
       col += 1
@@ -115,7 +114,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   def executeQuery[T](sql: String)(op: ResultSet => T): T =
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
 
-  /** Execute a SQL query, transferring closing responsibility of the `Statement` and `ResultSet` to the caller */
+  /** Execute a prepared `SQL` query, transferring closing responsibility of the `Statement` and `ResultSet` to the caller */
   def executeUnmanagedPreparedQuery(sql: String, params: Seq[Any]): (Statement, ResultSet) = {
     val stmt = dbCxn.prepareStatement(sql)
     val rs = stmt.setParams(params).executeQuery

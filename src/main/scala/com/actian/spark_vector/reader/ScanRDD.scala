@@ -22,10 +22,10 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.execution.datasources.jdbc.DriverRegistry
 
-import com.actian.spark_vector.vector.{ ResultSetToRowIterator, VectorConnectionProperties, VectorJDBC }
+import com.actian.spark_vector.vector.{ ResultSetRowIterator, VectorConnectionProperties, VectorJDBC }
 
 /**
- * `Vector` RDD to load data into `Spark` through its `DataStream API`
+ * `Vector` RDD to load data into `Spark` through JDBC
  *
  *  @param connProps contains the read configuration needed to connect to the Vector front-end
  *  @param vectorSelectStatement Vector prepared SQL statement to be issued through JDBC to start exporting data
@@ -37,7 +37,8 @@ class ScanRDD(
     vectorSelectStatement: String,
     vectorSelectParams: Seq[Any] = Nil) extends RDD[Row](sc, Nil) with Logging {
   private var closed = false
-  private var it: ResultSetToRowIterator = null
+  private var it: ResultSetRowIterator = null
+
   override protected def getPartitions = Array(new Partition { def index = 0 })
 
   override protected def getPreferredLocations(split: Partition) = Seq(connProps.host)
@@ -57,11 +58,11 @@ class ScanRDD(
     logDebug(s"Computing partition in ScanRDD by issuing JDBC select statement: $vectorSelectStatement")
     lazy val cxn = new VectorJDBC(connProps)
     lazy val (stmt, rs) = cxn.executeUnmanagedPreparedQuery(vectorSelectStatement, vectorSelectParams)
-    it = new ResultSetToRowIterator(rs)
+    it = new ResultSetRowIterator(rs)
     it
   }
 
-  private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed) {
-    try if (c != null) { c.close } catch { case e: Exception => logWarning(s"Exception closing $resourceName", e) }
+  private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {
+    try { c.close } catch { case e: Exception => logWarning(s"Exception closing $resourceName", e) }
   }
 }
