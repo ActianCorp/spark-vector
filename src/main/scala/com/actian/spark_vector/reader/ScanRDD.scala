@@ -52,7 +52,7 @@ class ScanRDD(
       close(stmt, "statement")
       close(cxn, "vector JDBC connection")
       closed = true
-      if (it != null) it.profilePrint(it.prof_accs)
+      if (it != null) it.profilePrint(it.profAccs)
     }
 
     logDebug(s"Computing partition in ScanRDD by issuing JDBC select statement: $vectorSelectStatement")
