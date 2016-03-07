@@ -19,7 +19,8 @@ import java.nio.channels.SocketChannel
 import scala.BigInt
 import scala.annotation.tailrec
 import org.apache.spark.Logging
-import com.actian.spark_vector.writer.{ DataStreamReader, DataStreamWriter }
+import com.actian.spark_vector.writer.DataStreamWriter
+import com.actian.spark_vector.reader.DataStreamReader
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorException
 

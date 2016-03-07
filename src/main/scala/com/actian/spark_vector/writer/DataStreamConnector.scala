@@ -15,15 +15,12 @@
  */
 package com.actian.spark_vector.writer
 
-import java.io.{ ByteArrayOutputStream, DataOutputStream }
 import java.net.InetSocketAddress
-import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
-
-import scala.annotation.tailrec
 
 import org.apache.spark.Logging
 
+import com.actian.spark_vector.reader.DataStreamReader
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.writer.srp.VectorSRPClient
 

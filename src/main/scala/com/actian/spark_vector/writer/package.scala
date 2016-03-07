@@ -24,10 +24,10 @@ package com.actian.spark_vector
  *  `create table` SQL statement that will be first submitted to `Vector`.
  *   - helpers [[RowWriter]] and [[DataStreamWriter]] objects are created and they contain all the needed information for a `Spark` worker to be able to process,
  *  serialize and communicate binary data to `Vector` end points.
- *   - a [[DataStreamRDD]] is created, containing as many partitions as there are `DataStreams` and that will create a `NarrowDependency` to the input `RDD`
+ *   - an [[InsertRDD]] is created, containing as many partitions as there are `DataStreams` and that will create a `NarrowDependency` to the input `RDD`
  *   - driver initiates the load, issuing a SQL query to `Vector` leader node
  *   - driver initiates Spark job => [[RowWriter]] and [[DataStreamWriter]] objects, part of the closure, are serialized and sent to worker processes
- *   - each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when [[DataStreamRDD]] was created), serializes it into
+ *   - each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when [[InsertRDD]] was created), serializes it into
  *  `ByteBuffers` and then flushes them through the socket towards one (and only one) predetermined `Vector` end point
  *   - during this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a `commit` or `abort` depending on whether any of the
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector` yet.
