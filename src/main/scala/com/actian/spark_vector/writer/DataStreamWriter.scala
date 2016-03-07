@@ -94,7 +94,7 @@ class DataStreamWriter[T <% Seq[Any]](
   }
 
   /**
-   * This function is executed once for each partition of `DataStreamRDD` and it will open a socket connection, process all data
+   * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
    * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = {
