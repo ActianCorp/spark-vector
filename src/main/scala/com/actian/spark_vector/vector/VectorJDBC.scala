@@ -131,7 +131,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
       })
     } catch {
       case exc: Exception =>
-        logError("Unable to retrieve metadata for table '${tableName}'", exc)
+        logError(s"Unable to retrieve metadata for table '${tableName}'", exc)
         throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}")
     }
   }
