@@ -35,29 +35,29 @@ object StringConversion {
        *  Find from the end of the array the first byte which is a single
        *  byte character or the start of a multi-byte character
        */
+      var i = targetSize
+      var ret = EmptyString
       def condHigh(i: Int): Boolean = (bytes(i) & HighBitMask) != HighBitMask
       def condMulti(i: Int): Boolean = (bytes(i) & MultiByteStartMask) == MultiByteStartMask
-      val ret = (targetSize to 0 by -1).toList
-                                       .find(i => condHigh(i) || condMulti(i))
-                                       .map(i => if (condHigh(i)) bytes.slice(0, Math.min(targetSize, i + 1)) else bytes.slice(0, i))
-      if (ret.isDefined) {
-        ret.get
-      } else {
-        /** No characters from the source fit in the target size buffer */
-        EmptyString
+
+      while (i >= 0) {
+        if (condHigh(i)) {
+          ret = bytes.slice(0, Math.min(targetSize, i + 1))
+        } else if (condMulti(i)) {
+          ret = bytes.slice(0, i)
+        }
+    	i = if (ret == EmptyString) i - 1 else -1
       }
+
+      ret
     }
   }
 
-  def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = {
-    if (value.length() <= targetSize) {
-      value.getBytes(UTF8Charset);
-    } else {
-      if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
-        value.substring(0, targetSize - 1).getBytes(UTF8Charset);
-      } else {
-        value.substring(0, targetSize).getBytes(UTF8Charset);
-      }
-    }
+  def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = if (value.length() <= targetSize) {
+    value.getBytes(UTF8Charset);
+  } else if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
+    value.substring(0, targetSize - 1).getBytes(UTF8Charset);
+  } else {
+    value.substring(0, targetSize).getBytes(UTF8Charset);
   }
 }

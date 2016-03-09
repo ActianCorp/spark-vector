@@ -20,21 +20,24 @@ import java.math.BigInteger
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
   // scalastyle:off magic.number
-
   final def convertToLongLongByteArray(value: BigInteger): Array[Byte] = {
     val source = value.toByteArray()
     val target = Array.fill[Byte](16)(0:Byte)
     val remaining = target.length - source.length
-    var resultIndex = 0
+    var sourceIndex = source.length - 1
+    var targetIndex = 0
 
-    for (sourceIndex <- source.length - 1 to 0 by -1 if resultIndex < target.length) {
-      target.update(resultIndex, source(sourceIndex))
-      resultIndex += 1
+    while (sourceIndex >= 0 && targetIndex < target.length) {
+      target.update(targetIndex, source(sourceIndex))
+      targetIndex += 1
+      sourceIndex -= 1
     }
 
     if (remaining > 0) {
-      for (index <- 0 to remaining - 1) {
+      var index = 0
+      while (index < remaining) {
         target.update(source.length + index, if (value.signum() >= 0) 0 else 0xFF.toByte)
+        index += 1
       }
     }
 

@@ -21,9 +21,9 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vector.vector.ColumnMetadata
 
-import com.actian.spark_vector.colbuffer.{ ColumnBuffer, ColumnBufferFactory }
+import com.actian.spark_vector.colbuffer.{ ColumnBuffer }
 
-import scala.reflect._
+import scala.reflect.classTag
 
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
@@ -37,18 +37,15 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
    * A list of column buffers, one for each column of the table inserted to that will be used to serialize input `RDD` rows into the
    * buffer for the appropriate table column
    */
-  private lazy val columnBufs =
-    tableSchema.zipWithIndex
-      .map {
-        case (col, idx) =>
-          logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
-            s"nullable=${col.nullable}, vectorsize=${DataStreamWriter.vectorSize}")
-          val columnBufOpt = ColumnBufferFactory(col.name, idx, col.typeName, col.precision, col.scale, col.nullable, DataStreamWriter.vectorSize)
-          if (columnBufOpt.isEmpty) {
-            throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
-          }
-          columnBufOpt.get
+  private lazy val columnBufs = tableSchema.toList.map {
+    case col =>
+      logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
+        s"nullable=${col.nullable}, vectorsize=${DataStreamWriter.vectorSize}")
+      ColumnBuffer(col.name, col.typeName, col.precision, col.scale, col.nullable, DataStreamWriter.vectorSize) match {
+        case Some(cb) => cb
+        case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
       }
+    }
 
   /**
    * A list of functions (one per column buffer) to write values (Any for now) into its corresponding column buffer, and performing the necessary type casts.

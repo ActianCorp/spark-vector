@@ -22,19 +22,14 @@ import java.nio.ByteBuffer
 import java.math.BigInteger
 import java.sql.Timestamp
 
-private class TimestampLongColumnBuffer(valueCount: Int, name: String, index: Int, scale: Int, nullable: Boolean,
-                                        converter: TimestampConversion.TimestampConverter, adjustToUTC: Boolean) extends
-              TimestampColumnBuffer(valueCount, LongSize, name, index, scale, nullable, converter, adjustToUTC) {
+private class TimestampLongColumnBuffer(maxValueCount: Int, name: String, scale: Int, nullable: Boolean, converter: TimestampConversion.TimestampConverter,
+  adjustToUTC: Boolean) extends TimestampColumnBuffer(maxValueCount, LongSize, name, scale, nullable, converter, adjustToUTC) {
 
-  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = {
-    buffer.putLong(converted.longValue())
-  }
+  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(converted.longValue())
 }
 
 private[colbuffer] trait TimestampLongColumnBufferInstance extends TimestampColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Timestamp] = {
-     new TimestampLongColumnBuffer(maxRowCount, name, index, scale, nullable, createConverter(), adjustToUTC)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+     new TimestampLongColumnBuffer(maxValueCount, name, scale, nullable, createConverter(), adjustToUTC)
 }

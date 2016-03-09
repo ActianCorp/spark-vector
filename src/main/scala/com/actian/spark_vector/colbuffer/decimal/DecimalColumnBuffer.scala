@@ -21,13 +21,10 @@ import java.lang.Number
 import java.math.BigDecimal
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class DecimalColumnBuffer(valueCount: Int, valueWidth: Int, name: String, index: Int,
-                                                      precision: Int, scale: Int, nullable: Boolean) extends
-                                  ColumnBuffer[Number](valueCount, valueWidth, valueWidth, name, index, nullable) {
+private[colbuffer] abstract class DecimalColumnBuffer(valueCount: Int, valueWidth: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  ColumnBuffer[Number](valueCount, valueWidth, valueWidth, name, nullable) {
 
-  override def put(source: Number, buffer: ByteBuffer): Unit = {
-    putScaled(movePoint(new BigDecimal(source.toString()), precision, scale), buffer)
-  }
+  override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), precision, scale), buffer)
 
   protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit
 
@@ -43,9 +40,9 @@ private[colbuffer] abstract class DecimalColumnBuffer(valueCount: Int, valueWidt
   }
 }
 
-private[colbuffer] trait DecimalColumnBufferInstance extends ColumnBufferInstance[Number] {
-  protected def minPrecision: Int
-  protected def maxPrecision: Int
+private[colbuffer] trait DecimalColumnBufferInstance extends ColumnBufferInstance {
+  protected val minPrecision: Int
+  protected val maxPrecision: Int
 
   private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
     tpe.equalsIgnoreCase(DecimalTypeId) && 0 < precision && 0 <= scale && scale <= precision &&

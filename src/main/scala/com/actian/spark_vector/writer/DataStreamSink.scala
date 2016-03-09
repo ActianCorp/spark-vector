@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
-case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
+case class DataStreamSink(implicit socket: SocketChannel) {
   import DataStreamWriter._
   /**
    * The write position (how many bytes have already been written to `socket`). Used to
@@ -39,20 +39,16 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
     pos = pos + values.limit()
   }
 
-  private def align(size: Int): Unit = {
-    RowWriter.padding(pos, size) match {
-      case x if x > 0 =>
-        writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
-        pos = pos + x
-      case _ =>
-    }
+  private def align(size: Int): Unit = RowWriter.padding(pos, size) match {
+    case x if x > 0 =>
+      writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
+      pos = pos + x
+    case _ =>
   }
 
-  // scalastyle:off magic.number
-  override def write(columnBuf: ColumnBuffer[_]): Unit = {
+  def write(columnBuf: ColumnBuffer[_]): Unit = {
     columnBuf.flip()
     writeColumn(columnBuf.values, columnBuf.markers, columnBuf.alignSize, columnBuf.nullable)
     columnBuf.clear()
   }
-  // scalastyle:on magic.number
 }

@@ -18,7 +18,6 @@ package com.actian.spark_vector
 /** Implements buffering (and value serialization) for `Vector` columns */
 package object colbuffer {
   /** Common constants (for types and sizes) */
-  // scalastyle:off magic.number
   final val ByteSize = 1
   final val ByteTypeId1 = "tinyint"
   final val ByteTypeId2 = "integer1"
@@ -56,5 +55,4 @@ package object colbuffer {
   final val TimestampNZTypeId1 = "timestamp"
   final val TimestampNZTypeId2 = "timestamp without time zone"
   final val TimestampTZTypeId = "timestamp with time zone"
-  // scalastyle:on magic.number
 }

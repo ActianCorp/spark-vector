@@ -24,9 +24,8 @@ import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.sql.Timestamp
 
-private[colbuffer] abstract class TimestampColumnBuffer(valueCount: Int, valueWidth: Int, name: String, index: Int, scale: Int, nullable: Boolean,
-                                                        converter: TimestampConversion.TimestampConverter, adjustToUTC: Boolean) extends
-                                  ColumnBuffer[Timestamp](valueCount, valueWidth, valueWidth, name, index, nullable) {
+private[colbuffer] abstract class TimestampColumnBuffer(maxValueCount: Int, valueWidth: Int, name: String, scale: Int, nullable: Boolean,
+  converter: TimestampConversion.TimestampConverter, adjustToUTC: Boolean) extends ColumnBuffer[Timestamp](maxValueCount, valueWidth, valueWidth, name, nullable) {
 
   override protected def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (adjustToUTC) {
@@ -39,51 +38,43 @@ private[colbuffer] abstract class TimestampColumnBuffer(valueCount: Int, valueWi
   protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit
 }
 
-private[colbuffer] trait TimestampColumnBufferInstance extends ColumnBufferInstance[Timestamp] {
-  protected def adjustToUTC: Boolean = true
+private[colbuffer] trait TimestampColumnBufferInstance extends ColumnBufferInstance {
+  protected val adjustToUTC: Boolean = true
   protected def createConverter(): TimestampConversion.TimestampConverter
 }
 
 private[colbuffer] trait TimestampLZColumnBufferInstance extends TimestampColumnBufferInstance {
 
-  protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+  protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean =
     tpe.equalsIgnoreCase(TimestampLZTypeId) && minScale <= columnScale && columnScale <= maxScale
-  }
 
   private class TimestampLZConverter extends TimestampConversion.TimestampConverter {
-    override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger = {
+
+    override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger =
       TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, 0, scale)
-    }
   }
 
-  override protected def createConverter(): TimestampConversion.TimestampConverter = {
-    new TimestampLZConverter()
-  }
+  override protected def createConverter(): TimestampConversion.TimestampConverter = new TimestampLZConverter()
 }
 
 private[colbuffer] trait TimestampNZColumnBufferInstance extends TimestampColumnBufferInstance {
 
-  protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
-    (tpe.equalsIgnoreCase(TimestampNZTypeId1) || tpe.equalsIgnoreCase(TimestampNZTypeId2)) &&
-    minScale <= columnScale && columnScale <= maxScale
-  }
+  protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean =
+    (tpe.equalsIgnoreCase(TimestampNZTypeId1) || tpe.equalsIgnoreCase(TimestampNZTypeId2)) && minScale <= columnScale && columnScale <= maxScale
 
   private class TimestampNZConverter extends TimestampConversion.TimestampConverter {
-    override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger = {
+
+    override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger =
       TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, offsetSeconds, scale)
-    }
   }
 
-  override protected def createConverter(): TimestampConversion.TimestampConverter = {
-    new TimestampNZConverter()
-  }
+  override protected def createConverter(): TimestampConversion.TimestampConverter = new TimestampNZConverter()
 }
 
 private[colbuffer] trait TimestampTZColumnBufferInstance extends TimestampColumnBufferInstance {
 
-  protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+  protected def supportsTZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean =
     tpe.equalsIgnoreCase(TimestampTZTypeId) && minScale <= columnScale && columnScale <= maxScale
-  }
 
   private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
     // scalastyle:off magic.number
@@ -95,8 +86,10 @@ private[colbuffer] trait TimestampTZColumnBufferInstance extends TimestampColumn
       val mask = new Array[Byte](16)
       mask.update(0, 0.toByte)
       mask.update(1, 248.toByte)
-      for (i <- 2 to mask.length - 1) {
+      var i = 2
+      while (i < mask.length) {
         mask.update(i, 0xFF.toByte)
+        i += 1
       }
       mask
     }
@@ -108,7 +101,5 @@ private[colbuffer] trait TimestampTZColumnBufferInstance extends TimestampColumn
     // scalastyle:off magic.number
   }
 
-  override protected def createConverter(): TimestampConversion.TimestampConverter = {
-    new TimestampTZConverter()
-  }
+  override protected def createConverter(): TimestampConversion.TimestampConverter = new TimestampTZConverter()
 }

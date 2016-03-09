@@ -20,7 +20,6 @@ object TimeNZLongColumnBuffer extends TimeNZColumnBufferInstance with TimeLongCo
   private final val MinTimeNZLongScale = 5
   private final val MaxTimeNZLongScale = 9
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
     supportsNZColumnType(tpe, scale, MinTimeNZLongScale, MaxTimeNZLongScale)
-  }
 }

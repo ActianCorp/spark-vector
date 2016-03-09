@@ -20,18 +20,14 @@ import com.actian.spark_vector.colbuffer.util.StringConversion
 
 import java.nio.ByteBuffer
 
-private class ByteLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
-              ByteEncodedStringColumnBuffer(valueCount, name, index, precision, scale, nullable) {
+private class ByteLengthLimitedStringColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  ByteEncodedStringColumnBuffer(maxValueCount, name, precision, scale, nullable) {
 
-  override protected def encode(str: String): Array[Byte] = {
-    StringConversion.truncateToUTF8Bytes(str, precision)
-  }
+  override protected def encode(str: String): Array[Byte] = StringConversion.truncateToUTF8Bytes(str, precision)
 }
 
-private[colbuffer] trait ByteLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance[String] {
+private[colbuffer] trait ByteLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {
-    new ByteLengthLimitedStringColumnBuffer(maxRowCount, name, index, precision, scale, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new ByteLengthLimitedStringColumnBuffer(maxValueCount, name, precision, scale, nullable)
 }

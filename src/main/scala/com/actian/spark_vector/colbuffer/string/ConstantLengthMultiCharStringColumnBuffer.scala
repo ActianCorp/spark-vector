@@ -20,7 +20,6 @@ import com.actian.spark_vector.colbuffer._
 /** `ColumnBuffer` object for `nchar` types (with precision > 1). */
 object ConstantLengthMultiCharStringColumnBuffer extends CharLengthLimitedStringColumnBufferInstance {
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
     tpe.equalsIgnoreCase(NcharTypeId) && precision > 1
-  }
 }

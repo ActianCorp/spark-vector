@@ -21,19 +21,14 @@ import com.actian.spark_vector.colbuffer.util.TimeConversion
 import java.nio.ByteBuffer
 import java.sql.Timestamp
 
-private class TimeIntColumnBuffer(valueCount: Int, name: String, index: Int, scale: Int, nullable: Boolean,
-                                  converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends
-              TimeColumnBuffer(valueCount, IntSize, name, index, scale, nullable, converter, adjustToUTC) {
+private class TimeIntColumnBuffer(maxValueCount: Int, name: String, scale: Int, nullable: Boolean, converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends
+  TimeColumnBuffer(maxValueCount, IntSize, name, scale, nullable, converter, adjustToUTC) {
 
-  override protected def putConverted(converted: Long, buffer: ByteBuffer): Unit = {
-    buffer.putInt(converted.toInt)
-  }
+  override protected def putConverted(converted: Long, buffer: ByteBuffer): Unit = buffer.putInt(converted.toInt)
 }
 
 private[colbuffer] trait TimeIntColumnBufferInstance extends TimeColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Timestamp] = {
-     new TimeIntColumnBuffer(maxRowCount, name, index, scale, nullable, createConverter(), adjustToUTC)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+     new TimeIntColumnBuffer(maxValueCount, name, scale, nullable, createConverter(), adjustToUTC)
 }

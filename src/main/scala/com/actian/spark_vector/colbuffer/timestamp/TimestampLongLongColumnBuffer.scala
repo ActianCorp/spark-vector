@@ -23,19 +23,14 @@ import java.nio.ByteBuffer
 import java.math.BigInteger
 import java.sql.Timestamp
 
-private class TimestampLongLongColumnBuffer(valueCount: Int, name: String, index: Int, scale: Int, nullable: Boolean,
-                                            converter: TimestampConversion.TimestampConverter, adjustToUTC: Boolean) extends
-              TimestampColumnBuffer(valueCount, LongLongSize, name, index, scale, nullable, converter, adjustToUTC) {
+private class TimestampLongLongColumnBuffer(maxValueCount: Int, name: String, scale: Int, nullable: Boolean, converter: TimestampConversion.TimestampConverter,
+  adjustToUTC: Boolean) extends TimestampColumnBuffer(maxValueCount, LongLongSize, name, scale, nullable, converter, adjustToUTC) {
 
-  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = {
-    buffer.put(BigIntegerConversion.convertToLongLongByteArray(converted))
-  }
+  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = buffer.put(BigIntegerConversion.convertToLongLongByteArray(converted))
 }
 
 private[colbuffer] trait TimestampLongLongColumnBufferInstance extends TimestampColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Timestamp] = {
-     new TimestampLongLongColumnBuffer(maxRowCount, name, index, scale, nullable, createConverter(), adjustToUTC)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+     new TimestampLongLongColumnBuffer(maxValueCount, name, scale, nullable, createConverter(), adjustToUTC)
 }

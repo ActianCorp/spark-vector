@@ -23,9 +23,8 @@ import org.apache.spark.Logging
 import java.nio.ByteBuffer
 import java.sql.Timestamp
 
-private[colbuffer] abstract class TimeColumnBuffer(valueCount: Int, valueWidth: Int, name: String, index: Int, scale: Int, nullable: Boolean,
-                                                   converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends
-                                  ColumnBuffer[Timestamp](valueCount, valueWidth, valueWidth, name, index, nullable) {
+private[colbuffer] abstract class TimeColumnBuffer(maxValueCount: Int, valueWidth: Int, name: String, scale: Int, nullable: Boolean,
+  converter: TimeConversion.TimeConverter, adjustToUTC: Boolean) extends ColumnBuffer[Timestamp](maxValueCount, valueWidth, valueWidth, name, nullable) {
 
   override protected def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (adjustToUTC) {
@@ -38,44 +37,35 @@ private[colbuffer] abstract class TimeColumnBuffer(valueCount: Int, valueWidth: 
   protected def putConverted(converted: Long, buffer: ByteBuffer): Unit
 }
 
-private[colbuffer] trait TimeColumnBufferInstance extends ColumnBufferInstance[Timestamp] {
-  protected def adjustToUTC: Boolean = true
+private[colbuffer] trait TimeColumnBufferInstance extends ColumnBufferInstance {
+  protected val adjustToUTC: Boolean = true
   protected def createConverter(): TimeConversion.TimeConverter
 }
 
 private[colbuffer] trait TimeLZColumnBufferInstance extends TimeColumnBufferInstance {
 
-  protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
+  protected def supportsLZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean =
     tpe.equalsIgnoreCase(TimeLZTypeId) && minScale <= columnScale && columnScale <= maxScale
-  }
 
   private class TimeLZConverter extends TimeConversion.TimeConverter {
-    override def convert(nanos: Long, scale: Int): Long = {
-      TimeConversion.scaledTime(nanos, scale)
-    }
+
+    override def convert(nanos: Long, scale: Int): Long = TimeConversion.scaledTime(nanos, scale)
   }
 
-  override protected def createConverter(): TimeConversion.TimeConverter = {
-    new TimeLZConverter()
-  }
+  override protected def createConverter(): TimeConversion.TimeConverter = new TimeLZConverter()
 }
 
 private[colbuffer] trait TimeNZColumnBufferInstance extends TimeColumnBufferInstance {
 
-  protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean = {
-    (tpe.equalsIgnoreCase(TimeNZTypeId1) || tpe.equalsIgnoreCase(TimeNZTypeId2)) &&
-    minScale <= columnScale && columnScale <= maxScale
-  }
+  protected def supportsNZColumnType(tpe: String, columnScale: Int, minScale: Int, maxScale: Int): Boolean =
+    (tpe.equalsIgnoreCase(TimeNZTypeId1) || tpe.equalsIgnoreCase(TimeNZTypeId2)) && minScale <= columnScale && columnScale <= maxScale
 
   private class TimeNZConverter extends TimeConversion.TimeConverter {
-    override def convert(nanos: Long, scale: Int): Long = {
-      TimeConversion.scaledTime(nanos, scale)
-    }
+
+    override def convert(nanos: Long, scale: Int): Long = TimeConversion.scaledTime(nanos, scale)
   }
 
-  override protected def createConverter(): TimeConversion.TimeConverter = {
-    new TimeNZConverter()
-  }
+  override protected def createConverter(): TimeConversion.TimeConverter = new TimeNZConverter()
 }
 
 private[colbuffer] trait TimeTZColumnBufferInstance extends TimeColumnBufferInstance {
@@ -87,12 +77,8 @@ private[colbuffer] trait TimeTZColumnBufferInstance extends TimeColumnBufferInst
   private class TimeTZConverter extends TimeConversion.TimeConverter {
     private final val TimeMask = 0xFFFFFFFFFFFFF800L
 
-    override def convert(nanos: Long, scale: Int): Long = {
-      ((TimeConversion.scaledTime(nanos, scale) << 11) & (TimeMask))
-    }
+    override def convert(nanos: Long, scale: Int): Long = ((TimeConversion.scaledTime(nanos, scale) << 11) & (TimeMask))
   }
 
-  override protected def createConverter(): TimeConversion.TimeConverter = {
-    new TimeTZConverter()
-  }
+  override protected def createConverter(): TimeConversion.TimeConverter = new TimeTZConverter()
 }

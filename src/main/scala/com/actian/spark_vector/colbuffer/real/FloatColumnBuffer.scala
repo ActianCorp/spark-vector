@@ -19,23 +19,18 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class FloatColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Float](valueCount, FloatSize, FloatSize, name, index, nullable) {
+private class FloatColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
+  ColumnBuffer[Float](maxValueCount, FloatSize, FloatSize, name, nullable) {
 
-  override def put(source: Float, buffer: ByteBuffer): Unit = {
-    buffer.putFloat(source)
-  }
+  override def put(source: Float, buffer: ByteBuffer): Unit = buffer.putFloat(source)
 }
 
 /** `ColumnBuffer` object for `real`, `float4` types. */
-object FloatColumnBuffer extends ColumnBufferInstance[Float] {
+object FloatColumnBuffer extends ColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Float] = {
-    new FloatColumnBuffer(maxRowCount, name, index, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new FloatColumnBuffer(maxValueCount, name, nullable)
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
     tpe.equalsIgnoreCase(FloatTypeId1) || tpe.equalsIgnoreCase(FloatTypeId2)
-  }
 }

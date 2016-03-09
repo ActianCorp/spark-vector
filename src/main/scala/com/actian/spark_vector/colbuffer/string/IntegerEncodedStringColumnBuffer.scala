@@ -19,16 +19,13 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int,
-                                                                   scale: Int, nullable: Boolean) extends
-                                  ColumnBuffer[String](valueCount, IntSize, IntSize, name, index, nullable) {
+private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  ColumnBuffer[String](maxValueCount, IntSize, IntSize, name, nullable) {
 
-  override protected def put(source: String, buffer: ByteBuffer): Unit = {
-    if (source.isEmpty()) {
-      buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace);
-    } else {
-      buffer.putInt(encode(source))
-    }
+  override protected def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
+    buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
+  } else {
+    buffer.putInt(encode(source))
   }
 
   protected def encode(str: String): Int

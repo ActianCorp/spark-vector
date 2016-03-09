@@ -19,21 +19,16 @@ import java.sql.Timestamp
 import java.sql.Date
 import java.util.Calendar
 
-import org.apache.spark.Logging
-
 /** Helper functions and constants for `Time` conversions. */
 object TimeConversion {
 
-  final def timeInNanos(source: Timestamp): Long = {
-    (source.getTime() / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos()
-  }
+  final def timeInNanos(source: Timestamp): Long =
+    (source.getTime / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos
 
-  final def normalizedTime(source: Timestamp): Long = {
-    normalizedTime(timeInNanos(source))
-  }
+  final def normalizedTime(source: Timestamp): Long = normalizedTime(timeInNanos(source))
 
   final def normalizedTime(nanos: Long): Long = {
-    val remainder = nanos % NanosecondsInDay
+    val remainder = Math.abs(nanos % NanosecondsInDay)
     if (remainder >= 0) {
       remainder
     } else {
@@ -41,36 +36,28 @@ object TimeConversion {
     }
   }
 
-  final def scaledTime(source: Timestamp, scale: Int): Long = {
-    scaledTime(timeInNanos(source), scale)
-  }
+  final def scaledTime(source: Timestamp, scale: Int): Long = scaledTime(timeInNanos(source), scale)
 
-  final def scaledTime(nanos: Long, scale: Int): Long = {
-    val adjustment = NanosecondsScale  - scale
-    nanos / PowersOfTen(adjustment)
-  }
+  final def scaledTime(nanos: Long, scale: Int): Long = nanos / PowersOfTen(NanosecondsScale  - scale)
 
   final def convertLocalDateToUTC(date: Date): Unit = {
     val cal = Calendar.getInstance()
     cal.setTime(date)
-    date.setTime(date.getTime() + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
+    date.setTime(date.getTime + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
   }
 
   final def convertLocalTimestampToUTC(time: Timestamp): Unit = {
     val cal = Calendar.getInstance()
-    cal.setTimeInMillis(time.getTime())
-    val nanos = time.getNanos()
-    time.setTime(time.getTime() + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
+    cal.setTimeInMillis(time.getTime)
+    val nanos = time.getNanos
+    time.setTime(time.getTime + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
     time.setNanos(nanos)
   }
 
   /** This trait should be used when implementing a type of time conversion,
    *  for example a time-zone converter using the upper helper functions. */
   trait TimeConverter {
-    def convert(source: Timestamp, scale: Int): Long = {
-      convert(timeInNanos(source), scale)
-    }
-
+    def convert(source: Timestamp, scale: Int): Long = convert(timeInNanos(source), scale)
     def convert(nanos: Long, scale: Int): Long
   }
 }

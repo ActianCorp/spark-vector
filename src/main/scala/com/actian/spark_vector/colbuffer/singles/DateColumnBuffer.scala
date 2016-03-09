@@ -21,8 +21,8 @@ import com.actian.spark_vector.colbuffer.util._
 import java.nio.ByteBuffer
 import java.sql.Date
 
-private class DateColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Date](valueCount, DateSize, DateSize, name, index, nullable) {
+private class DateColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
+  ColumnBuffer[Date](maxValueCount, DateSize, DateSize, name, nullable) {
 
   override protected def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
@@ -31,15 +31,12 @@ private class DateColumnBuffer(valueCount: Int, name: String, index: Int, nullab
 }
 
 /** `ColumnBuffer` object for `ansidate` types. */
-object DateColumnBuffer extends ColumnBufferInstance[Date] {
+object DateColumnBuffer extends ColumnBufferInstance {
   private final val DaysBeforeEpoch = 719528
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Date] = {
-    new DateColumnBuffer(maxRowCount, name, index, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new DateColumnBuffer(maxValueCount, name, nullable)
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
     tpe.equalsIgnoreCase(DateTypeId)
-  }
 }

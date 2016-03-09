@@ -18,22 +18,18 @@ package com.actian.spark_vector.colbuffer.string
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 
-private class CharLengthLimitedStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
-              ByteEncodedStringColumnBuffer(valueCount, name, index, precision * CharLengthLimitedStringColumnBuffer.MaxUTF8CharSize, scale, nullable) {
+private class CharLengthLimitedStringColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  ByteEncodedStringColumnBuffer(maxValueCount, name, precision * CharLengthLimitedStringColumnBuffer.MaxUTF8CharSize, scale, nullable) {
 
-  override protected def encode(str: String): Array[Byte] = {
-    StringConversion.truncateToUTF16CodeUnits(str, precision)
-  }
+  override protected def encode(str: String): Array[Byte] = StringConversion.truncateToUTF16CodeUnits(str, precision)
 }
 
 private object CharLengthLimitedStringColumnBuffer {
   private final val MaxUTF8CharSize = IntSize
 }
 
-private[colbuffer] trait CharLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance[String] {
+private[colbuffer] trait CharLengthLimitedStringColumnBufferInstance extends ColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {
-    new CharLengthLimitedStringColumnBuffer(maxRowCount, name, index, precision, scale, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new CharLengthLimitedStringColumnBuffer(maxValueCount, name, precision, scale, nullable)
 }

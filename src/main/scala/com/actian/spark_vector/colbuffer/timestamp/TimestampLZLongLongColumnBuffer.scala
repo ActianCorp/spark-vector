@@ -20,9 +20,8 @@ object TimestampLZLongLongColumnBuffer extends TimestampLZColumnBufferInstance w
   private final val MinTimestampLZLongLongScale = 8
   private final val MaxTimestampLZLongLongScale = 9
 
-  override protected def adjustToUTC: Boolean = false
+  override protected val adjustToUTC: Boolean = false
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
     supportsLZColumnType(tpe, scale, MinTimestampLZLongLongScale, MaxTimestampLZLongLongScale)
-  }
 }

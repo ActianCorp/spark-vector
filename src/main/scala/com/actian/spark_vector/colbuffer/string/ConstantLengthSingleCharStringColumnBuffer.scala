@@ -18,27 +18,22 @@ package com.actian.spark_vector.colbuffer.string
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 
-private class ConstantLengthSingleCharStringColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
-              IntegerEncodedStringColumnBuffer(valueCount, name, index, precision, scale, nullable) {
+private class ConstantLengthSingleCharStringColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  IntegerEncodedStringColumnBuffer(maxValueCount, name, precision, scale, nullable) {
 
-  override protected def encode(value: String): Int = {
-    if (Character.isHighSurrogate(value.charAt(0))) {
-      IntegerEncodedStringColumnBuffer.Whitespace
-    } else {
-      value.codePointAt(0)
-    }
+  override protected def encode(value: String): Int = if (Character.isHighSurrogate(value.charAt(0))) {
+    IntegerEncodedStringColumnBuffer.Whitespace
+  } else {
+    value.codePointAt(0)
   }
 }
 
 /** `ColumnBuffer` object for `nchar` types (with precision = 1). */
-object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance[String] {
+object ConstantLengthSingleCharStringColumnBuffer extends ColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[String] = {
-    new ConstantLengthSingleCharStringColumnBuffer(maxRowCount, name, index, precision, scale, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new ConstantLengthSingleCharStringColumnBuffer(maxValueCount, name, precision, scale, nullable)
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
     tpe.equalsIgnoreCase(NcharTypeId) && precision == 1
-  }
 }

@@ -21,23 +21,19 @@ import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
 import java.nio.ByteBuffer
 import java.math.BigDecimal
 
-private class DecimalLongLongColumnBuffer(valueCount: Int, name: String, index: Int, precision: Int, scale: Int, nullable: Boolean) extends
-              DecimalColumnBuffer(valueCount, LongLongSize, name, index, precision, scale, nullable) {
+private class DecimalLongLongColumnBuffer(valueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  DecimalColumnBuffer(valueCount, LongLongSize, name, precision, scale, nullable) {
 
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit =
     buffer.put(BigIntegerConversion.convertToLongLongByteArray(scaledSource.toBigInteger()))
-  }
 }
 
 /** `ColumnBuffer` object for `decimal(<long long>)` types. */
 object DecimalLongLongColumnBuffer extends DecimalColumnBufferInstance {
-  // scalastyle:off magic.number
-  final override protected def minPrecision = 19
-  final override protected def maxPrecision = 38
-  // scalastyle:on magic.number
+  override protected val minPrecision = 19
+  override protected val maxPrecision = 38
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Number]  = {
-    new DecimalLongLongColumnBuffer(maxRowCount, name, index, precision, scale, nullable)
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[_]  = {
+    new DecimalLongLongColumnBuffer(maxRowCount, name, precision, scale, nullable)
   }
 }

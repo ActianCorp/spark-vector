@@ -19,23 +19,18 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class ShortColumnBuffer(valueCount: Int, name: String, index: Int, nullable: Boolean) extends
-              ColumnBuffer[Short](valueCount, ShortSize, ShortSize, name, index, nullable) {
+private class ShortColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
+  ColumnBuffer[Short](maxValueCount, ShortSize, ShortSize, name, nullable) {
 
-  override protected def put(source: Short, buffer: ByteBuffer): Unit = {
-    buffer.putShort(source);
-  }
+  override protected def put(source: Short, buffer: ByteBuffer): Unit = buffer.putShort(source);
 }
 
 /** `ColumnBuffer` object for `smallint`, `integer2` types. */
-object ShortColumnBuffer extends ColumnBufferInstance[Short] {
+object ShortColumnBuffer extends ColumnBufferInstance {
 
-  private[colbuffer] override def getNewInstance(name: String, index: Int, precision: Int, scale: Int,
-                                                 nullable: Boolean, maxRowCount: Int): ColumnBuffer[Short] = {
-    new ShortColumnBuffer(maxRowCount, name, index, nullable)
-  }
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new ShortColumnBuffer(maxValueCount, name, nullable)
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean = {
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
     tpe.equalsIgnoreCase(ShortTypeId1) || tpe.equalsIgnoreCase(ShortTypeId2)
-  }
 }
