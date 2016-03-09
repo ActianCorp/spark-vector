@@ -21,7 +21,7 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vector.vector.ColumnMetadata
 
-import com.actian.spark_vector.colbuffer.{ ColumnBuffer }
+import com.actian.spark_vector.colbuffer.ColumnBuffer
 
 import scala.reflect.classTag
 

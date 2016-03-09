@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector.writer
 
-import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.colbuffer.ColumnBuffer
 
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
