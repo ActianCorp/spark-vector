@@ -44,8 +44,6 @@ private[colbuffer] trait DecimalColumnBufferInstance extends ColumnBufferInstanc
   protected val minPrecision: Int
   protected val maxPrecision: Int
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean = {
-    tpe.equalsIgnoreCase(DecimalTypeId) && 0 < precision && 0 <= scale && scale <= precision &&
-    minPrecision <= precision && precision <= maxPrecision
-  }
+  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
+    tpe.equalsIgnoreCase(DecimalTypeId) && 0 < precision && 0 <= scale && scale <= precision && minPrecision <= precision && precision <= maxPrecision
 }

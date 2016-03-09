@@ -31,7 +31,6 @@ object DecimalLongColumnBuffer extends DecimalColumnBufferInstance {
   override protected val minPrecision = 10
   override protected val maxPrecision = 18
 
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[_] = {
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[_] =
     new DecimalLongColumnBuffer(maxRowCount, name, precision, scale, nullable)
-  }
 }
