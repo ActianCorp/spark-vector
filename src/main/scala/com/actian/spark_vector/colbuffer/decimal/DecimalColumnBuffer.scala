@@ -21,8 +21,8 @@ import java.lang.Number
 import java.math.BigDecimal
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class DecimalColumnBuffer(valueCount: Int, valueWidth: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
-  ColumnBuffer[Number](valueCount, valueWidth, valueWidth, name, nullable) {
+private[colbuffer] abstract class DecimalColumnBuffer(maxValueCount: Int, valueWidth: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  ColumnBuffer[Number](maxValueCount, valueWidth, valueWidth, name, nullable) {
 
   override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), precision, scale), buffer)
 

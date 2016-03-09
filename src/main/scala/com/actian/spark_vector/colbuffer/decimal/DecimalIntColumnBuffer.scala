@@ -20,8 +20,8 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 import java.math.BigDecimal
 
-private class DecimalIntColumnBuffer(valueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
-  DecimalColumnBuffer(valueCount, IntSize, name, precision, scale, nullable) {
+private class DecimalIntColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
+  DecimalColumnBuffer(maxValueCount, IntSize, name, precision, scale, nullable) {
 
   override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putInt(scaledSource.intValue())
 }
@@ -31,6 +31,6 @@ object DecimalIntColumnBuffer extends DecimalColumnBufferInstance {
   override protected val minPrecision = 5
   override protected val maxPrecision = 9
 
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxRowCount: Int): ColumnBuffer[_] =
-    new DecimalIntColumnBuffer(maxRowCount, name, precision, scale, nullable)
+  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
+    new DecimalIntColumnBuffer(maxValueCount, name, precision, scale, nullable)
 }
