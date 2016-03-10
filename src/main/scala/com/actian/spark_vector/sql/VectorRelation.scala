@@ -81,7 +81,7 @@ object VectorRelation {
   }
 
   /** Quote the column name so that it can be used in VectorSQL statements */
-  def quote(name: String): String = "\"" + name + "\""
+  def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
 
   /**
    * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be

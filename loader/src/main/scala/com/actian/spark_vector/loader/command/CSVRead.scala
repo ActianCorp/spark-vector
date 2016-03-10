@@ -40,7 +40,7 @@ object CSVRead extends Logging {
    * @note The temporary table will be named "csv_<vectorTargetTable>"
    */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"csv_${options.vector.targetTable}"
+    val table = s"`csv_${options.vector.targetTable}_${System.currentTimeMillis}`"
     val baseQuery = s"""CREATE TEMPORARY TABLE ${table}${options.csv.header.map(_.mkString("(", ",", ")")).getOrElse("")}
       USING com.databricks.spark.csv
       OPTIONS (path "${options.general.sourceFile}"${parseOptions(options)})"""

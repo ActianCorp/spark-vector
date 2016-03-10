@@ -27,7 +27,7 @@ object ParquetRead {
    * @note The temporary table will be named "parquet_<vectorTargetTable>"
    */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"parquet_${options.vector.targetTable}"
+    val table = s"`parquet_${options.vector.targetTable}_${System.currentTimeMillis}`"
     sqlContext.read.parquet(options.general.sourceFile).registerTempTable(table)
     s"select ${options.general.colsToLoad.map(_.mkString(",")).getOrElse("*")} from $table"
   }
