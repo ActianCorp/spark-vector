@@ -30,13 +30,13 @@ case class DataStreamSink(implicit socket: SocketChannel) extends VectorSink {
   var pos: Int = 0
 
   private def writeColumn(columnIndex: Int, values: ByteBuffer, markers: ByteBuffer, align_size: Int): Unit = {
+    align(align_size)
+    writeByteBufferNoFlip(values)
+    pos = pos + values.limit()
     if (markers != null) {
       writeByteBufferNoFlip(markers)
       pos = pos + markers.limit()
     }
-    align(align_size)
-    writeByteBufferNoFlip(values)
-    pos = pos + values.limit()
   }
 
   private def align(typeSize: Int): Unit = {
