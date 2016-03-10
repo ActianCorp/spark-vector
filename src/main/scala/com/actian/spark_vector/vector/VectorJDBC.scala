@@ -42,14 +42,33 @@ object ResultSetIterator {
 
 /** Extracts `Rows` out of a `ResultSet` */
 class ResultSetRowIterator(result: ResultSet) extends ResultSetIterator[Row](result) with Logging with Profiling {
-  lazy val numColumns = result.getMetaData.getColumnCount
-  lazy val row = collection.mutable.IndexedSeq.fill[Any](numColumns)(null)
+  import java.sql.Types._
+
+  private lazy val numColumns = result.getMetaData.getColumnCount
+  private lazy val row = collection.mutable.IndexedSeq.fill[Any](numColumns)(null)
   implicit lazy val profAccs = profileInit("resultSet extraction")
+  private lazy val metadata = result.getMetaData
+
+  private def extractColumn(col: Int): Any = metadata.getColumnType(col) match {
+    case BIGINT => result.getLong(col)
+    case BOOLEAN => result.getBoolean(col)
+    case CHAR | NCHAR | NVARCHAR | VARCHAR => result.getString(col)
+    case DATE => result.getDate(col)
+    case DECIMAL | NUMERIC => result.getBigDecimal(col)
+    case DOUBLE => result.getDouble(col)
+    case FLOAT | REAL => result.getFloat(col)
+    case INTEGER => result.getInt(col)
+    case SMALLINT => result.getShort(col)
+    case TIMESTAMP | TIME => result.getTimestamp(col)
+    case TINYINT => result.getByte(col)
+    case _ => result.getObject(col)
+  }
+
   override protected def extractor: ResultSet => Row = { _ =>
     profile("resultSet extraction")
     var col = 0
     while (col < numColumns) {
-      row(col) = result.getObject(col + 1)
+      row(col) = extractColumn(col + 1)
       col += 1
     }
     val ret = Row.fromSeq(row)
