@@ -33,12 +33,12 @@ sealed class ArgDescription(val longName: String, val shortName: String, val des
  *  @param mandatory Flag to describe if the argument is required or not
  */
 sealed case class ArgOption[T: Read, O](
-  lName: String,
-  sName: String,
-  desc: String,
-  extractor: UserOptions => O,
-  injector: (T, UserOptions) => UserOptions,
-  mandatory: Boolean) extends ArgDescription(lName, sName, desc) {
+    lName: String,
+    sName: String,
+    desc: String,
+    extractor: UserOptions => O,
+    injector: (T, UserOptions) => UserOptions,
+    mandatory: Boolean) extends ArgDescription(lName, sName, desc) {
   def asOpt(parser: scopt.OptionParser[UserOptions]): OptionDef[T, UserOptions] =
     parser.opt[T](longName) abbr (shortName) action (injector) text (description)
 }
@@ -51,62 +51,80 @@ sealed case class ArgOption[T: Read, O](
  * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-1.0-SNAPSHOT.jar> [load] [options]
  *
  * Spark Vector load
- * --help
- *      This tool can be used to load CSV/Parquet files through Spark to Vector
- * Command: load [csv|parquet]
+ *   --help
+ *         This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
+ * Command: load [csv|parquet|orc]
  * Read a file and load into Vector
  * Command: load csv [options]
  * Load a csv file
- *  -sf <value> | --sourceFile <value>
- *      Source file
- *  -cols <value> | --cols <value>
- *      Comma separated string containing only column names to load
- *  -vh <value> | --vectorHost <value>
- *      Vector host name
- *  -vi <value> | --vectorInstance <value>
- *      Vector instance
- *  -vd <value> | --vectorDatabase <value>
- *      Vector database
- *  -vu <value> | --vectorUser <value>
- *      Vector user
- *  -vp <value> | --vectorPass <value>
- *      Vector password
- *  -tt <value> | --vectorTargetTable <value>
- *      Vector target table
- *  -sh <value> | --skipHeader <value>
- *      Skip header row
- *  -en <value> | --encoding <value>
- *      CSV text encoding
- *  -np <value> | --nullPattern <value>
- *      CSV null pattern
- *  -sc <value> | --separatorChar <value>
- *      CSV field separator character
- *  -qc <value> | --quoteChar <value>
- *      CSV quote character
- *  -ec <value> | --escapeChar <value>
- *      CSV escape character
- *  -h <value> | --header <value>
- *      Comma separated string with CSV column names and datatypes, e.g. "col1 int, col2 string"
- *  -pl <value> | --parserLib <value>
- *      CSV parser library: either default or univocity
- *      Command: load parquet [options]
+ *   -sf <value> | --sourceFile <value>
+ *         Source file
+ *   -cols <value> | --cols <value>
+ *         Comma separated string containing only column names to load
+ *   -vh <value> | --vectorHost <value>
+ *         Vector host name
+ *   -vi <value> | --vectorInstance <value>
+ *         Vector instance
+ *   -vd <value> | --vectorDatabase <value>
+ *         Vector database
+ *   -vu <value> | --vectorUser <value>
+ *         Vector user
+ *   -vp <value> | --vectorPass <value>
+ *         Vector password
+ *   -tt <value> | --vectorTargetTable <value>
+ *         Vector target table
+ *   -sh <value> | --skipHeader <value>
+ *         Skip header row
+ *   -en <value> | --encoding <value>
+ *         CSV text encoding
+ *   -np <value> | --nullPattern <value>
+ *         CSV null pattern
+ *   -sc <value> | --separatorChar <value>
+ *         CSV field separator character
+ *   -qc <value> | --quoteChar <value>
+ *         CSV quote character
+ *   -ec <value> | --escapeChar <value>
+ *         CSV escape character
+ *   -h <value> | --header <value>
+ *         Comma separated string with CSV column names and datatypes, e.g. "col1 int, col2 string,"
+ *   -pl <value> | --parserLib <value>
+ *         CSV parser library (for spark-csv): either default or univocity
+ * Command: load parquet [options]
  * Load a parquet file
- *  -sf <value> | --sourceFile <value>
- *      Source file
- *  -cols <value> | --cols <value>
- *      Comma separated string containing only column names to load
- *  -vh <value> | --vectorHost <value>
- *      Vector host name
- *  -vi <value> | --vectorInstance <value>
- *      Vector instance
- *  -vd <value> | --vectorDatabase <value>
- *      Vector database
- *  -vu <value> | --vectorUser <value>
- *      Vector user
- *  -vp <value> | --vectorPass <value>
- *      Vector password
- *  -tt <value> | --vectorTargetTable <value>
- *      Vector target table
+ *   -sf <value> | --sourceFile <value>
+ *         Source file
+ *   -cols <value> | --cols <value>
+ *         Comma separated string containing only column names to load
+ *   -vh <value> | --vectorHost <value>
+ *         Vector host name
+ *   -vi <value> | --vectorInstance <value>
+ *         Vector instance
+ *   -vd <value> | --vectorDatabase <value>
+ *         Vector database
+ *   -vu <value> | --vectorUser <value>
+ *         Vector user
+ *   -vp <value> | --vectorPass <value>
+ *         Vector password
+ *   -tt <value> | --vectorTargetTable <value>
+ *         Vector target table
+ * Command: load orc [options]
+ * Load an orc file
+ *   -sf <value> | --sourceFile <value>
+ *         Source file
+ *   -cols <value> | --cols <value>
+ *         Comma separated string containing only column names to load
+ *   -vh <value> | --vectorHost <value>
+ *         Vector host name
+ *   -vi <value> | --vectorInstance <value>
+ *         Vector instance
+ *   -vd <value> | --vectorDatabase <value>
+ *         Vector database
+ *   -vu <value> | --vectorUser <value>
+ *         Vector user
+ *   -vp <value> | --vectorPass <value>
+ *         Vector password
+ *   -tt <value> | --vectorTargetTable <value>
+ *         Vector target table
  * }}}
  */
 object Args {
@@ -120,6 +138,7 @@ object Args {
   val load = new ArgDescription("load", "lh", "Read a file and load into Vector")
   val csvLoad = new ArgDescription("csv", "csv", "Load a csv file")
   val parquetLoad = new ArgDescription("parquet", "parquet", "Load a parquet file")
+  val orcLoad = new ArgDescription("orc", "orc", "Load an orc file")
 
   val vectorHost = ArgOption[String, String](
     "vectorHost", "vh", "Vector host name", _.vector.host, updateVector((o, v) => o.copy(host = v)), true)
@@ -162,11 +181,13 @@ object Args {
 
   val csvArgs = Seq(hRow, encoding, nullPattern, separatorChar, quoteChar, escapeChar, header, parserLib)
   val parquetArgs = Seq.empty[ArgOption[_, _]]
+  val orcArgs = Seq.empty[ArgOption[_, _]]
 
   val csvOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ csvArgs
   val parquetOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ parquetArgs
+  val orcOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ orcArgs
 
-  val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetArgs)
+  val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetOptions, orcLoad.longName -> orcOptions)
 }
 
 object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-1.0-SNAPSHOT.jar>") {
@@ -174,7 +195,7 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
 
   head("Spark Vector load tool", "1.0.0")
   note("Spark Vector load")
-  help("help").text("This tool can be used to load CSV/Parquet files through Spark to Vector")
+  help("help").text("This tool can be used to load CSV/Parquet/ORC files through Spark to Vector")
   cmd(load.longName)
     .action((_, options) => options.copy(mode = load.longName))
     .abbr(load.shortName)
@@ -189,7 +210,12 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
         .action((_, options) => options.copy(mode = parquetLoad.longName))
         .abbr(parquetLoad.shortName)
         .text(parquetLoad.description)
-        .children(parquetOptions.map(_.asOpt(this)): _*))
+        .children(parquetOptions.map(_.asOpt(this)): _*),
+      cmd(orcLoad.longName)
+        .action((_, options) => options.copy(mode = orcLoad.longName))
+        .abbr(orcLoad.shortName)
+        .text(orcLoad.description)
+        .children(orcOptions.map(_.asOpt(this)): _*))
 
   checkConfig { options =>
     if (options.mode.isEmpty || options.mode == load.longName) {

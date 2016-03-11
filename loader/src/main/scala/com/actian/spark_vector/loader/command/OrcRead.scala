@@ -16,19 +16,19 @@
 package com.actian.spark_vector.loader.command
 
 import org.apache.spark.sql.SQLContext
-
 import com.actian.spark_vector.loader.options.UserOptions
+import org.apache.spark.Logging
 
-object ParquetRead {
+object OrcRead {
   /**
-   * Based on `options`, register a temporary table as the source of the `Parquet` input
+   * Based on `options`, register a temporary table as the source of the `ORC` input
    *
    * @return A string containing the `SELECT` statement that can be used to subsequently consume data from the temporary table
-   * @note The temporary table will be named "parquet_<vectorTargetTable>*"
+   * @note The temporary table will be named "orc_<vectorTargetTable>*"
    */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"parquet_${options.vector.targetTable}_${System.currentTimeMillis}"
-    sqlContext.read.parquet(options.general.sourceFile).registerTempTable(table)
+    val table = s"orc_${options.vector.targetTable}_${System.currentTimeMillis}"
+    sqlContext.read.format("orc").load(options.general.sourceFile).registerTempTable(table)
     s"select ${options.general.colsToLoad.map(_.mkString(",")).getOrElse("*")} from ${sparkQuote(table)}"
   }
 }
