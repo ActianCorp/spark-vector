@@ -50,7 +50,7 @@ object VectorEndPoint extends Logging {
             case "" => jdbcHost
             case _ => host
           }
-          VectorEndPoint(real_host.toUpperCase, port.toInt, username, password)
+          VectorEndPoint(real_host, port.toInt, username, password)
         }.toOption
       case _ => None
     }
