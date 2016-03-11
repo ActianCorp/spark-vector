@@ -37,17 +37,18 @@ object CSVRead extends Logging {
    *
    * @return A string containing the `SELECT` statement that can be used to subsequently consume data from the temporary
    * table
-   * @note The temporary table will be named "csv_<vectorTargetTable>"
+   * @note The temporary table will be named "csv_<vectorTargetTable>*"
    */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"`csv_${options.vector.targetTable}_${System.currentTimeMillis}`"
-    val baseQuery = s"""CREATE TEMPORARY TABLE ${table}${options.csv.header.map(_.mkString("(", ",", ")")).getOrElse("")}
+    val table = s"csv_${options.vector.targetTable}_${System.currentTimeMillis}"
+    val quotedTable = sparkQuote(table)
+    val baseQuery = s"""CREATE TEMPORARY TABLE $quotedTable${options.csv.header.map(_.mkString("(", ",", ")")).getOrElse("")}
       USING com.databricks.spark.csv
       OPTIONS (path "${options.general.sourceFile}"${parseOptions(options)})"""
     logDebug(s"CSV query to be executed for registering temporary table:\n$baseQuery")
     val df = sqlContext.sql(baseQuery)
     val np = options.csv.nullPattern.getOrElse("")
-    val cols = options.general.colsToLoad.getOrElse(sqlContext.sql(s"select * from $table where 1=0").columns.toSeq)
-    s"select ${cols.map(c => s"""if(`${c.trim}` = "$np", null, `${c.trim}`) as `${c.trim}`""").mkString(",")} from $table"
+    val cols = options.general.colsToLoad.getOrElse(sqlContext.sql(s"select * from $quotedTable where 1=0").columns.toSeq)
+    s"select ${cols.map(c => s"""if(`${c.trim}` = "$np", null, `${c.trim}`) as `${c.trim}`""").mkString(",")} from $quotedTable"
   }
 }
