@@ -36,7 +36,7 @@ object VectorTempTable {
    * @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"`${config.vector.targetTable}`"
+    val table = s"${sparkQuote(config.vector.targetTable)}"
     sqlContext.sql(s"""CREATE TEMPORARY TABLE ${table}
     USING com.actian.spark_vector.sql.DefaultSource
     OPTIONS (${parseOptions(config)})""")
