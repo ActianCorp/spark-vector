@@ -19,18 +19,13 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class ByteColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
-  ColumnBuffer[Byte](maxValueCount, ByteSize, ByteSize, name, nullable) {
-
+private class ByteColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Byte](p.name, p.maxValueCount, ByteSize, ByteSize, p.nullable) {
   override protected def put(source: Byte, buffer: ByteBuffer): Unit = buffer.put(source)
 }
 
-/** `ColumnBuffer` object for `tinyint`, `integer1` types. */
-object ByteColumnBuffer extends ColumnBufferInstance {
-
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
-    new ByteColumnBuffer(maxValueCount, name, nullable)
-
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(ByteTypeId1) || tpe.equalsIgnoreCase(ByteTypeId2)
+/** Builds a `ColumnBuffer` object for `tinyint`, `integer1` types. */
+private[colbuffer] object ByteColumnBuffer extends ColumnBufferBuilder {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+    case p if p.tpe == ByteTypeId1 || p.tpe == ByteTypeId2 => new ByteColumnBuffer(p)
+  }
 }

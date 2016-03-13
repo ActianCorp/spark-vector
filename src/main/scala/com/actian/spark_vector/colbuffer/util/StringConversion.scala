@@ -46,7 +46,7 @@ object StringConversion {
         } else if (condMulti(i)) {
           ret = bytes.slice(0, i)
         }
-    	i = if (ret == EmptyString) i - 1 else -1
+        i = if (ret == EmptyString) i - 1 else -1
       }
 
       ret

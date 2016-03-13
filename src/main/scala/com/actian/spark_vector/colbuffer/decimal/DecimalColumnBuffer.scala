@@ -16,15 +16,15 @@
 package com.actian.spark_vector.colbuffer.decimal
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
 
 import java.lang.Number
 import java.math.BigDecimal
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class DecimalColumnBuffer(maxValueCount: Int, valueWidth: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
-  ColumnBuffer[Number](maxValueCount, valueWidth, valueWidth, name, nullable) {
-
-  override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), precision, scale), buffer)
+private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends
+  ColumnBuffer[Number](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
+  override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), p.precision, p.scale), buffer)
 
   protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit
 
@@ -40,10 +40,63 @@ private[colbuffer] abstract class DecimalColumnBuffer(maxValueCount: Int, valueW
   }
 }
 
-private[colbuffer] trait DecimalColumnBufferInstance extends ColumnBufferInstance {
-  protected val minPrecision: Int
-  protected val maxPrecision: Int
+private class DecimalByteColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ByteSize) {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.put(scaledSource.byteValue())
+}
 
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(DecimalTypeId) && 0 < precision && 0 <= scale && scale <= precision && minPrecision <= precision && precision <= maxPrecision
+private object DecimalByteColumnBuffer {
+  final val PrecisionBounds = (0, 2)
+}
+
+private class DecimalShortColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ShortSize) {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putShort(scaledSource.shortValue())
+}
+
+private object DecimalShortColumnBuffer {
+  final val PrecisionBounds = (3, 4)
+}
+
+private class DecimalIntColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, IntSize) {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putInt(scaledSource.intValue())
+}
+
+private object DecimalIntColumnBuffer {
+  final val PrecisionBounds = (5, 9)
+}
+
+private class DecimalLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongSize) {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putLong(scaledSource.longValue())
+}
+
+private object DecimalLongColumnBuffer {
+  final val PrecisionBounds = (10, 18)
+}
+
+private class DecimalLongLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongLongSize) {
+  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit =
+    buffer.put(BigIntegerConversion.toLongLongByteArray(scaledSource.toBigInteger()))
+}
+
+private object DecimalLongLongColumnBuffer {
+  final val PrecisionBounds = (19, 38)
+}
+
+/** Builds a `ColumnBuffer` object for for `decimal(<byte, short, int, long, long long>)` types. */
+private[colbuffer] object DecimalColumnBuffer extends ColumnBufferBuilder {
+  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
+    case p if p.tpe == DecimalTypeId && isInBounds(p.scale, (0, p.precision)) => p
+  }
+
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {
+    /** `ColumnBuffer` object for `decimal(<byte>)` types. */
+    case p if isInBounds(p.precision, DecimalByteColumnBuffer.PrecisionBounds) => new DecimalByteColumnBuffer(p)
+    /** `ColumnBuffer` object for `decimal(<short>)` types. */
+    case p if isInBounds(p.precision, DecimalShortColumnBuffer.PrecisionBounds) => new DecimalShortColumnBuffer(p)
+    /** `ColumnBuffer` object for `decimal(<int>)` types. */
+    case p if isInBounds(p.precision, DecimalIntColumnBuffer.PrecisionBounds) => new DecimalIntColumnBuffer(p)
+    /** `ColumnBuffer` object for `decimal(<long>)` types. */
+    case p if isInBounds(p.precision, DecimalLongColumnBuffer.PrecisionBounds) => new DecimalLongColumnBuffer(p)
+    /** `ColumnBuffer` object for `decimal(<long long>)` types. */
+    case p if isInBounds(p.precision, DecimalLongLongColumnBuffer.PrecisionBounds) => new DecimalLongLongColumnBuffer(p)
+  }
 }

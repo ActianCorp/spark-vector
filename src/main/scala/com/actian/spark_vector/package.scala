@@ -29,4 +29,12 @@ package com.actian
  * a `Vector` thread will handle multiple `DataStreams`. On the other hand, each connection to a `Vector` end point maps to exactly one `DataStream`.
  */
 package object spark_vector {
+  /**
+   * Having two `PartialFunctions` `f` and `g` with no side effects, we compose them into another partial function `h` such that
+   * `h.isDefinedAt(x)` if `f.isDefinedAt(x)` and `g.isDefinedAt(f(x))`
+   * @return a `PartialFunction` composed from `f` and `g`
+   */
+  implicit class ComposePartial[A, B](f: PartialFunction[A, B]) {
+    def andThenPartial[C](g: PartialFunction[B, C]): PartialFunction[A, C] = Function.unlift(f.lift(_) flatMap g.lift)
+  }
 }

@@ -19,18 +19,13 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class DoubleColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
-  ColumnBuffer[Double](maxValueCount, DoubleSize, DoubleSize, name, nullable) {
-
+private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Double](p.name, p.maxValueCount, DoubleSize, DoubleSize, p.nullable) {
   override protected def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
 }
 
-/** `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
-object DoubleColumnBuffer extends ColumnBufferInstance {
-
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
-    new DoubleColumnBuffer(maxValueCount, name, nullable)
-
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(DoubleTypeId1) || tpe.equalsIgnoreCase(DoubleTypeId2) || tpe.equalsIgnoreCase(DoubleTypeId3)
+/** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
+private[colbuffer] object DoubleColumnBuffer extends ColumnBufferBuilder {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+    case p if p.tpe == DoubleTypeId1 || p.tpe == DoubleTypeId2 || p.tpe == DoubleTypeId3 => new DoubleColumnBuffer(p)
+  }
 }

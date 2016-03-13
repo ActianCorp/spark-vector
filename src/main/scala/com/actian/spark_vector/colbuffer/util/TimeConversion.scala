@@ -21,7 +21,6 @@ import java.util.Calendar
 
 /** Helper functions and constants for `Time` conversions. */
 object TimeConversion {
-
   final def timeInNanos(source: Timestamp): Long =
     (source.getTime / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos
 
