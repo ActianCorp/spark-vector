@@ -21,7 +21,7 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vector.vector.ColumnMetadata
 
-import com.actian.spark_vector.colbuffer.ColumnBuffer
+import com.actian.spark_vector.colbuffer.{ColumnBufferBuildParams, ColumnBuffer}
 
 import scala.reflect.classTag
 
@@ -41,7 +41,7 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
     case col =>
       logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
         s"nullable=${col.nullable}, vectorsize=${DataStreamWriter.vectorSize}")
-      ColumnBuffer(col.name, col.typeName, col.precision, col.scale, col.nullable, DataStreamWriter.vectorSize) match {
+      ColumnBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, DataStreamWriter.vectorSize, col.nullable)) match {
         case Some(cb) => cb
         case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
       }

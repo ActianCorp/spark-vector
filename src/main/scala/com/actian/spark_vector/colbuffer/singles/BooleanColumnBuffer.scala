@@ -19,23 +19,19 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class BooleanColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
-  ColumnBuffer[Boolean](maxValueCount, BooleanSize, BooleanSize, name, nullable) {
-
+private class BooleanColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Boolean](p.name, p.maxValueCount, BooleanSize, BooleanSize, p.nullable) {
   override protected def put(source: Boolean, buffer: ByteBuffer): Unit = source.booleanValue() match {
     case true => buffer.put(BooleanColumnBuffer.True)
     case false => buffer.put(BooleanColumnBuffer.False)
   }
 }
 
-/** `ColumnBuffer` object for `boolean` types. */
-object BooleanColumnBuffer extends ColumnBufferInstance {
+/** Builds a `ColumnBuffer` object for `boolean` types. */
+private[colbuffer] object BooleanColumnBuffer extends ColumnBufferBuilder {
   private final val True = 1:Byte
   private final val False = 0:Byte
 
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
-    new BooleanColumnBuffer(maxValueCount, name, nullable)
-
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(BooleanTypeId)
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+    case p if p.tpe == BooleanTypeId => new BooleanColumnBuffer(p)
+  }
 }

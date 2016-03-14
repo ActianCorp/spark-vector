@@ -38,13 +38,13 @@ import scala.throws._
  * The column value serialization should be implemented within the concrete
  * (typed) class instead.
  *
+ * @name the column's name
  * @maxValueCount the maximum number of values to store within the buffer
  * @valueWidth the width of the value's data type
  * @alignSize the data type's alignment size
- * @name the column's name
  * @nullable whether this column accepts null values or not
  */
-abstract class ColumnBuffer[@specialized T: ClassTag](maxValueCount: Int, valueWidth: Int, val alignSize: Int, name: String, val nullable: Boolean) {
+abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCount: Int, valueWidth: Int, val alignSize: Int, val nullable: Boolean) {
   private final val NullMarker = 1:Byte
   private final val NonNullMarker = 0:Byte
 
@@ -65,8 +65,7 @@ abstract class ColumnBuffer[@specialized T: ClassTag](maxValueCount: Int, valueW
   @throws(classOf[IllegalArgumentException])
   def putNull(): Unit = {
     if (!nullable) {
-      throw new IllegalArgumentException(
-                s"Cannot store NULL values in a non-nullable column '${name}'.")
+      throw new IllegalArgumentException(s"Cannot store NULL values in non-nullable '${name}' column.")
     }
     markers.put(NullMarker)
     values.put(nullValue)
@@ -99,59 +98,51 @@ abstract class ColumnBuffer[@specialized T: ClassTag](maxValueCount: Int, valueW
  * Trait to be used when implementing a companion object for a typed ColumnBuffer
  * (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
  */
-private[colbuffer] trait ColumnBufferInstance {
+private[colbuffer] trait ColumnBufferBuilder {
+  protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
+
   /** Get a new instance of `ColumnBuffer` for the given column type params. */
-  def apply(name: String, tpe: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] = {
-    assert(supportsColumnType(tpe, precision, scale, nullable))
-    getNewInstance(name, precision, scale, nullable, maxValueCount)
-  }
-  /** Get a new instance of `ColumnBuffer` w/o checking for column type support. */
-  private[colbuffer] def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_]
-  /** Check before getting a new instance whether this `ColumnBuffer` supports the column type params. */
-  private[colbuffer] def supportsColumnType(tpe: String, precision: Int, scale: Int, nullable: Boolean): Boolean
+  private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]]
+}
+
+/**
+ * Case class to be used when trying to create a typed column buffer object
+ * using the `ColumnBuffer(..)` apply-factory call with data type specific params.
+ *
+ * @name the column's name
+ * @tpe the data type's name (required in lower cases)
+ * @precision the data type's precision
+ * @scale the data type's scale size
+ * @maxValueCount the size of this column buffer (in tuple/value counts)
+ * @nullable whether this column accepts null values or not
+ */
+case class ColumnBufferBuildParams(name: String, tpe: String, precision: Int, scale: Int, maxValueCount: Int, nullable: Boolean) {
+  require(tpe == tpe.toLowerCase, s"Column type '${tpe}' should be in lower case letters.")
 }
 
 /** This is a `Factory` implementation of `ColumnBuffers`. */
 object ColumnBuffer {
-  private final val columnBufs:List[ColumnBufferInstance] = List(
+  private final val colBufBuilders:List[ColumnBufferBuilder] = List(
     ByteColumnBuffer,
     ShortColumnBuffer,
     IntColumnBuffer,
     LongColumnBuffer,
     FloatColumnBuffer,
     DoubleColumnBuffer,
-    DecimalByteColumnBuffer,
-    DecimalShortColumnBuffer,
-    DecimalIntColumnBuffer,
-    DecimalLongColumnBuffer,
-    DecimalLongLongColumnBuffer,
+    DecimalColumnBuffer,
     BooleanColumnBuffer,
     DateColumnBuffer,
-    ConstantLengthSingleByteStringColumnBuffer,
-    ConstantLengthSingleCharStringColumnBuffer,
-    ConstantLengthMultiByteStringColumnBuffer,
-    ConstantLengthMultiCharStringColumnBuffer,
-    VariableLengthByteStringColumnBuffer,
-    VariableLengthCharStringColumnBuffer,
-    TimeLZIntColumnBuffer,
-    TimeLZLongColumnBuffer,
-    TimeNZIntColumnBuffer,
-    TimeNZLongColumnBuffer,
-    TimeTZIntColumnBuffer,
-    TimeTZLongColumnBuffer,
-    TimestampLZLongColumnBuffer,
-    TimestampLZLongLongColumnBuffer,
-    TimestampNZLongColumnBuffer,
-    TimestampNZLongLongColumnBuffer,
-    TimestampTZLongColumnBuffer,
-    TimestampTZLongLongColumnBuffer
+    ByteEncodedStringColumnBuffer,
+    IntegerEncodedStringColumnBuffer,
+    TimeColumnBuffer,
+    TimestampColumnBuffer
   )
 
-  /** Get the `ColumnBuffer` object for the given params.
-   *  @return an Option embedding the `ColumnBuffer` object (or an empty option if a `ColumnBuffer` was not found)
+  private val build = colBufBuilders.map(_.build).reduce(_ orElse _)
+
+  /**
+   * Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
+   * @return an Option embedding the `ColumnBuffer` object (or an empty option if a `ColumnBuffer` was not found)
    */
-  def apply(name: String, tpe: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): Option[ColumnBuffer[_]] = {
-    columnBufs.find(columnBuf => columnBuf.supportsColumnType(tpe, precision, scale, nullable))
-              .map(columnBuf => columnBuf.getNewInstance(name, precision, scale, nullable, maxValueCount))
-  }
+  def apply(p: ColumnBufferBuildParams): Option[ColumnBuffer[_]] = PartialFunction.condOpt(p)(build)
 }

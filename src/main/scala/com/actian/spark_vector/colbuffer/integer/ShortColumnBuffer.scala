@@ -19,18 +19,13 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class ShortColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
-  ColumnBuffer[Short](maxValueCount, ShortSize, ShortSize, name, nullable) {
-
+private class ShortColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Short](p.name, p.maxValueCount, ShortSize, ShortSize, p.nullable) {
   override protected def put(source: Short, buffer: ByteBuffer): Unit = buffer.putShort(source);
 }
 
-/** `ColumnBuffer` object for `smallint`, `integer2` types. */
-object ShortColumnBuffer extends ColumnBufferInstance {
-
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
-    new ShortColumnBuffer(maxValueCount, name, nullable)
-
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(ShortTypeId1) || tpe.equalsIgnoreCase(ShortTypeId2)
+/** Builds a `ColumnBuffer` object for `smallint`, `integer2` types. */
+private[colbuffer] object ShortColumnBuffer extends ColumnBufferBuilder {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+    case p if p.tpe == ShortTypeId1 || p.tpe == ShortTypeId2 => new ShortColumnBuffer(p)
+  }
 }

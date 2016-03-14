@@ -16,12 +16,12 @@
 package com.actian.spark_vector.colbuffer.string
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.colbuffer.util.StringConversion
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(maxValueCount: Int, name: String, precision: Int, scale: Int, nullable: Boolean) extends
-  ColumnBuffer[String](maxValueCount, IntSize, IntSize, name, nullable) {
-
+private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
+  ColumnBuffer[String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
   override protected def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
     buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
   } else {
@@ -31,6 +31,34 @@ private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(maxValueCount
   protected def encode(str: String): Int
 }
 
-private object IntegerEncodedStringColumnBuffer {
+private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {
+  override protected def encode(value: String): Int = if (StringConversion.truncateToUTF8Bytes(value, 1).length == 0) {
+    IntegerEncodedStringColumnBuffer.Whitespace
+  } else {
+    value.codePointAt(0)
+  }
+}
+
+private class ConstantLengthSingleCharStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {
+  override protected def encode(value: String): Int = if (Character.isHighSurrogate(value.charAt(0))) {
+    IntegerEncodedStringColumnBuffer.Whitespace
+  } else {
+    value.codePointAt(0)
+  }
+}
+
+/** Builds a `ColumnBuffer` object for `char`, `nchar` integer-encoded types. */
+private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferBuilder {
   final val Whitespace = '\u0020'
+
+  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
+    case p if p.precision == 1 => p
+  }
+
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {
+    /** `ColumnBuffer` object for `char` types (with precision == 1). */
+    case p if p.tpe == CharTypeId => new ConstantLengthSingleByteStringColumnBuffer(p)
+    /** `ColumnBuffer` object for `nchar` types (with precision == 1). */
+    case p if p.tpe == NcharTypeId => new ConstantLengthSingleCharStringColumnBuffer(p)
+  }
 }

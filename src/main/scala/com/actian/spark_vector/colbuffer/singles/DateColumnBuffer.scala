@@ -21,22 +21,18 @@ import com.actian.spark_vector.colbuffer.util._
 import java.nio.ByteBuffer
 import java.sql.Date
 
-private class DateColumnBuffer(maxValueCount: Int, name: String, nullable: Boolean) extends
-  ColumnBuffer[Date](maxValueCount, DateSize, DateSize, name, nullable) {
-
+private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
   override protected def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
     buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
 }
 
-/** `ColumnBuffer` object for `ansidate` types. */
-object DateColumnBuffer extends ColumnBufferInstance {
+/** Builds a `ColumnBuffer` object for `ansidate` types. */
+private[colbuffer] object DateColumnBuffer extends ColumnBufferBuilder {
   private final val DaysBeforeEpoch = 719528
 
-  private[colbuffer] override def getNewInstance(name: String, precision: Int, scale: Int, nullable: Boolean, maxValueCount: Int): ColumnBuffer[_] =
-    new DateColumnBuffer(maxValueCount, name, nullable)
-
-  private[colbuffer] override def supportsColumnType(tpe: String, precision: Int, scale:Int, nullable: Boolean): Boolean =
-    tpe.equalsIgnoreCase(DateTypeId)
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+    case p if p.tpe == DateTypeId => new DateColumnBuffer(p)
+  }
 }

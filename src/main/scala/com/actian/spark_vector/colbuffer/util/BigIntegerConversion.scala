@@ -20,7 +20,7 @@ import java.math.BigInteger
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
   // scalastyle:off magic.number
-  final def convertToLongLongByteArray(value: BigInteger): Array[Byte] = {
+  final def toLongLongByteArray(value: BigInteger): Array[Byte] = {
     val source = value.toByteArray()
     val target = Array.fill[Byte](16)(0:Byte)
     val remaining = target.length - source.length
