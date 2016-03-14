@@ -29,9 +29,24 @@ import resource.managed
 
 /** Iterator over an ResultSet */
 abstract class ResultSetIterator[T](result: ResultSet) extends Iterator[T] {
+  private var gotNext = false
+  private var finished = false
+
   protected def extractor: ResultSet => T
-  override def hasNext: Boolean = result.next()
-  override def next(): T = extractor(result)
+
+  override def hasNext(): Boolean = {
+    if (!gotNext && !finished) {
+      gotNext = result.next()
+      finished = !gotNext
+    }
+    gotNext
+  }
+
+  override def next(): T = {
+    if (!hasNext) throw new NoSuchElementException("End of stream")
+    gotNext = false
+    extractor(result)
+  }
 }
 
 object ResultSetIterator {
