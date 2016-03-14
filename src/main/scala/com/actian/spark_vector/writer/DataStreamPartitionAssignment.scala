@@ -19,15 +19,14 @@ import scala.collection.mutable.{ ArrayBuffer, IndexedSeq => mutableISeq, Stack 
 import org.apache.spark.Logging
 import com.actian.spark_vector.Profiling
 
-/**
- * Trait that performs a special kind of matching in a bipartite graph:
+/** Trait that performs a special kind of matching in a bipartite graph:
  *  - let `A` and `B` be the two classes of nodes in a bipartite graph
  *  - let `edges` be the edges (`a -> b`)
  *  - for each `b` in `B`, define as `g(b)` as the number of nodes from `A` assigned to `b`
  *  - the goal of this algorithm is to assign each node from `a` in `A` to a node `b` in `B` such that there is an edge between
- * `a` and `b` and `max(g(b))` is minimum for all `b` in `B`
+ *  `a` and `b` and `max(g(b))` is minimum for all `b` in `B`
  *
- * This algorithm is very similar to Hopcroft-Karp's matching algorithm in bipartite graphs:
+ *  This algorithm is very similar to Hopcroft-Karp's matching algorithm in bipartite graphs:
  *  - create an initial matching
  *  - define `target` = `nA / nB` rounded up, i.e. the ideal solution
  *  - separate nodes from `B` into three classes: `b`s with `g(b) > target, = target and < target`
@@ -39,13 +38,14 @@ import com.actian.spark_vector.Profiling
  *  `|edges|sqrt(nA + nB)`. Since there is usually a constant number of `B`s a node from `A` shares an edge with, e.g.
  *  each HDFS block has an affinity to a constant number(replication factor) of hosts, and `nB` is usually << `nA`, the complexity of this algorithm can be viewed as `O(nA sqrt(nA))`
  */
-sealed trait BipartiteAssignment extends Logging with Profiling {
+private[writer] trait BipartiteAssignment extends Logging with Profiling {
   protected val nA: Int
   protected val nB: Int
   protected val edges: IndexedSeq[IndexedSeq[Int]]
   private lazy val matchFor = mutableISeq.fill(nA)(-1)
-  private lazy val numAperB = mutableISeq.fill(nB)(0)
+  private lazy val matchedAperB = mutableISeq.fill(nB)(0)
   private lazy val allAperB = {
+    val numAperB = mutableISeq.fill(nB)(0)
     for (a <- 0 until nA; b <- edges(a)) numAperB(b) += 1
     val ret = mutableISeq.tabulate(nB)(b => mutableISeq.fill(numAperB(b))(0))
     for (b <- 0 until nB) numAperB(b) = 0
@@ -53,7 +53,6 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
       ret(b)(numAperB(b)) = a
       numAperB(b) += 1
     }
-    for (b <- 0 until nB) numAperB(b) = 0
     ret
   }
 
@@ -61,8 +60,7 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
 
   private lazy val target = nA / nB + (if (nA % nB != 0) 1 else 0)
 
-  /**
-   * Find an alternating path that respects the properties of the algorithm, i.e. starts from a node with
+  /** Find an alternating path that respects the properties of the algorithm, i.e. starts from a node with
    *  `g(b) > target` and ends in a node with `g(b') < target`.
    *
    *  @param offset The offset index in allAperB to look for potential next A's, to mark which edges (b -> a) have already
@@ -74,47 +72,68 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
     var foundPath = false
     /** Use iterative algorithm as we might run out of stack memory if we recurse */
     while (!st.isEmpty) {
-      val (a, afidx) = st.pop
-      if (foundPath) matchFor(a) = edges(a)(afidx)
-      if (afidx == -1) {
+      val (a, edgeIdx) = st.pop
+      if (foundPath) matchFor(a) = edges(a)(edgeIdx + 1)
+      if (edgeIdx == -1) {
         visited(a) = true
-        edges(a).find { b => b != matchFor(a) && numAperB(b) < target }.foreach { b =>
+        edges(a).find { b => b != matchFor(a) && matchedAperB(b) < target }.foreach { b =>
           foundPath = true
-          numAperB(b) += 1
+          matchedAperB(b) += 1
           matchFor(a) = b
         }
       }
-      if (!foundPath && afidx + 1 < edges(a).size) {
-        val b = edges(a)(afidx + 1)
+      if (!foundPath) {
         var nextA = -1
-        while (offset(b).hasNext && (nextA == -1 || visited(nextA) || matchFor(nextA) != b)) {
-          nextA = offset(b).next
-        }
-        if (nextA != -1 && !visited(nextA) && matchFor(nextA) == b) {
-          st.push((a, afidx + 1))
-          st.push((nextA, -1))
+        var eIdx = edgeIdx
+        while (nextA == -1 && eIdx + 1 < edges(a).size) {
+          val b = edges(a)(eIdx + 1)
+          if (matchFor(a) != b) {
+            while (offset(b).hasNext && (nextA == -1 || visited(nextA) || matchFor(nextA) != b)) {
+              nextA = offset(b).next
+            }
+            if (nextA != -1 && !visited(nextA) && matchFor(nextA) == b) {
+              logTrace(s"Trying to revert edge $nextA -> $b")
+              st.push((a, eIdx))
+              st.push((nextA, -1))
+            } else {
+              nextA = -1
+            }
+          }
+          eIdx += 1
         }
       }
     }
     foundPath
   }
 
-  /**
-   * Get an assignment of partitions to hosts satisfying the properties described in the header
+  @inline private def logGraph: Unit = if (log.isTraceEnabled) {
+    logTrace(s"Trying to find a matching in a bipartite graph with $nA:$nB nodes and the following edges:")
+    (0 until nA).foreach { a => logTrace(s"$a: " + edges(a).map(_.toString).mkString(", ")) }
+  }
+
+  @inline private def logMatching(msg: => String): Unit = if (log.isTraceEnabled) {
+    logTrace(msg)
+    (0 until nA).groupBy(matchFor(_)).foreach { case (b, as) => logTrace(s"assigned to $b = ${as.mkString(", ")}") }
+  }
+
+  /** Get an assignment of partitions to hosts satisfying the properties described in the header
    *
-   * @return One sequence of partition indexes assigned to each host
+   *  @return One sequence of partition indexes assigned to each host
    */
   lazy val matching: IndexedSeq[IndexedSeq[Int]] = {
+    logGraph
     implicit val accs = profileInit("first assignment", "matching", "ret")
     profile("first assignment")
     /* Start with some assignment, any assignment */
     (0 until nA).foreach { a =>
-      val b = edges(a).minBy(numAperB(_))
+      val b = edges(a).minBy(matchedAperB(_))
       matchFor(a) = b
-      numAperB(b) += 1
+      matchedAperB(b) += 1
     }
     profileEnd
-    val more = (0 until nB).filter(numAperB(_) > target)
+    logMatching("Initial matching")
+    val more = (0 until nB).filter(matchedAperB(_) > target)
+    logDebug(s"Trying to get to target=$target and starting from nodes(in B): ${more.mkString(", ")}")
 
     val visited = mutableISeq.fill(nA)(false)
     var repeat = true
@@ -128,15 +147,18 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
 
       repeat = false
       more.foreach { b =>
-        while (iterators(b).hasNext && numAperB(b) > target) {
+        while (iterators(b).hasNext && matchedAperB(b) > target) {
           val a = iterators(b).next
-          if (matchFor(a) == b &&
-            !visited(a) && findPath(a, iterators, visited)) {
-            numAperB(b) -= 1
-            repeat = true
+          if (matchFor(a) == b && !visited(a)) {
+            logTrace(s"Trying to revert edge $a -> $b")
+            if (findPath(a, iterators, visited)) {
+              matchedAperB(b) -= 1
+              repeat = true
+            }
           }
         }
       }
+      logMatching(s"Matching after iteration $iterations")
     }
     profileEnd
     logDebug(s"Matching algorithm took $iterations iterations")
@@ -149,15 +171,14 @@ sealed trait BipartiteAssignment extends Logging with Profiling {
   }
 }
 
-/**
- * Class that contains the matching algorithm used to assign `RDD` partitions to Vector hosts, based on `affinities`.
+/** Class that contains the matching algorithm used to assign `RDD` partitions to Vector hosts, based on `affinities`.
  *
- * The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
- * that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
- * aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
+ *  The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
+ *  that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
+ *  aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
  *
- * @param affinities Affinities of each partition to host names represented as an `Array` of `Seq[T]`
- * @param endpoints Vector end points
+ *  @param affinities Affinities of each partition to host names represented as an `Array` of `Seq[T]`
+ *  @param endpoints Vector end points
  */
 final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndPoint]) extends BipartiteAssignment {
   private def verifyMatching: Unit = {
