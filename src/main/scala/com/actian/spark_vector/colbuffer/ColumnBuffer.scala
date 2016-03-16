@@ -26,32 +26,31 @@ import com.actian.spark_vector.colbuffer.timestamp._
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-import scala.reflect.{ClassTag, classTag}
+import scala.reflect.{ ClassTag, classTag }
 import scala.throws._
 
-/**
- * Abstract class to be used when implementing the class for a typed ColumnBuffer
- * (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
+/** Abstract class to be used when implementing the class for a typed ColumnBuffer
+ *  (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
  *
- * This class implements the base methods for buffering vectors of column values.
- * The `put`, `flip`, `clear` methods are according to the Buffer interface.
- * The column value serialization should be implemented within the concrete
- * (typed) class instead.
+ *  This class implements the base methods for buffering vectors of column values.
+ *  The `put`, `flip`, `clear` methods are according to the Buffer interface.
+ *  The column value serialization should be implemented within the concrete
+ *  (typed) class instead.
  *
- * @name the column's name
- * @maxValueCount the maximum number of values to store within the buffer
- * @valueWidth the width of the value's data type
- * @alignSize the data type's alignment size
- * @nullable whether this column accepts null values or not
+ *  @param name the column's name
+ *  @param maxValueCount the maximum number of values to store within the buffer
+ *  @param valueWidth the width of the value's data type
+ *  @param alignSize the data type's alignment size
+ *  @param nullable whether this column accepts null values or not
  */
 abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCount: Int, valueWidth: Int, val alignSize: Int, val nullable: Boolean) {
-  private final val NullMarker = 1:Byte
-  private final val NonNullMarker = 0:Byte
+  private final val NullMarker = 1: Byte
+  private final val NonNullMarker = 0: Byte
 
   val valueType = classTag[T]
   val values = ByteBuffer.allocateDirect(maxValueCount * valueWidth).order(ByteOrder.nativeOrder())
   val markers = ByteBuffer.allocateDirect(maxValueCount).order(ByteOrder.nativeOrder())
-  private val nullValue = Array.fill[Byte](alignSize)(0:Byte)
+  private val nullValue = Array.fill[Byte](alignSize)(0: Byte)
 
   protected def put(source: T, buffer: ByteBuffer): Unit
 
@@ -94,9 +93,8 @@ abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCoun
   }
 }
 
-/**
- * Trait to be used when implementing a companion object for a typed ColumnBuffer
- * (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
+/** Trait to be used when implementing a companion object for a typed ColumnBuffer
+ *  (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
  */
 private[colbuffer] trait ColumnBufferBuilder {
   protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
@@ -105,16 +103,15 @@ private[colbuffer] trait ColumnBufferBuilder {
   private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]]
 }
 
-/**
- * Case class to be used when trying to create a typed column buffer object
- * using the `ColumnBuffer(..)` apply-factory call with data type specific params.
+/** Case class to be used when trying to create a typed column buffer object
+ *  using the `ColumnBuffer(..)` apply-factory call with data type specific params.
  *
- * @name the column's name
- * @tpe the data type's name (required in lower cases)
- * @precision the data type's precision
- * @scale the data type's scale size
- * @maxValueCount the size of this column buffer (in tuple/value counts)
- * @nullable whether this column accepts null values or not
+ *  @param name the column's name
+ *  @param tpe the data type's name (required in lower cases)
+ *  @param precision the data type's precision
+ *  @param scale the data type's scale size
+ *  @param maxValueCount the size of this column buffer (in tuple/value counts)
+ *  @param nullable whether this column accepts null values or not
  */
 case class ColumnBufferBuildParams(name: String, tpe: String, precision: Int, scale: Int, maxValueCount: Int, nullable: Boolean) {
   require(tpe == tpe.toLowerCase, s"Column type '${tpe}' should be in lower case letters.")
@@ -122,7 +119,7 @@ case class ColumnBufferBuildParams(name: String, tpe: String, precision: Int, sc
 
 /** This is a `Factory` implementation of `ColumnBuffers`. */
 object ColumnBuffer {
-  private final val colBufBuilders:List[ColumnBufferBuilder] = List(
+  private final val colBufBuilders: List[ColumnBufferBuilder] = List(
     ByteColumnBuffer,
     ShortColumnBuffer,
     IntColumnBuffer,
@@ -135,14 +132,12 @@ object ColumnBuffer {
     ByteEncodedStringColumnBuffer,
     IntegerEncodedStringColumnBuffer,
     TimeColumnBuffer,
-    TimestampColumnBuffer
-  )
+    TimestampColumnBuffer)
 
   private val build = colBufBuilders.map(_.build).reduce(_ orElse _)
 
-  /**
-   * Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
-   * @return an Option embedding the `ColumnBuffer` object (or an empty option if a `ColumnBuffer` was not found)
+  /** Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
+   *  @return an Option embedding the `ColumnBuffer` object (or an empty option if a `ColumnBuffer` was not found)
    */
   def apply(p: ColumnBufferBuildParams): Option[ColumnBuffer[_]] = PartialFunction.condOpt(p)(build)
 }
