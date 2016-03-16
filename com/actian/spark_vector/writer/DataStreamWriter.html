@@ -702,7 +702,7 @@ execution time measured and stored into <code>acc</code>
         <span class="name">write</span><span class="params">(<span name="taskContext">taskContext: <span class="extype" name="org.apache.spark.TaskContext">TaskContext</span></span>, <span name="data">data: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.writer.DataStreamWriter.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">This function is executed once for each partition of <code>DataStreamRDD</code> and it will open a socket connection, process all data
+      <p class="shortcomment cmt">This function is executed once for each partition of <a href="InsertRDD.html" class="extype" name="com.actian.spark_vector.writer.InsertRDD">InsertRDD</a> and it will open a socket connection, process all data
 assigned to its corresponding partition (<code>taskContext.partitionId</code>) and then close the connection.</p>
     </li><li name="com.actian.spark_vector.writer.DataStreamWriter#writeConf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="writeConf:com.actian.spark_vector.writer.WriteConf"></a>

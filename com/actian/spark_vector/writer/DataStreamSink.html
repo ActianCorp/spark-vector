@@ -35,13 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DataStreamSink</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result"> extends <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DataStreamSink</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The <code>VectorSink</code> that flushes <code>ByteBuffers</code> through the <code>SocketChannel</code> <code>socket</code> to a <code>Vector DataStream</code></p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.writer.DataStreamSink"><span>DataStreamSink</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.actian.spark_vector.buffer.VectorSink"><span>VectorSink</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.writer.DataStreamSink"><span>DataStreamSink</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -393,110 +393,19 @@ calculate data type alignments
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#write128BitColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="write128BitColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="write128BitColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
+    </li><li name="com.actian.spark_vector.writer.DataStreamSink#write" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="write(columnBuf:com.actian.spark_vector.colbuffer.ColumnBuffer[_]):Unit"></a>
+      <a id="write(ColumnBuffer[_]):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">write128BitColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">write</span><span class="params">(<span name="columnBuf">columnBuf: <a href="../colbuffer/ColumnBuffer.html" class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer">ColumnBuffer</a>[_]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeByteColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeByteColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeByteColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeByteColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeDoubleColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeDoubleColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeDoubleColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeDoubleColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeFloatColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeFloatColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeFloatColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeFloatColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeIntColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeIntColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeIntColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeIntColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeLongColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeLongColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeLongColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeLongColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeShortColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeShortColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeShortColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeShortColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamSink#writeStringColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="writeStringColumn(columnIndex:Int,values:java.nio.ByteBuffer,markers:java.nio.ByteBuffer):Unit"></a>
-      <a id="writeStringColumn(Int,ByteBuffer,ByteBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">writeStringColumn</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="values">values: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="markers">markers: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamSink">DataStreamSink</a> → <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></dd></dl></div>
+      
     </li></ol>
             </div>
 
@@ -514,8 +423,6 @@ calculate data type alignments
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="com.actian.spark_vector.buffer.VectorSink">
-              <h3>Inherited from <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

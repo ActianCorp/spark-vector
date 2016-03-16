@@ -238,9 +238,9 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Retrieve the <code>ColumnMetadata</code>s for table <code>tableName</code> as a sequence containing as many elements
-as there are columns in the table.</p><div class="fullcomment"><div class="comment cmt"><p>Retrieve the <code>ColumnMetadata</code>s for table <code>tableName</code> as a sequence containing as many elements
-as there are columns in the table. Each element contains the name, type, nullability, precision
-and scale of its corresponding column in <code>tableName</code>
+ as there are columns in the table.</p><div class="fullcomment"><div class="comment cmt"><p>Retrieve the <code>ColumnMetadata</code>s for table <code>tableName</code> as a sequence containing as many elements
+ as there are columns in the table. Each element contains the name, type, nullability, precision
+ and scale of its corresponding column in <code>tableName</code>
 </p></div></div>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#commit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="commit():Unit"></a>
@@ -307,7 +307,7 @@ and scale of its corresponding column in <code>tableName</code>
       </span>
       </h4>
       <p class="shortcomment cmt">Execute a prepared <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package,
-mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
+ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
 </p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#executeQuery" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="executeQuery[T](sql:String)(op:java.sql.ResultSet=&gt;T):T"></a>
@@ -322,7 +322,7 @@ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
       </span>
       </h4>
       <p class="shortcomment cmt">Execute a <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package,
-mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
+ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
 </p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#executeStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="executeStatement(sql:String):Int"></a>
@@ -337,6 +337,19 @@ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
       </span>
       </h4>
       <p class="shortcomment cmt">Execute the update <code>SQL</code> query specified by <code>sql</code></p>
+    </li><li name="com.actian.spark_vector.vector.VectorJDBC#executeUnmanagedPreparedQuery" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="executeUnmanagedPreparedQuery(sql:String,params:Seq[Any]):(java.sql.Statement,java.sql.ResultSet)"></a>
+      <a id="executeUnmanagedPreparedQuery(String,Seq[Any]):(Statement,ResultSet)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">executeUnmanagedPreparedQuery</span><span class="params">(<span name="sql">sql: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="params">params: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: (<span class="extype" name="java.sql.Statement">Statement</span>, <span class="extype" name="java.sql.ResultSet">ResultSet</span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Execute a prepared <code>SQL</code> query, transferring closing responsibility of the <code>Statement</code> and <code>ResultSet</code> to the caller</p>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>

@@ -42,7 +42,7 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark -&gt; Vector loading part</p><p> Loading from <code>Spark</code> to <code>Vector</code> will be initiated with a call to <a href="../vector/LoadVector$.html#loadVector(rdd:org.apache.spark.rdd.RDD[Seq[Any]],schema:org.apache.spark.sql.types.StructType,targetTable:String,vectorProps:com.actian.spark_vector.vector.VectorConnectionProperties,preSQL:Option[Seq[String]],postSQL:Option[Seq[String]],fieldMap:Option[Map[String,String]],createTable:Boolean):Long" class="extmbr" name="com.actian.spark_vector.vector.LoadVector#loadVector">loadVector</a>, either directly or through the <code>SparkSQL</code>/<code>DataFrames</code> APIs.
  The sequence of operations is:</p><ul><li>given an input <code>RDD</code> with its corresponding data type information, its fields will either be matched to existing table's columns or they will help generate a
  <code>create table</code> SQL statement that will be first submitted to <code>Vector</code>.</li><li>helpers <a href="RowWriter.html" class="extype" name="com.actian.spark_vector.writer.RowWriter">RowWriter</a> and <a href="DataStreamWriter.html" class="extype" name="com.actian.spark_vector.writer.DataStreamWriter">DataStreamWriter</a> objects are created and they contain all the needed information for a <code>Spark</code> worker to be able to process,
- serialize and communicate binary data to <code>Vector</code> end points.</li><li>a <a href="DataStreamRDD.html" class="extype" name="com.actian.spark_vector.writer.DataStreamRDD">DataStreamRDD</a> is created, containing as many partitions as there are <code>DataStreams</code> and that will create a <code>NarrowDependency</code> to the input <code>RDD</code></li><li>driver initiates the load, issuing a SQL query to <code>Vector</code> leader node</li><li>driver initiates Spark job =&gt; <a href="RowWriter.html" class="extype" name="com.actian.spark_vector.writer.RowWriter">RowWriter</a> and <a href="DataStreamWriter.html" class="extype" name="com.actian.spark_vector.writer.DataStreamWriter">DataStreamWriter</a> objects, part of the closure, are serialized and sent to worker processes</li><li>each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when <a href="DataStreamRDD.html" class="extype" name="com.actian.spark_vector.writer.DataStreamRDD">DataStreamRDD</a> was created), serializes it into
+ serialize and communicate binary data to <code>Vector</code> end points.</li><li>an <a href="InsertRDD.html" class="extype" name="com.actian.spark_vector.writer.InsertRDD">InsertRDD</a> is created, containing as many partitions as there are <code>DataStreams</code> and that will create a <code>NarrowDependency</code> to the input <code>RDD</code></li><li>driver initiates the load, issuing a SQL query to <code>Vector</code> leader node</li><li>driver initiates Spark job =&gt; <a href="RowWriter.html" class="extype" name="com.actian.spark_vector.writer.RowWriter">RowWriter</a> and <a href="DataStreamWriter.html" class="extype" name="com.actian.spark_vector.writer.DataStreamWriter">DataStreamWriter</a> objects, part of the closure, are serialized and sent to worker processes</li><li>each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when <a href="InsertRDD.html" class="extype" name="com.actian.spark_vector.writer.InsertRDD">InsertRDD</a> was created), serializes it into
  <code>ByteBuffers</code> and then flushes them through the socket towards one (and only one) predetermined <code>Vector</code> end point</li><li>during this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a <code>commit</code> or <code>abort</code> depending on whether any of the
  workers failed. Note, we currently do not retry <code>Spark</code> workers since partial loading is not supported in <code>Vector</code> yet.
 </li></ul></div><div class="toggleContainer block">
@@ -87,20 +87,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.writer.BipartiteAssignment" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="BipartiteAssignmentextendsLoggingwithProfiling"></a>
-      <a id="BipartiteAssignment:BipartiteAssignment"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">sealed </span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="BipartiteAssignment.html"><span class="name">BipartiteAssignment</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Trait that performs a special kind of matching in a bipartite graph:</p>
-    </li><li name="com.actian.spark_vector.writer.DataStreamClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.writer.DataStreamClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DataStreamClientextendsSerializablewithLoggingwithProduct"></a>
       <a id="DataStreamClient:DataStreamClient"></a>
       <h4 class="signature">
@@ -137,26 +124,12 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="DataStreamPartitionAssignment.html"><span class="name">DataStreamPartitionAssignment</span></a><span class="result"> extends <a href="BipartiteAssignment.html" class="extype" name="com.actian.spark_vector.writer.BipartiteAssignment">BipartiteAssignment</a></span>
+        <a href="DataStreamPartitionAssignment.html"><span class="name">DataStreamPartitionAssignment</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.writer.BipartiteAssignment">BipartiteAssignment</span></span>
       </span>
       </h4>
       <p class="comment cmt">Class that contains the matching algorithm used to assign <code>RDD</code> partitions to Vector hosts, based on <code>affinities</code>.</p>
-    </li><li name="com.actian.spark_vector.writer.DataStreamRDD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataStreamRDD[R]extendsRDD[R]withLogging"></a>
-      <a id="DataStreamRDD[R]:DataStreamRDD[R]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="DataStreamRDD.html"><span class="name">DataStreamRDD</span></a><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.writer.DataStreamRDD.R">R</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt"><code>Vector</code> RDD to load data into <code>Vector</code> through its <code>DataStream API</code>
-</p>
     </li><li name="com.actian.spark_vector.writer.DataStreamSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataStreamSinkextendsVectorSinkwithProductwithSerializable"></a>
+      <a id="DataStreamSinkextendsProductwithSerializable"></a>
       <a id="DataStreamSink:DataStreamSink"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -164,7 +137,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DataStreamSink.html"><span class="name">DataStreamSink</span></a><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result"> extends <a href="../buffer/VectorSink.html" class="extype" name="com.actian.spark_vector.buffer.VectorSink">VectorSink</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DataStreamSink.html"><span class="name">DataStreamSink</span></a><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">The <code>VectorSink</code> that flushes <code>ByteBuffers</code> through the <code>SocketChannel</code> <code>socket</code> to a <code>Vector DataStream</code></p>
@@ -181,6 +154,20 @@
       </span>
       </h4>
       <p class="comment cmt">Entry point for loading with spark-vector connector.</p>
+    </li><li name="com.actian.spark_vector.writer.InsertRDD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InsertRDD[R]extendsRDD[R]withLogging"></a>
+      <a id="InsertRDD[R]:InsertRDD[R]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="InsertRDD.html"><span class="name">InsertRDD</span></a><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.writer.InsertRDD.R">R</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"><code>Vector</code> RDD to load data into <code>Vector</code> through its <code>DataStream API</code>
+</p>
     </li><li name="com.actian.spark_vector.writer.RowWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RowWriterextendsSerializablewithLogging"></a>
       <a id="RowWriter:RowWriter"></a>
@@ -238,19 +225,6 @@
       </span>
       <span class="symbol">
         <a href="DataStreamPartitionAssignment$.html"><span class="name">DataStreamPartitionAssignment</span></a>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.writer.DataStreamReader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataStreamReader"></a>
-      <a id="DataStreamReader:DataStreamReader"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="DataStreamReader$.html"><span class="name">DataStreamReader</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
       </span>
       </h4>
       

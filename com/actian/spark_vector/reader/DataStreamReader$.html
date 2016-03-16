@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>DataStreamPartitionAssignment - com.actian.spark_vector.writer.DataStreamPartitionAssignment</title>
-          <meta name="description" content="DataStreamPartitionAssignment - com.actian.spark vector.writer.DataStreamPartitionAssignment" />
-          <meta name="keywords" content="DataStreamPartitionAssignment com.actian.spark vector.writer.DataStreamPartitionAssignment" />
+          <title>DataStreamReader - com.actian.spark_vector.reader.DataStreamReader</title>
+          <meta name="description" content="DataStreamReader - com.actian.spark vector.reader.DataStreamReader" />
+          <meta name="keywords" content="DataStreamReader com.actian.spark vector.reader.DataStreamReader" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'com.actian.spark_vector.writer.DataStreamPartitionAssignment';
+            var hash = 'com.actian.spark_vector.reader.DataStreamReader$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -22,29 +22,26 @@
    	  </script>
     
         </head>
-        <body class="type">
+        <body class="value">
       <div id="definition">
-        <a href="DataStreamPartitionAssignment$.html" title="Go to companion"><img src="../../../../lib/class_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.writer">writer</a></p>
-        <h1><a href="DataStreamPartitionAssignment$.html" title="Go to companion">DataStreamPartitionAssignment</a></h1>
+        <img src="../../../../lib/object_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.reader">reader</a></p>
+        <h1>DataStreamReader</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">class</span>
+        <span class="modifier"></span>
+        <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">DataStreamPartitionAssignment</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.writer.BipartiteAssignment">BipartiteAssignment</span></span>
+        <span class="name">DataStreamReader</span><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Class that contains the matching algorithm used to assign <code>RDD</code> partitions to Vector hosts, based on <code>affinities</code>.</p><p> The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
- that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
- aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="com.actian.spark_vector.writer.BipartiteAssignment">BipartiteAssignment</span>, <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a>, <span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -62,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment"><span>DataStreamPartitionAssignment</span></li><li class="in" name="com.actian.spark_vector.writer.BipartiteAssignment"><span>BipartiteAssignment</span></li><li class="in" name="com.actian.spark_vector.Profiling"><span>Profiling</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.reader.DataStreamReader"><span>DataStreamReader</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -80,24 +77,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(affinities:Array[_&lt;:Seq[String]],endpoints:IndexedSeq[com.actian.spark_vector.writer.VectorEndPoint]):com.actian.spark_vector.writer.DataStreamPartitionAssignment"></a>
-      <a id="&lt;init&gt;:DataStreamPartitionAssignment"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DataStreamPartitionAssignment</span><span class="params">(<span name="affinities">affinities: <span class="extype" name="scala.Array">Array</span>[_ &lt;: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="endpoints">endpoints: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<a href="VectorEndPoint.html" class="extype" name="com.actian.spark_vector.writer.VectorEndPoint">VectorEndPoint</a>]</span>)</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">affinities</dt><dd class="cmt"><p>Affinities of each partition to host names represented as an <code>Array</code> of <code>Seq[T]</code></p></dd><dt class="param">endpoints</dt><dd class="cmt"><p>Vector end points
-</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         
 
@@ -170,19 +150,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#accs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="accs:com.actian.spark_vector.ProfAccMap"></a>
-      <a id="accs:ProfAccMap"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">accs</span><span class="result">: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -196,19 +163,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#assignment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="assignment:IndexedSeq[scala.collection.mutable.ArrayBuffer[Int]]"></a>
-      <a id="assignment:IndexedSeq[ArrayBuffer[Int]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">assignment</span><span class="result">: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.collection.mutable.ArrayBuffer">ArrayBuffer</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">For each end point in <code>endpoints</code>, a sequence of partition indices that are assigned to that end point</p>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -228,19 +182,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#edges" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="edges:scala.collection.immutable.IndexedSeq[scala.collection.immutable.IndexedSeq[Int]]"></a>
-      <a id="edges:IndexedSeq[IndexedSeq[Int]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">edges</span><span class="result">: <span class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -494,61 +435,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.BipartiteAssignment#matching" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="matching:IndexedSeq[IndexedSeq[Int]]"></a>
-      <a id="matching:IndexedSeq[IndexedSeq[Int]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">matching</span><span class="result">: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Get an assignment of partitions to hosts satisfying the properties described in the header
-</p><div class="fullcomment"><div class="comment cmt"><p>Get an assignment of partitions to hosts satisfying the properties described in the header
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>One sequence of partition indexes assigned to each host
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>BipartiteAssignment</dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#nA" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nA:Int"></a>
-      <a id="nA:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">nA</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
-    </li><li name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#nB" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nB:Int"></a>
-      <a id="nB:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">nB</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#nameToAcc" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nameToAcc(name:String)(implicitpmap:com.actian.spark_vector.ProfAccMap):com.actian.spark_vector.ProfAcc"></a>
-      <a id="nameToAcc(String)(ProfAccMap):ProfAcc"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">nameToAcc</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <a href="../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -588,62 +474,104 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profile(ProfAcc)(ProfAccMap):Unit"></a>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readByteArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readByteArray(in:java.nio.ByteBuffer):Array[Byte]"></a>
+      <a id="readByteArray(ByteBuffer):Array[Byte]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">profile</span><span class="params">(<span name="acc">acc: <a href="../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">readByteArray</span><span class="params">(<span name="in">in: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Start measuring time and record it in <code>acc</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Start measuring time and record it in <code>acc</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd><dt>Note</dt><dd><span class="cmt"><p>This function should always be used in combination with <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#profileEnd">profileEnd</a> in a similar way with opening and closing
-a sequence of brackets, where the code between a <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#profile">profile</a> call and its corresponding <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#profileEnd">profileEnd</a> will have its
-execution time measured and stored into <code>acc</code>
-</p></span></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profileEnd" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profileEnd(ProfAccMap):Unit"></a>
+      <p class="shortcomment cmt">Read a <code>ByteArray</code> from <code>in</code></p>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readByteBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readByteBuffer(len:Int)(implicitsocket:java.nio.channels.SocketChannel):java.nio.ByteBuffer"></a>
+      <a id="readByteBuffer(Int)(SocketChannel):ByteBuffer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">profileEnd</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">readByteBuffer</span><span class="params">(<span name="len">len: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#profile">profile</a> call</p><div class="fullcomment"><div class="comment cmt"><p>Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamPartitionAssignment#profile">profile</a> call</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profileInit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profileInit(names:String*):com.actian.spark_vector.ProfAccMap"></a>
-      <a id="profileInit(String*):ProfAccMap"></a>
+      <p class="shortcomment cmt">Read a byte buffer of length <code>len from </code>socket<code></code></p>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readByteBufferWithLength" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readByteBufferWithLength(implicitsocket:java.nio.channels.SocketChannel):java.nio.ByteBuffer"></a>
+      <a id="readByteBufferWithLength(SocketChannel):ByteBuffer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">profileInit</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>
+        <span class="name">readByteBufferWithLength</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Initialize profiling</p><div class="fullcomment"><div class="comment cmt"><p>Initialize profiling</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profilePrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profilePrint(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profilePrint(ProfAccMap):Unit"></a>
+      <p class="shortcomment cmt">Read a byte buffer and its length integer from <code>socket</code></p>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readCode(in:java.nio.ByteBuffer,code:Array[Int]):Boolean"></a>
+      <a id="readCode(ByteBuffer,Array[Int]):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">profilePrint</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">readCode</span><span class="params">(<span name="in">in: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="code">code: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Print profile information using <code>log</code></p><div class="fullcomment"><div class="comment cmt"><p>Print profile information using <code>log</code></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
+      <p class="shortcomment cmt">Read a Vector <code>code</code> from <code>in</code> and return <code>false</code> if a different
+code was read from the <code>ByteBuffer</code>
+</p><div class="fullcomment"><div class="comment cmt"><p>Read a Vector <code>code</code> from <code>in</code> and return <code>false</code> if a different
+code was read from the <code>ByteBuffer</code>
+</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@tailrec</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readLength" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readLength(in:java.nio.ByteBuffer):Long"></a>
+      <a id="readLength(ByteBuffer):Long"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readLength</span><span class="params">(<span name="in">in: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Read a variable length message's length from <code>in</code></p>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readString" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readString(in:java.nio.ByteBuffer):String"></a>
+      <a id="readString(ByteBuffer):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readString</span><span class="params">(<span name="in">in: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Read an ASCII string from <code>in</code></p>
+    </li><li name="com.actian.spark_vector.reader.DataStreamReader#readWithByteBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readWithByteBuffer[T](code:java.nio.ByteBuffer=&gt;T)(implicitsocket:java.nio.channels.SocketChannel):T"></a>
+      <a id="readWithByteBuffer[T]((ByteBuffer)⇒T)(SocketChannel):T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readWithByteBuffer</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="code">code: (<span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span>) ⇒ <span class="extype" name="com.actian.spark_vector.reader.DataStreamReader.readWithByteBuffer.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.reader.DataStreamReader.readWithByteBuffer.T">T</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Read data from <code>socket</code>, store it in a <code>ByteBuffer</code> and execute the <code>code</code> that reads from it</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -736,11 +664,7 @@ execution time measured and stored into <code>acc</code>
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="com.actian.spark_vector.writer.BipartiteAssignment">
-              <h3>Inherited from <span class="extype" name="com.actian.spark_vector.writer.BipartiteAssignment">BipartiteAssignment</span></h3>
-            </div><div class="parent" name="com.actian.spark_vector.Profiling">
-              <h3>Inherited from <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></h3>
-            </div><div class="parent" name="org.apache.spark.Logging">
+        <div class="parent" name="org.apache.spark.Logging">
               <h3>Inherited from <span class="extype" name="org.apache.spark.Logging">Logging</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>

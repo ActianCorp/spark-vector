@@ -43,62 +43,80 @@
 Usage: spark-submit --<span class="kw">class</span> com.actian.spark_vector.loader.Main &lt;spark_vector_loader-assembly-<span class="num">1.0</span>-SNAPSHOT.jar&gt; [load] [options]
 
 Spark Vector load
---help
-     This tool can be used to load CSV/Parquet files through Spark to Vector
-Command: load [csv|parquet]
+  --help
+        This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
+Command: load [csv|parquet|orc]
 Read a file and load into Vector
 Command: load csv [options]
 Load a csv file
- -sf &lt;value&gt; | --sourceFile &lt;value&gt;
-     Source file
- -cols &lt;value&gt; | --cols &lt;value&gt;
-     Comma separated string containing only column names to load
- -vh &lt;value&gt; | --vectorHost &lt;value&gt;
-     Vector host name
- -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
-     Vector instance
- -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
-     Vector database
- -vu &lt;value&gt; | --vectorUser &lt;value&gt;
-     Vector user
- -vp &lt;value&gt; | --vectorPass &lt;value&gt;
-     Vector password
- -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
-     Vector target table
- -sh &lt;value&gt; | --skipHeader &lt;value&gt;
-     Skip header row
- -en &lt;value&gt; | --encoding &lt;value&gt;
-     CSV text encoding
- -np &lt;value&gt; | --nullPattern &lt;value&gt;
-     CSV <span class="kw">null</span> pattern
- -sc &lt;value&gt; | --separatorChar &lt;value&gt;
-     CSV field separator character
- -qc &lt;value&gt; | --quoteChar &lt;value&gt;
-     CSV quote character
- -ec &lt;value&gt; | --escapeChar &lt;value&gt;
-     CSV escape character
- -h &lt;value&gt; | --header &lt;value&gt;
-     Comma separated string <span class="kw">with</span> CSV column names and datatypes, e.g. <span class="lit">"col1 int, col2 string"</span>
- -pl &lt;value&gt; | --parserLib &lt;value&gt;
-     CSV parser library: either default or univocity
-     Command: load parquet [options]
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table
+  -sh &lt;value&gt; | --skipHeader &lt;value&gt;
+        Skip header row
+  -en &lt;value&gt; | --encoding &lt;value&gt;
+        CSV text encoding
+  -np &lt;value&gt; | --nullPattern &lt;value&gt;
+        CSV <span class="kw">null</span> pattern
+  -sc &lt;value&gt; | --separatorChar &lt;value&gt;
+        CSV field separator character
+  -qc &lt;value&gt; | --quoteChar &lt;value&gt;
+        CSV quote character
+  -ec &lt;value&gt; | --escapeChar &lt;value&gt;
+        CSV escape character
+  -h &lt;value&gt; | --header &lt;value&gt;
+        Comma separated string <span class="kw">with</span> CSV column names and datatypes, e.g. <span class="lit">"col1 int, col2 string,"</span>
+  -pl &lt;value&gt; | --parserLib &lt;value&gt;
+        CSV parser library (<span class="kw">for</span> spark-csv): either default or univocity
+Command: load parquet [options]
 Load a parquet file
- -sf &lt;value&gt; | --sourceFile &lt;value&gt;
-     Source file
- -cols &lt;value&gt; | --cols &lt;value&gt;
-     Comma separated string containing only column names to load
- -vh &lt;value&gt; | --vectorHost &lt;value&gt;
-     Vector host name
- -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
-     Vector instance
- -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
-     Vector database
- -vu &lt;value&gt; | --vectorUser &lt;value&gt;
-     Vector user
- -vp &lt;value&gt; | --vectorPass &lt;value&gt;
-     Vector password
- -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
-     Vector target table</pre></div><div class="toggleContainer block">
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table
+Command: load orc [options]
+Load an orc file
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table</pre></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -530,6 +548,45 @@ Load a parquet file
       </span>
       <span class="symbol">
         <span class="name">nullPattern</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#orcArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="orcArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
+      <a id="orcArgs:Seq[ArgOption[_,_]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">orcArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#orcLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="orcLoad:com.actian.spark_vector.loader.parsers.ArgDescription"></a>
+      <a id="orcLoad:ArgDescription"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">orcLoad</span><span class="result">: <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#orcOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="orcOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
+      <a id="orcOptions:Seq[ArgOption[_,_]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">orcOptions</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
       </h4>
       

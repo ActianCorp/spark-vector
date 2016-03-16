@@ -111,6 +111,32 @@ loading to <code>Vector</code> tables.
       </h4>
       <p class="comment cmt">A partition corresponding to one <code>DataStream</code>
 </p>
+    </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ResultSetIterator[T]extendsIterator[T]"></a>
+      <a id="ResultSetIterator[T]:ResultSetIterator[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ResultSetIterator.html"><span class="name">ResultSetIterator</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.vector.ResultSetIterator.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Iterator over an ResultSet</p>
+    </li><li name="com.actian.spark_vector.vector.ResultSetRowIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ResultSetRowIteratorextendsResultSetIterator[org.apache.spark.sql.Row]withLoggingwithProfiling"></a>
+      <a id="ResultSetRowIterator:ResultSetRowIterator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ResultSetRowIterator.html"><span class="name">ResultSetRowIterator</span></a><span class="result"> extends <a href="ResultSetIterator.html" class="extype" name="com.actian.spark_vector.vector.ResultSetIterator">ResultSetIterator</a>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span> with <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extracts <code>Rows</code> out of a <code>ResultSet</code></p>
     </li><li name="com.actian.spark_vector.vector.VectorConnectionProperties" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorConnectionPropertiesextendsSerializablewithProduct"></a>
       <a id="VectorConnectionProperties:VectorConnectionProperties"></a>
@@ -198,6 +224,19 @@ loading to <code>Vector</code> tables.
       </span>
       </h4>
       <p class="comment cmt">Utility object that defines methods for loading data into Vector</p>
+    </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ResultSetIterator"></a>
+      <a id="ResultSetIterator:ResultSetIterator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ResultSetIterator$.html"><span class="name">ResultSetIterator</span></a>
+      </span>
+      </h4>
+      
     </li><li name="com.actian.spark_vector.vector.TableSchemaGenerator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TableSchemaGenerator"></a>
       <a id="TableSchemaGenerator:TableSchemaGenerator"></a>

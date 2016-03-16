@@ -88,7 +88,21 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.ProfAcc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.ComposePartial" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ComposePartial[A,B]extendsAnyRef"></a>
+      <a id="ComposePartial[A,B]:ComposePartial[A,B]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$ComposePartial.html"><span class="name">ComposePartial</span></a><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Having two <code>PartialFunctions</code> <code>f</code> and <code>g</code> with no side effects, we compose them into another partial function <code>h</code> such that
+<code>h.isDefinedAt(x)</code> if <code>f.isDefinedAt(x)</code> and <code>g.isDefinedAt(f(x))</code></p>
+    </li><li name="com.actian.spark_vector.ProfAcc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ProfAccextendsProductwithSerializable"></a>
       <a id="ProfAcc:ProfAcc"></a>
       <h4 class="signature">
@@ -134,16 +148,29 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector.buffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="buffer"></a>
-      <a id="buffer:buffer"></a>
+              <ol><li name="com.actian.spark_vector.colbuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="colbuffer"></a>
+      <a id="colbuffer:colbuffer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a href="buffer/package.html"><span class="name">buffer</span></a>
+        <a href="colbuffer/package.html"><span class="name">colbuffer</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Implements buffering (and value serialization) for <code>Vector</code> columns</p>
+    </li><li name="com.actian.spark_vector.reader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="reader"></a>
+      <a id="reader:reader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="reader/package.html"><span class="name">reader</span></a>
       </span>
       </h4>
       

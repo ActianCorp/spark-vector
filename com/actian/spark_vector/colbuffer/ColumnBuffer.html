@@ -2,17 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>ParquetRead - com.actian.spark_vector.loader.command.ParquetRead</title>
-          <meta name="description" content="ParquetRead - com.actian.spark vector.loader.command.ParquetRead" />
-          <meta name="keywords" content="ParquetRead com.actian.spark vector.loader.command.ParquetRead" />
+          <title>ColumnBuffer - com.actian.spark_vector.colbuffer.ColumnBuffer</title>
+          <meta name="description" content="ColumnBuffer - com.actian.spark vector.colbuffer.ColumnBuffer" />
+          <meta name="keywords" content="ColumnBuffer com.actian.spark vector.colbuffer.ColumnBuffer" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../index.html';
-            var hash = 'com.actian.spark_vector.loader.command.ParquetRead$';
+            var url = '../../../../index.html';
+            var hash = 'com.actian.spark_vector.colbuffer.ColumnBuffer';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -22,24 +22,29 @@
    	  </script>
     
         </head>
-        <body class="value">
+        <body class="type">
       <div id="definition">
-        <img src="../../../../../lib/object_big.png" />
-        <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.loader">loader</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.loader.command">command</a></p>
-        <h1>ParquetRead</h1>
+        <a href="ColumnBuffer$.html" title="Go to companion"><img src="../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.colbuffer">colbuffer</a></p>
+        <h1><a href="ColumnBuffer$.html" title="Go to companion">ColumnBuffer</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">ParquetRead</span>
+        <span class="name">ColumnBuffer</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Abstract class to be used when implementing the class for a typed ColumnBuffer
+ (e.g. object IntColumnBuffer extends ColumnBuffer[Int])</p><p> This class implements the base methods for buffering vectors of column values.
+ The <code>put</code>, <code>flip</code>, <code>clear</code> methods are according to the Buffer interface.
+ The column value serialization should be implemented within the concrete
+ (typed) class instead.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -59,7 +64,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.loader.command.ParquetRead"><span>ParquetRead</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.colbuffer.ColumnBuffer"><span>ColumnBuffer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -77,14 +82,47 @@
 
       <div id="template">
         <div id="allMembers">
-        
-
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(name:String,maxValueCount:Int,valueWidth:Int,alignSize:Int,nullable:Boolean)(implicitevidence$1:scala.reflect.ClassTag[T]):com.actian.spark_vector.colbuffer.ColumnBuffer[T]"></a>
+      <a id="&lt;init&gt;:ColumnBuffer[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ColumnBuffer</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="maxValueCount">maxValueCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueWidth">valueWidth: <span class="extype" name="scala.Int">Int</span></span>, <span name="alignSize">alignSize: <span class="extype" name="scala.Int">Int</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer.T">T</span>]</span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>the column's name</p></dd><dt class="param">maxValueCount</dt><dd class="cmt"><p>the maximum number of values to store within the buffer</p></dd><dt class="param">valueWidth</dt><dd class="cmt"><p>the width of the value's data type</p></dd><dt class="param">alignSize</dt><dd class="cmt"><p>the data type's alignment size</p></dd><dt class="param">nullable</dt><dd class="cmt"><p>whether this column accepts null values or not
+</p></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Abstract Value Members</h3>
+              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#put" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="put(source:T,buffer:java.nio.ByteBuffer):Unit"></a>
+      <a id="put(T,ByteBuffer):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">put</span><span class="params">(<span name="source">source: <span class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer.T">T</span></span>, <span name="buffer">buffer: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:AnyRef):Boolean"></a>
       <a id="!=(AnyRef):Boolean"></a>
@@ -150,6 +188,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#alignSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="alignSize:Int"></a>
+      <a id="alignSize:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">alignSize</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">the data type's alignment size</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -163,6 +214,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#clear" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="clear():Unit"></a>
+      <a id="clear():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clear</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -175,7 +239,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -220,13 +284,26 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#flip" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="flip():Unit"></a>
+      <a id="flip():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">flip</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -266,6 +343,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#markers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="markers:java.nio.ByteBuffer"></a>
+      <a id="markers:ByteBuffer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">markers</span><span class="result">: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -305,22 +395,65 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.loader.command.ParquetRead#registerTempTable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="registerTempTable(options:com.actian.spark_vector.loader.options.UserOptions,sqlContext:org.apache.spark.sql.SQLContext):String"></a>
-      <a id="registerTempTable(UserOptions,SQLContext):String"></a>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#nullable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nullable:Boolean"></a>
+      <a id="nullable:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nullable</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">whether this column accepts null values or not
+</p>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#put" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="put(source:T):Unit"></a>
+      <a id="put(T):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">registerTempTable</span><span class="params">(<span name="options">options: <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a></span>, <span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">put</span><span class="params">(<span name="source">source: <span class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer.T">T</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Based on <code>options</code>, register a temporary table as the source of the <code>Parquet</code> input
-</p><div class="fullcomment"><div class="comment cmt"><p>Based on <code>options</code>, register a temporary table as the source of the <code>Parquet</code> input
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A string containing the <code>SELECT</code> statement that can be used to subsequently consume data from the temporary table</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The temporary table will be named &quot;parquet_&lt;vectorTargetTable&gt;*&quot;
-</p></span></dd></dl></div>
+      
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#putNull" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="putNull():Unit"></a>
+      <a id="putNull():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">putNull</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[IllegalArgumentException]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#size" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="size:Int"></a>
+      <a id="size:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">size</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -347,6 +480,32 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#valueType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="valueType:scala.reflect.ClassTag[T]"></a>
+      <a id="valueType:ClassTag[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">valueType</span><span class="result">: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer.T">T</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#values" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="values:java.nio.ByteBuffer"></a>
+      <a id="values:ByteBuffer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">values</span><span class="result">: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -433,6 +592,6 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
     </body>
       </html>

@@ -1,0 +1,10 @@
+#Ignore
+src
+target
+loader/src
+loader/target
+.classpath
+.settings
+loader/.classpath
+loader/.settings
+
