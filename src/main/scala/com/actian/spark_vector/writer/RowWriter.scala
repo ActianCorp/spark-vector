@@ -30,22 +30,21 @@ import scala.reflect.classTag
  *
  * @param tableSchema schema information for the `Vector` table/relation being loaded to
  */
-class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logging {
+class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Logging {
   import RowWriter._
 
   /**
    * A list of column buffers, one for each column of the table inserted to that will be used to serialize input `RDD` rows into the
    * buffer for the appropriate table column
    */
-  private lazy val columnBufs = tableSchema.toList.map {
-    case col =>
-      logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
-        s"nullable=${col.nullable}, vectorsize=${DataStreamWriter.vectorSize}")
-      ColumnBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, DataStreamWriter.vectorSize, col.nullable)) match {
-        case Some(cb) => cb
-        case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
-      }
+  private val columnBufs = tableSchema.toList.map { case col =>
+    logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
+      s"nullable=${col.nullable}, vectorsize=${vectorSize}")
+    ColumnBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable)) match {
+      case Some(cb) => cb
+      case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
     }
+  }
 
   /**
    * A list of functions (one per column buffer) to write values (Any for now) into its corresponding column buffer, and performing the necessary type casts.
@@ -53,44 +52,38 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
    * @note since the column buffers are exposed only through the interface `ColumnBuf[_]`. Since we need to cast the value(Any) to the `ColumnBuf`'s expected type,
    * we make use of runtime reflection to determine the type of the generic parameter of the ColumnBuf
    */
-  private lazy val writeValFcns: Seq[(Any, ColumnBuffer[_]) => Unit] = columnBufs.map {
-    case buf =>
-      val ret: (Any, ColumnBuffer[_]) => Unit = buf.valueType match {
-        case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
-        case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
-        case y if y == classTag[Short] => writeValToColumnBuffer[Short]
-        case y if y == classTag[Int] => writeValToColumnBuffer[Int]
-        case y if y == classTag[Long] => writeValToColumnBuffer[Long]
-        case y if y == classTag[Double] => writeValToColumnBuffer[Double]
-        case y if y == classTag[Float] => writeValToColumnBuffer[Float]
-        case y if y == classTag[String] => writeValToColumnBuffer[String]
-        case y if y == classTag[Number] => writeValToColumnBuffer[Number]
-        case y if y == classTag[Date] => writeValToColumnBuffer[Date]
-        case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
-        case y => throw new Exception(s"Unexpected buffer column type ${y}")
-      }
-      ret
+  private val writeValFcns: Seq[(Any, ColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
+    val ret: (Any, ColumnBuffer[_]) => Unit = buf.valueType match {
+      case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
+      case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
+      case y if y == classTag[Short] => writeValToColumnBuffer[Short]
+      case y if y == classTag[Int] => writeValToColumnBuffer[Int]
+      case y if y == classTag[Long] => writeValToColumnBuffer[Long]
+      case y if y == classTag[Double] => writeValToColumnBuffer[Double]
+      case y if y == classTag[Float] => writeValToColumnBuffer[Float]
+      case y if y == classTag[String] => writeValToColumnBuffer[String]
+      case y if y == classTag[Number] => writeValToColumnBuffer[Number]
+      case y if y == classTag[Date] => writeValToColumnBuffer[Date]
+      case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
+      case y => throw new Exception(s"Unexpected buffer column type ${y}")
+    }
+    ret
   }
 
   /** Write a single `row` */
-  def write(row: Seq[Any]): Unit = {
-    (0 to row.length - 1).map {
-      case idx =>
-        writeToColumnBuffer(row(idx), columnBufs(idx), writeValFcns(idx))
-    }
+  def write(row: Seq[Any]): Unit = (0 to row.length - 1).map {
+    case idx => writeToColumnBuffer(row(idx), columnBufs(idx), writeValFcns(idx))
   }
 
-  private def writeValToColumnBuffer[T](x: Any, columnBuf: ColumnBuffer[_]): Unit = {
+  private def writeValToColumnBuffer[T](x: Any, columnBuf: ColumnBuffer[_]): Unit =
     columnBuf.asInstanceOf[ColumnBuffer[T]].put(x.asInstanceOf[T])
-  }
 
-  private def writeToColumnBuffer(x: Any, columnBuf: ColumnBuffer[_], writeFcn: (Any, ColumnBuffer[_]) => Unit): Unit = {
+  private def writeToColumnBuffer(x: Any, columnBuf: ColumnBuffer[_], writeFcn: (Any, ColumnBuffer[_]) => Unit): Unit =
     if (x == null) {
       columnBuf.putNull()
     } else {
       writeFcn(x, columnBuf)
     }
-  }
 
   /**
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
@@ -103,22 +96,18 @@ class RowWriter(tableSchema: Seq[ColumnMetadata]) extends Serializable with Logg
   }
 
   /** Flushes buffered data to the socket through `sink` */
-  def flushToSink(sink: DataStreamSink): Unit = {
-    columnBufs.foreach { case columnBuf => sink.write(columnBuf) }
+  def flushToSink(sink: DataStreamSink): Unit = columnBufs.foreach {
+    case columnBuf => sink.write(columnBuf)
   }
 }
 
 object RowWriter {
-  def apply(tableSchema: Seq[ColumnMetadata]): RowWriter = {
-    new RowWriter(tableSchema)
-  }
+  def apply(tableSchema: Seq[ColumnMetadata], vectorSize: Int): RowWriter = new RowWriter(tableSchema, vectorSize)
 
   /** Helper to determine how much padding (# of trash bytes) needs to be written to properly align a type with size `typeSize`, given that we are currently at `pos` */
-  def padding(pos: Int, typeSize: Int): Int = {
-    if ((pos & (typeSize - 1)) != 0) {
-      typeSize - (pos & (typeSize - 1))
-    } else {
-      0
-    }
+  def padding(pos: Int, typeSize: Int): Int = if ((pos & (typeSize - 1)) != 0) {
+    typeSize - (pos & (typeSize - 1))
+  } else {
+    0
   }
 }

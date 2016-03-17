@@ -28,7 +28,6 @@ import com.actian.spark_vector.writer.{ DataStreamWriter, InsertRDD, RowWriter }
 
 /** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {
-
   import RDDUtil._
   import ResourceUtil._
 
@@ -60,18 +59,15 @@ object LoadVector extends Logging {
     validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
 
     // If a subset of input fields are needed to load, select only the fields needed
-    val (inputRDD, inputType) =
-      if (field2Columns.length < schema.fields.length) {
-        selectFields(rdd, schema, field2Columns.map(_.fieldName))
-      } else {
-        (rdd, schema)
-      }
+    val (inputRDD, inputType) = if (field2Columns.length < schema.fields.length) {
+      selectFields(rdd, schema, field2Columns.map(_.fieldName))
+    } else {
+      (rdd, schema)
+    }
     val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
       field2Columns.map(i => i.columnName -> i.fieldName).toMap)
 
-    val rowWriter = RowWriter(tableSchema)
-    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, rowWriter)
-
+    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, tableSchema)
     closeResourceOnFailure(writer.client) {
       preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
     }

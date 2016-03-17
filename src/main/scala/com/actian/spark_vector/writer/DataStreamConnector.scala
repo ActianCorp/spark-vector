@@ -20,9 +20,10 @@ import java.nio.channels.SocketChannel
 
 import org.apache.spark.Logging
 
-import com.actian.spark_vector.reader.DataStreamReader
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.writer.srp.VectorSRPClient
+import com.actian.spark_vector.reader.DataStreamReader
+import com.actian.spark_vector.vector.VectorConnectionHeader
 
 /**
  * Class containing methods to open connections to Vector's `DataStream` API
@@ -31,6 +32,8 @@ import com.actian.spark_vector.writer.srp.VectorSRPClient
  * ports of the hosts where they are expected and authentication information
  */
 class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializable {
+  import DataStreamReader._
+
   private def openConnection(idx: Int): SocketChannel = {
     val host: VectorEndPoint = writeConf.vectorEndPoints(idx)
     logInfo(s"Opening a socket to $host")
@@ -47,7 +50,8 @@ class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializabl
     closeResourceAfterUse(socket) { op(socket) }
   }
 
-  def skipTableInfo(implicit socket: SocketChannel): Unit = {
-    DataStreamReader.readWithByteBuffer { in => } // skip table information message. TODO(): read at least the expected vectorsize
+  def readConnectionHeader(implicit socket: SocketChannel): VectorConnectionHeader = readWithByteBuffer { in =>
+    /** There is more information about columns, datatypes and nullability in this header but we ignore it since we got it before from a JDBC query. */
+    VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
   }
 }
