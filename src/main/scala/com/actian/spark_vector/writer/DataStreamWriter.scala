@@ -15,31 +15,28 @@
  */
 package com.actian.spark_vector.writer
 
-import java.io.{ByteArrayOutputStream, DataOutputStream}
+import java.io.{ ByteArrayOutputStream, DataOutputStream }
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
 
-import org.apache.spark.{Logging, TaskContext}
+import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
-import com.actian.spark_vector.vector.VectorConnectionProperties
+import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
 
 /**
  * Entry point for loading with spark-vector connector.
  *
  * @param vectorProps connection information to the leader node's SQL interface
  * @param table The table loaded to
- * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector`
+ * @param tableSchema of the table as a `StructType`
  */
-class DataStreamWriter[T <% Seq[Any]](
-  vectorProps: VectorConnectionProperties,
-  table: String,
-  rowWriter: RowWriter) extends Logging with Serializable with Profiling {
-
+class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableSchema: Seq[ColumnMetadata]) extends
+  Logging with Serializable with Profiling {
   import DataStreamWriter._
 
   /**
@@ -48,8 +45,7 @@ class DataStreamWriter[T <% Seq[Any]](
    *
    * @note Available only on the driver.
    */
-  @transient
-  val client = DataStreamClient(vectorProps, table)
+  @transient val client = DataStreamClient(vectorProps, table)
   /** Write configuration to be used when connecting to the `DataStream` API */
   lazy val writeConf = {
     client.prepareDataStreams
@@ -62,11 +58,12 @@ class DataStreamWriter[T <% Seq[Any]](
    * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
    * the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
    */
-  private def writeSplittingInVectors(data: Iterator[T])(implicit sink: DataStreamSink) = {
+  private def writeSplittingInVectors(data: Iterator[T], vectorSize: Int)(implicit sink: DataStreamSink): Unit = {
     implicit val socket = sink.socket
     var i = 0
     var written = 0
     val headerSize = 4 /* code */ + 4 /* number of tuples */ + 4 /* messageLength */
+    val rowWriter = RowWriter(tableSchema, vectorSize)
     implicit val accs = profileInit("total", "child", "buffering", "flushing")
     profile("total")
     do {
@@ -97,13 +94,14 @@ class DataStreamWriter[T <% Seq[Any]](
    * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
    * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
-  def write(taskContext: TaskContext, data: Iterator[T]): Unit = {
-    connector.withConnection(taskContext.partitionId)(implicit channel => {
+  def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
+    implicit channel => {
       implicit val sink = DataStreamSink()
-      connector.skipTableInfo
-      writeSplittingInVectors(data)
-    })
-  }
+      val header = connector.readConnectionHeader
+      if (header.statusCode < 0) throw new Exception(s"Error writing data: got status code = ${header.statusCode} from connection")
+      writeSplittingInVectors(data, header.vectorSize)
+    }
+  )
 
   /**
    * Initiate the load, i.e. submit the SQL query to start loading from an external source.
@@ -122,24 +120,17 @@ class DataStreamWriter[T <% Seq[Any]](
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */
 object DataStreamWriter extends Logging {
-  /** Default vector size to use while loading. i.e. the number of rows that will be transmitted with each message sent to `Vector` */
-  val vectorSize = 1024
-
   // scalastyle:off magic.number
   /** Write the length `len` of a variable length message to `out` */
-  @tailrec
-  def writeLength(out: DataOutputStream, len: Long): Unit = {
-    len match {
-      case x if x < 255 => out.writeByte(x.toInt)
-      case _ =>
-        out.write(255)
-        writeLength(out, len - 255)
-    }
+  @tailrec def writeLength(out: DataOutputStream, len: Long): Unit = len match {
+    case x if x < 255 => out.writeByte(x.toInt)
+    case _ =>
+      out.write(255)
+      writeLength(out, len - 255)
   }
 
   /** Write an ASCII encoded string to `out` */
-  def writeString(out: DataOutputStream, s: String): Unit =
-    writeByteArray(out, s.getBytes("ASCII"))
+  def writeString(out: DataOutputStream, s: String): Unit = writeByteArray(out, s.getBytes("ASCII"))
 
   /** Write a `ByteArray` `a` to `out` */
   def writeByteArray(out: DataOutputStream, a: Array[Byte]): Unit = {
@@ -151,10 +142,8 @@ object DataStreamWriter extends Logging {
    * Writes `buffer` to `socket`. Note this method assumes that the buffer is in read mode, i.e.
    * the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
    */
-  def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
-    while (buffer.hasRemaining())
-      socket.write(buffer)
-  }
+  def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit =
+    while (buffer.hasRemaining()) socket.write(buffer)
 
   /** Writes an integer to the socket */
   def writeInt(x: Int)(implicit socket: SocketChannel): Unit = {
@@ -164,11 +153,7 @@ object DataStreamWriter extends Logging {
   }
 
   /** Write a Vector code to `out`*/
-  def writeCode(out: DataOutputStream, code: Array[Int]): Unit = {
-    code.foreach {
-      out.writeInt(_)
-    }
-  }
+  def writeCode(out: DataOutputStream, code: Array[Int]): Unit = code.foreach { out.writeInt(_) }
 
   /**
    * Write a `ByteBuffer` to `socket`. Note this method flips the byteBuffer before writing. For writing
