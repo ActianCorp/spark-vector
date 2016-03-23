@@ -20,28 +20,18 @@ import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
 
 import java.lang.Number
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.nio.ByteBuffer
 
 private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends
-  ColumnBuffer[Number](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
-  override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), p.precision, p.scale), buffer)
+  ColumnBuffer[BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
+  override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
 
-  protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit
-
-  private def movePoint(value: BigDecimal, precision: Int, scale: Int): BigDecimal = {
-    val sourceIntegerDigits = value.precision() - value.scale()
-    val targetIntegerDigits = precision - scale
-    val moveRightBy = if (sourceIntegerDigits > targetIntegerDigits) {
-      scale - (sourceIntegerDigits - targetIntegerDigits)
-    } else {
-      scale
-    }
-    value.movePointRight(moveRightBy)
-  }
+  @inline protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
 }
 
 private class DecimalByteColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ByteSize) {
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.put(scaledSource.byteValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.put(unscaled.byteValue())
 }
 
 private object DecimalByteColumnBuffer {
@@ -49,7 +39,7 @@ private object DecimalByteColumnBuffer {
 }
 
 private class DecimalShortColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ShortSize) {
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putShort(scaledSource.shortValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putShort(unscaled.shortValue())
 }
 
 private object DecimalShortColumnBuffer {
@@ -57,7 +47,7 @@ private object DecimalShortColumnBuffer {
 }
 
 private class DecimalIntColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, IntSize) {
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putInt(scaledSource.intValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putInt(unscaled.intValue())
 }
 
 private object DecimalIntColumnBuffer {
@@ -65,7 +55,7 @@ private object DecimalIntColumnBuffer {
 }
 
 private class DecimalLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongSize) {
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit = buffer.putLong(scaledSource.longValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(unscaled.longValue())
 }
 
 private object DecimalLongColumnBuffer {
@@ -73,8 +63,7 @@ private object DecimalLongColumnBuffer {
 }
 
 private class DecimalLongLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongLongSize) {
-  override protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit =
-    buffer.put(BigIntegerConversion.toLongLongByteArray(scaledSource.toBigInteger()))
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = BigIntegerConversion.putLongLongByteArray(buffer, unscaled)
 }
 
 private object DecimalLongLongColumnBuffer {

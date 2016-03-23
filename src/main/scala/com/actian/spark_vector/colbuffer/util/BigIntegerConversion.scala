@@ -15,33 +15,36 @@
  */
 package com.actian.spark_vector.colbuffer.util
 
+import com.actian.spark_vector.colbuffer.LongLongSize
+
 import java.math.BigInteger
+import java.nio.ByteBuffer
 
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
   // scalastyle:off magic.number
-  final def toLongLongByteArray(value: BigInteger): Array[Byte] = {
-    val source = value.toByteArray()
-    val target = Array.fill[Byte](16)(0:Byte)
-    val remaining = target.length - source.length
+  /**
+   * Puts a BigInteger to a ByteBuffer using little-endian ordering.
+   * @note We need little-endian ordering due to network serialization
+   * otherwise, the BigInteger.toByteArray would've been sufficient.
+   */
+  final def putLongLongByteArray(buffer: ByteBuffer, value: BigInteger): Unit = {
+    val source = value.toByteArray() /** This is in big-endian */
+    val remaining = LongLongSize - source.length
     var sourceIndex = source.length - 1
-    var targetIndex = 0
 
-    while (sourceIndex >= 0 && targetIndex < target.length) {
-      target.update(targetIndex, source(sourceIndex))
-      targetIndex += 1
+    while (sourceIndex >= 0) {
+      buffer.put(source(sourceIndex))
       sourceIndex -= 1
     }
 
     if (remaining > 0) {
       var index = 0
       while (index < remaining) {
-        target.update(source.length + index, if (value.signum() >= 0) 0 else 0xFF.toByte)
+        if (value.signum() >= 0) buffer.put(0:Byte) else buffer.put(0xFF.toByte)
         index += 1
       }
     }
-
-    target
   }
   // scalastyle:on magic.number
 }
