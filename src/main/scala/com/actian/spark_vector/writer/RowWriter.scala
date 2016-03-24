@@ -16,6 +16,7 @@
 package com.actian.spark_vector.writer
 
 import java.sql.{ Date, Timestamp }
+import java.math.BigDecimal
 
 import org.apache.spark.Logging
 
@@ -62,7 +63,7 @@ class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Loggi
       case y if y == classTag[Double] => writeValToColumnBuffer[Double]
       case y if y == classTag[Float] => writeValToColumnBuffer[Float]
       case y if y == classTag[String] => writeValToColumnBuffer[String]
-      case y if y == classTag[Number] => writeValToColumnBuffer[Number]
+      case y if y == classTag[BigDecimal] => writeValToColumnBuffer[BigDecimal]
       case y if y == classTag[Date] => writeValToColumnBuffer[Date]
       case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
       case y => throw new Exception(s"Unexpected buffer column type ${y}")

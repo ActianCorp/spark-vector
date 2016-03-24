@@ -16,7 +16,7 @@
 package com.actian.spark_vector.colbuffer.timestamp
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute}
+import com.actian.spark_vector.colbuffer.util.{ TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute }
 
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -42,7 +42,7 @@ private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends 
 }
 
 private class TimestampLongLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongLongSize) {
-  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = buffer.put(BigIntegerConversion.toLongLongByteArray(converted))
+  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = BigIntegerConversion.putLongLongByteArray(buffer, converted)
 }
 
 private class TimestampNZConverter extends TimestampConversion.TimestampConverter {
