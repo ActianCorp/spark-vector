@@ -24,11 +24,6 @@ lazy val connectorDeps = Seq(
     "com.jsuereth" %% "scala-arm" % "1.3"
 )
 
-lazy val connectorSettings = Seq(
-    compileOrder := CompileOrder.JavaThenScala,
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
-)
-
 lazy val loaderDeps = Seq(
     "com.github.scopt" %% "scopt" % "3.3.0",
     "com.typesafe" % "config" % "1.2.1",
@@ -37,7 +32,6 @@ lazy val loaderDeps = Seq(
 
 lazy val root = (project in file("."))
     .settings(commonSettings:_*)
-    .settings(connectorSettings:_*)
     .settings(
         name := "spark_vector",
         libraryDependencies ++= connectorDeps

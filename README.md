@@ -6,7 +6,7 @@ This connector works with both Vector SMP and VectorH MPP.
 
 ## API documentation
 
-[Spark-Vector Connector](http://actiancorp.github.io/spark-vector) and [Spark-Vector Loader](http://actiancorp.github.io/spark-vector/loader) Scaladocs.
+[Spark-Vector Connector](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) and [Spark-Vector Loader](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.package) Scaladocs.
 
 ## Requirements
 
@@ -97,7 +97,7 @@ The `OPTIONS` clause of the SparkSQL statement can contain:
 
 ### Spark-Vector Loader
 
-The Spark-Vector loader is a command line client utility that provides the ability to load CSV and Parquet files through Spark into Vector, using the Spark-Vector connector.
+The Spark-Vector loader is a command line client utility that provides the ability to load CSV,Parquet and ORC files through Spark into Vector, using the Spark-Vector connector.
 
 #### Building
 
@@ -121,7 +121,18 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
-The entire list of options can be retrieved with:
+#### Usage: ORC
+
+Loading ORC files:
+
+```
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load orc -sf hdfs://namenode:port/tmp/file.orc
+-vh vectorhost -vi VI -vd databasename -tt vector_table
+```
+
+#### List of options
+
+The entire list of options is available [here](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.parsers.Args$) or can be retrieved with:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-0.1.jar load --help
