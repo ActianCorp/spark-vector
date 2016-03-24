@@ -26,8 +26,12 @@ lazy val connectorDeps = Seq(
 
 lazy val loaderDeps = Seq(
     "com.github.scopt" %% "scopt" % "3.3.0",
-    "com.typesafe" % "config" % "1.2.1",
-    "com.databricks" % "spark-csv_2.10" % "1.2.0"
+    "com.typesafe" % "config" % "1.3.0",
+    "com.databricks" %% "spark-csv" % "1.2.0"
+)
+
+lazy val providerDeps = Seq(
+    "com.typesafe.play" %% "play-json" % "2.4.6"
 )
 
 lazy val root = (project in file("."))
@@ -43,3 +47,10 @@ lazy val loader = project
         name := "spark_vector_loader",
         libraryDependencies ++= loaderDeps
     ).dependsOn(root)
+
+lazy val provider = project
+    .settings(commonSettings: _*)
+    .settings(
+        name := "spark_vector_provider",
+        libraryDependencies ++= providerDeps
+    ).dependsOn(loader)

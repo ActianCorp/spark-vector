@@ -18,7 +18,7 @@ package com.actian.spark_vector.sql
 import com.actian.spark_vector.vector.VectorConnectionProperties
 
 /** A reference to a `Vector` table */
-case class TableRef(host: String, instance: String, database: String, user: Option[String], password: Option[String], table: String) {
+case class TableRef(host: String, instance: String, database: String, user: Option[String], password: Option[String], table: String, cols: Seq[String]) {
   def toConnectionProps: VectorConnectionProperties = {
     VectorConnectionProperties(host, instance, database, user, password)
   }
@@ -32,6 +32,7 @@ object TableRef {
     val table = parameters("table")
     val user = if (parameters.contains("user")) Some(parameters("user")) else None
     val password = if (parameters.contains("password")) Some(parameters("password")) else None
-    TableRef(host, instance, database, user, password, table)
+    val colsToLoad = parameters.get("cols").map(_.split(",").map(_.trim).toSeq).getOrElse(Nil)
+    TableRef(host, instance, database, user, password, table, colsToLoad)
   }
 }

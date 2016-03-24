@@ -17,14 +17,13 @@ package com.actian.spark_vector.vector
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
-
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.Vector._
 import com.actian.spark_vector.writer.{ DataStreamWriter, InsertRDD, RowWriter }
+import com.actian.spark_vector.writer.WriteConf
 
 /** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {
@@ -48,7 +47,8 @@ object LoadVector extends Logging {
     preSQL: Option[Seq[String]],
     postSQL: Option[Seq[String]],
     fieldMap: Option[Map[String, String]],
-    createTable: Boolean = false): Long = {
+    createTable: Boolean = false,
+    writeConf: Option[WriteConf] = None): Long = {
     val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
     val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
     val tableSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
@@ -70,17 +70,18 @@ object LoadVector extends Logging {
       field2Columns.map(i => i.columnName -> i.fieldName).toMap)
 
     val rowWriter = RowWriter(tableSchema)
-    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, rowWriter)
+    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, rowWriter, writeConf)
 
     closeResourceOnFailure(writer.client) {
       preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
     }
 
     val insertRDD = new InsertRDD(finalRDD, writer.writeConf)
-    val result = writer.initiateLoad
+    //val result = writer.initiateLoad
     insertRDD.sparkContext.runJob(insertRDD, writer.write _)
     // FIX ME
-    val rowCount = Await.result(result, Duration.Inf)
+    //val rowCount = Await.result(result, Duration.Inf)
+    val rowCount = 0
     if (rowCount >= 0) {
       // Run post-load SQL
       closeResourceOnFailure(writer.client) {

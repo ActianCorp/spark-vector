@@ -16,30 +16,29 @@
 package com.actian.spark_vector.loader.command
 
 import org.apache.spark.sql.SQLContext
-
 import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.sql.{ VectorRelation, TableRef }
+import com.actian.spark_vector.writer.WriteConf
 
 object VectorTempTable {
-  private def parseOptions(config: UserOptions): String = {
-    val basic = Seq(s"""host "${config.vector.host}"""",
-      s"""instance "${config.vector.instance}"""",
-      s"""database "${config.vector.database}"""",
-      s"""table "${config.vector.targetTable}"""")
-    val optional = Seq(config.vector.user.map(user => s"""user "${user}""""),
-      config.vector.password.map(pass => s"""password "${pass}"""")).flatten
-    (basic ++ optional).mkString(",")
+  private def parseOptions(config: UserOptions): Map[String, String] = {
+    Map("host" -> Some(config.vector.host),
+      "instance" -> Some(config.vector.instance),
+      "database" -> Some(config.vector.database),
+      "table" -> Some(config.vector.targetTable),
+      "user" -> config.vector.user,
+      "password" -> config.vector.password).filter(_._2.isDefined).mapValues(_.get)
   }
 
   /**
    * Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
    *
-   * @return The name of the registered temporary table (for now = <vectorTargetTable>)
+   *  @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
-    val table = s"${sparkQuote(config.vector.targetTable)}"
-    sqlContext.sql(s"""CREATE TEMPORARY TABLE ${table}
-    USING com.actian.spark_vector.sql.DefaultSource
-    OPTIONS (${parseOptions(config)})""")
-    table
+    val params = parseOptions(config)
+    val tableName = params("table")
+    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), None, sqlContext)).registerTempTable(tableName)
+    sparkQuote(tableName)
   }
 }

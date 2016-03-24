@@ -23,8 +23,9 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.reader.ScanRDD
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
+import com.actian.spark_vector.writer.WriteConf
 
-private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
+private[spark_vector] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext, writeConf: Option[WriteConf] = None)
     extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import VectorOps._
 
@@ -41,7 +42,7 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
     logInfo(s"Trying to insert rdd: $data into Vector table")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
     // TODO could expose other options in Spark parameters
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
+    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps, writeConf = writeConf)
     logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -64,8 +65,8 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
 }
 
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext, writeConf: Option[WriteConf] = None): VectorRelation = {
+    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext, writeConf)
   }
 
   def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = {
@@ -75,7 +76,7 @@ object VectorRelation {
   /** Obtain the structType containing the schema for the table referred by tableRef */
   def structType(tableRef: TableRef): StructType = {
     VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-      val structFields = cxn.columnMetadata(tableRef.table).map(_.structField)
+      val structFields = cxn.columnMetadata(tableRef.table, tableRef.cols).map(_.structField)
       StructType(structFields)
     }
   }

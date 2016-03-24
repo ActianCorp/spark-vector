@@ -15,14 +15,14 @@
  */
 package com.actian.spark_vector.writer
 
-import java.io.{ByteArrayOutputStream, DataOutputStream}
+import java.io.{ ByteArrayOutputStream, DataOutputStream }
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 import scala.annotation.tailrec
 import scala.concurrent.Future
 
-import org.apache.spark.{Logging, TaskContext}
+import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
@@ -36,9 +36,10 @@ import com.actian.spark_vector.vector.VectorConnectionProperties
  * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector`
  */
 class DataStreamWriter[T <% Seq[Any]](
-  vectorProps: VectorConnectionProperties,
-  table: String,
-  rowWriter: RowWriter) extends Logging with Serializable with Profiling {
+    vectorProps: VectorConnectionProperties,
+    table: String,
+    rowWriter: RowWriter,
+    writeConfig: Option[WriteConf] = None) extends Logging with Serializable with Profiling {
 
   import DataStreamWriter._
 
@@ -51,7 +52,7 @@ class DataStreamWriter[T <% Seq[Any]](
   @transient
   val client = DataStreamClient(vectorProps, table)
   /** Write configuration to be used when connecting to the `DataStream` API */
-  lazy val writeConf = {
+  lazy val writeConf = writeConfig.getOrElse {
     client.prepareDataStreams
     client.getWriteConf
   }

@@ -19,6 +19,7 @@ import com.actian.spark_vector.vector.Vector._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.Logging
+import com.actian.spark_vector.writer.WriteConf
 
 /** Add vector operations to RecordRDD. */
 trait VectorOps {
@@ -50,9 +51,10 @@ trait VectorOps {
       preSQL: Option[Seq[String]] = None,
       postSQL: Option[Seq[String]] = None,
       fieldMap: Option[Map[String, String]] = None,
-      createTable: Boolean = false): Long = {
+      createTable: Boolean = false,
+      writeConf: Option[WriteConf] = None): Long = {
       LoadVector.loadVector(rdd, schema, targetTable, vectorProps,
-        preSQL, postSQL, fieldMap, createTable)
+        preSQL, postSQL, fieldMap, createTable, writeConf)
     }
   }
 }
