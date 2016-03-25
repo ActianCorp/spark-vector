@@ -126,7 +126,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading ORC files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load orc -sf hdfs://namenode:port/tmp/file.orc
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-0.1.jar load orc -sf hdfs://namenode:port/tmp/file.orc
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
