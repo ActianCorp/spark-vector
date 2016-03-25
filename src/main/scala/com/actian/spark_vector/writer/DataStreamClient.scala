@@ -39,7 +39,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
   }
 
   private def startLoadSql(table: String) = s"copy table $table from external"
-  private def prepareLoadSql(table: String) = s"prepare for x100 copy into $table"
+  private def prepareLoadSql(table: String) = s"prepare for x100 stream into $table"
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */
   def getJdbc(): VectorJDBC = jdbc
