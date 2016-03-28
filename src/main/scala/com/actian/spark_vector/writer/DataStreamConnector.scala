@@ -51,15 +51,12 @@ class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializabl
   }
 
   def readConnectionHeader(implicit socket: SocketChannel): VectorConnectionHeader = {
-    /** Use a default VectorConnection header as init value */
-    var ret: VectorConnectionHeader = VectorConnectionHeader(0, 1024)
-    readWithByteBuffer { in => } // column definition header
-    readWithByteBuffer { in => } // actual data
-    readWithByteBuffer { in =>
-      /** There is more information above about columns, datatypes and nullability but we ignore it since we got it before from a JDBC query. */
-      ret = VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
+    readWithByteBuffer { in => } // get_table_info column definition header
+    readWithByteBuffer { in => } // actual data of the get_table_info
+    readWithByteBuffer { in => } // end of get_table_info query
+    readWithByteBuffer { in => // query response for data loading
+      /** There is more information on datatypes and nullability before, but we ignore it since we got it earlier from a JDBC query. */
+      VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
     }
-    readWithByteBuffer { in => } // ready for data message
-    ret
   }
 }
