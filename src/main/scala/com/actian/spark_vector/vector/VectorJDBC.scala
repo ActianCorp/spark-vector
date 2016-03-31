@@ -239,7 +239,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
   /** Return true if the table `tableName` is empty */
   def isTableEmpty(tableName: String): Boolean = {
-    val rowCount = querySingleResult[Int](s"select count(*) from ${quote(tableName)}")
+    val rowCount = querySingleResult[Long](s"select count(*) from ${quote(tableName)}")
     rowCount.map(_ == 0).getOrElse(throw new VectorException(SqlException, s"No result for count on table '${tableName}'"))
   }
 
