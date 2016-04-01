@@ -28,6 +28,10 @@ private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams
   override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
 
   @inline protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
+
+  @inline override protected def putOne(source: ByteBuffer) = ???
+
+  @inline override def get() = ???
 }
 
 private class DecimalByteColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ByteSize) {

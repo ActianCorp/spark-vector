@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import com.actian.spark_vector.vector.VectorJDBC
+import com.actian.spark_vector.datastream.VectorEndpoint
 
-/** Configuration for writing, one entry for each Vector end point expecting data */
-case class WriteConf(vectorEndPoints: IndexedSeq[VectorEndPoint]) extends Serializable
+/** Configuration for reading/writing end points - one entry for each Vector end point expecting data */
+case class VectorEndpointConf(vectorEndpoints: IndexedSeq[VectorEndpoint]) extends Serializable
 
-object WriteConf {
-  def apply(jdbc: VectorJDBC): WriteConf = {
-    WriteConf(VectorEndPoint.fromDataStreamsTable(jdbc))
-  }
+object VectorEndpointConf {
+  def apply(jdbc: VectorJDBC): VectorEndpointConf = VectorEndpointConf(VectorEndpoint.fromDataStreamsTable(jdbc))
 }

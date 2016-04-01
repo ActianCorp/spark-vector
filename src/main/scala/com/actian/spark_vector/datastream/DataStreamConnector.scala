@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 
 import org.apache.spark.Logging
 
-import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
+import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
 import com.actian.spark_vector.writer.srp.VectorSRPClient
-import com.actian.spark_vector.reader.DataStreamReader
+import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.VectorConnectionHeader
 
 /**
@@ -31,27 +31,35 @@ import com.actian.spark_vector.vector.VectorConnectionHeader
  * @param writeConf `DataStream` information containing at least the number of connections expected, the names and
  * ports of the hosts where they are expected and authentication information
  */
-class DataStreamConnector(writeConf: WriteConf) extends Logging with Serializable {
+class DataStreamConnector(writeConf: VectorEndpointConf) extends Logging with Serializable {
   import DataStreamReader._
 
-  private def openConnection(idx: Int): SocketChannel = {
-    val host: VectorEndPoint = writeConf.vectorEndPoints(idx)
+  private def openSocketChannel(idx: Int): SocketChannel = {
+    val host: VectorEndpoint = writeConf.vectorEndpoints(idx)
     logInfo(s"Opening a socket to $host")
     implicit val socket = SocketChannel.open()
     socket.connect(new InetSocketAddress(host.host, host.port))
     val srpClient = new VectorSRPClient(host.username, host.password)
-    srpClient.authenticate
+    closeResourceOnFailure(socket) { srpClient.authenticate }
     socket
   }
 
   /** Open a connection to Vector and execute the code specified by `op` */
   def withConnection[T](idx: Int)(op: SocketChannel => T): T = {
-    val socket = openConnection(idx)
+    val socket = openSocketChannel(idx)
     closeResourceAfterUse(socket) { op(socket) }
   }
 
-  def readConnectionHeader(implicit socket: SocketChannel): VectorConnectionHeader = readWithByteBuffer { in =>
-    /** There is more information about columns, datatypes and nullability in this header but we ignore it since we got it before from a JDBC query. */
-    VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
+  /** Open a connection to Vector, execute the code specified by `op` and leave the socket open */
+  def newConnection[T](idx: Int)(op: SocketChannel => T): T = {
+    val socket = openSocketChannel(idx)
+    closeResourceOnFailure(socket) { op(socket) }
+  }
+
+  def readConnectionHeader(implicit socket: SocketChannel): VectorConnectionHeader = closeResourceOnFailure(socket) {
+    readWithByteBuffer { in =>
+      /** There is more information about columns, datatypes and nullability in this header but we ignore it since we got it before from a JDBC query. */
+      VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
+    }
   }
 }

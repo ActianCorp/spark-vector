@@ -21,6 +21,10 @@ import java.nio.ByteBuffer
 
 private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Double](p.name, p.maxValueCount, DoubleSize, DoubleSize, p.nullable) {
   override protected def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 /** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */

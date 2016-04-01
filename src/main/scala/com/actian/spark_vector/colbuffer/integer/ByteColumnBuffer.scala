@@ -21,6 +21,10 @@ import java.nio.ByteBuffer
 
 private class ByteColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Byte](p.name, p.maxValueCount, ByteSize, ByteSize, p.nullable) {
   override protected def put(source: Byte, buffer: ByteBuffer): Unit = buffer.put(source)
+
+  override protected def putOne(source: ByteBuffer): Unit = put(source.get(), values)
+
+  override def get(): Byte = values.get()
 }
 
 /** Builds a `ColumnBuffer` object for `tinyint`, `integer1` types. */

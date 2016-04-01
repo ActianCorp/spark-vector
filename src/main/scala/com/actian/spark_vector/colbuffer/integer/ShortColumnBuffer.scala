@@ -21,6 +21,10 @@ import java.nio.ByteBuffer
 
 private class ShortColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Short](p.name, p.maxValueCount, ShortSize, ShortSize, p.nullable) {
   override protected def put(source: Short, buffer: ByteBuffer): Unit = buffer.putShort(source);
+
+  override protected def putOne(source: ByteBuffer): Unit = put(source.getShort(), values)
+
+  override def get(): Short = values.getShort()
 }
 
 /** Builds a `ColumnBuffer` object for `smallint`, `integer2` types. */

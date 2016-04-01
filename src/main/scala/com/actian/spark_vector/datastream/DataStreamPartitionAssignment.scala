@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import scala.collection.mutable.{ ArrayBuffer, IndexedSeq => mutableISeq, Stack }
 import org.apache.spark.Logging
@@ -38,7 +38,7 @@ import com.actian.spark_vector.Profiling
  *  `|edges|sqrt(nA + nB)`. Since there is usually a constant number of `B`s a node from `A` shares an edge with, e.g.
  *  each HDFS block has an affinity to a constant number(replication factor) of hosts, and `nB` is usually << `nA`, the complexity of this algorithm can be viewed as `O(nA sqrt(nA))`
  */
-private[writer] trait BipartiteAssignment extends Logging with Profiling {
+private[datastream] trait BipartiteAssignment extends Logging with Profiling {
   protected val nA: Int
   protected val nB: Int
   protected val edges: IndexedSeq[IndexedSeq[Int]]
@@ -180,7 +180,7 @@ private[writer] trait BipartiteAssignment extends Logging with Profiling {
  *  @param affinities Affinities of each partition to host names represented as an `Array` of `Seq[T]`
  *  @param endpoints Vector end points
  */
-final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndPoint]) extends BipartiteAssignment {
+final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]) extends BipartiteAssignment {
   private def verifyMatching: Unit = {
     var sanity = 0
     (0 to hosts.size - 1).view.map { host =>
@@ -269,7 +269,7 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
 }
 
 object DataStreamPartitionAssignment {
-  def apply(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndPoint]): IndexedSeq[IndexedSeq[Int]] = {
+  def apply(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]): IndexedSeq[IndexedSeq[Int]] = {
     (new DataStreamPartitionAssignment(affinities, endpoints)).assignment
   }
 }

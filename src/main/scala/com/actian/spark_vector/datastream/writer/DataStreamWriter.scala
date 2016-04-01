@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream.writer
 
 import java.io.{ ByteArrayOutputStream, DataOutputStream }
 import java.nio.ByteBuffer
@@ -25,15 +25,17 @@ import scala.concurrent.Future
 import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.Profiling
-import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
+import com.actian.spark_vector.colbuffer.IntSize
+import com.actian.spark_vector.datastream.{ DataStreamClient, DataStreamConnector }
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
+import com.actian.spark_vector.util.ResourceUtil
 
 /**
  * Entry point for loading with spark-vector connector.
  *
  * @param vectorProps connection information to the leader node's SQL interface
  * @param table The table loaded to
- * @param tableSchema of the table as a `StructType`
+ * @param tableSchema of the table as a sequence of columns metadata
  */
 class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableSchema: Seq[ColumnMetadata]) extends
   Logging with Serializable with Profiling {
@@ -48,11 +50,11 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
   @transient val client = DataStreamClient(vectorProps, table)
   /** Write configuration to be used when connecting to the `DataStream` API */
   lazy val writeConf = {
-    client.prepareDataStreams
-    client.getWriteConf
+    client.prepareLoadDataStreams
+    client.getVectorEndpointConf
   }
   private lazy val connector = new DataStreamConnector(writeConf)
-  private val binaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
+  private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
 
   /**
    * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
@@ -62,7 +64,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
     implicit val socket = sink.socket
     var i = 0
     var written = 0
-    val headerSize = 4 /* code */ + 4 /* number of tuples */ + 4 /* messageLength */
+    val headerSize = IntSize /* code */ + IntSize /* number of tuples */ + IntSize /* messageLength */
     val rowWriter = RowWriter(tableSchema, vectorSize)
     implicit val accs = profileInit("total", "child", "buffering", "flushing")
     profile("total")
@@ -79,7 +81,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
       profileEnd
       profile("flushing")
       writeInt(rowWriter.bytesToBeFlushed(headerSize, i))
-      writeInt(binaryDataCode)
+      writeInt(BinaryDataCode)
       writeInt(i) // write actual number of tuples
       sink.pos = headerSize
       rowWriter.flushToSink(sink)
@@ -95,7 +97,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
    * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
-    implicit channel => {
+    implicit socket => {
       implicit val sink = DataStreamSink()
       val header = connector.readConnectionHeader
       if (header.statusCode < 0) throw new Exception(s"Error writing data: got status code = ${header.statusCode} from connection")
@@ -120,6 +122,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */
 object DataStreamWriter extends Logging {
+  import ResourceUtil._
   // scalastyle:off magic.number
   /** Write the length `len` of a variable length message to `out` */
   @tailrec def writeLength(out: DataOutputStream, len: Long): Unit = len match {

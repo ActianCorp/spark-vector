@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.Vector._
-import com.actian.spark_vector.writer.{ DataStreamWriter, InsertRDD, RowWriter }
+import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD, RowWriter }
 
 /** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {

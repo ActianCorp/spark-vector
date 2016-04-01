@@ -29,6 +29,10 @@ private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBuff
   }
 
   protected def encode(str: String): Int
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {

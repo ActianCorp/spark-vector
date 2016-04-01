@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
-
-import com.actian.spark_vector.colbuffer.ColumnBuffer
+package com.actian.spark_vector.datastream.writer
 
 import java.nio.ByteBuffer
+import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
+import com.actian.spark_vector.colbuffer._
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
 case class DataStreamSink(implicit socket: SocketChannel) {

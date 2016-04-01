@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream.writer
 
 import java.sql.{ Date, Timestamp }
 import java.math.BigDecimal
 
 import org.apache.spark.Logging
 
-import com.actian.spark_vector.vector.ColumnMetadata
-
-import com.actian.spark_vector.colbuffer.{ColumnBufferBuildParams, ColumnBuffer}
-
 import scala.reflect.classTag
 
+import com.actian.spark_vector.vector.ColumnMetadata
+import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer }
+
 /**
- * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
- *
- * @param tableSchema schema information for the `Vector` table/relation being loaded to
- */
+* Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
+*
+* @param tableSchema schema information for the `Vector` table/relation being loaded to
+*/
 class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Logging {
   import RowWriter._
 

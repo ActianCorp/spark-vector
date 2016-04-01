@@ -54,10 +54,23 @@ abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCoun
 
   protected def put(source: T, buffer: ByteBuffer): Unit
 
+  protected def putOne(source: ByteBuffer): Unit
+
   def put(source: T): Unit = {
     put(source, values)
     if (nullable) {
       markers.put(NonNullMarker)
+    }
+  }
+
+  def put(source: ByteBuffer, valueCount: Int): Unit  = {
+    var i = valueCount
+    while (i > 0) {
+      putOne(source)
+      if (nullable) {
+        source.get
+      }
+      i -= 1
     }
   }
 
@@ -69,6 +82,8 @@ abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCoun
     markers.put(NullMarker)
     values.put(nullValue)
   }
+
+  def get(): T
 
   def size: Int = {
     var ret = values.position()

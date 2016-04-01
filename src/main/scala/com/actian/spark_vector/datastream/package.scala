@@ -32,6 +32,4 @@ package com.actian.spark_vector
  *   - during this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a `commit` or `abort` depending on whether any of the
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector` yet.
  */
-package object writer {
-  val IntSize = 4
-}
+package object datastream { }

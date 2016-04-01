@@ -24,6 +24,10 @@ private class BooleanColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuff
     case true => buffer.put(BooleanColumnBuffer.True)
     case false => buffer.put(BooleanColumnBuffer.False)
   }
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 /** Builds a `ColumnBuffer` object for `boolean` types. */

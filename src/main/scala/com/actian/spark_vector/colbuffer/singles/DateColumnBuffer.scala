@@ -26,6 +26,10 @@ private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[
     TimeConversion.convertLocalDateToUTC(source)
     buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 /** Builds a `ColumnBuffer` object for `ansidate` types. */

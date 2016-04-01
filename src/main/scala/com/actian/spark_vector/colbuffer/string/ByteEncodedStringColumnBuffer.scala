@@ -28,6 +28,10 @@ private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferB
   }
 
   protected def encode(str: String): Array[Byte]
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 private class ByteLengthLimitedStringColumnBuffer(p: ColumnBufferBuildParams) extends ByteEncodedStringColumnBuffer(p) {

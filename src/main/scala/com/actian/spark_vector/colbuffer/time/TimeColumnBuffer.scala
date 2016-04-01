@@ -34,6 +34,10 @@ private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams,  v
   }
 
   protected def putConverted(converted: Long, buffer: ByteBuffer): Unit
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 private class TimeIntColumnBuffer(p: TimeColumnBufferParams) extends TimeColumnBuffer(p, IntSize) {

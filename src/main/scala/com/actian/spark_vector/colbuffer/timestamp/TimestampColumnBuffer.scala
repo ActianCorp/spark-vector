@@ -35,6 +35,10 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
   }
 
   protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit
+
+  override protected def putOne(source: ByteBuffer) = ???
+
+  override def get() = ???
 }
 
 private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongSize) {
