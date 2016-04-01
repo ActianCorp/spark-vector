@@ -31,7 +31,7 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
  */
 class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[Row](sc, Nil) with Logging {
   private var closed = false
-  private var it: Iterator[Row] = null
+  private var it: RowReader = null
 
   override protected def getPartitions = (0 until reader.readConf.vectorEndpoints.size).map(i => new Partition { def index = i }).toArray
 
@@ -39,10 +39,11 @@ class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader)
 
   override def compute(split: Partition, taskContext: TaskContext): Iterator[Row] = {
     taskContext.addTaskCompletionListener { _ =>
-      close(reader, "data stream reader")
+      close(it, "data stream reader")
       closed = true
     }
-    reader.read(taskContext)
+    it = reader.read(taskContext)
+    it
   }
 
   private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {

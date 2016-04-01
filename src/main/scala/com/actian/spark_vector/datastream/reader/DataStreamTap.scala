@@ -60,5 +60,7 @@ case class DataStreamTap(implicit val socket: SocketChannel) {
     !remaining
   }
 
+  def close() = socket.close
+
   isEmpty
 }

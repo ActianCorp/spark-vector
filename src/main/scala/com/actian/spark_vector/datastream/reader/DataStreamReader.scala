@@ -66,8 +66,6 @@ class DataStreamReader(vectorProps: VectorConnectionProperties, table: String, t
     }
   )
 
-  def close(implicit socket: SocketChannel): Unit = socket.close()
-
   /**
    * Initiate the unload, i.e. submit the SQL query to start unloading to an external source.
    *

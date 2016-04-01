@@ -77,6 +77,8 @@ class RowReader(tableSchema: Seq[ColumnMetadata], vectorSize: Int, tap: DataStre
     ret
   }
 
+  def close() = tap.close
+
   hasNext()
 }
 
