@@ -16,7 +16,6 @@
 package com.actian.spark_vector.datastream
 
 import com.actian.spark_vector.vector.VectorJDBC
-import com.actian.spark_vector.datastream.VectorEndpoint
 
 /** Configuration for reading/writing end points - one entry for each Vector end point expecting data */
 case class VectorEndpointConf(vectorEndpoints: IndexedSeq[VectorEndpoint]) extends Serializable
