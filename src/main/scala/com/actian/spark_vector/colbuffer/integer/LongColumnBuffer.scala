@@ -20,11 +20,9 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class LongColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Long](p.name, p.maxValueCount, LongSize, LongSize, p.nullable) {
-  override protected def put(source: Long, buffer: ByteBuffer): Unit = buffer.putLong(source)
+  override def put(source: Long, buffer: ByteBuffer): Unit = buffer.putLong(source)
 
-  override protected def putOne(source: ByteBuffer): Unit = put(source.getLong(), values)
-
-  override def get(): Long = values.getLong()
+  override def get(buffer: ByteBuffer): Long = buffer.getLong()
 }
 
 /** Builds a `ColumnBuffer` object for `bigint`, `integer8` types. */

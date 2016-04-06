@@ -56,7 +56,7 @@ class DataStreamReader(vectorProps: VectorConnectionProperties, table: String, t
 
   /**
    * This function is executed once for each partition of [[ScanRDD]]. Will open a socket connection, read all data assigned
-   * to its corresponding partition (`taskContext.partitionId`) and return a row iterator, leaving the connection opened.
+   * to its corresponding partition (`taskContext.partitionId`) and return a row iterator (leaving the connection opened).
    */
   def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId)(
     implicit socket => {

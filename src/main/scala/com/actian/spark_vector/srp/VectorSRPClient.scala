@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer.srp
+package com.actian.spark_vector.srp
 
 import java.nio.channels.SocketChannel
 import scala.BigInt

@@ -19,7 +19,7 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.{ Logging, Partition, SparkContext, TaskContext }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.expressions.MutableRow
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 
@@ -29,7 +29,7 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
  *  @param vectorSelectStatement Vector prepared SQL statement to be issued through JDBC to start exporting data
  *  @param vectorSelectParams  Parameters to the prepared SQL statement, if any
  */
-class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[Row](sc, Nil) with Logging {
+class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[MutableRow](sc, Nil) with Logging {
   private var closed = false
   private var it: RowReader = null
 
@@ -37,9 +37,10 @@ class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader)
 
   override protected def getPreferredLocations(split: Partition) = Seq(reader.readConf.vectorEndpoints(split.index).host)
 
-  override def compute(split: Partition, taskContext: TaskContext): Iterator[Row] = {
+  override def compute(split: Partition, taskContext: TaskContext): Iterator[MutableRow] = {
     taskContext.addTaskCompletionListener { _ =>
-      close(it, "data stream reader")
+      close(it, "RowReader")
+      close(reader.client, "DataStreamClient")
       closed = true
     }
     it = reader.read(taskContext)

@@ -17,10 +17,9 @@ package com.actian.spark_vector.sql
 
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
+import org.apache.spark.sql.{ Row, DataFrame, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
-
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
@@ -51,17 +50,17 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    logDebug("vector: buildScan: columns: " + requiredColumns.mkString(", "))
-    logDebug("vector: buildScan: filters: " + filters.mkString(", "))
+    logDebug(s"vector: buildScan: columns: ${requiredColumns.mkString(", ")}")
+    logDebug(s"vector: buildScan: filters: ${filters.mkString(", ")}")
 
     val columns = if (requiredColumns.isEmpty) "*" else requiredColumns.mkString(",")
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
-    val selectStatement = s"select $columns from ${tableRef.table} $whereClause"
-    logDebug(s"Executing Vector select statement: selectStatement")
+    val selectStatement = s"select ${columns} from ${tableRef.table} ${whereClause}"
+    logDebug(s"Executing Vector select statement: ${selectStatement}")
 
     val reader = new DataStreamReader(tableRef.toConnectionProps, tableRef.table, colMetadataSchema)
     reader.initiateUnload(selectStatement, whereParams)
-    new ScanRDD(sqlContext.sparkContext, reader)
+    (new ScanRDD(sqlContext.sparkContext, reader)).asInstanceOf[RDD[Row]]
   }
 }
 

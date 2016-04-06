@@ -25,7 +25,7 @@
  * Any other license of the libraries either javascript or java/scala used still
  * applies and must be used according to its licensing information.
  */
-package com.actian.spark_vector.writer.srp
+package com.actian.spark_vector.srp
 
 import java.security._
 import scala.language.implicitConversions

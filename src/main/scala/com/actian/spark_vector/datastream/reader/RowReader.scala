@@ -18,63 +18,57 @@ package com.actian.spark_vector.datastream.reader
 import java.sql.{ Date, Timestamp }
 import java.math.BigDecimal
 import java.nio.ByteBuffer
-import org.apache.spark.Logging
-import org.apache.spark.sql.Row
-import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer }
-import org.apache.spark.sql.RowFactory
 
-class RowReader(tableSchema: Seq[ColumnMetadata], vectorSize: Int, tap: DataStreamTap) extends Iterator[Row] with Logging {
+import org.apache.spark.Logging
+import org.apache.spark.sql.catalyst.expressions.{ MutableRow, GenericMutableRow }
+
+import com.actian.spark_vector.vector.ColumnMetadata
+import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
+
+class RowReader(tableSchema: Seq[ColumnMetadata], vectorSize: Int, tap: DataStreamTap) extends Iterator[MutableRow] with Logging {
   import RowReader._
 
   /**
-   * TODO: duplicate - RowWriter
-   * A list of column buffers, one for each column of the table inserted to that will be used to serialize input `RDD` rows into the
+   * A list of read column buffers, one for each column of the unloaded table, that will be used to deserialize input `RDD` rows into the
    * buffer for the appropriate table column
    */
-  private val columnBufs = tableSchema.toList.map { case col =>
+  private lazy val columnBufs = tableSchema.toList.map { case col =>
     logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
       s"nullable=${col.nullable}, vectorsize=${vectorSize}")
-    ColumnBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable)) match {
-      case Some(cb) => cb
-      case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
-    }
+    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable))
   }
-  private val numColumns = tableSchema.size
-  private val row = collection.mutable.IndexedSeq.fill[Any](numColumns)(null)
+
+  private lazy val numColumns = tableSchema.size
+  private lazy val row = new GenericMutableRow(numColumns)
   private var numTuples = 0
 
-  private def putVectorsToColumnBufs(vector: ByteBuffer): Seq[ColumnBuffer[_]] = {
+  private def putVectorsToColumnBufs(vector: ByteBuffer): Seq[ReadColumnBuffer[_]] = {
     if (!hasNext) throw new Exception("No more rows!")
     numTuples = vector.getInt()
+    logDebug(s"Got ${numTuples} tuples to deserialize into typed column buffers.")
     columnBufs.foreach { cb =>
       cb.clear
-      cb.put(vector, numTuples) /** Consume and deserialize data from the big byte buffer */
+      cb.fill(vector, numTuples) /** Consume and deserialize data from the big byte buffer */
     }
     columnBufs
   }
 
-  private def getRow(): Row = {
+  private def getRow(): MutableRow = {
     var col = 0
     while (col < numColumns) {
-      row(col) = columnBufs(col).get()
+      row(col) = if (columnBufs(col).getIsNull()) null else columnBufs(col).get()
       col += 1
     }
-    Row.fromSeq(row) /* refolosit */
+    row
   }
 
   override def hasNext(): Boolean = !tap.isEmpty || numTuples > 0
 
-  override def next(): Row = {
-    var ret: Row = ???
-    if (numTuples > 0) {
-      ret = getRow()
-    } else {
-      putVectorsToColumnBufs(tap.read())
-      ret = getRow()
-    }
+  override def next(): MutableRow = {
+    var ret: MutableRow = ???
+    if (numTuples == 0) putVectorsToColumnBufs(tap.read())
     numTuples -= 1
-    ret
+    getRow()
   }
 
   def close() = tap.close

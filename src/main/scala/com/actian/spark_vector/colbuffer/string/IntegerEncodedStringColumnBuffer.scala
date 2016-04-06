@@ -22,7 +22,7 @@ import java.nio.ByteBuffer
 
 private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
   ColumnBuffer[String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
-  override protected def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
+  override def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
     buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
   } else {
     buffer.putInt(encode(source))
@@ -30,9 +30,7 @@ private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBuff
 
   protected def encode(str: String): Int
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): String = ???
 }
 
 private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {

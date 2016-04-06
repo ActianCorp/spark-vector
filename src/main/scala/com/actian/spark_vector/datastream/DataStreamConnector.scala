@@ -21,7 +21,7 @@ import java.nio.channels.SocketChannel
 import org.apache.spark.Logging
 
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
-import com.actian.spark_vector.writer.srp.VectorSRPClient
+import com.actian.spark_vector.srp.VectorSRPClient
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.VectorConnectionHeader
 

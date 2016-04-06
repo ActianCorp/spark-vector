@@ -20,11 +20,9 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class ByteColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Byte](p.name, p.maxValueCount, ByteSize, ByteSize, p.nullable) {
-  override protected def put(source: Byte, buffer: ByteBuffer): Unit = buffer.put(source)
+  override def put(source: Byte, buffer: ByteBuffer): Unit = buffer.put(source)
 
-  override protected def putOne(source: ByteBuffer): Unit = put(source.get(), values)
-
-  override def get(): Byte = values.get()
+  override def get(buffer: ByteBuffer): Byte = buffer.get()
 }
 
 /** Builds a `ColumnBuffer` object for `tinyint`, `integer1` types. */

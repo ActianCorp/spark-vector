@@ -20,11 +20,9 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class ShortColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Short](p.name, p.maxValueCount, ShortSize, ShortSize, p.nullable) {
-  override protected def put(source: Short, buffer: ByteBuffer): Unit = buffer.putShort(source);
+  override def put(source: Short, buffer: ByteBuffer): Unit = buffer.putShort(source)
 
-  override protected def putOne(source: ByteBuffer): Unit = put(source.getShort(), values)
-
-  override def get(): Short = values.getShort()
+  override def get(buffer: ByteBuffer): Short = buffer.getShort()
 }
 
 /** Builds a `ColumnBuffer` object for `smallint`, `integer2` types. */

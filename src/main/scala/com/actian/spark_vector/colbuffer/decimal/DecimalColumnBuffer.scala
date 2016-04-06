@@ -27,11 +27,9 @@ private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams
   ColumnBuffer[BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
   override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
 
-  @inline protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
+  protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
 
-  @inline override protected def putOne(source: ByteBuffer) = ???
-
-  @inline override def get() = ???
+  override def get(buffer: ByteBuffer): BigDecimal = ???
 }
 
 private class DecimalByteColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ByteSize) {

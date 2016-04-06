@@ -20,11 +20,9 @@ import com.actian.spark_vector.colbuffer._
 import java.nio.ByteBuffer
 
 private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Double](p.name, p.maxValueCount, DoubleSize, DoubleSize, p.nullable) {
-  override protected def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
+  override def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): Double = buffer.getDouble()
 }
 
 /** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */

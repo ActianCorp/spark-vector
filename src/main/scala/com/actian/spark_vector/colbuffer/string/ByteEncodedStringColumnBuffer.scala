@@ -22,16 +22,14 @@ import java.nio.ByteBuffer
 
 private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
   ColumnBuffer[String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
-  override protected def put(source: String, buffer: ByteBuffer): Unit = {
+  override def put(source: String, buffer: ByteBuffer): Unit = {
     buffer.put(encode(source))
     buffer.put(0:Byte)
   }
 
   protected def encode(str: String): Array[Byte]
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): String = ???
 }
 
 private class ByteLengthLimitedStringColumnBuffer(p: ColumnBufferBuildParams) extends ByteEncodedStringColumnBuffer(p) {

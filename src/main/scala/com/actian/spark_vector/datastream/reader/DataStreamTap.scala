@@ -15,6 +15,8 @@
  */
 package com.actian.spark_vector.datastream.reader
 
+import org.apache.spark.Logging
+
 import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.colbuffer.ColumnBuffer
 
@@ -22,7 +24,7 @@ import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 /** The `VectorTap` that reads a `Vector DataStream`s from a `SocketChannel` `socket` as a `ByteBuffer` */
-case class DataStreamTap(implicit val socket: SocketChannel) {
+case class DataStreamTap(implicit val socket: SocketChannel) extends Logging {
   import DataStreamReader._
 
   private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
@@ -33,6 +35,7 @@ case class DataStreamTap(implicit val socket: SocketChannel) {
   private var remaining = true
 
   private def readVectors(): ByteBuffer = {
+    logDebug(s"Reading vector(s) from datastream...")
     val vectors = readByteBufferWithLength
     val code = vectors.getInt()
     if (code != BinaryDataCode) throw new Exception(s"Invalid binary data code = ${code}!")
@@ -45,12 +48,12 @@ case class DataStreamTap(implicit val socket: SocketChannel) {
   }
 
   def read(): ByteBuffer = closeResourceOnFailure(socket) {
+    if (!remaining) throw new Exception("Empty data stream tap!")
     if (!tapOpened) {
       tapOpened = true
     } else {
       vectors = readVectors()
     }
-    if (!remaining) throw new Exception("Empty data stream tap!")
     vectors
   }
 

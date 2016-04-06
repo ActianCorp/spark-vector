@@ -22,14 +22,12 @@ import java.nio.ByteBuffer
 import java.sql.Date
 
 private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
-  override protected def put(source: Date, buffer: ByteBuffer): Unit = {
+  override def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
     buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): Date = new Date((buffer.getInt() - DateColumnBuffer.DaysBeforeEpoch) * MillisecondsInDay.toLong)
 }
 
 /** Builds a `ColumnBuffer` object for `ansidate` types. */

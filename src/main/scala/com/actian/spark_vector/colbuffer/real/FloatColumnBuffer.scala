@@ -22,9 +22,7 @@ import java.nio.ByteBuffer
 private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Float](p.name, p.maxValueCount, FloatSize, FloatSize, p.nullable) {
   override def put(source: Float, buffer: ByteBuffer): Unit = buffer.putFloat(source)
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): Float = buffer.getFloat()
 }
 
 /** Builds a `ColumnBuffer` object for `real`, `float4` types. */

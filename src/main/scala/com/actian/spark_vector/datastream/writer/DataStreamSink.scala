@@ -18,7 +18,7 @@ package com.actian.spark_vector.datastream.writer
 import java.nio.ByteBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
-import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.colbuffer.WriteColumnBuffer
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
 case class DataStreamSink(implicit socket: SocketChannel) {
@@ -46,7 +46,7 @@ case class DataStreamSink(implicit socket: SocketChannel) {
     case _ =>
   }
 
-  def write(columnBuf: ColumnBuffer[_]): Unit = {
+  def write(columnBuf: WriteColumnBuffer[_]): Unit = {
     columnBuf.flip()
     writeColumn(columnBuf.values, columnBuf.markers, columnBuf.alignSize, columnBuf.nullable)
     columnBuf.clear()

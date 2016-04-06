@@ -26,7 +26,7 @@ private case class TimestampColumnBufferParams(cbParams: ColumnBufferBuildParams
 
 private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBufferParams, valueWidth: Int) extends
   ColumnBuffer[Timestamp](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
-  override protected def put(source: Timestamp, buffer: ByteBuffer): Unit = {
+  override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (p.adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
     }
@@ -36,9 +36,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
 
   protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit
 
-  override protected def putOne(source: ByteBuffer) = ???
-
-  override def get() = ???
+  override def get(buffer: ByteBuffer): Timestamp = ???
 }
 
 private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongSize) {

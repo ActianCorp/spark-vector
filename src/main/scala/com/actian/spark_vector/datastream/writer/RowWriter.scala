@@ -23,7 +23,7 @@ import org.apache.spark.Logging
 import scala.reflect.classTag
 
 import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer }
+import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
 
 /**
 * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
@@ -34,16 +34,13 @@ class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Loggi
   import RowWriter._
 
   /**
-   * A list of column buffers, one for each column of the table inserted to that will be used to serialize input `RDD` rows into the
+   * A list of write column buffers, one for each column of the loaded table, that will be used to serialize input `RDD` rows into the
    * buffer for the appropriate table column
    */
-  private val columnBufs = tableSchema.toList.map { case col =>
+  private lazy val columnBufs = tableSchema.toList.map { case col =>
     logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
       s"nullable=${col.nullable}, vectorsize=${vectorSize}")
-    ColumnBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable)) match {
-      case Some(cb) => cb
-      case None => throw new Exception(s"Unable to find internal buffer for column ${col.name} of type ${col.typeName}")
-    }
+    ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable))
   }
 
   /**
@@ -52,8 +49,8 @@ class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Loggi
    * @note since the column buffers are exposed only through the interface `ColumnBuf[_]`. Since we need to cast the value(Any) to the `ColumnBuf`'s expected type,
    * we make use of runtime reflection to determine the type of the generic parameter of the ColumnBuf
    */
-  private val writeValFcns: Seq[(Any, ColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
-    val ret: (Any, ColumnBuffer[_]) => Unit = buf.valueType match {
+  private lazy val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
+    val ret: (Any, WriteColumnBuffer[_]) => Unit = buf.valueType match {
       case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
       case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
       case y if y == classTag[Short] => writeValToColumnBuffer[Short]
@@ -75,10 +72,10 @@ class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Loggi
     case idx => writeToColumnBuffer(row(idx), columnBufs(idx), writeValFcns(idx))
   }
 
-  private def writeValToColumnBuffer[T](x: Any, columnBuf: ColumnBuffer[_]): Unit =
-    columnBuf.asInstanceOf[ColumnBuffer[T]].put(x.asInstanceOf[T])
+  private def writeValToColumnBuffer[T](x: Any, columnBuf: WriteColumnBuffer[_]): Unit =
+    columnBuf.asInstanceOf[WriteColumnBuffer[T]].put(x.asInstanceOf[T])
 
-  private def writeToColumnBuffer(x: Any, columnBuf: ColumnBuffer[_], writeFcn: (Any, ColumnBuffer[_]) => Unit): Unit =
+  private def writeToColumnBuffer(x: Any, columnBuf: WriteColumnBuffer[_], writeFcn: (Any, WriteColumnBuffer[_]) => Unit): Unit =
     if (x == null) {
       columnBuf.putNull()
     } else {

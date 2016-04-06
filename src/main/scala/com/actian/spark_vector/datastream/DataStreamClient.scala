@@ -47,12 +47,11 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def startFutureQuery(query: String, whereParams: Seq[Any] = Seq.empty[Any]): Future[Int] = Future {
     val ret = try {
       closeResourceOnFailure(this) {
-        jdbc.executePreparedQuery(query, whereParams)((rs: ResultSet) => {
-          val rsLast = rs.last()
-          val rsNumRows = rs.getRow()
-          rs.close()
-          rsNumRows
-        })
+        if (whereParams.isEmpty) {
+          jdbc.executeStatement(query)
+        } else {
+          jdbc.executePreparedStatement(query, whereParams)
+        }
       }
     } catch {
       case e: SQLException =>
