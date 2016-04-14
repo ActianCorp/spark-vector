@@ -34,4 +34,18 @@ case class Job(query_id: String, job_parts: Seq[JobPart])
 object Job {
   import JobPart._
   implicit val jobFormat = Json.format[Job]
+  final val QueryId = "query_id"
+  final val JobParts = "job_parts"
+  final val PartId = "part_id"
+  final val VectorTableName = "vector_table_name"
+  final val SqlQuery = "spark_sql_query"
+  final val ColsToLoad = "cols_to_load"
+  final val Ref = "spark_ref"
+  final val Options = "options"
+  final val Format = "format"
+  final val DataStreams = "datastreams"
+  final val DataStreamHost = "host"
+  final val DataStreamPort = "port"
+  final val UserName = "username"
+  final val Password = "password"
 }
