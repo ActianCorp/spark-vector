@@ -43,7 +43,7 @@ case class ColumnMetadata(val name: String, val typeName: String, val nullable: 
     case BooleanTypeId => (BooleanType, ByteSize)
     case DateTypeId => (DateType, IntSize)
     case CharTypeId | NcharTypeId => (StringType, IntSize)
-    case VarcharTypeId | NvarcharTypeId => (StringType, precision + 1)
+    case VarcharTypeId | NvarcharTypeId | YearToMonthTypeId | DayToSecondTypeId => (StringType, precision + 1)
     case TimeNZTypeId1 | TimeNZTypeId2 | TimeTZTypeId | TimeLZTypeId | TimestampNZTypeId1 |
          TimestampNZTypeId2  | TimestampTZTypeId  | TimestampLZTypeId  => (TimestampType, LongLongSize)
     case _ => throw new Exception(s"Unsupported type '${typeName}' for column '${name}'.")

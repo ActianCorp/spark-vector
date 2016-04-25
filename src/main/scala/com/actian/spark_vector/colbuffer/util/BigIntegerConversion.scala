@@ -22,7 +22,7 @@ import java.nio.ByteBuffer
 
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
-  val bigIntArray = Array.fill[Byte](LongLongSize)(0:Byte) /** Keep in big-endian */
+  val bigIntArray = Array.fill[Byte](LongLongSize)(0:Byte) /** Keep it in big-endian */
 
   // scalastyle:off magic.number
   /**
@@ -53,7 +53,7 @@ object BigIntegerConversion {
    * Gets a BigInteger from a ByteBuffer which is in big-endian order.
    */
   final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
-    var sourceIndex = LongLongSize
+    var sourceIndex = bigIntArray.length
 
     while (sourceIndex >= 0) {
       bigIntArray(sourceIndex) = buffer.get()

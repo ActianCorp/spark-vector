@@ -38,7 +38,7 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param tableSchema of the table as a sequence of columns metadata
  */
 class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableMetadataSchema: Seq[ColumnMetadata])
-  extends Logging with Serializable with Profiling {
+  extends Logging with Serializable {
   import DataStreamWriter._
 
   /**
@@ -54,42 +54,6 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
     client.getVectorEndpointConf
   }
   private lazy val connector = DataStreamConnector(writeConf)
-  private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
-
-  /**
-   * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
-   * the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
-   */
-  private def writeSplittingInVectors(headerInfo: DataStreamConnectionHeader, data: Iterator[T], sink: DataStreamSink): Unit = {
-    implicit val socket = sink.socket
-    var i = 0
-    var written = 0
-    val rowWriter = RowWriter(tableMetadataSchema, headerInfo)
-    implicit val accs = profileInit("total", "child", "buffering", "flushing")
-    profile("total")
-    do {
-      i = 0
-      profile("child")
-      while (i < headerInfo.vectorSize && data.hasNext) {
-        val next = data.next
-        profile("buffering")
-        rowWriter.write(next)
-        profileEnd
-        i = i + 1
-      }
-      profileEnd
-      profile("flushing")
-      writeInt(rowWriter.bytesToBeFlushed(DataStreamConnector.DataHeaderSize))
-      writeInt(BinaryDataCode)
-      writeInt(i) // write actual number of tuples
-      sink.pos = DataStreamConnector.DataHeaderSize
-      rowWriter.flushToSink(sink)
-      written = written + i
-      profileEnd
-    } while (i != 0)
-    profileEnd
-    profilePrint
-  }
 
   /**
    * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
@@ -98,7 +62,8 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
     implicit socket => {
       val headerInfo = connector.readExternalScanConnectionHeader().validateColumnInfo(tableMetadataSchema)
-      writeSplittingInVectors(headerInfo, data, DataStreamSink())
+      val rowWriter = RowWriter(tableMetadataSchema, headerInfo, DataStreamSink())
+      rowWriter.write(data)
     }
   )
 
@@ -143,8 +108,9 @@ object DataStreamWriter extends Logging {
    * Writes `buffer` to `socket`. Note this method assumes that the buffer is in read mode, i.e.
    * the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
    */
-  def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit =
+  def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = closeResourceOnFailure(socket) {
     while (buffer.hasRemaining()) socket.write(buffer)
+  }
 
   /** Writes an integer to the socket */
   def writeInt(x: Int)(implicit socket: SocketChannel): Unit = {
@@ -160,13 +126,13 @@ object DataStreamWriter extends Logging {
    * Write a `ByteBuffer` to `socket`. Note this method flips the byteBuffer before writing. For writing
    * a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
    */
-  def writeByteBuffer(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
+  private def writeByteBuffer(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     buffer.flip()
     writeByteBufferNoFlip(buffer)
   }
 
   /** Write a `ByteBuffer` preceded by its length to `socket` */
-  def writeByteBufferWithLength(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
+  private def writeByteBufferWithLength(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     val lenByteBuffer = ByteBuffer.allocateDirect(4)
     logTrace(s"Writing a byte stream of size ${buffer.limit()}")
     lenByteBuffer.putInt(buffer.limit() + 4)

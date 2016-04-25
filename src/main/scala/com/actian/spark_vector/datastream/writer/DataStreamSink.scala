@@ -19,39 +19,52 @@ import java.nio.ByteBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
-import com.actian.spark_vector.datastream.padding
+import com.actian.spark_vector.datastream.{ padding, DataStreamConnector }
 import com.actian.spark_vector.colbuffer.WriteColumnBuffer
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
 private[writer] case class DataStreamSink(implicit socket: SocketChannel) extends Serializable {
   import DataStreamWriter._
 
+  private final val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
+
   /**
    * The write position (how many bytes have already been written to `socket`). Used to
    * calculate data type alignments
    */
-  var pos: Int = 0
+  private var pos: Int = 0
 
-  private def writeColumn(values: ByteBuffer, markers: ByteBuffer, alignSize: Int, nullable: Boolean): Unit = {
-    align(alignSize)
-    writeByteBufferNoFlip(values)
-    pos = pos + values.limit()
-    if (nullable) {
-      writeByteBufferNoFlip(markers)
-      pos = pos + markers.limit()
+  private def writeDataHeader(len: Int, numTuples: Int): Unit = {
+    writeInt(len)
+    writeInt(BinaryDataCode)
+    writeInt(numTuples) // write actual number of tuples
+    pos = DataStreamConnector.DataHeaderSize
+  }
+
+  private def writeDataColumn(columnBuf: WriteColumnBuffer[_]): Unit = {
+    align(columnBuf.alignSize)
+    writeByteBufferNoFlip(columnBuf.values)
+    pos += columnBuf.values.limit()
+    if (columnBuf.nullable) {
+      writeByteBufferNoFlip(columnBuf.markers)
+      pos += columnBuf.markers.limit()
     }
   }
 
   private def align(size: Int): Unit = padding(pos, size) match {
     case x if x > 0 =>
       writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
-      pos = pos + x
+      pos += x
     case _ =>
   }
 
-  def write(columnBuf: WriteColumnBuffer[_]): Unit = {
-    columnBuf.flip()
-    writeColumn(columnBuf.values, columnBuf.markers, columnBuf.alignSize, columnBuf.nullable)
-    columnBuf.clear()
+  /** Writes buffered data to the socket, the header and the actual binary data */
+  def write(len: Int, numTuples: Int, columnBufs: Seq[WriteColumnBuffer[_]]): Unit = {
+    writeDataHeader(len, numTuples)
+    columnBufs.foreach { case columnBuf =>
+      columnBuf.flip()
+      writeDataColumn(columnBuf)
+      columnBuf.clear()
+    }
   }
 }

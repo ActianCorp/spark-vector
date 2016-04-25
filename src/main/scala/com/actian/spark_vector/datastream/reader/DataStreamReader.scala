@@ -114,8 +114,8 @@ object DataStreamReader extends Logging {
   def readString(in: ByteBuffer): String = new String(readByteArray(in), "ASCII")
 
   /** Read a byte buffer of length `len from `socket` */
-  def readByteBuffer(len: Int, reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = {
-    val buffer = reuseBufferOpt.getOrElse({ByteBuffer.allocate(len)})
+  private def readByteBuffer(len: Int, reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = closeResourceOnFailure(socket) {
+    val buffer = reuseBufferOpt.getOrElse(ByteBuffer.allocate(len))
     logDebug(s"${if (!reuseBufferOpt.isEmpty) "Reusing" else "Creating a new"} byte buffer of size ${buffer.capacity}")
     var i = 0
     buffer.clear()
@@ -131,7 +131,7 @@ object DataStreamReader extends Logging {
   }
 
   /** Read a byte buffer and its length integer from `socket` */
-  def readByteBufferWithLength(reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = {
+  private def readByteBufferWithLength(reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = {
     val len = readByteBuffer(IntSize, reuseBufferOpt).getInt()
     logTrace(s"Reading a byte stream of size ${len - IntSize}")
     readByteBuffer(len - IntSize, reuseBufferOpt)
@@ -139,6 +139,6 @@ object DataStreamReader extends Logging {
 
   /** Read data from `socket`, store it in a `ByteBuffer` and execute the `code` that reads from it */
   def readWithByteBuffer[T](reuseBufferOpt: Option[ByteBuffer] = None)(code: ByteBuffer => T)(implicit socket: SocketChannel): T =
-    closeResourceOnFailure(socket) { code(readByteBufferWithLength(reuseBufferOpt))  }
+    code(readByteBufferWithLength(reuseBufferOpt))
   // scalastyle:on magic.number
 }

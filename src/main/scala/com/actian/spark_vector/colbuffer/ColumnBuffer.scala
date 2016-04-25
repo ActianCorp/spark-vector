@@ -114,9 +114,9 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
 }
 
 class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extends RWColumnBuffer(col) {
-  private val values = new Array[T](col.maxValueCount)
-  private val isNullValue = new Array[Boolean](col.maxValueCount)
-  private lazy val markers = new Array[Byte](col.maxValueCount)
+  private val values =  Array.ofDim[T](col.maxValueCount.toInt)
+  private val isNullValue = Array.ofDim[Boolean](col.maxValueCount)
+  private lazy val markers = Array.ofDim[Byte](col.maxValueCount)
 
   private var capacity = col.maxValueCount
   private var left = 0

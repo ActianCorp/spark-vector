@@ -27,8 +27,8 @@ import java.nio.channels.SocketChannel
 private[reader] case class DataStreamTap(implicit val socket: SocketChannel) extends Logging with Serializable {
   import DataStreamReader._
 
-  private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
-  private val NumTuplesIndex = 4
+  private final val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
+  private final val NumTuplesIndex = 4
 
   private var vectors: ByteBuffer = null
   private var tapOpened: Boolean = true

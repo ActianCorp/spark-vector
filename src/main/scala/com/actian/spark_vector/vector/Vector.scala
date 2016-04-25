@@ -25,7 +25,7 @@ import org.apache.spark.SparkContext
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.VectorUtil._
-import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD, RowWriter }
+import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
 
 

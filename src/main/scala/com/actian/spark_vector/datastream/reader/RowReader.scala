@@ -27,13 +27,13 @@ import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
 import org.apache.spark.sql.catalyst.InternalRow
 
-import com.actian.spark_vector.datastream.padding
+import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
-import com.actian.spark_vector.datastream.{ DataStreamConnectionHeader, DataStreamConnector }
+import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
 class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
-  extends Iterator[InternalRow] with Logging with Serializable {
+  extends Iterator[InternalRow] with Logging with Serializable with Profiling {
   import RowReader._
 
   private val row = new SpecificMutableRow(tableMetadataSchema.map(_.dataType))
@@ -51,11 +51,11 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
       col.nullable && headerInfo.isNullableCol(i)))
   }
 
-  private val reuseBufferSize = bytesToBeFilled(DataStreamConnector.DataHeaderSize)
+  private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
 
   private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocate(reuseBufferSize)
 
-  private def bytesToBeFilled(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
+  private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val buf = columnBufs(idx)
     pos + padding(pos, buf.alignSize) + headerInfo.vectorSize * ((if (buf.nullable) 1 else 0) + tableMetadataSchema(idx).maxDataSize)
   }
@@ -114,10 +114,25 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   }
 
   override def next(): InternalRow = {
-    if (!hasNext) throw new NoSuchElementException("Empty row reader.")
-    if (numTuples == 0) fillColumnBuffers(tap.read())
+    implicit val accs = profileInit("next row", "reading from datastream", "columns buffering")
+    profile("next row")
+    if (!hasNext) {
+      profileEnd
+      throw new NoSuchElementException("Empty row reader.")
+    }
+    if (numTuples == 0) {
+      profile("reading from datastream")
+      val vector = tap.read()
+      profileEnd
+      profile("columns buffering")
+      fillColumnBuffers(vector)
+      profileEnd
+    }
     numTuples -= 1
-    read()
+    val ret = read()
+    profileEnd
+    profilePrint
+    ret
   }
 
   def close() = tap.close

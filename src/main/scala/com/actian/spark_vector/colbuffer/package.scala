@@ -48,6 +48,8 @@ package object colbuffer {
   final val NcharTypeId = "nchar"
   final val VarcharTypeId = "varchar"
   final val NvarcharTypeId = "nvarchar"
+  final val YearToMonthTypeId = "interval year to month"
+  final val DayToSecondTypeId = "interval day to second"
   final val TimeNZTypeId1 = "time"
   final val TimeNZTypeId2 = "time without time zone"
   final val TimeTZTypeId = "time with time zone"

@@ -22,10 +22,10 @@ import org.apache.spark.Logging
 
 import scala.reflect.{ classTag, ClassTag }
 
-import com.actian.spark_vector.datastream.padding
+import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
-import com.actian.spark_vector.datastream.DataStreamConnectionHeader
+import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
 
 /**
@@ -34,7 +34,8 @@ import com.actian.spark_vector.datastream.DataStreamConnectionHeader
 * @param tableMetadataSchema schema information for the `Vector` table/relation being loaded
 * @param vectorSize the max value count of the `Vector` tuple vectors
 */
-class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader) extends Logging with Serializable {
+class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink)
+  extends Logging with Serializable with Profiling {
   import RowWriter._
 
   /**
@@ -75,9 +76,9 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   private def writeValToColumnBuffer[T](value: Any, columnBuf: WriteColumnBuffer[_]) = columnBuf.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
 
   /** Write a single `row` */
-  def write(row: Seq[Any]): Unit = {
+  private def writeToColumnBuffer(row: Seq[Any]): Unit = {
     var i = 0
-    while (i < row.length) {
+    while (i < row.length) { // writing all columns of this row to appropiate colbufs
       writeToColumnBuffer(row(i), columnBufs(i), writeValFcns(i))
       i += 1
     }
@@ -93,17 +94,41 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
-  def bytesToBeFlushed(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
+  private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val buf = columnBufs(idx)
     pos + padding(pos, buf.alignSize) + buf.size
   }
 
-  /** Flushes buffered data to the socket through `sink` */
-  def flushToSink(sink: DataStreamSink): Unit = columnBufs.foreach {
-    case columnBuf => sink.write(columnBuf)
+  /**
+   * Reads rows from input iterator, buffers a vector of them and then flushes all through the socket, making sure to include
+   * the message length, the binary packet type `BinaryDataCode`, the number of tuples, and the actual serialized column data
+   */
+  def write[T <% Seq[Any]](data: Iterator[T]): Unit = {
+    var i = 0
+    var writtenTuples = 0
+    implicit val accs = profileInit("total write", "next row", "column buffering", "writing to datastream")
+    profile("total write")
+    do {
+      i = 0
+      profile("next row")
+      while (i < headerInfo.vectorSize && data.hasNext) {
+        val next = data.next
+        profile("column buffering")
+        writeToColumnBuffer(next)
+        profileEnd
+        i += 1
+      }
+      profileEnd
+      profile("writing to datastream")
+      sink.write(bytesToBeWritten(DataStreamConnector.DataHeaderSize), i, columnBufs)
+      writtenTuples += i
+      profileEnd
+    } while (i != 0)
+    profileEnd
+    profilePrint
   }
 }
 
 object RowWriter {
-  def apply(tableSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader): RowWriter = new RowWriter(tableSchema, headerInfo)
+  def apply(tableSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink): RowWriter = new RowWriter(tableSchema, headerInfo, sink)
 }
