@@ -53,7 +53,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
 
-  private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocate(reuseBufferSize)
+  private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocateDirect(reuseBufferSize)
 
   private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val buf = columnBufs(idx)

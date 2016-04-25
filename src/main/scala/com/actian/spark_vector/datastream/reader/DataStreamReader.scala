@@ -115,7 +115,7 @@ object DataStreamReader extends Logging {
 
   /** Read a byte buffer of length `len from `socket` */
   private def readByteBuffer(len: Int, reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = closeResourceOnFailure(socket) {
-    val buffer = reuseBufferOpt.getOrElse(ByteBuffer.allocate(len))
+    val buffer = reuseBufferOpt.getOrElse(ByteBuffer.allocateDirect(len))
     logDebug(s"${if (!reuseBufferOpt.isEmpty) "Reusing" else "Creating a new"} byte buffer of size ${buffer.capacity}")
     var i = 0
     buffer.clear()
