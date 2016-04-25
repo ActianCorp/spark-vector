@@ -23,23 +23,22 @@ import com.actian.spark_vector.colbuffer.ColumnBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
-/** The `VectorTap` that reads a `Vector DataStream`s from a `SocketChannel` `socket` as a `ByteBuffer` */
-case class DataStreamTap(implicit val socket: SocketChannel) extends Logging {
+/** The `VectorTap` that reads a `Vector DataStream` from a socket as a `ByteBuffer` */
+private[reader] case class DataStreamTap(implicit val socket: SocketChannel) extends Logging with Serializable {
   import DataStreamReader._
 
   private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
-  private val NumTuplesIndex = 0
+  private val NumTuplesIndex = 4
 
   private var vectors: ByteBuffer = null
   private var tapOpened: Boolean = true
   private var remaining = true
 
-  private def readVectors(): ByteBuffer = {
-    logDebug(s"Reading vector(s) from datastream...")
-    val vectors = readByteBufferWithLength
-    val code = vectors.getInt()
-    if (code != BinaryDataCode) throw new Exception(s"Invalid binary data code = ${code}!")
+  private def readVectors(reuseByteBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseByteBuffer)) { vectors =>
+    val dataCode = vectors.getInt()
+    if (dataCode != BinaryDataCode) throw new Exception(s"Invalid binary data code = ${dataCode}!")
     if (vectors.getInt(NumTuplesIndex) == 0) {
+      logDebug(s"Empty data stream.")
       remaining = false
       null
     } else {
@@ -47,23 +46,21 @@ case class DataStreamTap(implicit val socket: SocketChannel) extends Logging {
     }
   }
 
-  def read(): ByteBuffer = closeResourceOnFailure(socket) {
-    if (!remaining) throw new Exception("Empty data stream tap!")
+  def read()(implicit reuseByteBuffer: ByteBuffer): ByteBuffer = {
+    if (!remaining) throw new NoSuchElementException("Empty data stream.")
     if (!tapOpened) {
       tapOpened = true
     } else {
-      vectors = readVectors()
+      vectors = readVectors(reuseByteBuffer)
     }
     vectors
   }
 
-  def isEmpty(): Boolean = {
+  def isEmpty()(implicit reuseByteBuffer: ByteBuffer): Boolean = {
     if (remaining) read()
     tapOpened = false
     !remaining
   }
 
   def close() = socket.close
-
-  isEmpty
 }

@@ -19,7 +19,7 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Float](p.name, p.maxValueCount, FloatSize, FloatSize, p.nullable) {
+private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Float, Float](p.name, p.maxValueCount, FloatSize, FloatSize, p.nullable) {
   override def put(source: Float, buffer: ByteBuffer): Unit = buffer.putFloat(source)
 
   override def get(buffer: ByteBuffer): Float = buffer.getFloat()
@@ -27,7 +27,7 @@ private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer
 
 /** Builds a `ColumnBuffer` object for `real`, `float4` types. */
 private[colbuffer] object FloatColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
     case p if p.tpe == FloatTypeId1 || p.tpe == FloatTypeId2 => new FloatColumnBuffer(p)
   }
 }

@@ -35,9 +35,9 @@ object TimeConversion {
     }
   }
 
-  final def scaledTime(source: Timestamp, scale: Int): Long = scaledTime(timeInNanos(source), scale)
+  final def scaledTime(unscaledNanos: Long, scale: Int): Long = unscaledNanos / PowersOfTen(NanosecondsScale  - scale)
 
-  final def scaledTime(nanos: Long, scale: Int): Long = nanos / PowersOfTen(NanosecondsScale  - scale)
+  final def unscaledTime(scaledNanos: Long, scale: Int): Long = scaledNanos * PowersOfTen(NanosecondsScale - scale)
 
   final def convertLocalDateToUTC(date: Date): Unit = {
     val cal = Calendar.getInstance()
@@ -56,7 +56,7 @@ object TimeConversion {
   /** This trait should be used when implementing a type of time conversion,
    *  for example a time-zone converter using the upper helper functions. */
   trait TimeConverter {
-    def convert(source: Timestamp, scale: Int): Long = convert(timeInNanos(source), scale)
     def convert(nanos: Long, scale: Int): Long
+    def deconvert(source: Long, scale: Int): Long
   }
 }

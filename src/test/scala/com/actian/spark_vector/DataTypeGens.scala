@@ -41,7 +41,7 @@ object DataTypeGens {
       const(FloatType),
       const(DoubleType),
       const(DateType),
-      const(TimestampType),
+      //const(TimestampType))
       const(StringType))
 
   val fieldGen: Gen[StructField] =

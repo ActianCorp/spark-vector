@@ -18,11 +18,14 @@ package com.actian.spark_vector.datastream.writer
 import java.nio.ByteBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
+
+import com.actian.spark_vector.datastream.padding
 import com.actian.spark_vector.colbuffer.WriteColumnBuffer
 
 /** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
-case class DataStreamSink(implicit socket: SocketChannel) {
+private[writer] case class DataStreamSink(implicit socket: SocketChannel) extends Serializable {
   import DataStreamWriter._
+
   /**
    * The write position (how many bytes have already been written to `socket`). Used to
    * calculate data type alignments
@@ -30,16 +33,16 @@ case class DataStreamSink(implicit socket: SocketChannel) {
   var pos: Int = 0
 
   private def writeColumn(values: ByteBuffer, markers: ByteBuffer, alignSize: Int, nullable: Boolean): Unit = {
+    align(alignSize)
+    writeByteBufferNoFlip(values)
+    pos = pos + values.limit()
     if (nullable) {
       writeByteBufferNoFlip(markers)
       pos = pos + markers.limit()
     }
-    align(alignSize)
-    writeByteBufferNoFlip(values)
-    pos = pos + values.limit()
   }
 
-  private def align(size: Int): Unit = RowWriter.padding(pos, size) match {
+  private def align(size: Int): Unit = padding(pos, size) match {
     case x if x > 0 =>
       writeByteBufferNoFlip(ByteBuffer.allocateDirect(x))
       pos = pos + x

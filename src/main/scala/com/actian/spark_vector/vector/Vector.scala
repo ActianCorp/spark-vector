@@ -15,126 +15,95 @@
  */
 package com.actian.spark_vector.vector
 
-import java.rmi.dgc.VMID
-import java.sql.SQLException
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
-import org.apache.spark.Logging
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.Row
+import org.apache.spark.SparkContext
 
-import com.actian.spark_vector.vector.ErrorCodes._
-import com.actian.spark_vector.vector.VectorJDBC.withJDBC
+import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
+import com.actian.spark_vector.vector.VectorUtil._
+import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD, RowWriter }
+import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
 
-/**
- * Common Vector operations
- */
-private[vector] object Vector extends Logging {
 
-  /**
-   * Return the table schema as a `StructType` for the given table.
-   *
-   * @param vectorProps Vector connection properties
-   * @param targetTable name of the target table
-   * @return schema of the table as a `StructType`
-   * @throws VectorException if the target table does not exist or if there are connection failures
-   */
-  def getTableSchema(vectorProps: VectorConnectionProperties, targetTable: String, createTableSQL: Option[String] = None): Seq[ColumnMetadata] = {
-    try {
-      withJDBC(vectorProps) { dbCxn =>
-        if (!dbCxn.tableExists(targetTable)) {
-          if (createTableSQL.isDefined) {
-            createTableSQL.foreach(dbCxn.executeStatement)
-          } else {
-            logError(s"$targetTable: target table does not exist")
-            throw new VectorException(NoSuchTable, targetTable + ": target table does not exist")
-          }
-        }
-
-        logDebug(s"$targetTable: target table exists")
-        dbCxn.columnMetadata(targetTable)
-      }
-    } catch {
-      case e: SQLException =>
-        logError(s" Error connecting to Vector instance.", e)
-        throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance")
-    }
-  }
-
-  private def uniqueString: String = new VMID().toString.toUpperCase.replaceAll("[:\\-]", "X")
-
-  case class Field2Column(fieldName: String, columnName: String)
+/** Utility object that defines methods for loading data into Vector */
+object Vector {
+  import RDDUtil._
+  import ResourceUtil._
 
   /**
-   * Apply the given field mapping of input fields to target columns.
+   * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
+   * using the connection information stored in `vectorProps`.
    *
-   * @param fieldMap map of input field names to target column names
-   * @param rddSchema schema of the input data
-   * @param tableSchema schema of the target table
-   * @return sequence of tuples of type (field name, column name) enclosed in `Field2Column` case classes
-   * @throws VectorException if a target table does not exist or a map is not provided and the
-   *  cardinality of the input and target table are not equal
+   * @param preSQL specify some queries to be executed before loading, in the same transaction
+   * @param postSQL specify some queries to be executed after loading, in the same transaction
+   * @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
+   * @param createTable specify if the table should be created if it does not exist
    */
-  def applyFieldMap(fieldMap: Map[String, String], rddSchema: StructType, tableSchema: StructType): Seq[Field2Column] = {
-    if (fieldMap.isEmpty) {
-      if (rddSchema.fields.length != tableSchema.fields.length) {
-        throw VectorException(
-          InvalidNumberOfInputs,
-          "Without a field map, the number of input fields and target columns are expected to match. Specify a field mapping to map input fields to target columns.")
-      }
+  def loadVector(rdd: RDD[Seq[Any]],
+    rddSchema: StructType,
+    targetTable: String,
+    vectorProps: VectorConnectionProperties,
+    preSQL: Option[Seq[String]],
+    postSQL: Option[Seq[String]],
+    fieldMap: Option[Map[String, String]],
+    createTable: Boolean = false): Long = {
+    val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
+    val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, rddSchema))
+    val tableMetadataSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
+    val tableStructTypeSchema = StructType(tableMetadataSchema.map(_.structField))
 
-      // Zip field names and columns names and convert to Field2Columns collection
-      rddSchema.fieldNames.zip(tableSchema.fieldNames).map { case (x: String, y: String) => Field2Column(x, y) }
+    // Apply the given field map return a sequence of field name, column name tuples
+    val field2Columns = applyFieldMap(resolvedFieldMap, rddSchema, tableStructTypeSchema)
+    // Validate the list of columns are OK to load
+    validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
+
+    // If a subset of input fields are needed to load, select only the fields needed
+    val (inputRDD, inputType) = if (field2Columns.length < rddSchema.fields.length) {
+      selectFields(rdd, rddSchema, field2Columns.map(_.fieldName))
     } else {
-      if (fieldMap.size > tableSchema.fields.length) {
-        throw VectorException(
-          InvalidNumberOfInputs,
-          "More input fields are defined in the field mapping than exist in the target table")
-      }
-
-      // Validate that all entries in the field map reference existing source fields
-      fieldMap.keys.foreach(fieldName => {
-        if (!rddSchema.fieldNames.contains(fieldName)) {
-          throw new VectorException(
-            NoSuchSourceField,
-            s"$fieldName: source field in field mapping does not exist in the input. Available field names are: ${rddSchema.fieldNames.mkString(", ")}")
-        }
-      })
-
-      val fieldColumnNames = rddSchema.fieldNames.foldLeft(Seq[Field2Column]())((columnNames, inputFieldName) => {
-        fieldMap.get(inputFieldName) match {
-          case Some(targetColumnName) =>
-            if (tableSchema.fieldNames.contains(targetColumnName)) {
-              columnNames :+ Field2Column(inputFieldName, targetColumnName)
-            } else {
-              throw VectorException(
-                NoSuchColumn,
-                s"A column with name '$targetColumnName' does not exist in the target table. Available column names are: ${tableSchema.fieldNames.mkString(", ")}")
-            }
-          case None => columnNames
-        }
-      })
-
-      if (fieldColumnNames.length == 0) {
-        throw VectorException(
-          NoColumnsMapped,
-          "The given field map does not map from any input fields to any target columns.")
-      }
-
-      fieldColumnNames
+      (rdd, rddSchema)
     }
+    val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
+      field2Columns.map(i => i.columnName -> i.fieldName).toMap)
+
+    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, tableMetadataSchema)
+    closeResourceOnFailure(writer.client) {
+      preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+    }
+
+    val insertRDD = new InsertRDD(finalRDD, writer)
+    val result = writer.initiateLoad
+    insertRDD.sparkContext.runJob(insertRDD, writer.write _)
+
+    // FIX ME
+    val rowCount = Await.result(result, Duration.Inf)
+    if (rowCount >= 0) {
+      // Run post-load SQL
+      closeResourceOnFailure(writer.client) {
+        postSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+      }
+      writer.commit
+    }
+    writer.client.getJdbc.close
+
+    rowCount
   }
 
-  /**
-   * Validate that the list of columns for the given target table schema are OK to load.
-   * Ensures that non-null columns are being loaded. Throws an exception otherwise.
-   *
-   * @param tableSchema schema of the target table
-   * @param columnNames columns being loaded
-   *
-   * @throws VectorException thrown if a non-null column is not being loaded
-   */
-  def validateColumns(tableSchema: StructType, columnNames: Seq[String]): Unit = {
-    val ex = tableSchema.fields.find(field => !field.nullable && !columnNames.contains(field.name)).map(field =>
-      VectorException(MissingNonNullColumn, s"Column ${field.name} is defined NOT NULL but is not being loaded."))
-    if (ex.isDefined) throw ex.get
+  def unloadVector(sparkContext: SparkContext,
+    vectorProps: VectorConnectionProperties,
+    targetTable: String,
+    tableMetadataSchema: Seq[ColumnMetadata],
+    selectColumns: String = "*",
+    whereClause: String = "",
+    whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
+	val reader = new DataStreamReader(vectorProps, targetTable, tableMetadataSchema)
+    val scanRDD = new ScanRDD(sparkContext, reader)
+	assert(whereClause.isEmpty == whereParams.isEmpty)
+    reader.initiateUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
+    scanRDD.asInstanceOf[RDD[Row]]
   }
 }

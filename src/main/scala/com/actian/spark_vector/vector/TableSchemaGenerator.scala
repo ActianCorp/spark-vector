@@ -18,7 +18,6 @@ package com.actian.spark_vector.vector
 import org.apache.spark.sql.types._
 
 object TableSchemaGenerator {
-
   // TODO ensure consistency with ColumnMetadata mappings
   private def sqlTypeName(dataType: DataType): String = dataType match {
     case BooleanType => "boolean"

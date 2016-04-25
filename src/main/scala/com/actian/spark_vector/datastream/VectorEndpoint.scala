@@ -55,6 +55,7 @@ object VectorEndpoint extends Logging {
 
   /** Issues a query through JDBC to obtain connection information from the `DataStreams` system table */
   def fromDataStreamsTable(cxn: VectorJDBC): IndexedSeq[VectorEndpoint] = {
+    logDebug(s"Running sql query ${getVectorEndPointSql} to get the datastream endpoints' info.")
     val resultSet = cxn.query(getVectorEndPointSql)
     val ret = resultSet
       .map(VectorEndpoint(_, cxn.getIngresHost))

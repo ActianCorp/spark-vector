@@ -16,7 +16,7 @@
 package com.actian.spark_vector.colbuffer.time
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.TimeConversion
+import com.actian.spark_vector.colbuffer.util.{ TimeConversion, MillisecondsScale }
 
 import java.nio.ByteBuffer
 import java.sql.Timestamp
@@ -24,7 +24,7 @@ import java.sql.Timestamp
 private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams, converter: TimeConversion.TimeConverter, adjustToUTC: Boolean = false)
 
 private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams,  valueWidth: Int) extends
-  ColumnBuffer[Timestamp](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
+  ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (p.adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
@@ -35,25 +35,42 @@ private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams,  v
 
   protected def putConverted(converted: Long, buffer: ByteBuffer): Unit
 
-  override def get(buffer: ByteBuffer): Timestamp = ???
+  override def get(buffer: ByteBuffer): Long = {
+    val convertedSource = getConverted(buffer)
+    p.converter.deconvert(convertedSource, p.cbParams.scale)
+  }
+
+  protected def getConverted(buffer: ByteBuffer): Long
 }
 
 private class TimeIntColumnBuffer(p: TimeColumnBufferParams) extends TimeColumnBuffer(p, IntSize) {
   override protected def putConverted(converted: Long, buffer: ByteBuffer): Unit = buffer.putInt(converted.toInt)
+
+  override protected def getConverted(buffer: ByteBuffer): Long = buffer.getInt()
 }
 
 private class TimeLongColumnBuffer(p: TimeColumnBufferParams) extends TimeColumnBuffer(p, LongSize) {
   override protected def putConverted(converted: Long, buffer: ByteBuffer): Unit = buffer.putLong(converted)
+
+  override protected def getConverted(buffer: ByteBuffer): Long = buffer.getLong()
 }
 
 private class TimeNZLZConverter extends TimeConversion.TimeConverter {
-  override def convert(nanos: Long, scale: Int): Long = TimeConversion.scaledTime(nanos, scale)
+  override def convert(unscaledNanos: Long, scale: Int): Long =
+    TimeConversion.scaledTime(unscaledNanos, scale)
+
+  override def deconvert(scaledNanos: Long, scale: Int): Long =
+    TimeConversion.scaledTime(TimeConversion.unscaledTime(scaledNanos, scale), MillisecondsScale)
 }
 
 private class TimeTZConverter extends TimeConversion.TimeConverter {
   private final val TimeMask = 0xFFFFFFFFFFFFF800L
 
-  override def convert(nanos: Long, scale: Int): Long = (TimeConversion.scaledTime(nanos, scale) << 11) & TimeMask
+  override def convert(unscaledNanos: Long, scale: Int): Long =
+    (TimeConversion.scaledTime(unscaledNanos, scale) << 11) & TimeMask
+
+  override def deconvert(scaledNanos: Long, scale: Int): Long =
+    TimeConversion.scaledTime(TimeConversion.unscaledTime((scaledNanos & ~TimeMask) >> 11, scale), MillisecondsScale)
 }
 
 /** Builds a `ColumnBuffer` object for `time` (NZ, TZ, LZ) types. */
@@ -69,7 +86,7 @@ private[colbuffer] object TimeColumnBuffer extends ColumnBufferBuilder {
     case p if p.tpe == TimeLZTypeId => TimeColumnBufferParams(p, new TimeNZLZConverter())
   }
 
-  private val buildNZLZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = (buildNZPartial orElse buildLZPartial) andThenPartial {
+  private val buildNZLZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = (buildNZPartial orElse buildLZPartial) andThenPartial {
     case nzlz if isInBounds(nzlz.cbParams.scale, nzlzIntScaleBounds) => new TimeIntColumnBuffer(nzlz)
     case nzlz if isInBounds(nzlz.cbParams.scale, nzlzLongScaleBounds) => new TimeLongColumnBuffer(nzlz)
   }
@@ -78,10 +95,10 @@ private[colbuffer] object TimeColumnBuffer extends ColumnBufferBuilder {
     case p if p.tpe == TimeTZTypeId => TimeColumnBufferParams(p, new TimeTZConverter())
   }
 
-  private val buildTZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildTZPartial andThenPartial {
+  private val buildTZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildTZPartial andThenPartial {
     case tz if isInBounds(tz.cbParams.scale, tzIntScaleBounds) => new TimeIntColumnBuffer(tz)
     case tz if isInBounds(tz.cbParams.scale, tzLongScaleBounds) => new TimeLongColumnBuffer(tz)
   }
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildNZLZ orElse buildTZ
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildNZLZ orElse buildTZ
 }

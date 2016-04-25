@@ -19,7 +19,7 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class LongColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Long](p.name, p.maxValueCount, LongSize, LongSize, p.nullable) {
+private class LongColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Long, Long](p.name, p.maxValueCount, LongSize, LongSize, p.nullable) {
   override def put(source: Long, buffer: ByteBuffer): Unit = buffer.putLong(source)
 
   override def get(buffer: ByteBuffer): Long = buffer.getLong()
@@ -27,7 +27,7 @@ private class LongColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[
 
 /** Builds a `ColumnBuffer` object for `bigint`, `integer8` types. */
 private[colbuffer] object LongColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
     case p if p.tpe == LongTypeId1 || p.tpe == LongTypeId2 =>  new LongColumnBuffer(p)
   }
 }

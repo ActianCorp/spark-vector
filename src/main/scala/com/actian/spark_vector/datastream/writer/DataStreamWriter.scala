@@ -26,7 +26,7 @@ import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.IntSize
-import com.actian.spark_vector.datastream.{ DataStreamClient, DataStreamConnector }
+import com.actian.spark_vector.datastream.{ DataStreamClient, DataStreamConnectionHeader, DataStreamConnector }
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
 import com.actian.spark_vector.util.ResourceUtil
 
@@ -37,8 +37,8 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table loaded to
  * @param tableSchema of the table as a sequence of columns metadata
  */
-class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableSchema: Seq[ColumnMetadata]) extends
-  Logging with Serializable with Profiling {
+class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableMetadataSchema: Seq[ColumnMetadata])
+  extends Logging with Serializable with Profiling {
   import DataStreamWriter._
 
   /**
@@ -53,25 +53,24 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
     client.prepareLoadDataStreams
     client.getVectorEndpointConf
   }
-  private lazy val connector = new DataStreamConnector(writeConf)
+  private lazy val connector = DataStreamConnector(writeConf)
   private val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
 
   /**
    * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
    * the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
    */
-  private def writeSplittingInVectors(data: Iterator[T], vectorSize: Int)(implicit sink: DataStreamSink): Unit = {
+  private def writeSplittingInVectors(headerInfo: DataStreamConnectionHeader, data: Iterator[T], sink: DataStreamSink): Unit = {
     implicit val socket = sink.socket
     var i = 0
     var written = 0
-    val headerSize = IntSize /* code */ + IntSize /* number of tuples */ + IntSize /* messageLength */
-    val rowWriter = RowWriter(tableSchema, vectorSize)
+    val rowWriter = RowWriter(tableMetadataSchema, headerInfo)
     implicit val accs = profileInit("total", "child", "buffering", "flushing")
     profile("total")
     do {
       i = 0
       profile("child")
-      while (i < vectorSize && data.hasNext) {
+      while (i < headerInfo.vectorSize && data.hasNext) {
         val next = data.next
         profile("buffering")
         rowWriter.write(next)
@@ -80,10 +79,10 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
       }
       profileEnd
       profile("flushing")
-      writeInt(rowWriter.bytesToBeFlushed(headerSize, i))
+      writeInt(rowWriter.bytesToBeFlushed(DataStreamConnector.DataHeaderSize))
       writeInt(BinaryDataCode)
       writeInt(i) // write actual number of tuples
-      sink.pos = headerSize
+      sink.pos = DataStreamConnector.DataHeaderSize
       rowWriter.flushToSink(sink)
       written = written + i
       profileEnd
@@ -98,10 +97,8 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
     implicit socket => {
-      implicit val sink = DataStreamSink()
-      val header = connector.readConnectionHeader
-      if (header.statusCode < 0) throw new Exception(s"Error writing data: got status code = ${header.statusCode} from connection")
-      writeSplittingInVectors(data, header.vectorSize)
+      val headerInfo = connector.readExternalScanConnectionHeader().validateColumnInfo(tableMetadataSchema)
+      writeSplittingInVectors(headerInfo, data, DataStreamSink())
     }
   )
 
@@ -123,6 +120,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */
 object DataStreamWriter extends Logging {
   import ResourceUtil._
+
   // scalastyle:off magic.number
   /** Write the length `len` of a variable length message to `out` */
   @tailrec def writeLength(out: DataOutputStream, len: Long): Unit = len match {
@@ -170,7 +168,7 @@ object DataStreamWriter extends Logging {
   /** Write a `ByteBuffer` preceded by its length to `socket` */
   def writeByteBufferWithLength(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     val lenByteBuffer = ByteBuffer.allocateDirect(4)
-    logTrace(s"trying to write a byte buffer with total length of ${buffer.limit()}")
+    logTrace(s"Writing a byte stream of size ${buffer.limit()}")
     lenByteBuffer.putInt(buffer.limit() + 4)
     writeByteBuffer(lenByteBuffer)
     buffer.position(buffer.limit())

@@ -96,7 +96,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
       writeByteArray(out, A)
     }
     val (s, b) =
-      readWithByteBuffer[(Array[Byte], Array[Byte])] { in =>
+      readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
         if (!readCode(in, sBCode)) {
           throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
         }
@@ -112,7 +112,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
       writeCode(out, MCode)
       writeByteArray(out, clientM)
     }
-    val serverM = readWithByteBuffer[Array[Byte]] { in =>
+    val serverM = readWithByteBuffer[Array[Byte]]() { in =>
       if (!readCode(in, serverMCode)) {
         throw new VectorException(AuthError, "Unable to read code before verification of server M key")
       }

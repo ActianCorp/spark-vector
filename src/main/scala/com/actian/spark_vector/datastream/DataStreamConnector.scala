@@ -17,13 +17,59 @@ package com.actian.spark_vector.datastream
 
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
+import java.nio.ByteBuffer
 
 import org.apache.spark.Logging
 
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
-import com.actian.spark_vector.srp.VectorSRPClient
 import com.actian.spark_vector.datastream.reader.DataStreamReader
-import com.actian.spark_vector.vector.VectorConnectionHeader
+import com.actian.spark_vector.vector.ColumnMetadata
+import com.actian.spark_vector.srp.VectorSRPClient
+import com.actian.spark_vector.colbuffer.IntSize
+
+/**
+ * Container for the datastream connection header info.
+ * @note we keep just a part of this info, the rest of it such as column names and their logical/physical types
+ * is not stored in this container since we get it earlier from a JDBC query.
+ */
+private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
+  // scalastyle:off magic.number
+  private def uByte(value: Byte) = if (value < 0) value + 256 else value
+
+  val statusCode = header.getInt()
+
+  private val numCols = header.getInt()
+
+  val vectorSize = header.getInt()
+
+  lazy val isNullableCol = {
+    val nullCol = Array.fill[Boolean](numCols)(false)
+    var i = 0
+    while (i < numCols) {
+      var sizeValue = uByte(header.get())
+      var colNameSize = sizeValue
+      while (sizeValue == 255) {
+        sizeValue = uByte(header.get())
+        colNameSize += sizeValue
+      }
+      nullCol(i) = colNameSize == 0
+      while (colNameSize > 0) {
+        header.get()
+        colNameSize -= 1
+      }
+      i += 1
+    }
+    nullCol
+  }
+  // scalastyle:on magic.number
+
+  require(statusCode >= 0, "Invalid status code: error reading data.")
+
+  def validateColumnInfo(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
+    // TODO: header sanity check, throwing some exceptions in case of inconsistencies
+    this
+  }
+}
 
 /**
  * Class containing methods to open connections to Vector's `DataStream` API
@@ -31,12 +77,12 @@ import com.actian.spark_vector.vector.VectorConnectionHeader
  * @param writeConf `DataStream` information containing at least the number of connections expected, the names and
  * ports of the hosts where they are expected and authentication information
  */
-class DataStreamConnector(writeConf: VectorEndpointConf) extends Logging with Serializable {
+private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends Logging with Serializable {
   import DataStreamReader._
 
   private def openSocketChannel(idx: Int): SocketChannel = {
-    val host: VectorEndpoint = writeConf.vectorEndpoints(idx)
-    logInfo(s"Opening a socket to $host")
+    val host: VectorEndpoint = conf.vectorEndpoints(idx)
+    logDebug(s"Opening a socket to $host")
     implicit val socket = SocketChannel.open()
     socket.connect(new InetSocketAddress(host.host, host.port))
     val srpClient = new VectorSRPClient(host.username, host.password)
@@ -56,10 +102,21 @@ class DataStreamConnector(writeConf: VectorEndpointConf) extends Logging with Se
     closeResourceOnFailure(socket) { op(socket) }
   }
 
-  def readConnectionHeader(implicit socket: SocketChannel): VectorConnectionHeader = closeResourceOnFailure(socket) {
-    readWithByteBuffer { in =>
-      /** There is more information about columns, datatypes and nullability in this header but we ignore it since we got it before from a JDBC query. */
-      VectorConnectionHeader(in.getInt(VectorConnectionHeader.StatusCodeIndex), in.getInt(VectorConnectionHeader.VectorSizeIndex))
-    }
+  def readExternalScanConnectionHeader()(implicit socket: SocketChannel): DataStreamConnectionHeader = {
+    readWithByteBuffer() { in => } // get_table_info column definition header
+    readWithByteBuffer() { in => } // actual data of the get_table_info
+    readWithByteBuffer() { in => } // end of get_table_info query
+    readWithByteBuffer() { in => DataStreamConnectionHeader(in) } // query response for data loading
   }
+
+  def readExternalInsertConnectionHeader()(implicit socket: SocketChannel): DataStreamConnectionHeader = readWithByteBuffer() {
+    in => DataStreamConnectionHeader(in)
+  }
+}
+
+private[datastream] object DataStreamConnector {
+  // @note this is the binary data header's size (NOT the connection header's size)
+  final val DataHeaderSize =  IntSize /* messageLength */ + IntSize /* binaryDataCode */ + IntSize /* numTuples */
+
+  def apply(conf: VectorEndpointConf): DataStreamConnector = new DataStreamConnector(conf)
 }

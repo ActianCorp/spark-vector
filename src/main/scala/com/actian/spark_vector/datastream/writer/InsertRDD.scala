@@ -21,8 +21,7 @@ import scala.reflect.ClassTag
 import org.apache.spark.{ Logging, OneToOneDependency, NarrowDependency, Partition, TaskContext }
 import org.apache.spark.rdd.RDD
 
-import com.actian.spark_vector.vector.DataStreamPartition
-import com.actian.spark_vector.datastream.{ DataStreamPartitionAssignment, VectorEndpointConf }
+import com.actian.spark_vector.datastream.{ DataStreamPartition, DataStreamPartitionAssignment, VectorEndpointConf }
 
 /**
  * `Vector` RDD to load data into `Vector` through its `DataStream API`
@@ -30,8 +29,9 @@ import com.actian.spark_vector.datastream.{ DataStreamPartitionAssignment, Vecto
  *  @param rdd `RDD` to be loaded
  *  @param writeConf contains the write configuration needed to connect to `Vector DataStream`s
  */
-class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpointConf) extends RDD[R](rdd.context, Nil) with Logging {
-
+class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writer: DataStreamWriter[_]) extends RDD[R](rdd.context, Nil) with Logging {
+  /** Lazy-read the configuration from `Vector` */
+  private val writeConf = writer.writeConf
   /** All hosts where `Vector` expects data to be loaded */
   private val vectorHosts = writeConf.vectorEndpoints.map(_.host).toSet
   /** Used for logging what partitions are assigned to which `DataStream` */
@@ -85,7 +85,6 @@ class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpoi
   }
 
   override def compute(split: Partition, taskContext: TaskContext): Iterator[R] = {
-    //logTrace(s"Computing partition ${split.index} = ${task.partitionId}")
     split.asInstanceOf[DataStreamPartition].parents.toIterator.flatMap(firstParent[R].iterator(_, taskContext))
   }
 

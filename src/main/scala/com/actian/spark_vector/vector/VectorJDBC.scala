@@ -133,10 +133,12 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   }
 
   /** Execute a `JDBC` statement closing resources on failures, using scala-arm's `resource` package */
-  private def withStatement[T](op: Statement => T): T = managed(dbCxn.createStatement()).map(op).resolve()
+  private def withStatement[T](op: Statement => T): T =
+    managed(dbCxn.createStatement()).map(op).resolve()
 
   /** Execute a `JDBC` prepared statement closing resources on failures, using scala-arm's `resource` package */
-  private def withPreparedStatement[T](query: String, op: PreparedStatement => T): T = managed(dbCxn.prepareStatement(query)).map(op).resolve()
+  private def withPreparedStatement[T](query: String, op: PreparedStatement => T): T =
+    managed(dbCxn.prepareStatement(query)).map(op).resolve()
 
   /** Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
    *  mapping the `ResultSet` to a new type as specified by `op`
@@ -204,20 +206,17 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   }
 
   /** Parse the result of a JDBC statement as at most a single value (possibly none) */
-  def querySingleResult[T](sql: String): Option[T] = executeQuery(sql)(resultSet => {
-    if (resultSet.next()) {
-      Option(resultSet.getObject(1).asInstanceOf[T])
-    } else {
-      None
-    }
+  def querySingleResult[T](sql: String): Option[T] = executeQuery(sql)(resultSet => if (resultSet.next()) {
+    Option(resultSet.getObject(1).asInstanceOf[T])
+  } else {
+    None
   })
 
   /** Execute a select query on Vector and return the results as a matrix of elements */
-  def query(sql: String): Seq[Seq[Any]] =
-    executeQuery(sql)(ResultSetIterator(_)(toRow).toVector)
+  def query(sql: String): Seq[Seq[Any]] = executeQuery(sql)(ResultSetIterator(_)(toRow).toVector)
 
-  def query(sql: String, params: Seq[Any]): Seq[Seq[Any]] =
-    executePreparedQuery(sql, params)(ResultSetIterator(_)(toRow).toVector)
+  /** Execute a select prepared query on Vector and return the results as a matrix of elements */
+  def query(sql: String, params: Seq[Any]): Seq[Seq[Any]] = executePreparedQuery(sql, params)(ResultSetIterator(_)(toRow).toVector)
 
   /** Drop the Vector table `tableName` if it exists */
   def dropTable(tableName: String): Unit = try {
@@ -276,6 +275,7 @@ object VectorJDBC extends Logging {
       } catch {
         case exc: Exception =>
           cxn.rollback()
+          cxn.close()
           logError(s"error executing SQL statement: '${statement}'", exc)
           throw VectorException(SqlExecutionError, s"Error executing SQL statement: '${statement}'")
       }

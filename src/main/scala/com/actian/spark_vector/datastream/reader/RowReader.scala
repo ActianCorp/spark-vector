@@ -17,65 +17,112 @@ package com.actian.spark_vector.datastream.reader
 
 import java.sql.{ Date, Timestamp }
 import java.math.BigDecimal
-import java.nio.ByteBuffer
+import java.nio.{ ByteOrder, ByteBuffer }
+
+import scala.reflect.{ classTag, ClassTag }
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.catalyst.expressions.{ MutableRow, GenericMutableRow }
+import org.apache.spark.sql.types.Decimal
+import org.apache.spark.unsafe.types.UTF8String
+import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
+import org.apache.spark.sql.catalyst.InternalRow
 
+import com.actian.spark_vector.datastream.padding
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
+import com.actian.spark_vector.datastream.{ DataStreamConnectionHeader, DataStreamConnector }
 
-class RowReader(tableSchema: Seq[ColumnMetadata], vectorSize: Int, tap: DataStreamTap) extends Iterator[MutableRow] with Logging {
+class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
+  extends Iterator[InternalRow] with Logging with Serializable {
   import RowReader._
 
-  /**
-   * A list of read column buffers, one for each column of the unloaded table, that will be used to deserialize input `RDD` rows into the
-   * buffer for the appropriate table column
-   */
-  private lazy val columnBufs = tableSchema.toList.map { case col =>
-    logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
-      s"nullable=${col.nullable}, vectorsize=${vectorSize}")
-    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable))
-  }
-
-  private lazy val numColumns = tableSchema.size
-  private lazy val row = new GenericMutableRow(numColumns)
+  private val row = new SpecificMutableRow(tableMetadataSchema.map(_.dataType))
+  private val numColumns = tableMetadataSchema.size
   private var numTuples = 0
 
-  private def putVectorsToColumnBufs(vector: ByteBuffer): Seq[ReadColumnBuffer[_]] = {
-    if (!hasNext) throw new Exception("No more rows!")
+  /**
+   * A seq of read column buffers, one for each column of the unloaded table, that will be used to deserialize the data
+   * streams for the appropriate table columns
+   */
+  private val columnBufs = tableMetadataSchema.zipWithIndex.map { case (col, i) =>
+    logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
+      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable && headerInfo.isNullableCol(i)}")
+    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
+      col.nullable && headerInfo.isNullableCol(i)))
+  }
+
+  private val reuseBufferSize = bytesToBeFilled(DataStreamConnector.DataHeaderSize)
+
+  private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocate(reuseBufferSize)
+
+  private def bytesToBeFilled(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
+    val buf = columnBufs(idx)
+    pos + padding(pos, buf.alignSize) + headerInfo.vectorSize * ((if (buf.nullable) 1 else 0) + tableMetadataSchema(idx).maxDataSize)
+  }
+
+  private def fillColumnBuffers(vector: ByteBuffer) = {
     numTuples = vector.getInt()
-    logDebug(s"Got ${numTuples} tuples to deserialize into typed column buffers.")
+    vector.order(ByteOrder.LITTLE_ENDIAN) /** The data from Vector comes in LITTLE_ENDIAN */
     columnBufs.foreach { cb =>
       cb.clear
-      cb.fill(vector, numTuples) /** Consume and deserialize data from the big byte buffer */
+      cb.fill(vector, numTuples) /** Consume and deserialize tuples from the vector byte buffer */
     }
+    vector.order(ByteOrder.BIG_ENDIAN) /** Go back to BIG_ENDIAN because this buffer is reused by DataStreamTap */
     columnBufs
   }
 
-  private def getRow(): MutableRow = {
+  /**
+   * A list of calls (one per column buffer) to set typed values in the corresponding row's column position, and performing the necessary type casts
+   * while reading the needed value from its `ReadColumnBuffer[_]`.
+   *
+   * @note since read column buffers are exposed only through the `ReadColumnBuffer[_]` interface and we need to set the `SpecificMutableRow` with appropriate
+   * typed values, we make use of runtime reflection to determine the type of the generic parameter of the `ReadColumnBuffer[_]`
+   */
+  private def setValFromColumnBuffer(col: Int) = columnBufs(col).valueType match {
+    case y if y == classTag[Byte] => row.setByte(col, readValFromColumnBuffer[Byte](col))
+    case y if y == classTag[Short] => row.setShort(col, readValFromColumnBuffer[Short](col))
+    case y if y == classTag[Int] => row.setInt(col, readValFromColumnBuffer[Int](col))
+    case y if y == classTag[Long] => row.setLong(col, readValFromColumnBuffer[Long](col))
+    case y if y == classTag[Float] => row.setFloat(col, readValFromColumnBuffer[Float](col))
+    case y if y == classTag[Double] => row.setDouble(col, readValFromColumnBuffer[Double](col))
+    case y if y == classTag[BigDecimal] => row.update(col, Decimal(readValFromColumnBuffer[BigDecimal](col)))
+    case y if y == classTag[Boolean] => row.setBoolean(col, readValFromColumnBuffer[Boolean](col))
+    case y if y == classTag[UTF8String] => row.update(col, readValFromColumnBuffer[UTF8String](col))
+    case y => throw new Exception(s"Unexpected buffer column type '${y}'")
+  }
+
+  private def readValFromColumnBuffer[T: ClassTag](col: Int) = columnBufs(col).asInstanceOf[ReadColumnBuffer[T]].get()
+
+  private def read(): InternalRow = {
     var col = 0
     while (col < numColumns) {
-      row(col) = if (columnBufs(col).getIsNull()) null else columnBufs(col).get()
+      setValAt(col)
       col += 1
     }
     row
   }
 
-  override def hasNext(): Boolean = !tap.isEmpty || numTuples > 0
+  private def setValAt(col: Int) = if (columnBufs(col).getIsNull()) {
+    row.setNullAt(col)
+  } else {
+    setValFromColumnBuffer(col)
+  }
 
-  override def next(): MutableRow = {
-    var ret: MutableRow = ???
-    if (numTuples == 0) putVectorsToColumnBufs(tap.read())
+  override def hasNext(): Boolean = {
+    val ret = numTuples > 0 || !tap.isEmpty
+    ret
+  }
+
+  override def next(): InternalRow = {
+    if (!hasNext) throw new NoSuchElementException("Empty row reader.")
+    if (numTuples == 0) fillColumnBuffers(tap.read())
     numTuples -= 1
-    getRow()
+    read()
   }
 
   def close() = tap.close
-
-  hasNext()
 }
 
 object RowReader {
-  def apply(tableSchema: Seq[ColumnMetadata], vectorSize: Int, tap: DataStreamTap): RowReader = new RowReader(tableSchema, vectorSize, tap)
+  def apply(tableSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap): RowReader = new RowReader(tableSchema, headerInfo, tap)
 }

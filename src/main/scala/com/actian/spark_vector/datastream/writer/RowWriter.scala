@@ -20,76 +20,82 @@ import java.math.BigDecimal
 
 import org.apache.spark.Logging
 
-import scala.reflect.classTag
+import scala.reflect.{ classTag, ClassTag }
 
+import com.actian.spark_vector.datastream.padding
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
+import com.actian.spark_vector.datastream.DataStreamConnectionHeader
+
 
 /**
 * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
 *
-* @param tableSchema schema information for the `Vector` table/relation being loaded to
+* @param tableMetadataSchema schema information for the `Vector` table/relation being loaded
+* @param vectorSize the max value count of the `Vector` tuple vectors
 */
-class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Logging {
+class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader) extends Logging with Serializable {
   import RowWriter._
 
   /**
-   * A list of write column buffers, one for each column of the loaded table, that will be used to serialize input `RDD` rows into the
-   * buffer for the appropriate table column
+   * A seq of write column buffers, one for each column of the loaded table, that will be used to serialize the
+   * input `RDD` rows for the appropriate table columns
    */
-  private lazy val columnBufs = tableSchema.toList.map { case col =>
-    logDebug(s"Trying to find a factory for column ${col.name}, type=${col.typeName}, precision=${col.precision}, scale=${col.scale}, " +
-      s"nullable=${col.nullable}, vectorsize=${vectorSize}")
-    ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, vectorSize, col.nullable))
+  private val columnBufs = tableMetadataSchema.map { case col =>
+    logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}," +
+      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable}")
+    ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
+      col.nullable))
   }
 
   /**
-   * A list of functions (one per column buffer) to write values (Any for now) into its corresponding column buffer, and performing the necessary type casts.
+   * A seq of functions (one per column buffer) to write values (Any for now) in the corresponding column buffer, and performing the necessary type casts.
    *
-   * @note since the column buffers are exposed only through the interface `ColumnBuf[_]`. Since we need to cast the value(Any) to the `ColumnBuf`'s expected type,
-   * we make use of runtime reflection to determine the type of the generic parameter of the ColumnBuf
+   * @note since write column buffers are exposed only through the `WriteColumnBuffer[_]` interface and we need to cast the value(Any) to the expected type,
+   * we make use of runtime reflection to determine the type of the generic parameter of the `WriteColumnBuffer[_]`
    */
-  private lazy val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
+  private val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
     val ret: (Any, WriteColumnBuffer[_]) => Unit = buf.valueType match {
       case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
-      case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
       case y if y == classTag[Short] => writeValToColumnBuffer[Short]
       case y if y == classTag[Int] => writeValToColumnBuffer[Int]
       case y if y == classTag[Long] => writeValToColumnBuffer[Long]
       case y if y == classTag[Double] => writeValToColumnBuffer[Double]
       case y if y == classTag[Float] => writeValToColumnBuffer[Float]
-      case y if y == classTag[String] => writeValToColumnBuffer[String]
       case y if y == classTag[BigDecimal] => writeValToColumnBuffer[BigDecimal]
+      case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
       case y if y == classTag[Date] => writeValToColumnBuffer[Date]
       case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
-      case y => throw new Exception(s"Unexpected buffer column type ${y}")
+      case y if y == classTag[String] => writeValToColumnBuffer[String]
+      case y => throw new Exception(s"Unexpected buffer column type '${y}'")
     }
     ret
   }
 
+  private def writeValToColumnBuffer[T](value: Any, columnBuf: WriteColumnBuffer[_]) = columnBuf.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
+
   /** Write a single `row` */
-  def write(row: Seq[Any]): Unit = (0 to row.length - 1).map {
-    case idx => writeToColumnBuffer(row(idx), columnBufs(idx), writeValFcns(idx))
+  def write(row: Seq[Any]): Unit = {
+    var i = 0
+    while (i < row.length) {
+      writeToColumnBuffer(row(i), columnBufs(i), writeValFcns(i))
+      i += 1
+    }
   }
 
-  private def writeValToColumnBuffer[T](x: Any, columnBuf: WriteColumnBuffer[_]): Unit =
-    columnBuf.asInstanceOf[WriteColumnBuffer[T]].put(x.asInstanceOf[T])
-
-  private def writeToColumnBuffer(x: Any, columnBuf: WriteColumnBuffer[_], writeFcn: (Any, WriteColumnBuffer[_]) => Unit): Unit =
-    if (x == null) {
-      columnBuf.putNull()
-    } else {
-      writeFcn(x, columnBuf)
-    }
+  private def writeToColumnBuffer(value: Any, columnBuf: WriteColumnBuffer[_], writeValFcn: (Any, WriteColumnBuffer[_]) => Unit) = if (value == null) {
+    columnBuf.putNull()
+  } else {
+    writeValFcn(value, columnBuf)
+  }
 
   /**
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
-  def bytesToBeFlushed(headerSize: Int, n: Int): Int = (0 until tableSchema.size).foldLeft(headerSize) {
-    case (pos, idx) =>
-      val buf = columnBufs(idx)
-      pos + padding(pos + (if (tableSchema(idx).nullable) n else 0), buf.alignSize) + buf.size
+  def bytesToBeFlushed(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
+    val buf = columnBufs(idx)
+    pos + padding(pos, buf.alignSize) + buf.size
   }
 
   /** Flushes buffered data to the socket through `sink` */
@@ -99,12 +105,5 @@ class RowWriter(tableSchema: Seq[ColumnMetadata], vectorSize: Int) extends Loggi
 }
 
 object RowWriter {
-  def apply(tableSchema: Seq[ColumnMetadata], vectorSize: Int): RowWriter = new RowWriter(tableSchema, vectorSize)
-
-  /** Helper to determine how much padding (# of trash bytes) needs to be written to properly align a type with size `typeSize`, given that we are currently at `pos` */
-  def padding(pos: Int, typeSize: Int): Int = if ((pos & (typeSize - 1)) != 0) {
-    typeSize - (pos & (typeSize - 1))
-  } else {
-    0
-  }
+  def apply(tableSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader): RowWriter = new RowWriter(tableSchema, headerInfo)
 }

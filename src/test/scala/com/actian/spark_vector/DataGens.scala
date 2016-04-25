@@ -23,7 +23,10 @@ import scala.collection.{ JavaConverters, Seq }
 import scala.util.Try
 
 import org.apache.spark.sql.types._
+
 import org.scalacheck.{ Arbitrary, Gen }
+
+import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
 object DataGens {
   import com.actian.spark_vector.DataTypeGens._
@@ -61,14 +64,16 @@ object DataGens {
   private val dateValueGen: Gen[Long] =
     choose(Calendar.getInstance().getTime().getTime(), (Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 103))
 
-  val dateGen: Gen[jsql.Date] = new jsql.Date(Calendar.getInstance().getTime().getTime())
+  // @note normalize getTime so that we don't have diffs more than 1 day in between our {JDBC,Spark}results
+  val dateGen: Gen[jsql.Date] = new jsql.Date((Calendar.getInstance().getTime().getTime() / MillisecondsInDay) * MillisecondsInDay)
 
   val timestampGen: Gen[jsql.Timestamp] =
     for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
 
   // FIXME allow empty strings (and filter externally for vector tests)
+  // @note we donnot allow invalid UTF8 chars to be generated (from D800 to DFFF incl)
   val stringGen: Gen[String] =
-    arbitrary[String].map(_.filter(c => Character.isDefined(c) && c != '\u0000')).filter(!_.isEmpty)
+    arbitrary[String].map(_.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF'))).filter(!_.isEmpty)
 
   def valueGen(dataType: DataType): Gen[Any] =
     dataType match {
@@ -79,9 +84,10 @@ object DataGens {
       case LongType => longGen
       case FloatType => floatGen
       case DoubleType => doubleGen
-      case TimestampType => timestampGen
+      //case TimestampType => timestampGen
       case DateType => dateGen
-      case _ => stringGen
+      case StringType => stringGen
+      case _ => throw new Exception("Invalid data type.")
     }
 
   def nullableValueGen(field: StructField): Gen[Any] = {

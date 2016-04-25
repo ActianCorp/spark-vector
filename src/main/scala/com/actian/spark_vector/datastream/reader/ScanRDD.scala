@@ -19,25 +19,26 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.{ Logging, Partition, SparkContext, TaskContext }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.expressions.MutableRow
+import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 
 /**
- * `Vector` RDD to load data into `Spark` through JDBC
- *
- *  @param vectorSelectStatement Vector prepared SQL statement to be issued through JDBC to start exporting data
- *  @param vectorSelectParams  Parameters to the prepared SQL statement, if any
+ * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[MutableRow](sc, Nil) with Logging {
+class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[InternalRow](sc, Nil) with Logging {
+  /** Lazy-read configuration from `Vector` */
+  private val readConf = reader.readConf
+  /** Closed state for the datastream connection */
   private var closed = false
+  /** Custom row iterator for reading `DataStream`s in row format */
   private var it: RowReader = null
 
-  override protected def getPartitions = (0 until reader.readConf.vectorEndpoints.size).map(i => new Partition { def index = i }).toArray
+  override protected def getPartitions = (0 until readConf.vectorEndpoints.size).map(i => new Partition { def index = i }).toArray
 
-  override protected def getPreferredLocations(split: Partition) = Seq(reader.readConf.vectorEndpoints(split.index).host)
+  override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
 
-  override def compute(split: Partition, taskContext: TaskContext): Iterator[MutableRow] = {
+  override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
     taskContext.addTaskCompletionListener { _ =>
       close(it, "RowReader")
       close(reader.client, "DataStreamClient")
