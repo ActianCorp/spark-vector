@@ -55,8 +55,8 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * @note since write column buffers are exposed only through the `WriteColumnBuffer[_]` interface and we need to cast the value(Any) to the expected type,
    * we make use of runtime reflection to determine the type of the generic parameter of the `WriteColumnBuffer[_]`
    */
-  private val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case buf =>
-    val ret: (Any, WriteColumnBuffer[_]) => Unit = buf.valueType match {
+  private val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case cb =>
+    val ret: (Any, WriteColumnBuffer[_]) => Unit = cb.valueType match {
       case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
       case y if y == classTag[Short] => writeValToColumnBuffer[Short]
       case y if y == classTag[Int] => writeValToColumnBuffer[Int]
@@ -73,7 +73,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     ret
   }
 
-  private def writeValToColumnBuffer[T](value: Any, columnBuf: WriteColumnBuffer[_]) = columnBuf.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
+  private def writeValToColumnBuffer[T](value: Any, cb: WriteColumnBuffer[_]) = cb.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
 
   /** Write a single `row` */
   private def writeToColumnBuffer(row: Seq[Any]): Unit = {
@@ -84,10 +84,10 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     }
   }
 
-  private def writeToColumnBuffer(value: Any, columnBuf: WriteColumnBuffer[_], writeValFcn: (Any, WriteColumnBuffer[_]) => Unit) = if (value == null) {
-    columnBuf.putNull()
+  private def writeToColumnBuffer(value: Any, cb: WriteColumnBuffer[_], writeValFcn: (Any, WriteColumnBuffer[_]) => Unit) = if (value == null) {
+    cb.putNull()
   } else {
-    writeValFcn(value, columnBuf)
+    writeValFcn(value, cb)
   }
 
   /**
@@ -95,8 +95,8 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
   private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
-    val buf = columnBufs(idx)
-    pos + padding(pos, buf.alignSize) + buf.size
+    val cb = columnBufs(idx)
+    pos + padding(pos, cb.alignSize) + cb.size
   }
 
   /**

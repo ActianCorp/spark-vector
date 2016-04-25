@@ -41,13 +41,13 @@ private[writer] case class DataStreamSink(implicit socket: SocketChannel) extend
     pos = DataStreamConnector.DataHeaderSize
   }
 
-  private def writeDataColumn(columnBuf: WriteColumnBuffer[_]): Unit = {
-    align(columnBuf.alignSize)
-    writeByteBufferNoFlip(columnBuf.values)
-    pos += columnBuf.values.limit()
-    if (columnBuf.nullable) {
-      writeByteBufferNoFlip(columnBuf.markers)
-      pos += columnBuf.markers.limit()
+  private def writeDataColumn(cb: WriteColumnBuffer[_]): Unit = {
+    align(cb.alignSize)
+    writeByteBufferNoFlip(cb.values)
+    pos += cb.values.limit()
+    if (cb.nullable) {
+      writeByteBufferNoFlip(cb.markers)
+      pos += cb.markers.limit()
     }
   }
 
@@ -61,10 +61,10 @@ private[writer] case class DataStreamSink(implicit socket: SocketChannel) extend
   /** Writes buffered data to the socket, the header and the actual binary data */
   def write(len: Int, numTuples: Int, columnBufs: Seq[WriteColumnBuffer[_]]): Unit = {
     writeDataHeader(len, numTuples)
-    columnBufs.foreach { case columnBuf =>
-      columnBuf.flip()
-      writeDataColumn(columnBuf)
-      columnBuf.clear()
+    columnBufs.foreach { case cb =>
+      cb.flip()
+      writeDataColumn(cb)
+      cb.clear()
     }
   }
 }
