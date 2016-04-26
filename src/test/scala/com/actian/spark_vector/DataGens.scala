@@ -48,70 +48,61 @@ object DataGens {
   val longGen: Gen[Long] = arbitrary[Long]
 
   // FIXME allow arbitrary doubles (and filter externally for vector tests)
-  val floatGen: Gen[Float] =
-    arbitrary[Float].map(f => if (f.abs > 1e-38) f else 0.0f)
+  val floatGen: Gen[Float] = arbitrary[Float].map(f => if (f.abs > 1e-38) f else 0.0f)
 
   // FIXME allow arbitrary doubles (and filter externally for vector tests)
-  val doubleGen: Gen[Double] =
-    for {
-      neg <- arbitrary[Boolean]
-      digits <- listOfN(12, choose(0, 9))
-    } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
+  val doubleGen: Gen[Double] = for {
+    neg <- arbitrary[Boolean]
+    digits <- listOfN(12, choose(0, 9))
+  } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
-  val decimalGen: Gen[BigDecimal] =
-    arbitrary[BigDecimal].filter(bd => (Try { BigDecimal(bd.toString) }).isSuccess)
+  // FIXME DecimalType doesn't exist yet in Spark 1.5.2
+  val decimalGen: Gen[BigDecimal] = arbitrary[BigDecimal].filter(bd => (Try { BigDecimal(bd.toString) }).isSuccess)
 
   private val dateValueGen: Gen[Long] =
     choose(Calendar.getInstance().getTime().getTime(), (Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 103))
 
   // @note normalize getTime so that we don't have diffs more than 1 day in between our {JDBC,Spark}results
-  val dateGen: Gen[jsql.Date] = new jsql.Date((Calendar.getInstance().getTime().getTime() / MillisecondsInDay) * MillisecondsInDay)
+  val dateGen: Gen[jsql.Date] = new jsql.Date((Calendar.getInstance().getTimeInMillis() / MillisecondsInDay) * MillisecondsInDay)
 
-  val timestampGen: Gen[jsql.Timestamp] =
-    for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
+  val timestampGen: Gen[jsql.Timestamp] = for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
 
   // FIXME allow empty strings (and filter externally for vector tests)
   // @note we donnot allow invalid UTF8 chars to be generated (from D800 to DFFF incl)
   val stringGen: Gen[String] =
     arbitrary[String].map(_.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF'))).filter(!_.isEmpty)
 
-  def valueGen(dataType: DataType): Gen[Any] =
-    dataType match {
-      case BooleanType => booleanGen
-      case ByteType => byteGen
-      case ShortType => shortGen
-      case IntegerType => intGen
-      case LongType => longGen
-      case FloatType => floatGen
-      case DoubleType => doubleGen
-      //case TimestampType => timestampGen
-      case DateType => dateGen
-      case StringType => stringGen
-      case _ => throw new Exception("Invalid data type.")
-    }
+  def valueGen(dataType: DataType): Gen[Any] = dataType match {
+    case BooleanType => booleanGen
+    case ByteType => byteGen
+    case ShortType => shortGen
+    case IntegerType => intGen
+    case LongType => longGen
+    case FloatType => floatGen
+    case DoubleType => doubleGen
+    case TimestampType => timestampGen
+    case DateType => dateGen
+    case StringType => stringGen
+    case _ => throw new Exception("Invalid data type.")
+  }
 
   def nullableValueGen(field: StructField): Gen[Any] = {
     val gen = valueGen(field.dataType)
-    if (field.nullable)
-      gen //frequency(9 -> gen, 1 -> const(null)) TODO
-    else
-      gen
+    if (field.nullable) gen /*TODO: frequency(9 -> gen, 1 -> const(null))*/ else gen
   }
 
   def rowGen(schema: StructType): Gen[Seq[Any]] =
     sequence(schema.fields.map(f => nullableValueGen(f))).map(l => Seq[Any](l.asScala: _*)) // TODO Huh? Why ju.ArrayList?!?
 
-  def dataGenFor(schema: StructType, maxRows: Int): Gen[Seq[Seq[Any]]] =
-    for {
-      numRows <- choose(1, maxRows)
-      rows <- listOfN(numRows, rowGen(schema))
-    } yield rows
+  def dataGenFor(schema: StructType, maxRows: Int): Gen[Seq[Seq[Any]]] = for {
+    numRows <- choose(1, maxRows)
+    rows <- listOfN(numRows, rowGen(schema))
+  } yield rows
 
   case class TypedData(dataType: StructType, data: Seq[Seq[Any]])
 
-  val dataGen: Gen[TypedData] =
-    for {
-      schema <- schemaGen
-      data <- dataGenFor(schema, DefaultMaxRows)
-    } yield TypedData(schema, data)
+  val dataGen: Gen[TypedData] = for {
+    schema <- schemaGen
+    data <- dataGenFor(schema, DefaultMaxRows)
+  } yield TypedData(schema, data)
 }

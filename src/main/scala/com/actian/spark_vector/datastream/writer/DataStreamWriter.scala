@@ -61,7 +61,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
     implicit socket => {
-      val headerInfo = connector.readExternalScanConnectionHeader().validateColumnInfo(tableMetadataSchema)
+      val headerInfo = connector.readExternalScanConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
       val rowWriter = RowWriter(tableMetadataSchema, headerInfo, DataStreamSink())
       rowWriter.write(data)
     }

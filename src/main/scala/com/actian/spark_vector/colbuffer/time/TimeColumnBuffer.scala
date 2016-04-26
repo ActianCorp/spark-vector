@@ -16,7 +16,7 @@
 package com.actian.spark_vector.colbuffer.time
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{ TimeConversion, MillisecondsScale }
+import com.actian.spark_vector.colbuffer.util.{ TimeConversion, PowersOfTen, MicrosecondsScale, SecondsBeforeEpoch }
 
 import java.nio.ByteBuffer
 import java.sql.Timestamp
@@ -60,7 +60,7 @@ private class TimeNZLZConverter extends TimeConversion.TimeConverter {
     TimeConversion.scaledTime(unscaledNanos, scale)
 
   override def deconvert(scaledNanos: Long, scale: Int): Long =
-    TimeConversion.scaledTime(TimeConversion.unscaledTime(scaledNanos, scale), MillisecondsScale)
+    TimeConversion.scaledTime(TimeConversion.unscaledTime(scaledNanos, scale), MicrosecondsScale)
 }
 
 private class TimeTZConverter extends TimeConversion.TimeConverter {
@@ -70,7 +70,7 @@ private class TimeTZConverter extends TimeConversion.TimeConverter {
     (TimeConversion.scaledTime(unscaledNanos, scale) << 11) & TimeMask
 
   override def deconvert(scaledNanos: Long, scale: Int): Long =
-    TimeConversion.scaledTime(TimeConversion.unscaledTime((scaledNanos & ~TimeMask) >> 11, scale), MillisecondsScale)
+    TimeConversion.scaledTime(TimeConversion.unscaledTime((scaledNanos & ~TimeMask) >> 11, scale), MicrosecondsScale)
 }
 
 /** Builds a `ColumnBuffer` object for `time` (NZ, TZ, LZ) types. */

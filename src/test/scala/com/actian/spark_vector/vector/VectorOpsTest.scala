@@ -267,7 +267,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         actRow.size should be(expRow.size)
         Inspectors.forAll(actRow.zip(expRow).zipWithIndex.filter(i => mappedIndices.contains(i._2)).map(_._1)) {
           case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay should be(0)
-          case (act: Timestamp, exp: Timestamp) => act should be(exp)
           case (act, exp) => act should be(exp)
         }
      }

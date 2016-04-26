@@ -32,13 +32,16 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
     if (p.adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
     }
-    val convertedSource = p.converter.convert(source.getTime() / PowersOfTen(MillisecondsScale), source.getNanos(), 0, p.cbParams.scale)
+    val convertedSource = p.converter.convert(source.getTime() / PowersOfTen(MillisecondsScale), source.getNanos(), p.cbParams.scale)
     putConverted(convertedSource, buffer)
   }
 
   protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit
 
-  override def get(buffer: ByteBuffer): Long = getConverted(buffer).longValue
+  override def get(buffer: ByteBuffer): Long = {
+    val convertedSource = getConverted(buffer)
+    p.converter.deconvert(convertedSource, p.cbParams.scale)
+  }
 
   protected def getConverted(buffer: ByteBuffer): BigInteger
 }
@@ -56,8 +59,11 @@ private class TimestampLongLongColumnBuffer(p: TimestampColumnBufferParams) exte
 }
 
 private class TimestampNZConverter extends TimestampConversion.TimestampConverter {
-  override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger =
-    TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, offsetSeconds, scale)
+  override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger =
+    TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, scale)
+
+  override def deconvert(convertedSource: BigInteger, scale: Int): Long =
+    TimestampConversion.unscaledTimestamp(convertedSource, scale)
 }
 
 private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
@@ -78,16 +84,21 @@ private class TimestampTZConverter extends TimestampConversion.TimestampConverte
     mask
   }
 
-  override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger = {
-    val scaledTimestamp = TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, 0, scale)
-    scaledTimestamp.shiftLeft(11).and(TimeMask).or(BigInteger.valueOf(offsetSeconds / SecondsInMinute).and(ZoneMask))
+  override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
+    val scaledTimestamp = TimestampConversion.scaledTimestamp(epochSeconds, subsecNanos, scale)
+    scaledTimestamp.shiftLeft(11).and(TimeMask).and(ZoneMask)
+  }
+
+  override def deconvert(convertedSource: BigInteger, scale: Int): Long = {
+    val deconvertedSource = convertedSource.andNot(ZoneMask).andNot(TimeMask).shiftRight(11)
+    TimestampConversion.unscaledTimestamp(deconvertedSource, scale)
   }
   // scalastyle:on magic.number
 }
 
 private class TimestampLZConverter extends TimestampNZConverter {
-  override def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger =
-    super.convert(epochSeconds, subsecNanos, 0, scale)
+  override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger =
+    super.convert(epochSeconds, subsecNanos, scale)
 }
 
 /** Builds a `ColumnBuffer` object for `timestamp` (NZ, TZ, LZ) types. */

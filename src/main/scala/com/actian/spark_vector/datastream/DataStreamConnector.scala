@@ -65,7 +65,7 @@ private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
 
   require(statusCode >= 0, "Invalid status code: error reading data.")
 
-  def validateColumnInfo(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
+  def validateColumnDataTypes(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
     // TODO: header sanity check, throwing some exceptions in case of inconsistencies
     this
   }

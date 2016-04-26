@@ -53,8 +53,10 @@ object TimeConversion {
     time.setNanos(nanos)
   }
 
-  /** This trait should be used when implementing a type of time conversion,
-   *  for example a time-zone converter using the upper helper functions. */
+  /**
+   * This trait should be used when implementing a type of time conversion,
+   * for example a time-zone converter using the upper helper functions.
+   */
   trait TimeConverter {
     def convert(nanos: Long, scale: Int): Long
     def deconvert(source: Long, scale: Int): Long

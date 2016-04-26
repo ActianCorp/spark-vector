@@ -21,10 +21,10 @@ import java.math.BigInteger
 object TimestampConversion {
   // scalastyle:off magic.number
   private final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
-  private final val NanosecondsFactorBI = BigInteger.valueOf(Math.pow(10, NanosecondsScale).toLong)
+  private final val NanosecondsFactorBI = BigInteger.valueOf(PowersOfTen(NanosecondsScale).toLong)
 
-  final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger  = {
-    val secondsTotal = BigInteger.valueOf(epochSeconds).add(BigInteger.valueOf(offsetSeconds)).add(SecondsBeforeEpochBI)
+  final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger  = {
+    val secondsTotal = BigInteger.valueOf(epochSeconds).add(SecondsBeforeEpochBI)
     val nanosTotal = secondsTotal.multiply(NanosecondsFactorBI).add(BigInteger.valueOf(subsecNanos))
     val adjustment = scale - NanosecondsScale
     val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
@@ -36,10 +36,27 @@ object TimestampConversion {
     }
   }
 
-  /** This trait should be used when implementing a type of timestamp conversion,
-   *  for example a timestamp-zone converter using the upper helper functions. */
+  final def unscaledTimestamp(scaledNanos: BigInteger, scale: Int): Long = {
+    val adjustment = scale - NanosecondsScale
+    val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
+
+    if (adjustment >= 0) {
+      scaledNanos.divide(adjustmentFactor)
+    } else {
+      scaledNanos.multiply(adjustmentFactor)
+    }
+
+    val approxEpochSeconds = scaledNanos.divide(NanosecondsFactorBI).subtract(SecondsBeforeEpochBI)
+    approxEpochSeconds.longValue()
+  }
+
+  /**
+   * This trait should be used when implementing a type of timestamp conversion,
+   * for example a timestamp-zone converter using the upper helper functions.
+   */
   trait TimestampConverter {
-    def convert(epochSeconds: Long, subsecNanos: Long, offsetSeconds: Int, scale: Int): BigInteger
+    def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger
+    def deconvert(convertedValue: BigInteger, scale: Int): Long
   }
   // scalastyle:on magic.number
 }

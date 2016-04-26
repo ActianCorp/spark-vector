@@ -59,7 +59,7 @@ class DataStreamReader(vectorProps: VectorConnectionProperties, table: String, t
    */
   def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId)(
     implicit socket => {
-      val headerInfo = connector.readExternalInsertConnectionHeader().validateColumnInfo(tableMetadataSchema)
+      val headerInfo = connector.readExternalInsertConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
       RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
     }
   )
