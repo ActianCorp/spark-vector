@@ -100,9 +100,9 @@ object Vector {
     selectColumns: String = "*",
     whereClause: String = "",
     whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
-	val reader = new DataStreamReader(vectorProps, targetTable, tableMetadataSchema)
+    val reader = new DataStreamReader(vectorProps, targetTable, tableMetadataSchema)
     val scanRDD = new ScanRDD(sparkContext, reader)
-	assert(whereClause.isEmpty == whereParams.isEmpty)
+    assert(whereClause.isEmpty == whereParams.isEmpty)
     reader.initiateUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
     scanRDD.asInstanceOf[RDD[Row]]
   }

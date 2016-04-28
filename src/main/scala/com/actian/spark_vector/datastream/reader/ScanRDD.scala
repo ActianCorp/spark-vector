@@ -32,7 +32,7 @@ class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader)
   /** Closed state for the datastream connection */
   private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */
-  private var it: RowReader = null
+  private var it: RowReader = _
 
   override protected def getPartitions = (0 until readConf.vectorEndpoints.size).map(i => new Partition { def index = i }).toArray
 

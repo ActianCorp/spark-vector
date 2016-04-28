@@ -49,8 +49,8 @@ case class ColumnMetadata(val name: String, val typeName: String, val nullable: 
     case _ => throw new Exception(s"Unsupported type '${typeName}' for column '${name}'.")
   }
 
-  def dataType = dataTypeInfo._1
-  def maxDataSize = dataTypeInfo._2
+  def dataType: DataType = dataTypeInfo._1
+  def maxDataSize: Int = dataTypeInfo._2
 
   override def toString: String =
     s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}"

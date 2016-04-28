@@ -167,17 +167,19 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     withPreparedStatement(sql, statement => statement.setParams(params).executeUpdate)
 
   /** Return true if there is a table named `tableName` in Vector */
-  def tableExists(tableName: String): Boolean = if (!tableName.isEmpty) try {
-    val sql = s"SELECT COUNT(*) FROM ${quote(tableName)} WHERE 1=0"
-    executeQuery(sql)(_ != null)
-  } catch {
-    case exc: Exception =>
-      val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
-      if (!message.contains("does not exist or is not owned by you")) {
-        throw new VectorException(NoSuchTable, s"SQL exception encountered while checking for existence of table ${tableName}: ${message}")
-      } else {
-        false
-      }
+  def tableExists(tableName: String): Boolean = if (!tableName.isEmpty) {
+    try {
+      val sql = s"SELECT COUNT(*) FROM ${quote(tableName)} WHERE 1=0"
+      executeQuery(sql)(_ != null)
+    } catch {
+      case exc: Exception =>
+        val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
+        if (!message.contains("does not exist or is not owned by you")) {
+          throw new VectorException(NoSuchTable, s"SQL exception encountered while checking for existence of table ${tableName}: ${message}")
+        } else {
+          false
+        }
+    }
   } else {
     false
   }

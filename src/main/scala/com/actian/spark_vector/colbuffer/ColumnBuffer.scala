@@ -138,12 +138,12 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
       source.get()
       pad -= 1
     }
-	while (right < n) {
-	  isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
-	  values(right) = col.get(source) /** This returns a deserialized value to us */
-	  right += 1
-	  capacity -= 1
-	}
+    while (right < n) {
+      isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
+      values(right) = col.get(source) /** This returns a deserialized value to us */
+      right += 1
+      capacity -= 1
+    }
   }
 
   @throws(classOf[IllegalStateException])

@@ -135,7 +135,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     ret
   }
 
-  def close() = tap.close
+  def close(): Unit = tap.close
 }
 
 object RowReader {

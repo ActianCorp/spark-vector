@@ -30,7 +30,7 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
   private final val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
   private final val NumTuplesIndex = 4
 
-  private var vectors: ByteBuffer = null
+  private var vectors: ByteBuffer = _
   private var tapOpened: Boolean = true
   private var remaining = true
 
@@ -40,10 +40,8 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
     if (vectors.getInt(NumTuplesIndex) == 0) {
       logDebug(s"Empty data stream.")
       remaining = false
-      null
-    } else {
-      vectors
     }
+    vectors
   }
 
   def read()(implicit reuseByteBuffer: ByteBuffer): ByteBuffer = {
@@ -62,5 +60,5 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
     !remaining
   }
 
-  def close() = socket.close
+  def close(): Unit = socket.close
 }
