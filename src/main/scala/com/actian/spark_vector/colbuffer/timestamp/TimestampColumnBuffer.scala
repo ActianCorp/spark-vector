@@ -60,7 +60,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
 private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongSize) {
   override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(converted.longValue)
 
-  /* TODO: remove the need of new BigInteger obj for TimestampLon */
+  /* TODO: remove the need of new BigInteger obj for TimestampLong */
   override protected def getConverted(buffer: ByteBuffer): BigInteger = BigInteger.valueOf(buffer.getLong())
 }
 
