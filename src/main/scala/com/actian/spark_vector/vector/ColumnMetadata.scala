@@ -15,45 +15,35 @@
  */
 package com.actian.spark_vector.vector
 
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.StructField
 
-/**
- * Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
+/** Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
  */
 case class ColumnMetadata(val name: String, val typeName: String, val nullable: Boolean, val precision: Int, val scale: Int) extends Serializable {
 
-  /**
-   * Convert the given column metadata into a `StructField` representing the column
-   * @return a new `StructField` instance
+  /** Convert the given column metadata into a `StructField` representing the column
+   *  @return a new `StructField` instance
    */
   val structField: StructField = StructField(name, dataType, nullable)
 
   // Convert from column type name to StructField data type
-  private[this] def dataType: DataType = {
-    typeName match {
-      case "boolean" => BooleanType
-      case "integer1" => ByteType
-      case "smallint" => ShortType
-      case "integer" => IntegerType
-      case "bigint" => LongType
-      case "float4" => FloatType
-      case "float" => DoubleType
-      case "decimal" => DecimalType(precision, scale)
-      case "money" => DecimalType(precision, scale)
-      case "char" => StringType
-      case "nchar" => StringType
-      case "varchar" => StringType
-      case "nvarchar" => StringType
-      case "ansidate" => DateType
-      case "time without time zone" => TimestampType
-      case "time with time zone" => TimestampType
-      case "time with local time zone" => TimestampType
-      case "timestamp without time zone" => TimestampType
-      case "timestamp with time zone" => TimestampType
-      case "timestamp with local time zone" => TimestampType
-      case "interval year to month" => StringType
-      case "interval day to year" => StringType
-      case _ => StringType
+  private[this] def dataType: org.apache.spark.sql.types.DataType = {
+    import org.apache.spark.sql.types._
+    VectorDataType(typeName) match {
+      case VectorDataType.BooleanType => BooleanType
+      case VectorDataType.ByteType => ByteType
+      case VectorDataType.ShortType => ShortType
+      case VectorDataType.IntegerType => IntegerType
+      case VectorDataType.BigIntType => LongType
+      case VectorDataType.FloatType => FloatType
+      case VectorDataType.DoubleType => DoubleType
+      case VectorDataType.DecimalType => DecimalType(precision, scale)
+      case VectorDataType.CharType | VectorDataType.NcharType | VectorDataType.VarcharType | VectorDataType.NvarcharType => StringType
+      case VectorDataType.DateType => DateType
+      case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType |
+        VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType => TimestampType
+      case VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => StringType
+      case VectorDataType.NotSupported => throw new VectorException(ErrorCodes.InvalidDataType, s"Vector type not supported: $typeName")
     }
   }
 

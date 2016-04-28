@@ -37,12 +37,7 @@ object Main extends App with Logging {
   private val sc = new SparkContext(conf)
   private val sqlContext = new HiveContext(sc)
 
-  private lazy val vectorHost = "schwalbe"
-  private lazy val vectorInstance = "C2"
-  private lazy val vectorDatabase = "test"
-  private lazy val connectionParams = Map("host" -> vectorHost, "instance" -> vectorInstance, "database" -> vectorDatabase)
-
-  private lazy val handler = new RequestHandler(sqlContext, connectionParams)
+  private lazy val handler = new RequestHandler(sqlContext)
 
   @inline def finished(line: String): Boolean = {
     line == null || line == "<END>"

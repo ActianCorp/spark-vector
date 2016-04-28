@@ -17,11 +17,11 @@ package com.actian.spark_vector.colbuffer.string
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
-  ColumnBuffer[String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
+private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
   override protected def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
     buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
   } else {
@@ -56,9 +56,7 @@ private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferB
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {
-    /** `ColumnBuffer` object for `char` types (with precision == 1). */
-    case p if p.tpe == CharTypeId => new ConstantLengthSingleByteStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nchar` types (with precision == 1). */
-    case p if p.tpe == NcharTypeId => new ConstantLengthSingleCharStringColumnBuffer(p)
+    (ofDataType(VectorDataType.CharType) andThen { new ConstantLengthSingleByteStringColumnBuffer(_) }) orElse
+      (ofDataType(VectorDataType.NcharType) andThen { new ConstantLengthSingleCharStringColumnBuffer(_) })
   }
 }

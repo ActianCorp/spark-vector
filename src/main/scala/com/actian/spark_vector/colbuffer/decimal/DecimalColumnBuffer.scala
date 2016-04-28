@@ -17,13 +17,12 @@ package com.actian.spark_vector.colbuffer.decimal
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
-
 import java.lang.Number
 import java.math.BigDecimal
 import java.nio.ByteBuffer
+import com.actian.spark_vector.vector.VectorDataType
 
-private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends
-  ColumnBuffer[Number](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
+private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends ColumnBuffer[Number](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
   override def put(source: Number, buffer: ByteBuffer): Unit = putScaled(movePoint(new BigDecimal(source.toString()), p.precision, p.scale), buffer)
 
   protected def putScaled(scaledSource: BigDecimal, buffer: ByteBuffer): Unit
@@ -83,8 +82,8 @@ private object DecimalLongLongColumnBuffer {
 
 /** Builds a `ColumnBuffer` object for for `decimal(<byte, short, int, long, long long>)` types. */
 private[colbuffer] object DecimalColumnBuffer extends ColumnBufferBuilder {
-  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
-    case p if p.tpe == DecimalTypeId && isInBounds(p.scale, (0, p.precision)) => p
+  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = ofDataType(VectorDataType.DecimalType) andThenPartial {
+    case p if isInBounds(p.scale, (0, p.precision)) => p
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {

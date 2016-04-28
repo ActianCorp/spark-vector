@@ -22,12 +22,11 @@ import com.actian.spark_vector.colbuffer.singles._
 import com.actian.spark_vector.colbuffer.string._
 import com.actian.spark_vector.colbuffer.time._
 import com.actian.spark_vector.colbuffer.timestamp._
-
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-
 import scala.reflect.{ ClassTag, classTag }
 import scala.throws._
+import com.actian.spark_vector.vector.VectorDataType
 
 /** Abstract class to be used when implementing the class for a typed ColumnBuffer
  *  (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
@@ -98,6 +97,9 @@ abstract class ColumnBuffer[@specialized T: ClassTag](name: String, maxValueCoun
  */
 private[colbuffer] trait ColumnBufferBuilder {
   protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
+
+  protected def ofDataType(t: VectorDataType.EnumVal): PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] =
+    { case p if VectorDataType(p.tpe) == t => p }
 
   /** Get a new instance of `ColumnBuffer` for the given column type params. */
   private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]]

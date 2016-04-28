@@ -4,32 +4,59 @@ import com.actian.spark_vector.writer.VectorEndPoint
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import com.actian.spark_vector.vector.ColumnMetadata
+import com.actian.spark_vector.writer.WriteConf
 
-sealed case class JobPart(part_id: String,
-  vector_table_name: String,
-  spark_sql_query: String,
-  cols_to_load: Option[Seq[String]],
-  spark_ref: String,
-  options: Map[String, String],
-  datastreams: IndexedSeq[VectorEndPoint])
+private[provider] case class LogicalType(`type`: String,
+  precision: Int,
+  scale: Int)
+
+private[provider] case class ColumnInfo(column_name: String,
+    logical_type: LogicalType,
+    physical_type: String,
+    nullable: Boolean,
+    is_const: Boolean) {
+  implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale)
+}
+
+private[provider] case class StreamPerNode(nr: Int,
+    port: Int,
+    host: String) {
+  private val ReasonableThreadsPerNode = 1024
+  require(nr <= ReasonableThreadsPerNode)
+}
+
+private[provider] case class DataStream(
+  rolename: String,
+  password: String,
+  streams_per_node: Seq[StreamPerNode])
+
+private[provider] case class JobPart(part_id: String,
+    external_table_name: String,
+    operator_type: String,
+    external_reference: String,
+    format: Option[String],
+    column_infos: Seq[ColumnInfo],
+    options: Map[String, String],
+    datastream: DataStream) {
+  def writeConf: WriteConf = {
+    val endpoints = for {
+      spn <- datastream.streams_per_node
+      i <- 0 until spn.nr
+    } yield VectorEndPoint(spn.host, spn.port, datastream.rolename, datastream.password)
+    WriteConf(endpoints.toIndexedSeq)
+  }
+}
 
 object JobPart {
-  implicit lazy val vectorEndPointReads: Reads[VectorEndPoint] = (
-    (JsPath \ "host").read[String] and
-    (JsPath \ "port").read[Int] and
-    (JsPath \ "username").read[String] and
-    (JsPath \ "password").read[String])(VectorEndPoint.apply(_: String, _: Int, _: String, _: String))
-
-  implicit lazy val vectorEndPointWrites: Writes[VectorEndPoint] = (
-    (JsPath \ "host").write[String] and
-    (JsPath \ "port").write[Int] and
-    (JsPath \ "username").write[String] and
-    (JsPath \ "password").write[String])(unlift(VectorEndPoint.unapply))
-
+  implicit val logicalTypeFormat = Json.format[LogicalType]
+  implicit val columnInfoFormat = Json.format[ColumnInfo]
+  implicit val streamPerNodeFormat = Json.format[StreamPerNode]
+  implicit val dataStreamFormat = Json.format[DataStream]
   implicit val jobPartFormat = Json.format[JobPart]
 }
 
-case class Job(query_id: String, job_parts: Seq[JobPart])
+case class Job(transaction_id: Long, query_id: Long, `type`: String, parts: Seq[JobPart])
 
 object Job {
   import JobPart._

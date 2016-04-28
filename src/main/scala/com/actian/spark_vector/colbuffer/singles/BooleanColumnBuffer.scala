@@ -16,6 +16,7 @@
 package com.actian.spark_vector.colbuffer.singles
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
@@ -28,10 +29,9 @@ private class BooleanColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuff
 
 /** Builds a `ColumnBuffer` object for `boolean` types. */
 private[colbuffer] object BooleanColumnBuffer extends ColumnBufferBuilder {
-  private final val True = 1:Byte
-  private final val False = 0:Byte
+  private final val True = 1: Byte
+  private final val False = 0: Byte
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
-    case p if p.tpe == BooleanTypeId => new BooleanColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] =
+    ofDataType(VectorDataType.BooleanType) andThen { new BooleanColumnBuffer(_) }
 }

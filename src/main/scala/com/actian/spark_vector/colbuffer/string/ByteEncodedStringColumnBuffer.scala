@@ -17,14 +17,14 @@ package com.actian.spark_vector.colbuffer.string
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
-  ColumnBuffer[String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
+private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
   override protected def put(source: String, buffer: ByteBuffer): Unit = {
     buffer.put(encode(source))
-    buffer.put(0:Byte)
+    buffer.put(0: Byte)
   }
 
   protected def encode(str: String): Array[Byte]
@@ -50,10 +50,8 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
   }
 
   private val buildConstLenMulti: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildConstLenMultiPartial andThenPartial {
-    /** `ColumnBuffer` object for `char` types (with precision > 1). */
-    case p if p.tpe == CharTypeId => new ByteLengthLimitedStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nchar` types (with precision > 1). */
-    case p if p.tpe == NcharTypeId => new CharLengthLimitedStringColumnBuffer(p)
+    (ofDataType(VectorDataType.CharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
+      (ofDataType(VectorDataType.NcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
 
   private val buildVarLenPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
@@ -61,10 +59,8 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
   }
 
   private val buildVarLen: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildVarLenPartial andThenPartial {
-    /** `ColumnBuffer` object for `varchar` types (with precision > 0). */
-    case p if p.tpe == VarcharTypeId => new ByteLengthLimitedStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nvarchar` types (with precision > 0). */
-    case p if p.tpe == NvarcharTypeId => new CharLengthLimitedStringColumnBuffer(p)
+    (ofDataType(VectorDataType.VarcharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
+      (ofDataType(VectorDataType.NvarcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildConstLenMulti orElse buildVarLen

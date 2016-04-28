@@ -28,40 +28,21 @@ import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.vector.VectorConnectionProperties
 
-/**
- * Entry point for loading with spark-vector connector.
+/** Entry point for loading with spark-vector connector.
  *
- * @param vectorProps connection information to the leader node's SQL interface
- * @param table The table loaded to
- * @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector`
+ *  @param rowWriter used to write rows consumed from input `RDD` to `ByteBuffer`s and then flushed through the socket to `Vector`
+ *  @param writeConfig Write configuration to be used when connecting to the `DataStream` API
  */
 class DataStreamWriter[T <% Seq[Any]](
-    vectorProps: VectorConnectionProperties,
-    table: String,
     rowWriter: RowWriter,
-    writeConfig: Option[WriteConf] = None) extends Logging with Serializable with Profiling {
-
+    writeConf: WriteConf) extends Logging with Serializable with Profiling {
   import DataStreamWriter._
 
-  /**
-   * A client to connect to the `Vector`'s SQL interface through JDBC. Currently used to
-   * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
-   *
-   * @note Available only on the driver.
-   */
-  @transient
-  val client = DataStreamClient(vectorProps, table)
-  /** Write configuration to be used when connecting to the `DataStream` API */
-  lazy val writeConf = writeConfig.getOrElse {
-    client.prepareDataStreams
-    client.getWriteConf
-  }
   private lazy val connector = new DataStreamConnector(writeConf)
   private val binaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
 
-  /**
-   * Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
-   * the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
+  /** Read rows from input iterator, buffer a vector of them and then flush them through the socket, making sure to include
+   *  the message length, the binary packet type `binaryDataCode`, the number of tuples, and the actual serialized data
    */
   private def writeSplittingInVectors(data: Iterator[T])(implicit sink: DataStreamSink) = {
     implicit val socket = sink.socket
@@ -94,9 +75,8 @@ class DataStreamWriter[T <% Seq[Any]](
     profilePrint
   }
 
-  /**
-   * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
-   * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
+  /** This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
+   *  assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = {
     connector.withConnection(taskContext.partitionId)(implicit channel => {
@@ -105,20 +85,6 @@ class DataStreamWriter[T <% Seq[Any]](
       writeSplittingInVectors(data)
     })
   }
-
-  /**
-   * Initiate the load, i.e. submit the SQL query to start loading from an external source.
-   *
-   * @note should only be called on the driver.
-   */
-  def initiateLoad: Future[Int] = client.startLoad
-
-  /**
-   * Commit the last transaction started by this `DataStreamWriter`'s client.
-   *
-   * @note should only be called on the driver.
-   */
-  def commit: Unit = client.commit
 }
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */
@@ -148,9 +114,8 @@ object DataStreamWriter extends Logging {
     out.write(a)
   }
 
-  /**
-   * Writes `buffer` to `socket`. Note this method assumes that the buffer is in read mode, i.e.
-   * the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
+  /** Writes `buffer` to `socket`. Note this method assumes that the buffer is in read mode, i.e.
+   *  the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
    */
   def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     while (buffer.hasRemaining())
@@ -171,9 +136,8 @@ object DataStreamWriter extends Logging {
     }
   }
 
-  /**
-   * Write a `ByteBuffer` to `socket`. Note this method flips the byteBuffer before writing. For writing
-   * a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
+  /** Write a `ByteBuffer` to `socket`. Note this method flips the byteBuffer before writing. For writing
+   *  a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
    */
   def writeByteBuffer(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
     buffer.flip()

@@ -20,10 +20,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
-
+import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.reader.ScanRDD
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
 import com.actian.spark_vector.writer.WriteConf
+import com.actian.spark_vector.vector.VectorException
 
 private[spark_vector] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext, writeConf: Option[WriteConf] = None)
     extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
@@ -42,7 +43,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef, userSpecifiedSche
     logInfo(s"Trying to insert rdd: $data into Vector table")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
     // TODO could expose other options in Spark parameters
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps, writeConf = writeConf)
+    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
     logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -64,13 +65,31 @@ private[spark_vector] class VectorRelation(tableRef: TableRef, userSpecifiedSche
   }
 }
 
+private[spark_vector] class VectorRelationWithSpecifiedSchema(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: WriteConf, override val sqlContext: SQLContext)
+    extends BaseRelation with InsertableRelation with Logging {
+  import VectorOps._
+
+  override def schema = StructType(columnMetadata.map(_.structField))
+
+  override def insert(data: DataFrame, overwrite: Boolean): Unit = {
+    if (overwrite) {
+      throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
+    }
+    data.rdd.map(row => row.toSeq).loadVector(data.schema, table, columnMetadata, writeConf)
+  }
+}
+
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext, writeConf: Option[WriteConf] = None): VectorRelation = {
-    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext, writeConf)
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
+    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
   }
 
   def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = {
     new VectorRelation(tableRef, None, sqlContext)
+  }
+
+  def apply(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: WriteConf, sqlContext: SQLContext) = {
+    new VectorRelationWithSpecifiedSchema(table, columnMetadata, writeConf, sqlContext)
   }
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
@@ -84,8 +103,7 @@ object VectorRelation {
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
 
-  /**
-   * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
+  /** Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
    *  used directly with Vector jdbc. The parameters are stored in the second element of the
    *  returned tuple
    */
@@ -104,9 +122,8 @@ object VectorRelation {
     }
   }
 
-  /**
-   * Given a sequence of filters, generate the where clause that can be used in the prepared statement
-   * together with its parameters
+  /** Given a sequence of filters, generate the where clause that can be used in the prepared statement
+   *  together with its parameters
    */
   def generateWhereClause(filters: Array[Filter]): (String, Seq[Any]) = {
     val convertedFilters = filters.map(convertFilter)

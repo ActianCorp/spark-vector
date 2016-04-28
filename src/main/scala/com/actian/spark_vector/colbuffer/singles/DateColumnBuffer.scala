@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.singles
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 import java.sql.Date
@@ -32,7 +33,6 @@ private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[
 private[colbuffer] object DateColumnBuffer extends ColumnBufferBuilder {
   private final val DaysBeforeEpoch = 719528
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
-    case p if p.tpe == DateTypeId => new DateColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] =
+    ofDataType(VectorDataType.DateType) andThen { new DateColumnBuffer(_) }
 }
