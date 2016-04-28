@@ -22,7 +22,6 @@ package object util {
   final val SecondsInMinute = 60
   final val SecondsBeforeEpoch = 62167219200L
   final val MillisecondsScale = 3
-  final val MicrosecondsScale = 6
   final val MillisecondsInMinute = SecondsInMinute * PowersOfTen(MillisecondsScale)
   final val MillisecondsInDay = 24 * 60 * MillisecondsInMinute
   final val NanosecondsScale = 9

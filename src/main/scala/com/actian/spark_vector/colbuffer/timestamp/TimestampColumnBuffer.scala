@@ -20,7 +20,7 @@ import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.Logging
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{ TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, NanosecondsScale }
+import com.actian.spark_vector.colbuffer.util.{ TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale }
 
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -44,8 +44,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
   protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit
 
   override def get(buffer: ByteBuffer): Long = {
-    val converted = getConverted(buffer)
-    val (epochSeconds, subsecNanos) = p.converter.deconvert(converted, p.cbParams.scale)
+    val (epochSeconds, subsecNanos) = p.converter.deconvert(getConverted(buffer), p.cbParams.scale)
     ts.setTime(epochSeconds * PowersOfTen(MillisecondsScale))
     ts.setNanos(subsecNanos.toInt)
     if (p.adjustToUTC) {
@@ -96,7 +95,7 @@ private class TimestampTZConverter extends TimestampConversion.TimestampConverte
 
   override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val scaledNanos = TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
-    scaledNanos.shiftLeft(11).and(TimeMask).and(ZoneMask)
+    scaledNanos.shiftLeft(11).and(TimeMask).or(BigInteger.ZERO.and(ZoneMask))
   }
 
   override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) = {
