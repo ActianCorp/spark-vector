@@ -15,29 +15,40 @@
  */
 package com.actian.spark_vector.colbuffer.time
 
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
+
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{ TimeConversion, PowersOfTen, MicrosecondsScale, SecondsBeforeEpoch }
+import com.actian.spark_vector.colbuffer.util.{ TimeConversion, PowersOfTen, MillisecondsScale, NanosecondsScale }
 
 import java.nio.ByteBuffer
 import java.sql.Timestamp
+import java.util.Calendar
 
-private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams, converter: TimeConversion.TimeConverter, adjustToUTC: Boolean = false)
+private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams, converter: TimeConversion.TimeConverter,
+  adjustToUTC: Boolean = false)
 
 private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams,  valueWidth: Int) extends
   ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
+  private val ts = new Timestamp(System.currentTimeMillis())
+
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (p.adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
     }
-    val convertedSource = p.converter.convert(TimeConversion.normalizedTime(source), p.cbParams.scale)
+    val convertedSource = p.converter.convert(TimeConversion.normalizeTime(source), p.cbParams.scale)
     putConverted(convertedSource, buffer)
   }
 
   protected def putConverted(converted: Long, buffer: ByteBuffer): Unit
 
   override def get(buffer: ByteBuffer): Long = {
-    val convertedSource = getConverted(buffer)
-    p.converter.deconvert(convertedSource, p.cbParams.scale)
+    val deconvertedSource = p.converter.deconvert(getConverted(buffer), p.cbParams.scale)
+    ts.setTime(TimeConversion.scaleNanos(deconvertedSource, MillisecondsScale))
+    ts.setNanos((deconvertedSource % PowersOfTen(NanosecondsScale)).toInt)
+    if (p.adjustToUTC) {
+      TimeConversion.convertUTCToLocalTimestamp(ts)
+    }
+    DateTimeUtils.fromJavaTimestamp(ts)
   }
 
   protected def getConverted(buffer: ByteBuffer): Long
@@ -56,21 +67,17 @@ private class TimeLongColumnBuffer(p: TimeColumnBufferParams) extends TimeColumn
 }
 
 private class TimeNZLZConverter extends TimeConversion.TimeConverter {
-  override def convert(unscaledNanos: Long, scale: Int): Long =
-    TimeConversion.scaledTime(unscaledNanos, scale)
+  override def convert(unscaledNanos: Long, scale: Int): Long = TimeConversion.scaleNanos(unscaledNanos, scale)
 
-  override def deconvert(scaledNanos: Long, scale: Int): Long =
-    TimeConversion.scaledTime(TimeConversion.unscaledTime(scaledNanos, scale), MicrosecondsScale)
+  override def deconvert(scaledNanos: Long, scale: Int): Long = TimeConversion.unscaleNanos(scaledNanos, scale)
 }
 
 private class TimeTZConverter extends TimeConversion.TimeConverter {
   private final val TimeMask = 0xFFFFFFFFFFFFF800L
 
-  override def convert(unscaledNanos: Long, scale: Int): Long =
-    (TimeConversion.scaledTime(unscaledNanos, scale) << 11) & TimeMask
+  override def convert(unscaledNanos: Long, scale: Int): Long = (TimeConversion.scaleNanos(unscaledNanos, scale) << 11) & TimeMask
 
-  override def deconvert(scaledNanos: Long, scale: Int): Long =
-    TimeConversion.scaledTime(TimeConversion.unscaledTime((scaledNanos & ~TimeMask) >> 11, scale), MicrosecondsScale)
+  override def deconvert(scaledNanos: Long, scale: Int): Long = TimeConversion.unscaleNanos(scaledNanos >> 11, scale)
 }
 
 /** Builds a `ColumnBuffer` object for `time` (NZ, TZ, LZ) types. */

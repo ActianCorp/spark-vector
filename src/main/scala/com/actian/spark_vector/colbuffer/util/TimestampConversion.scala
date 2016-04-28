@@ -23,7 +23,7 @@ object TimestampConversion {
   private final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
   private final val NanosecondsFactorBI = BigInteger.valueOf(PowersOfTen(NanosecondsScale).toLong)
 
-  final def scaledTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger  = {
+  final def scaleTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger  = {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(SecondsBeforeEpochBI)
     val nanosTotal = secondsTotal.multiply(NanosecondsFactorBI).add(BigInteger.valueOf(subsecNanos))
     val adjustment = scale - NanosecondsScale
@@ -36,18 +36,19 @@ object TimestampConversion {
     }
   }
 
-  final def unscaledTimestamp(scaledNanos: BigInteger, scale: Int): Long = {
+  final def unscaleTimestamp(source: BigInteger, scale: Int): (Long, Long) = {
     val adjustment = scale - NanosecondsScale
     val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
 
-    if (adjustment >= 0) {
-      scaledNanos.divide(adjustmentFactor)
+    val newSource = if (adjustment >= 0) {
+      source.divide(adjustmentFactor)
     } else {
-      scaledNanos.multiply(adjustmentFactor)
+      source.multiply(adjustmentFactor)
     }
 
-    val approxEpochSeconds = scaledNanos.divide(NanosecondsFactorBI).subtract(SecondsBeforeEpochBI)
-    approxEpochSeconds.longValue()
+    val subsecNanosBI = newSource.mod(NanosecondsFactorBI)
+    val epochSeconds = newSource.subtract(subsecNanosBI).divide(NanosecondsFactorBI).subtract(SecondsBeforeEpochBI)
+    (epochSeconds.longValue(), subsecNanosBI.longValue())
   }
 
   /**
@@ -56,7 +57,7 @@ object TimestampConversion {
    */
   trait TimestampConverter {
     def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger
-    def deconvert(convertedValue: BigInteger, scale: Int): Long
+    def deconvert(convertedValue: BigInteger, scale: Int): (Long, Long)
   }
   // scalastyle:on magic.number
 }

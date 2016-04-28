@@ -15,10 +15,10 @@
  */
 package com.actian.spark_vector.colbuffer.singles
 
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
+
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util._
-
-import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
 import java.nio.ByteBuffer
 import java.sql.Date

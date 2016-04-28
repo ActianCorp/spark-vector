@@ -50,12 +50,12 @@ object BigIntegerConversion {
   }
 
   /**
-   * Gets a BigInteger from a ByteBuffer which is in big-endian order.
+   * Gets a BigInteger from a ByteBuffer in big-endian order.
    */
   final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
-    var sourceIndex = bigIntArray.length
+    var sourceIndex = bigIntArray.length - 1
 
-    while (sourceIndex >= 0) {
+    while (sourceIndex >= 0) { /** Get in little-endian order */
       bigIntArray(sourceIndex) = buffer.get()
       sourceIndex -= 1
     }

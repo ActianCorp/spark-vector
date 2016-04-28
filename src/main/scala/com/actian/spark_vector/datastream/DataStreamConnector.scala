@@ -67,6 +67,7 @@ private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
 
   def validateColumnDataTypes(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
     // TODO: header sanity check, throwing some exceptions in case of inconsistencies
+    // TODO: support const value types as well
     this
   }
 }

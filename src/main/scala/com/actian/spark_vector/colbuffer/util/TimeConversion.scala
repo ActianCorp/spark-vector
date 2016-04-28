@@ -21,12 +21,12 @@ import java.util.Calendar
 
 /** Helper functions and constants for `Time` conversions. */
 object TimeConversion {
-  final def timeInNanos(source: Timestamp): Long =
+  @inline private final def timeInNanos(source: Timestamp): Long =
     (source.getTime / PowersOfTen(MillisecondsScale)) * PowersOfTen(NanosecondsScale) + source.getNanos
 
-  final def normalizedTime(source: Timestamp): Long = normalizedTime(timeInNanos(source))
+  final def normalizeTime(source: Timestamp): Long = normalizeNanos(timeInNanos(source))
 
-  final def normalizedTime(nanos: Long): Long = {
+  private final def normalizeNanos(nanos: Long): Long = {
     val remainder = Math.abs(nanos % NanosecondsInDay)
     if (remainder >= 0) {
       remainder
@@ -35,23 +35,31 @@ object TimeConversion {
     }
   }
 
-  final def scaledTime(unscaledNanos: Long, scale: Int): Long = unscaledNanos / PowersOfTen(NanosecondsScale  - scale)
+  @inline final def scaleNanos(unscaledNanos: Long, scale: Int): Long = unscaledNanos / PowersOfTen(NanosecondsScale  - scale)
 
-  final def unscaledTime(scaledNanos: Long, scale: Int): Long = scaledNanos * PowersOfTen(NanosecondsScale - scale)
+  @inline final def unscaleNanos(scaledNanos: Long, scale: Int): Long = scaledNanos * PowersOfTen(NanosecondsScale - scale)
 
-  final def convertLocalDateToUTC(date: Date): Unit = {
+  @inline private final def convertLocalDateHelper(date: Date, sign: Int = 1): Unit = {
     val cal = Calendar.getInstance()
     cal.setTime(date)
-    date.setTime(date.getTime + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
+    date.setTime(date.getTime + sign * cal.get(Calendar.ZONE_OFFSET) + sign * cal.get(Calendar.DST_OFFSET))
   }
 
-  final def convertLocalTimestampToUTC(time: Timestamp): Unit = {
+  final def convertLocalDateToUTC(date: Date): Unit = convertLocalDateHelper(date)
+
+  final def convertUTCToLocalDate(date: Date): Unit = convertLocalDateHelper(date, -1)
+
+  @inline private final def convertLocalTimeHelper(time: Timestamp, sign: Int = 1): Unit = {
     val cal = Calendar.getInstance()
-    cal.setTimeInMillis(time.getTime)
     val nanos = time.getNanos
-    time.setTime(time.getTime + cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET))
+    cal.setTimeInMillis(time.getTime)
+    time.setTime(time.getTime + sign * cal.get(Calendar.ZONE_OFFSET) + sign * cal.get(Calendar.DST_OFFSET))
     time.setNanos(nanos)
   }
+
+  final def convertLocalTimestampToUTC(time: Timestamp): Unit = convertLocalTimeHelper(time)
+
+  final def convertUTCToLocalTimestamp(time: Timestamp): Unit = convertLocalTimeHelper(time, -1)
 
   /**
    * This trait should be used when implementing a type of time conversion,
