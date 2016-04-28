@@ -18,17 +18,21 @@ package com.actian.spark_vector.colbuffer.string
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 
+import org.apache.spark.unsafe.types.UTF8String
+
 import java.nio.ByteBuffer
 
 private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
-  ColumnBuffer[String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
-  override protected def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
+  ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
+  override def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
     buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
   } else {
     buffer.putInt(encode(source))
   }
 
-  protected def encode(str: String): Int
+  protected def encode(value: String): Int
+
+  override def get(buffer: ByteBuffer): UTF8String = UTF8String.fromBytes(Character.toChars(buffer.getInt()).map(_.toByte))
 }
 
 private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {
@@ -55,7 +59,7 @@ private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferB
     case p if p.precision == 1 => p
   }
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildPartial andThenPartial {
     /** `ColumnBuffer` object for `char` types (with precision == 1). */
     case p if p.tpe == CharTypeId => new ConstantLengthSingleByteStringColumnBuffer(p)
     /** `ColumnBuffer` object for `nchar` types (with precision == 1). */

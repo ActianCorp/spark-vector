@@ -33,9 +33,8 @@ object DateHelper {
     cal.getTime
   }
 
-  def timestampFor(year: Int, month: Int, day: Int, hours: Int = 0, minutes: Int = 0, seconds: Int = 0, millis: Int = 0, tz: TimeZone = TimeZone.getDefault): Timestamp = {
+  def timestampFor(year: Int, month: Int, day: Int, hours: Int = 0, minutes: Int = 0, seconds: Int = 0, millis: Int = 0, tz: TimeZone = TimeZone.getDefault): Timestamp =
     new Timestamp(dateFor(year, month, day, hours, minutes, seconds, millis, tz).getTime)
-  }
 
   def timeFor(hours: Int, minutes: Int, seconds: Int): Timestamp = {
     import java.util.Calendar

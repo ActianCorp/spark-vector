@@ -43,7 +43,7 @@ object ConstructVector {
       case Args.csvLoad.longName => CSVRead.registerTempTable(config, sqlContext)
       case Args.parquetLoad.longName => ParquetRead.registerTempTable(config, sqlContext)
       case Args.orcLoad.longName => OrcRead.registerTempTable(config, sqlContext)
-      case m => throw new IllegalArgumentException("Invalid configuration mode: $m")
+      case m => throw new IllegalArgumentException(s"Invalid configuration mode: ${m}")
     }
 
     val targetTempTable = VectorTempTable.register(config, sqlContext)

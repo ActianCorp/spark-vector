@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import scala.util.Try
 
@@ -22,17 +22,14 @@ import org.apache.spark.Logging
 import com.actian.spark_vector.vector.VectorJDBC
 
 /** Information to connect to a VectorEndpoint (DataStream) */
-case class VectorEndPoint(host: String,
-  port: Int,
-  username: String,
-  password: String) extends Serializable
+case class VectorEndpoint(host: String, port: Int, username: String, password: String) extends Serializable
 
 /**
  * Contains helpers to obtain VectorEndpoint information from `Vector`'s SQL interface.
  *
  * @note The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future
  */
-object VectorEndPoint extends Logging {
+object VectorEndpoint extends Logging {
   private val hostDbColumn = "host"
   private val portDbColumn = "port"
   private val usernameDbColumn = "username"
@@ -42,7 +39,7 @@ object VectorEndPoint extends Logging {
 
   private val getVectorEndPointSql: String = s"select $hostDbColumn, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
 
-  def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndPoint] = {
+  def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndpoint] = {
     seq match {
       case Seq(host: String, port: String, username: String, password: String) =>
         Try {
@@ -50,17 +47,18 @@ object VectorEndPoint extends Logging {
             case "" => jdbcHost
             case _ => host
           }
-          VectorEndPoint(real_host, port.toInt, username, password)
+          VectorEndpoint(real_host, port.toInt, username, password)
         }.toOption
       case _ => None
     }
   }
 
   /** Issues a query through JDBC to obtain connection information from the `DataStreams` system table */
-  def fromDataStreamsTable(cxn: VectorJDBC): IndexedSeq[VectorEndPoint] = {
+  def fromDataStreamsTable(cxn: VectorJDBC): IndexedSeq[VectorEndpoint] = {
+    logDebug(s"Running sql query ${getVectorEndPointSql} to get the datastream endpoints' info.")
     val resultSet = cxn.query(getVectorEndPointSql)
     val ret = resultSet
-      .map(VectorEndPoint(_, cxn.getIngresHost))
+      .map(VectorEndpoint(_, cxn.getIngresHost))
       .flatten
     logDebug(s"Got the following VectorEndPoints from the datastreams table: ${ret.map(_.toString).mkString(",")}")
     ret.toIndexedSeq

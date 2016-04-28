@@ -34,4 +34,9 @@ object TableRef {
     val password = if (parameters.contains("password")) Some(parameters("password")) else None
     TableRef(host, instance, database, user, password, table)
   }
+
+  def apply(connectionProps: VectorConnectionProperties, table: String): TableRef = {
+    TableRef(connectionProps.host , connectionProps.instance, connectionProps.database,
+      connectionProps.user, connectionProps.password, table)
+  }
 }

@@ -19,13 +19,15 @@ import com.actian.spark_vector.colbuffer._
 
 import java.nio.ByteBuffer
 
-private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Double](p.name, p.maxValueCount, DoubleSize, DoubleSize, p.nullable) {
-  override protected def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
+private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Double, Double](p.name, p.maxValueCount, DoubleSize, DoubleSize, p.nullable) {
+  override def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source)
+
+  override def get(buffer: ByteBuffer): Double = buffer.getDouble()
 }
 
 /** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
 private[colbuffer] object DoubleColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
     case p if p.tpe == DoubleTypeId1 || p.tpe == DoubleTypeId2 || p.tpe == DoubleTypeId3 => new DoubleColumnBuffer(p)
   }
 }

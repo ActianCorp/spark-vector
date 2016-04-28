@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream.writer
 
 import scala.annotation.tailrec
 import scala.reflect.ClassTag
@@ -21,7 +21,7 @@ import scala.reflect.ClassTag
 import org.apache.spark.{ Logging, OneToOneDependency, NarrowDependency, Partition, TaskContext }
 import org.apache.spark.rdd.RDD
 
-import com.actian.spark_vector.vector.DataStreamPartition
+import com.actian.spark_vector.datastream.{ DataStreamPartition, DataStreamPartitionAssignment, VectorEndpointConf }
 
 /**
  * `Vector` RDD to load data into `Vector` through its `DataStream API`
@@ -29,12 +29,11 @@ import com.actian.spark_vector.vector.DataStreamPartition
  *  @param rdd `RDD` to be loaded
  *  @param writeConf contains the write configuration needed to connect to `Vector DataStream`s
  */
-class InsertRDD[R: ClassTag](
-  @transient val rdd: RDD[R],
-  writeConf: WriteConf) extends RDD[R](rdd.context, Nil) with Logging {
-
+class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writer: DataStreamWriter[_]) extends RDD[R](rdd.context, Nil) with Logging {
+  /** Lazy-read the configuration from `Vector` */
+  private val writeConf = writer.writeConf
   /** All hosts where `Vector` expects data to be loaded */
-  private val vectorHosts = writeConf.vectorEndPoints.map(_.host).toSet
+  private val vectorHosts = writeConf.vectorEndpoints.map(_.host).toSet
   /** Used for logging what partitions are assigned to which `DataStream` */
   private val partitionsPerDataStreamToPrint = 10
 
@@ -64,7 +63,7 @@ class InsertRDD[R: ClassTag](
         getPreferredLocationsRec(rdd, partition)
     }
 
-    val ret = DataStreamPartitionAssignment(affinities, writeConf.vectorEndPoints)
+    val ret = DataStreamPartitionAssignment(affinities, writeConf.vectorEndpoints)
 
     logDebug(s"Computed endPointsToParentPartitionsMap and got ..." +
       s"""${
@@ -77,17 +76,16 @@ class InsertRDD[R: ClassTag](
     ret.map(_.map(rdd.partitions(_).index))
   }
 
-  override protected def getPartitions = (0 until writeConf.vectorEndPoints.length)
+  override protected def getPartitions = (0 until writeConf.vectorEndpoints.length)
     .map(x => DataStreamPartition(x, rdd, endPointsToParentPartitionsMap(x))).toArray
 
   override protected def getPreferredLocations(split: Partition) = {
-    logDebug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndPoints(split.index).host}")
-    Seq(writeConf.vectorEndPoints(split.index).host)
+    logDebug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndpoints(split.index).host}")
+    Seq(writeConf.vectorEndpoints(split.index).host)
   }
 
-  override def compute(split: Partition, task: TaskContext): Iterator[R] = {
-    //logTrace(s"Computing partition ${split.index} = ${task.partitionId}")
-    split.asInstanceOf[DataStreamPartition].parents.toIterator.flatMap(firstParent[R].iterator(_, task))
+  override def compute(split: Partition, taskContext: TaskContext): Iterator[R] = {
+    split.asInstanceOf[DataStreamPartition].parents.toIterator.flatMap(firstParent[R].iterator(_, taskContext))
   }
 
   override def getDependencies: Seq[NarrowDependency[_]] =

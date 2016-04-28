@@ -38,7 +38,8 @@ package object colbuffer {
   final val DoubleTypeId2 = "float8";
   final val DoubleTypeId3 = "double precision"
   final val LongLongSize = 16
-  final val DecimalTypeId = "decimal"
+  final val DecimalTypeId1 = "decimal"
+  final val DecimalTypeId2 = "money"
   final val BooleanSize = 1
   final val BooleanTypeId = "boolean"
   final val DateSize = 4
@@ -47,6 +48,8 @@ package object colbuffer {
   final val NcharTypeId = "nchar"
   final val VarcharTypeId = "varchar"
   final val NvarcharTypeId = "nvarchar"
+  final val YearToMonthTypeId = "interval year to month"
+  final val DayToSecondTypeId = "interval day to second"
   final val TimeNZTypeId1 = "time"
   final val TimeNZTypeId2 = "time without time zone"
   final val TimeTZTypeId = "time with time zone"

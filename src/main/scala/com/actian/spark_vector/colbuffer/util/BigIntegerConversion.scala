@@ -22,18 +22,20 @@ import java.nio.ByteBuffer
 
 /** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
+  val bigIntArray = Array.fill[Byte](LongLongSize)(0:Byte) /** Keep it in big-endian */
+
   // scalastyle:off magic.number
   /**
-   * Puts a BigInteger to a ByteBuffer using little-endian ordering.
-   * @note We need little-endian ordering due to network serialization
-   * otherwise, the BigInteger.toByteArray would've been sufficient.
+   * Puts a BigInteger to a ByteBuffer in little-endian order.
+   * @note We need little-endian (cpu-wise) ordering due to Vector storing data
+   * like this and not in big-endian (network-wise)
    */
   final def putLongLongByteArray(buffer: ByteBuffer, value: BigInteger): Unit = {
     val source = value.toByteArray() /** This is in big-endian */
     val remaining = LongLongSize - source.length
     var sourceIndex = source.length - 1
 
-    while (sourceIndex >= 0) {
+    while (sourceIndex >= 0) { /** Put in little-endian order */
       buffer.put(source(sourceIndex))
       sourceIndex -= 1
     }
@@ -41,10 +43,24 @@ object BigIntegerConversion {
     if (remaining > 0) {
       var index = 0
       while (index < remaining) {
-        if (value.signum() >= 0) buffer.put(0:Byte) else buffer.put(0xFF.toByte)
+        if (value.signum() >= 0) buffer.put(0.toByte) else buffer.put(0xFF.toByte)
         index += 1
       }
     }
+  }
+
+  /**
+   * Gets a BigInteger from a ByteBuffer in big-endian order.
+   */
+  final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
+    var sourceIndex = bigIntArray.length - 1
+
+    while (sourceIndex >= 0) { /** Get in little-endian order */
+      bigIntArray(sourceIndex) = buffer.get()
+      sourceIndex -= 1
+    }
+
+    new BigInteger(bigIntArray)
   }
   // scalastyle:on magic.number
 }

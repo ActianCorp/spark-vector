@@ -54,7 +54,7 @@ object StringConversion {
   }
 
   def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = if (value.length() <= targetSize) {
-    value.getBytes(UTF8Charset);
+    value.getBytes(UTF8Charset)
   } else if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
     value.substring(0, targetSize - 1).getBytes(UTF8Charset);
   } else {

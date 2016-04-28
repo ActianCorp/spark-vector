@@ -17,19 +17,24 @@ package com.actian.spark_vector.sql
 
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
+import org.apache.spark.sql.{ Row, DataFrame, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.SparkContext
 
-import com.actian.spark_vector.reader.ScanRDD
-import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
+import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
+import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps, ColumnMetadata }
 
 private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
-    extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+  extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import VectorOps._
+  import ResourceUtil._
+  import RDDUtil._
+  import VectorRelation._
 
-  override def schema: StructType =
-    userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
+  private lazy val tableMetadataSchema = getTableSchema(tableRef)
+  override def schema: StructType = userSpecifiedSchema.getOrElse(structType(tableMetadataSchema))
+  override def needConversion: Boolean = false
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
@@ -38,46 +43,38 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
       }
     }
 
-    logInfo(s"Trying to insert rdd: $data into Vector table")
+    logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
-    // TODO could expose other options in Spark parameters
     val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
-    logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
+    logInfo(s"Loaded ${rowCount} records into Vector table '${tableRef.table}'")
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    logDebug("vector: buildScan: columns: " + requiredColumns.mkString(", "))
-    logDebug("vector: buildScan: filters: " + filters.mkString(", "))
-
-    val columns =
-      if (requiredColumns.isEmpty) {
-        "*"
-      } else {
-        requiredColumns.mkString(",")
-      }
-
+    val selectColumns = if (requiredColumns.isEmpty) "*" else requiredColumns.mkString(",")
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
-    val statement = s"select $columns from ${tableRef.table} $whereClause"
-    logDebug(s"Executing Vector select statement: $statement")
-    new ScanRDD(sqlContext.sparkContext, tableRef.toConnectionProps, statement, whereParams)
+
+    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table,
+      tableMetadataSchema, selectColumns, whereClause, whereParams)
   }
 }
 
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation =
     new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
+
+  def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = new VectorRelation(tableRef, None, sqlContext)
+
+  /** Obtain the metadata containing the schema for the table referred by tableRef */
+  def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
+    cxn.columnMetadata(tableRef.table)
   }
 
-  def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, None, sqlContext)
-  }
+  private def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType = StructType(tableMetadataSchema.map(_.structField))
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
-  def structType(tableRef: TableRef): StructType = {
-    VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-      val structFields = cxn.columnMetadata(tableRef.table).map(_.structField)
-      StructType(structFields)
-    }
+  def structType(tableRef: TableRef): StructType = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
+    structType(getTableSchema(tableRef))
   }
 
   /** Quote the column name so that it can be used in VectorSQL statements */
