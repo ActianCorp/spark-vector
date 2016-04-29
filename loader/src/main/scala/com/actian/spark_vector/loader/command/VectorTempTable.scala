@@ -20,13 +20,18 @@ import org.apache.spark.sql.SQLContext
 import com.actian.spark_vector.loader.options.UserOptions
 
 object VectorTempTable {
+  private def generateSQLOption(key: String, queries: Seq[String]): Seq[String] =
+    (0 until queries.size).map(i => s"""${key}${i} "${queries(i)}"""")
+
   private def parseOptions(config: UserOptions): String = {
     val basic = Seq(s"""host "${config.vector.host}"""",
       s"""instance "${config.vector.instance}"""",
       s"""database "${config.vector.database}"""",
       s"""table "${config.vector.targetTable}"""")
     val optional = Seq(config.vector.user.map(user => s"""user "${user}""""),
-      config.vector.password.map(pass => s"""password "${pass}"""")).flatten
+      config.vector.password.map(pass => s"""password "${pass}""""),
+      config.vector.preSQL.map(generateSQLOption("loadpresql", _).mkString(", ")),
+      config.vector.postSQL.map(generateSQLOption("loadpostsql", _).mkString(", "))).flatten
     (basic ++ optional).mkString(",")
   }
 

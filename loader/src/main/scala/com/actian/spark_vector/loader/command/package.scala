@@ -18,5 +18,5 @@ package com.actian.spark_vector.loader
 package object command {
   def sparkQuote(name: String): String = s"`$name`"
 
-  def colsSelectStatement(cols: Option[Seq[String]]) = cols.map(_.map(sparkQuote(_)).mkString(", ")).getOrElse("*")
+  def colsSelectStatement(cols: Option[Seq[String]]): String = cols.map(_.map(sparkQuote(_)).mkString(", ")).getOrElse("*")
 }
