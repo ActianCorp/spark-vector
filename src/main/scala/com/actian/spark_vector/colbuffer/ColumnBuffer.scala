@@ -15,7 +15,6 @@
  */
 package com.actian.spark_vector.colbuffer
 
-import com.actian.spark_vector.datastream.padding
 import com.actian.spark_vector.colbuffer.integer._
 import com.actian.spark_vector.colbuffer.real._
 import com.actian.spark_vector.colbuffer.decimal._
@@ -23,6 +22,8 @@ import com.actian.spark_vector.colbuffer.singles._
 import com.actian.spark_vector.colbuffer.string._
 import com.actian.spark_vector.colbuffer.time._
 import com.actian.spark_vector.colbuffer.timestamp._
+import com.actian.spark_vector.datastream.padding
+import com.actian.spark_vector.BooleanExpr
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -61,15 +62,7 @@ private[colbuffer] sealed abstract class RWColumnBuffer(col: ColumnBuffer[_, _])
 
   val alignSize = col.alignSize
   val nullable = col.nullable
-  val markerSize = col.nullable match {
-    case false => 0
-    case true  => ByteSize
-  }
   val maxValueCount = col.maxValueCount
-  def constantLimit(count: Int): Int = { // Helps if the column is constant
-    val limit = if (maxValueCount == 1) 1 else maxValueCount + 1
-    count % limit
-  }
 
   def position(): Int
 
@@ -136,18 +129,24 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
 
   private def isEmpty = left >= right
 
+  private def constantLimit(count: Int): Int = { // Helps if the column is constant
+    val limit = (maxValueCount == 1).ifThenElse(1, maxValueCount + 1)
+    count % limit
+  }
+
   @throws(classOf[BufferOverflowException])
   def fill(source: ByteBuffer, n: Int): Unit = {
-    if (n > col.maxValueCount) throw new BufferOverflowException()
+    val nLimit = constantLimit(n)
+    if (nLimit > col.maxValueCount) throw new BufferOverflowException()
     if (col.nullable) {
-      source.get(markers, 0, n)
+      source.get(markers, 0, nLimit)
     }
     var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
     while (pad > 0) {
       source.get()
       pad -= 1
     }
-    while (right < n) {
+    while (right < nLimit) {
       isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
       values(right) = col.get(source) // This returns a deserialized value to us
       right += 1

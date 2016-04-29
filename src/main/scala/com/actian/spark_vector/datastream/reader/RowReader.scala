@@ -27,9 +27,9 @@ import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
 import org.apache.spark.sql.catalyst.InternalRow
 
-import com.actian.spark_vector.Profiling
+import com.actian.spark_vector.{ BooleanExpr, Profiling }
 import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
+import com.actian.spark_vector.colbuffer.{ ByteSize, ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
 class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
@@ -48,7 +48,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
       s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
     ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
-      if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize, col.nullable && headerInfo.isNullableCol(i)))
+      headerInfo.isConstCol(i).ifThenElse(1, headerInfo.vectorSize), headerInfo.isNullableCol(i)))
   }
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
@@ -57,7 +57,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
 
   private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + cb.maxValueCount * (cb.markerSize + tableMetadataSchema(idx).maxDataSize)
+    pos + padding(pos, cb.alignSize) + cb.maxValueCount * (cb.nullable.ifThenElse(ByteSize, 0) + tableMetadataSchema(idx).maxDataSize)
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {
@@ -65,7 +65,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     vector.order(ByteOrder.LITTLE_ENDIAN) /** The data from Vector comes in LITTLE_ENDIAN */
     columnBufs.foreach { cb =>
       cb.clear
-      cb.fill(vector, cb.constantLimit(numTuples)) /** Consume and deserialize tuples from the vector byte buffer */
+      cb.fill(vector, numTuples) /** Consume and deserialize tuples from the vector byte buffer */
     }
     vector.order(ByteOrder.BIG_ENDIAN) /** Go back to BIG_ENDIAN because this buffer is reused by DataStreamTap */
     columnBufs
