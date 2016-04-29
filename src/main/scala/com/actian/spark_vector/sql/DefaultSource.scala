@@ -16,23 +16,23 @@
 package com.actian.spark_vector.sql
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
-import org.apache.spark.sql.sources.{BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider}
+import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
+import org.apache.spark.sql.sources.{ BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider }
 import org.apache.spark.sql.types.StructType
 
-import com.actian.spark_vector.vector.VectorJDBC;
+import com.actian.spark_vector.vector.VectorJDBC
 
 class DefaultSource extends RelationProvider with SchemaRelationProvider with CreatableRelationProvider with Logging {
 
   override def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation =
-    VectorRelation(TableRef(parameters), sqlContext)
+    VectorRelation(TableRef(parameters), sqlContext, parameters)
 
   override def createRelation(sqlContext: SQLContext, parameters: Map[String, String], schema: StructType): BaseRelation =
-    VectorRelation(TableRef(parameters), Some(schema), sqlContext)
+    VectorRelation(TableRef(parameters), Some(schema), sqlContext, parameters)
 
   override def createRelation(sqlContext: SQLContext, mode: SaveMode, parameters: Map[String, String], data: DataFrame): BaseRelation = {
     val tableRef = TableRef(parameters)
-    val table = VectorRelation(tableRef, sqlContext)
+    val table = VectorRelation(tableRef, sqlContext, parameters)
 
     mode match {
       case SaveMode.Overwrite =>

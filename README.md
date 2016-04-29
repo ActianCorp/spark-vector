@@ -93,6 +93,20 @@ The `OPTIONS` clause of the SparkSQL statement can contain:
     <td>None</td>
     <td>Vector target table</td>
  </tr>
+ <tr>
+    <td><tt>loadpreSQL*</tt></td>
+    <td>No</td>
+    <td>None</td>
+    <td>Query to execute before a load, in the same transaction. Multiple queries can be specified using different suffixes, e.g.  loadpreSQL0, loadpreSQL1, etc. In this case, the query execution order is determined by the lexicographic order
+    </td>
+ </tr>
+ <tr>
+    <td><tt>loadpostSQL*</tt></td>
+    <td>No</td>
+    <td>None</td>
+    <td>Query to execute after a load, in the same transaction. Multiple queries can be specified using different suffixes, e.g.  loadpostSQL0, loadpostSQL1, etc. In this case, the query execution order is determined by the lexicographic order
+    </td>
+ </tr>
 </table>
 
 ### Spark-Vector Loader

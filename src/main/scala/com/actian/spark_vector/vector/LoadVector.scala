@@ -23,8 +23,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
-import com.actian.spark_vector.vector.Vector._
-import com.actian.spark_vector.writer.{ DataStreamWriter, InsertRDD, RowWriter }
+import com.actian.spark_vector.vector.Vector.{ applyFieldMap, getTableSchema, validateColumns }
+import com.actian.spark_vector.writer.{ DataStreamClient, DataStreamWriter, InsertRDD }
 
 /** Utility object that defines methods for loading data into Vector */
 object LoadVector extends Logging {
@@ -48,44 +48,44 @@ object LoadVector extends Logging {
     postSQL: Option[Seq[String]],
     fieldMap: Option[Map[String, String]],
     createTable: Boolean = false): Long = {
-    val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
-    val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
-    val tableSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
-    val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
+    val client = new DataStreamClient(vectorProps, targetTable)
+    closeResourceAfterUse(client) {
+      val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
+      val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
+      val tableSchema = getTableSchema(client.getJdbc, targetTable, optCreateTableSQL)
+      val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
 
-    // Apply the given field map return a sequence of field name, column name tuples
-    val field2Columns = applyFieldMap(resolvedFieldMap, schema, tableStructTypeSchema)
-    // Validate the list of columns are OK to load
-    validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
+      // Apply the given field map return a sequence of field name, column name tuples
+      val field2Columns = applyFieldMap(resolvedFieldMap, schema, tableStructTypeSchema)
+      // Validate the list of columns are OK to load
+      validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
 
-    // If a subset of input fields are needed to load, select only the fields needed
-    val (inputRDD, inputType) = if (field2Columns.length < schema.fields.length) {
-      selectFields(rdd, schema, field2Columns.map(_.fieldName))
-    } else {
-      (rdd, schema)
-    }
-    val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
-      field2Columns.map(i => i.columnName -> i.fieldName).toMap)
-
-    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, tableSchema)
-    closeResourceOnFailure(writer.client) {
-      preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
-    }
-
-    val insertRDD = new InsertRDD(finalRDD, writer.writeConf)
-    val result = writer.initiateLoad
-    insertRDD.sparkContext.runJob(insertRDD, writer.write _)
-    // FIX ME
-    val rowCount = Await.result(result, Duration.Inf)
-    if (rowCount >= 0) {
-      // Run post-load SQL
-      closeResourceOnFailure(writer.client) {
-        postSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+      // If a subset of input fields are needed to load, select only the fields needed
+      val (inputRDD, inputType) = if (field2Columns.length < schema.fields.length) {
+        selectFields(rdd, schema, field2Columns.map(_.fieldName))
+      } else {
+        (rdd, schema)
       }
-      writer.commit
-    }
-    writer.client.getJdbc.close
+      val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
+        field2Columns.map(i => i.columnName -> i.fieldName).toMap)
 
-    rowCount
+      logDebug(s"""Executing preSQL queries: ${preSQL.mkString(",")}""")
+      preSQL.foreach(_.foreach(client.getJdbc.executeStatement))
+
+      client.prepareDataStreams
+      val writeConf = client.getWriteConf
+      val writer = new DataStreamWriter[Seq[Any]](writeConf, targetTable, tableSchema)
+      val insertRDD = new InsertRDD(finalRDD, writeConf)
+      val result = client.startLoad
+      insertRDD.sparkContext.runJob(insertRDD, writer.write _)
+      // FIX ME
+      val rowCount = Await.result(result, Duration.Inf)
+      if (rowCount >= 0) {
+        logDebug(s"""Executing postSQL queries: ${postSQL.mkString(",")}""")
+        postSQL.foreach(_.foreach(client.getJdbc.executeStatement))
+        client.commit
+      }
+      rowCount
+    }
   }
 }
