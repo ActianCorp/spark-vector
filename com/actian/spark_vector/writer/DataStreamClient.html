@@ -41,7 +41,9 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A client to prepare loading and issue the load <code>SQL</code> query to Vector
 </p></div><dl class="paramcmts block"><dt class="param">vectorProps</dt><dd class="cmt"><p>connection information</p></dd><dt class="param">table</dt><dd class="cmt"><p>to which table this client will load data
-</p></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This client opens a JDBC connection when instantiated. To prevent leaks,
+ the <a href="#close():Unit" class="extmbr" name="com.actian.spark_vector.writer.DataStreamClient#close">close</a> method must be called
+</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>

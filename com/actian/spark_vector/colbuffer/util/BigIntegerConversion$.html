@@ -305,6 +305,21 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.util.BigIntegerConversion#putLongLongByteArray" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="putLongLongByteArray(buffer:java.nio.ByteBuffer,value:java.math.BigInteger):Unit"></a>
+      <a id="putLongLongByteArray(ByteBuffer,BigInteger):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">putLongLongByteArray</span><span class="params">(<span name="buffer">buffer: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="value">value: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Puts a BigInteger to a ByteBuffer using little-endian ordering.</p><div class="fullcomment"><div class="comment cmt"><p>Puts a BigInteger to a ByteBuffer using little-endian ordering.</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>We need little-endian ordering due to network serialization
+otherwise, the BigInteger.toByteArray would've been sufficient.
+</p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -318,19 +333,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.util.BigIntegerConversion#toLongLongByteArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="toLongLongByteArray(value:java.math.BigInteger):Array[Byte]"></a>
-      <a id="toLongLongByteArray(BigInteger):Array[Byte]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toLongLongByteArray</span><span class="params">(<span name="value">value: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

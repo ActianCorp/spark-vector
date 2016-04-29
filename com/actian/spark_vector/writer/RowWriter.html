@@ -35,14 +35,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">RowWriter</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <span class="name">RowWriter</span><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Writes <code>RDD</code> rows to <code>ByteBuffers</code> and flushes them to a <code>Vector</code> through a <code>VectorSink</code>
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -60,7 +60,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.writer.RowWriter"><span>RowWriter</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.writer.RowWriter"><span>RowWriter</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -81,7 +81,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="com.actian.spark_vector.writer.RowWriter#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(tableSchema:Seq[com.actian.spark_vector.vector.ColumnMetadata]):com.actian.spark_vector.writer.RowWriter"></a>
+      <a id="&lt;init&gt;(tableSchema:Seq[com.actian.spark_vector.vector.ColumnMetadata],vectorSize:Int):com.actian.spark_vector.writer.RowWriter"></a>
       <a id="&lt;init&gt;:RowWriter"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -89,7 +89,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">RowWriter</span><span class="params">(<span name="tableSchema">tableSchema: <span class="extype" name="scala.Seq">Seq</span>[<a href="../vector/ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>)</span>
+        <span class="name">RowWriter</span><span class="params">(<span name="tableSchema">tableSchema: <span class="extype" name="scala.Seq">Seq</span>[<a href="../vector/ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>, <span name="vectorSize">vectorSize: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">tableSchema</dt><dd class="cmt"><p>schema information for the <code>Vector</code> table/relation being loaded to
@@ -627,10 +627,6 @@ the total amount of data buffered + a header size + some trash bytes used to pro
         <div id="inheritedMembers">
         <div class="parent" name="org.apache.spark.Logging">
               <h3>Inherited from <span class="extype" name="org.apache.spark.Logging">Logging</span></h3>
-            </div><div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

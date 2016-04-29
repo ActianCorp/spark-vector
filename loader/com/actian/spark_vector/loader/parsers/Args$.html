@@ -65,6 +65,10 @@ Load a csv file
         Vector password
   -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
         Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
   -sh &lt;value&gt; | --skipHeader &lt;value&gt;
         Skip header row
   -en &lt;value&gt; | --encoding &lt;value&gt;
@@ -99,6 +103,10 @@ Load a parquet file
         Vector password
   -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
         Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
 Command: load orc [options]
 Load an orc file
   -sf &lt;value&gt; | --sourceFile &lt;value&gt;
@@ -116,7 +124,11 @@ Load an orc file
   -vp &lt;value&gt; | --vectorPass &lt;value&gt;
         Vector password
   -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
-        Vector target table</pre></div><div class="toggleContainer block">
+        Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span></pre></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -642,6 +654,32 @@ Load an orc file
       </span>
       </h4>
       
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#postSQL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="postSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]"></a>
+      <a id="postSQL:ArgOption[Seq[String],Option[Seq[String]]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">postSQL</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#preSQL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="preSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]"></a>
+      <a id="preSQL:ArgOption[Seq[String],Option[Seq[String]]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">preSQL</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]]</span>
+      </span>
+      </h4>
+      
     </li><li name="com.actian.spark_vector.loader.parsers.Args#quoteChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="quoteChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]"></a>
       <a id="quoteChar:ArgOption[Char,Option[Char]]"></a>
@@ -695,15 +733,15 @@ Load an orc file
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="vectorArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[String,_&gt;:Option[String]withString&lt;:java.io.Serializable]]"></a>
-      <a id="vectorArgs:Seq[ArgOption[String,_&gt;:Option[String]withString&lt;:Serializable]]"></a>
+      <a id="vectorArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:Seq[String]withString&lt;:Object,_&gt;:Option[Seq[String]]withOption[String]withString&lt;:java.io.Serializable]]"></a>
+      <a id="vectorArgs:Seq[ArgOption[_&gt;:Seq[String]withString&lt;:AnyRef,_&gt;:Option[Seq[String]]withOption[String]withString&lt;:Serializable]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">vectorArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="java.lang.String">String</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="java.io.Serializable">Serializable</span>]]</span>
+        <span class="name">vectorArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_ &gt;: <span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="scala.AnyRef">AnyRef</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="java.lang.String">String</span>]] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="java.io.Serializable">Serializable</span>]]</span>
       </span>
       </h4>
       

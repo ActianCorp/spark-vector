@@ -35,13 +35,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">RowWriter</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">RowWriter</span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.writer.RowWriter"><span>RowWriter</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.writer.RowWriter"><span>RowWriter</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -151,15 +151,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.writer.RowWriter#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply(tableSchema:Seq[com.actian.spark_vector.vector.ColumnMetadata]):com.actian.spark_vector.writer.RowWriter"></a>
-      <a id="apply(Seq[ColumnMetadata]):RowWriter"></a>
+      <a id="apply(tableSchema:Seq[com.actian.spark_vector.vector.ColumnMetadata],vectorSize:Int):com.actian.spark_vector.writer.RowWriter"></a>
+      <a id="apply(Seq[ColumnMetadata],Int):RowWriter"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="tableSchema">tableSchema: <span class="extype" name="scala.Seq">Seq</span>[<a href="../vector/ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>)</span><span class="result">: <a href="RowWriter.html" class="extype" name="com.actian.spark_vector.writer.RowWriter">RowWriter</a></span>
+        <span class="name">apply</span><span class="params">(<span name="tableSchema">tableSchema: <span class="extype" name="scala.Seq">Seq</span>[<a href="../vector/ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>, <span name="vectorSize">vectorSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="RowWriter.html" class="extype" name="com.actian.spark_vector.writer.RowWriter">RowWriter</a></span>
       </span>
       </h4>
       
@@ -423,11 +423,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
