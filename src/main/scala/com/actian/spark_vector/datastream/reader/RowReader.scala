@@ -46,9 +46,9 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    */
   private val columnBufs = tableMetadataSchema.zipWithIndex.map { case (col, i) =>
     logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
-      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable && headerInfo.isNullableCol(i)}")
-    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
-      col.nullable && headerInfo.isNullableCol(i)))
+      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
+    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
+      if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize, col.nullable && headerInfo.isNullableCol(i)))
   }
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
@@ -57,7 +57,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
 
   private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + headerInfo.vectorSize * ((if (cb.nullable) 1 else 0) + tableMetadataSchema(idx).maxDataSize)
+    pos + padding(pos, cb.alignSize) + cb.maxValueCount * (cb.markerSize + tableMetadataSchema(idx).maxDataSize)
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {
@@ -65,7 +65,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     vector.order(ByteOrder.LITTLE_ENDIAN) /** The data from Vector comes in LITTLE_ENDIAN */
     columnBufs.foreach { cb =>
       cb.clear
-      cb.fill(vector, numTuples) /** Consume and deserialize tuples from the vector byte buffer */
+      cb.fill(vector, cb.constantLimit(numTuples)) /** Consume and deserialize tuples from the vector byte buffer */
     }
     vector.order(ByteOrder.BIG_ENDIAN) /** Go back to BIG_ENDIAN because this buffer is reused by DataStreamTap */
     columnBufs

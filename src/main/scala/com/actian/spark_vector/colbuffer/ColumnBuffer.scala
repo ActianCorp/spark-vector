@@ -31,17 +31,18 @@ import java.nio.BufferOverflowException
 import scala.reflect.{ ClassTag, classTag }
 import scala.throws._
 
-/** Abstract class to be used when implementing the class for a typed ColumnBuffer
- *  (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
+/**
+ * Abstract class to be used when implementing the class for a typed ColumnBuffer
+ * (e.g. object IntColumnBuffer extends ColumnBuffer[Int])
  *
- *  This class implements the base `put` and `get` methods for serializing (IN-type) and
- *  deserializing (OUT-type) vectors of column values.
+ * This class implements the base `put` and `get` methods for serializing (IN-type) and
+ * deserializing (OUT-type) vectors of column values.
  *
- *  @param name the column's name
- *  @param maxValueCount the maximum number of values to store within the buffer
- *  @param valueWidth the width of the value's data type
- *  @param alignSize the data type's alignment size
- *  @param nullable whether this column accepts null values or not
+ * @param name the column's name
+ * @param maxValueCount the maximum number of values to store within the buffer
+ * @param valueWidth the width of the value's data type
+ * @param alignSize the data type's alignment size
+ * @param nullable whether this column accepts null values or not
  */
 private[colbuffer] abstract class ColumnBuffer[@specialized IN: ClassTag, @specialized OUT: ClassTag](val name: String,
   val maxValueCount: Int, val valueWidth: Int, val alignSize: Int, val nullable: Boolean) extends Serializable {
@@ -55,20 +56,29 @@ private[colbuffer] abstract class ColumnBuffer[@specialized IN: ClassTag, @speci
 
 private[colbuffer] sealed abstract class RWColumnBuffer(col: ColumnBuffer[_, _])
   extends Serializable {
-  final val NullMarker = 1: Byte
-  final val NonNullMarker = 0: Byte
+  protected final val NullMarker = 1: Byte
+  protected final val NonNullMarker = 0: Byte
 
   val alignSize = col.alignSize
   val nullable = col.nullable
+  val markerSize = col.nullable match {
+    case false => 0
+    case true  => ByteSize
+  }
+  val maxValueCount = col.maxValueCount
+  def constantLimit(count: Int): Int = { // Helps if the column is constant
+    val limit = if (maxValueCount == 1) 1 else maxValueCount + 1
+    count % limit
+  }
+
+  def position(): Int
 
   def clear(): Unit
-
-  def size(): Int
 }
 
 class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) extends RWColumnBuffer(col) {
   val values = ByteBuffer.allocateDirect(col.maxValueCount * col.valueWidth).order(ByteOrder.nativeOrder())
-  private val nullValue = Array.fill[Byte](col.alignSize)(0:Byte)
+  private val nullValue = Array.fill[Byte](col.alignSize)(0: Byte)
   lazy val markers = ByteBuffer.allocateDirect(col.maxValueCount).order(ByteOrder.nativeOrder())
 
   /** Make valueType visible outside */
@@ -90,7 +100,7 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
     values.put(nullValue)
   }
 
-  override def size(): Int = {
+  override def position(): Int = {
     var ret = values.position()
     if (col.nullable) {
       ret += markers.position()
@@ -114,11 +124,10 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
 }
 
 class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extends RWColumnBuffer(col) {
-  private val values =  Array.ofDim[T](col.maxValueCount.toInt)
+  private val values = Array.ofDim[T](col.maxValueCount)
   private val isNullValue = Array.ofDim[Boolean](col.maxValueCount)
   private lazy val markers = Array.ofDim[Byte](col.maxValueCount)
 
-  private var capacity = col.maxValueCount
   private var left = 0
   private var right = 0
 
@@ -127,22 +136,21 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
 
   private def isEmpty = left >= right
 
- @throws(classOf[BufferOverflowException])
+  @throws(classOf[BufferOverflowException])
   def fill(source: ByteBuffer, n: Int): Unit = {
-    if (n > capacity) throw new BufferOverflowException()
+    if (n > col.maxValueCount) throw new BufferOverflowException()
     if (col.nullable) {
       source.get(markers, 0, n)
     }
-    var pad = padding(source.position + IntSize /* messageLength */, col.alignSize)
+    var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
     while (pad > 0) {
       source.get()
       pad -= 1
     }
     while (right < n) {
       isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
-      values(right) = col.get(source) /** This returns a deserialized value to us */
+      values(right) = col.get(source) // This returns a deserialized value to us
       right += 1
-      capacity -= 1
     }
   }
 
@@ -150,7 +158,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   def get(): T = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
     val ret = values(left)
-    left += 1
+    left = constantLimit(left + 1)
     ret
   }
 
@@ -160,16 +168,16 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
     isNullValue(left)
   }
 
-  override def size(): Int = right
+  override def position(): Int = right
 
-  override def clear():Unit = {
-    capacity = col.maxValueCount
+  override def clear(): Unit = {
     left = 0
     right = 0
   }
 }
 
-/** Trait to be used when implementing a companion object for a typed ColumnBuffer
+/**
+ * Trait to be used when implementing a companion object for a typed ColumnBuffer
  *  (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
  */
 private[colbuffer] trait ColumnBufferBuilder {
@@ -179,7 +187,8 @@ private[colbuffer] trait ColumnBufferBuilder {
   private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]]
 }
 
-/** Case class to be used when trying to create a typed W/R column buffer object
+/**
+ * Case class to be used when trying to create a typed W/R column buffer object
  *  through the `newWriteBuffer` or `newReadBuffer` methods.
  *
  *  @param name the column's name
@@ -213,20 +222,23 @@ object ColumnBuffer {
 
   private val build = colBufBuilders.map(_.build).reduce(_ orElse _)
 
-  /** Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
+  /**
+   * Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
    *  @return a `ColumnBuffer` object (or throws an exception if an appropiate `ColumnBuffer` was not found)
    */
   @throws(classOf[Exception])
   private def apply(p: ColumnBufferBuildParams): ColumnBuffer[_, _] = PartialFunction.condOpt(p)(build) match {
     case Some(cb) => cb
-    case None => throw new Exception(s"Unable to find internal buffer for column '${p.name}' of type '${p.tpe}'")
+    case None     => throw new Exception(s"Unable to find internal buffer for column '${p.name}' of type '${p.tpe}'")
   }
 
-  /** Get a `WriteColumnBuffer` object for the given `ColumnBufferBuildParams` params.
+  /**
+   * Get a `WriteColumnBuffer` object for the given `ColumnBufferBuildParams` params.
    */
   def newWriteBuffer(p: ColumnBufferBuildParams): WriteColumnBuffer[_] = new WriteColumnBuffer(ColumnBuffer(p))
 
-  /** Get a `ReadColumnBuffer` object for the given `ColumnBufferBuildParams` params.
+  /**
+   * Get a `ReadColumnBuffer` object for the given `ColumnBufferBuildParams` params.
    */
   def newReadBuffer(p: ColumnBufferBuildParams): ReadColumnBuffer[_] = new ReadColumnBuffer(ColumnBuffer(p))
 }

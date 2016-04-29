@@ -96,7 +96,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    */
   private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + cb.size
+    pos + padding(pos, cb.alignSize) + cb.position
   }
 
   /**

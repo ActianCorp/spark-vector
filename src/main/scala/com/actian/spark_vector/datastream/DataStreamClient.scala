@@ -27,7 +27,6 @@ import com.actian.spark_vector.vector.ErrorCodes
 
 /**
  * A client to prepare loading and issue the load `SQL` query to Vector
- *
  * @param vectorProps connection information
  * @param table to which table this client will load data
  */
