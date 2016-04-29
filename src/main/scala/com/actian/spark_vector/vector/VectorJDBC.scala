@@ -95,7 +95,8 @@ class ResultSetRowIterator(result: ResultSet) extends ResultSetIterator[Row](res
   }
 }
 
-/** Encapsulate functions for accessing Vector using JDBC
+/**
+ * Encapsulate functions for accessing Vector using JDBC
  */
 class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
@@ -143,8 +144,9 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     managed(dbCxn.prepareStatement(query)).map(op).resolve()
   }
 
-  /** Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
-   *  mapping the `ResultSet` to a new type as specified by `op`
+  /**
+   * Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
+   * mapping the `ResultSet` to a new type as specified by `op`
    */
   def executeQuery[T](sql: String)(op: ResultSet => T): T =
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
@@ -156,7 +158,8 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     (stmt, rs)
   }
 
-  /** Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package,
+  /**
+   * Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package,
    *  mapping the `ResultSet` to a new type as specified by `op`
    */
   def executePreparedQuery[T](sql: String, params: Seq[Any])(op: ResultSet => T): T =
@@ -187,9 +190,10 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     }
   }
 
-  /** Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
-   *  as there are columns in the table. Each element contains the name, type, nullability, precision
-   *  and scale of its corresponding column in `tableName`
+  /**
+   * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
+   * as there are columns in the table. Each element contains the name, type, nullability, precision
+   * and scale of its corresponding column in `tableName`
    */
   def columnMetadata(tableName: String): Seq[ColumnMetadata] = {
     val sql = s"SELECT * FROM ${quote(tableName)}  WHERE 1=0"
@@ -247,9 +251,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   def close(): Unit = dbCxn.close
 
   /** Set auto-commit to ON/OFF for this `JDBC` connection */
-  def autoCommit(value: Boolean): Unit = {
-    dbCxn.setAutoCommit(value)
-  }
+  def autoCommit(value: Boolean): Unit = dbCxn.setAutoCommit(value)
 
   /** Commit the last transaction */
   def commit(): Unit = dbCxn.commit()
@@ -273,12 +275,13 @@ object VectorJDBC extends Logging {
     managed(new VectorJDBC(cxnProps)).map(op).resolve()
   }
 
-  /** Run the given sequence of SQL statements in order. No results are returned.
-   *  A failure will cause any changes to be rolled back. An empty set of statements
-   *  is ignored.
+  /**
+   * Run the given sequence of SQL statements in order. No results are returned.
+   * A failure will cause any changes to be rolled back. An empty set of statements
+   * is ignored.
    *
-   *  @param vectorProps connection properties
-   *  @param statements sequence of SQL statements to execute
+   * @param vectorProps connection properties
+   * @param statements sequence of SQL statements to execute
    */
   def executeStatements(vectorProps: VectorConnectionProperties)(statements: Seq[String]): Unit = {
     withJDBC(vectorProps) { cxn =>

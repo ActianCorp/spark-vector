@@ -19,15 +19,16 @@ import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.{ Logging, SparkException }
 import org.apache.spark.sql.types.{ BooleanType, IntegerType, StringType, StructField, StructType }
+import org.scalacheck.Gen
 import org.scalatest.{ Inspectors, Matchers, fixture }
 import org.scalatest.prop.PropertyChecks
 
-import com.actian.spark_vector.{ DataGens, RDDFixtures, SparkContextFixture }
+import com.actian.spark_vector.{ DataGens, Profiling, RDDFixtures, SparkContextFixture }
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.test.tags.RandomizedTest
 import com.actian.spark_vector.test.util.StructTypeUtil
 import com.actian.spark_vector.util.RDDUtil
-import com.actian.spark_vector.vector.ErrorCodes._;
+import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture.withTable
 import com.actian.spark_vector.vector.VectorOps.VectorRDDOps
 
@@ -35,7 +36,7 @@ import com.actian.spark_vector.vector.VectorOps.VectorRDDOps
  * Test VectorOps
  */
 @IntegrationTest
-class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures with VectorFixture with Logging {
+class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures with VectorFixture with Logging with Profiling {
 
   private val doesNotExistTable = "this_table_does_not_exist"
 
@@ -294,6 +295,35 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         a[VectorException] should be thrownBy {
           rdd.loadVector(schema, tableName, connectionProps, createTable = true)
         }
+      }
+    }
+  }
+
+  test("many runs do not slow down") { fixture =>
+    withTable(createAdmitTable) { tableName =>
+      import Gen._
+
+      val (goodRdd, goodSchema) = admitRDD(fixture.sc)
+      val (badRdd, badSchema) = admitRDDWithNulls(fixture.sc)
+      val goodWeight = 3
+      val badWeight = 1
+      val numRuns = 50
+      implicit val accs = profileInit("load")
+      val reasonableTimePerRun = 3 * 1000000000L /* 3 seconds */
+      val rddSchemaGen = Gen.frequency((goodWeight, (goodRdd, goodSchema)), (badWeight, (badRdd, badSchema)))
+      for {
+        i <- 0 until numRuns
+        (rdd, schema) <- rddSchemaGen.sample
+      } {
+        val lastTiming = accs.accs("load").acc
+        profile("load")
+        try {
+          rdd.loadVector(schema, tableName, connectionProps)
+        } catch {
+          case e: Exception =>
+        }
+        profileEnd
+        (accs.accs("load").acc - lastTiming) should be < reasonableTimePerRun
       }
     }
   }

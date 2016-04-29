@@ -31,26 +31,13 @@ import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetada
 /**
  * Entry point for loading with spark-vector connector.
  *
- * @param vectorProps connection information to the leader node's SQL interface
+ * @param writeConf Write configuration to be used when connecting to the `DataStream` API
  * @param table The table loaded to
  * @param tableSchema of the table as a `StructType`
  */
-class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableSchema: Seq[ColumnMetadata]) extends
-  Logging with Serializable with Profiling {
+class DataStreamWriter[T <% Seq[Any]](writeConf: WriteConf, table: String, tableSchema: Seq[ColumnMetadata]) extends Logging with Serializable with Profiling {
   import DataStreamWriter._
 
-  /**
-   * A client to connect to the `Vector`'s SQL interface through JDBC. Currently used to
-   * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
-   *
-   * @note Available only on the driver.
-   */
-  @transient val client = DataStreamClient(vectorProps, table)
-  /** Write configuration to be used when connecting to the `DataStream` API */
-  lazy val writeConf = {
-    client.prepareDataStreams
-    client.getWriteConf
-  }
   private lazy val connector = new DataStreamConnector(writeConf)
   private val binaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
 
@@ -100,22 +87,7 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
       val header = connector.readConnectionHeader
       if (header.statusCode < 0) throw new Exception(s"Error writing data: got status code = ${header.statusCode} from connection")
       writeSplittingInVectors(data, header.vectorSize)
-    }
-  )
-
-  /**
-   * Initiate the load, i.e. submit the SQL query to start loading from an external source.
-   *
-   * @note should only be called on the driver.
-   */
-  def initiateLoad: Future[Int] = client.startLoad
-
-  /**
-   * Commit the last transaction started by this `DataStreamWriter`'s client.
-   *
-   * @note should only be called on the driver.
-   */
-  def commit: Unit = client.commit
+    })
 }
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */

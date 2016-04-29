@@ -24,9 +24,13 @@ import org.apache.spark.sql.types.StructType
 import com.actian.spark_vector.reader.ScanRDD
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
 
-private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
+private[spark_vector] class VectorRelation(tableRef: TableRef,
+  userSpecifiedSchema: Option[StructType],
+  override val sqlContext: SQLContext,
+  options: Map[String, String] = Map.empty)
     extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import VectorOps._
+  import VectorRelation._
 
   override def schema: StructType =
     userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
@@ -40,8 +44,10 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
 
     logInfo(s"Trying to insert rdd: $data into Vector table")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
+    val preSQL = getSQL(LoadPreSQL, options)
+    val postSQL = getSQL(LoadPostSQL, options)
     // TODO could expose other options in Spark parameters
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
+    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps, Some(preSQL), Some(postSQL))
     logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -64,12 +70,15 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
 }
 
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
+  val LoadPreSQL = "loadpresql"
+  val LoadPostSQL = "loadpostsql"
+
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext, options: Map[String, String]): VectorRelation = {
+    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext, options)
   }
 
-  def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, None, sqlContext)
+  def apply(tableRef: TableRef, sqlContext: SQLContext, options: Map[String, String]): VectorRelation = {
+    new VectorRelation(tableRef, None, sqlContext, options)
   }
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
@@ -79,6 +88,10 @@ object VectorRelation {
       StructType(structFields)
     }
   }
+
+  /** Retrieves a series of SQL queries from the option with key `key` */
+  def getSQL(key: String, options: Map[String, String]): Seq[String] =
+    options.filterKeys(_.toLowerCase startsWith key).toSeq.sortBy(_._1).map(_._2)
 
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")

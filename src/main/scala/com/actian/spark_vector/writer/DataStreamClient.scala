@@ -29,10 +29,13 @@ import com.actian.spark_vector.vector.ErrorCodes
  *
  * @param vectorProps connection information
  * @param table to which table this client will load data
+ *
+ * @note This client opens a JDBC connection when instantiated. To prevent leaks,
+ *  the [[close]] method must be called
  */
 case class DataStreamClient(vectorProps: VectorConnectionProperties,
-  table: String) extends Serializable with Logging {
-  private lazy val jdbc = {
+    table: String) extends Serializable with Logging {
+  private val jdbc = {
     val ret = new VectorJDBC(vectorProps)
     ret.autoCommit(false)
     ret
@@ -65,17 +68,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
   }
 
   /** Start loading data to Vector */
-  def startLoad(): Future[Int] = Future {
-    val ret = try {
-      closeResourceOnFailure(this) {
-        jdbc.executeStatement(startLoadSql(table))
-      }
-    } catch {
-      case e: SQLException =>
-        throw new VectorException(e.getErrorCode, e.getMessage, e)
-    }
-    ret
-  }
+  def startLoad(): Future[Int] = Future { jdbc.executeStatement(startLoadSql(table)) }
 
   /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit
