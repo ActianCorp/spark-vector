@@ -17,10 +17,9 @@ package com.actian.spark_vector.colbuffer.timestamp
 
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
-import org.apache.spark.Logging
-
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{ TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale }
+import com.actian.spark_vector.colbuffer.util.{
+  TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute }
 import com.actian.spark_vector.vector.VectorDataType
 
 import java.math.BigInteger
@@ -31,7 +30,7 @@ private case class TimestampColumnBufferParams(cbParams: ColumnBufferBuildParams
   adjustToUTC: Boolean = false)
 
 private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBufferParams, valueWidth: Int) extends
-  ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) with Logging {
+  ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
   private val ts = new Timestamp(System.currentTimeMillis())
 
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
@@ -65,21 +64,25 @@ private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends 
 }
 
 private class TimestampLongLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongLongSize) {
-  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = BigIntegerConversion.putLongLongByteArray(buffer, converted)
+  override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit =
+    BigIntegerConversion.putLongLongByteArray(buffer, converted)
 
-  override protected def getConverted(buffer: ByteBuffer): BigInteger = BigIntegerConversion.getLongLongByteArray(buffer)
+  override protected def getConverted(buffer: ByteBuffer): BigInteger =
+    BigIntegerConversion.getLongLongByteArray(buffer)
 }
 
 private class TimestampNZConverter extends TimestampConversion.TimestampConverter {
-  override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
+  override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger =
+    TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
 
-  override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) = TimestampConversion.unscaleTimestamp(convertedSource, scale)
+  override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) =
+    TimestampConversion.unscaleTimestamp(convertedSource, scale)
 }
 
 private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
   // scalastyle:off magic.number
-  private final val TimeMask = new BigInteger(timeMask)
-  private final val ZoneMask = BigInteger.valueOf(0x7FF)
+  private final val TimeMaskBi = new BigInteger(timeMask)
+  private final val SecondsInMinuteBi = BigInteger.valueOf(SecondsInMinute)
 
   /** Set the 117 most significant bits to 1 and the 11 least significant bits to 0. */
   private def timeMask: Array[Byte] = {
@@ -96,12 +99,13 @@ private class TimestampTZConverter extends TimestampConversion.TimestampConverte
 
   override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val scaledNanos = TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
-    scaledNanos.shiftLeft(11).and(TimeMask).or(BigInteger.ZERO.and(ZoneMask))
+    scaledNanos.shiftLeft(11).and(TimeMaskBi)
   }
 
   override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) = {
-    val deconvertedSource = convertedSource.shiftRight(11)
-    TimestampConversion.unscaleTimestamp(deconvertedSource, scale)
+    val timezoneSec = convertedSource.andNot(TimeMaskBi).multiply(SecondsInMinuteBi)
+    val (epochSeconds, subsecNanos) = TimestampConversion.unscaleTimestamp(convertedSource.shiftRight(11), scale)
+    (epochSeconds - timezoneSec.longValue, subsecNanos)
   }
   // scalastyle:on magic.number
 }

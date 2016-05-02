@@ -19,12 +19,15 @@ package com.actian.spark_vector.colbuffer
 package object util {
   // scalastyle:off magic.number
   final val PowersOfTen = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
-  final val SecondsInMinute = 60
   final val SecondsBeforeEpoch = 62167219200L
+  final val SecondsInMinute = 60
   final val MillisecondsScale = 3
   final val MillisecondsInMinute = SecondsInMinute * PowersOfTen(MillisecondsScale)
-  final val MillisecondsInDay = 24 * 60 * MillisecondsInMinute
+  final val MillisecondsInHour = 60 * MillisecondsInMinute
+  final val MillisecondsInDay = 24 * MillisecondsInHour
   final val NanosecondsScale = 9
-  final val NanosecondsInDay = (MillisecondsInDay.toLong * PowersOfTen(NanosecondsScale - MillisecondsScale))
+  final val NanosecondsInMinute = (MillisecondsInMinute.toLong * PowersOfTen(NanosecondsScale - MillisecondsScale))
+  final val NanosecondsInHour = 60L * NanosecondsInMinute
+  final val NanosecondsInDay = 24L * NanosecondsInHour
   // scalastyle:on magic.number
 }

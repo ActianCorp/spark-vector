@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-import org.apache.spark.scheduler.{ SparkListener, SparkListenerApplicationEnd }
+import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
@@ -110,10 +110,10 @@ private[vector] object Vector extends Logging {
       assert(whereClause.isEmpty == whereParams.isEmpty)
       client.startUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
       sparkContext.addSparkListener(new SparkListener() {
-        override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd) {
-          logDebug(s"Unload ended @ ${applicationEnd.time}")
+        override def onJobEnd(job: SparkListenerJobEnd) {
           client.commit
           client.close
+          logDebug(s"Data stream client connection closed. Unload ended @ ${job.time}.")
         }
       })
       scanRDD.asInstanceOf[RDD[Row]]

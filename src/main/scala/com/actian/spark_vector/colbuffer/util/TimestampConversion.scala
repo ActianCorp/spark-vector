@@ -48,7 +48,7 @@ object TimestampConversion {
 
     val subsecNanosBI = newSource.mod(NanosecondsFactorBI)
     val epochSeconds = newSource.subtract(subsecNanosBI).divide(NanosecondsFactorBI).subtract(SecondsBeforeEpochBI)
-    (epochSeconds.longValue(), subsecNanosBI.longValue())
+    (epochSeconds.longValue, subsecNanosBI.longValue)
   }
 
   /**
