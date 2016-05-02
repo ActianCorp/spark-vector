@@ -129,23 +129,15 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
 
   private def isEmpty = left >= right
 
-  private def constantLimit(count: Int): Int = { // Helps if the column is constant
-    val limit = (maxValueCount == 1).ifThenElse(1, maxValueCount + 1)
-    count % limit
-  }
-
   @throws(classOf[BufferOverflowException])
   def fill(source: ByteBuffer, n: Int): Unit = {
-    val nLimit = constantLimit(n)
+    val nLimit = Math.min(n, maxValueCount)
     if (nLimit > col.maxValueCount) throw new BufferOverflowException()
     if (col.nullable) {
       source.get(markers, 0, nLimit)
     }
     var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
-    while (pad > 0) {
-      source.get()
-      pad -= 1
-    }
+    source.position(source.position + pad)
     while (right < nLimit) {
       isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
       values(right) = col.get(source) // This returns a deserialized value to us
@@ -157,7 +149,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   def get(): T = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
     val ret = values(left)
-    left = constantLimit(left + 1)
+    left = (left + 1) % right
     ret
   }
 

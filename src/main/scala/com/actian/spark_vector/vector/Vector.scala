@@ -18,6 +18,7 @@ package com.actian.spark_vector.vector
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
+import org.apache.spark.scheduler.{ SparkListener, SparkListenerApplicationEnd }
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
@@ -34,7 +35,7 @@ private[vector] object Vector extends Logging {
   import RDDUtil._
   import ResourceUtil._
   import VectorUtil._
-  
+
   /**
    * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
    * using the connection information stored in `vectorProps`.
@@ -101,14 +102,21 @@ private[vector] object Vector extends Logging {
     whereClause: String = "",
     whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
     val client = new DataStreamClient(vectorProps, targetTable)
-    closeResourceAfterUse(client) {
-      client.prepareLoadDataStreams
+    closeResourceOnFailure(client) {
+      client.prepareUnloadDataStreams
       val readConf = client.getVectorEndpointConf
       val reader = new DataStreamReader(readConf, targetTable, tableMetadataSchema)
       val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
       assert(whereClause.isEmpty == whereParams.isEmpty)
       client.startUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
-      scanRDD
+      sparkContext.addSparkListener(new SparkListener() {
+        override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd) {
+          logDebug(s"Unload ended @ ${applicationEnd.time}");
+          client.commit
+          client.close
+        }
+      });
+      scanRDD.asInstanceOf[RDD[Row]]
     }
   }
 }

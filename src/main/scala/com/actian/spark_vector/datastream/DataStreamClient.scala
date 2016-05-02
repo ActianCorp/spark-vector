@@ -79,8 +79,9 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   def startLoad(): Future[Int] = executeSql(startLoadSql(table))
 
   /** Start unloading data from Vector */
-  def startUnload(preparedSelect: String, whereParams: Seq[Any]): Future[Int] =
+  def startUnload(preparedSelect: String, whereParams: Seq[Any]): Future[Int] = {
     executeSql(startUnloadSql(preparedSelect), whereParams)
+  }
 
   /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit

@@ -108,10 +108,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     setValFromColumnBuffer(col)
   }
 
-  override def hasNext(): Boolean = {
-    val ret = numTuples > 0 || !tap.isEmpty
-    ret
-  }
+  override def hasNext(): Boolean = numTuples > 0 || !tap.isEmpty
 
   override def next(): InternalRow = {
     implicit val accs = profileInit("next row", "reading from datastream", "columns buffering")
