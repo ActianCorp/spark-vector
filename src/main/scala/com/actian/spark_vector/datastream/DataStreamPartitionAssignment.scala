@@ -177,24 +177,28 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
  *  that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
  *  aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
  *
- *  @param affinities Affinities of each partition to host names represented as an `Array` of `Seq[T]`
+ *  @param affinities Affinities of each partition to host names represented as an `Array` of `Seq[String]`
  *  @param endpoints Vector end points
  */
 final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]) extends BipartiteAssignment {
   private def verifyMatching: Unit = {
-    var sanity = 0
-    (0 to hosts.size - 1).view.map { host =>
-      matching(host).view.map(partitionsWithAffinity(_)._2).foreach { partition =>
-        if (affinities(partition).find(hosts(_) == host).isEmpty) sanity += 1
+    def sanity = {
+      var cnt = 0
+      (0 to hosts.size - 1).view.map { host =>
+        matching(host).view.map(partitionsWithAffinity(_)._2).foreach { partition =>
+          if (affinities(partition).find(hosts.get(_) == Some(host)).isEmpty) cnt += 1
+        }
       }
+      cnt
     }
+
     logDebug(s"After matching algorithm, $sanity partitions are read remotely")
   }
 
   private def prepareStructures = {
     profile("prepare structures")
-    val (p1, p2) = (0 until affinities.size).map { part => (affinities(part), part) }.partition(!_._1.isEmpty)
     val hosts = endpoints.map(_.host).distinct.zipWithIndex.toMap
+    val (p1, p2) = (0 until affinities.size).map { part => (affinities(part).filter(hosts.contains(_)), part) }.partition(!_._1.isEmpty)
     val aff = (0 until p1.size).map { idx => p1(idx)._1.map(hosts(_)).toIndexedSeq }
     profileEnd
     (p1, p2, hosts, aff)
@@ -247,8 +251,11 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
       assignment(k) += partitionsWithoutAffinity(idx)._2
       k = if (k + 1 >= assignment.size) 0 else k + 1
     }
-    var sanity = 0
-    (0 until endpoints.size).view.foreach { endpoint => assignment(endpoint).foreach { partition => if (affinities(partition).find(endpoints(endpoint).host == _).isEmpty) sanity += 1 } }
+    def sanity = {
+      var cnt = 0
+      (0 until endpoints.size).view.foreach { endpoint => assignment(endpoint).foreach { partition => if (affinities(partition).find(endpoints(endpoint).host == _).isEmpty) cnt += 1 } }
+      cnt
+    }
     logDebug(s"After computing assignment, $sanity partitions are read remotely")
     profileEnd
   }

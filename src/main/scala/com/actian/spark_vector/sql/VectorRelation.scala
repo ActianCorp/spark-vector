@@ -25,12 +25,13 @@ import org.apache.spark.SparkContext
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps, ColumnMetadata }
 
-private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext)
+private[spark_vector] class VectorRelation(tableRef: TableRef,
+  userSpecifiedSchema: Option[StructType],
+  override val sqlContext: SQLContext,
+  options: Map[String, String])
   extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
-  import VectorOps._
-  import ResourceUtil._
-  import RDDUtil._
   import VectorRelation._
+  import VectorOps._
 
   private lazy val tableMetadataSchema = getTableSchema(tableRef)
   override def schema: StructType = userSpecifiedSchema.getOrElse(structType(tableMetadataSchema))
@@ -45,8 +46,11 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
 
     logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
     val anySeqRDD = data.rdd.map(row => row.toSeq)
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
-    logInfo(s"Loaded ${rowCount} records into Vector table '${tableRef.table}'")
+    val preSQL = getSQL(LoadPreSQL, options)
+    val postSQL = getSQL(LoadPostSQL, options)
+    // TODO could expose other options in Spark parameters
+    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
+    logInfo(s"Loaded ${rowCount} records into table ${tableRef.table}")
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
@@ -54,16 +58,20 @@ private[sql] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Optio
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
     logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
-    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table,
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, 
       tableMetadataSchema, selectColumns, whereClause, whereParams)
   }
 }
 
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation =
-    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
+  final val LoadPreSQL = "loadpresql"
+  final val LoadPostSQL = "loadpostsql"
 
-  def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = new VectorRelation(tableRef, None, sqlContext)
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext, options: Map[String, String]): VectorRelation =
+    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext, options)
+
+  def apply(tableRef: TableRef, sqlContext: SQLContext, options: Map[String, String]): VectorRelation =
+    new VectorRelation(tableRef, None, sqlContext, options)
 
   /** Obtain the metadata containing the schema for the table referred by tableRef */
   def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
@@ -77,6 +85,10 @@ object VectorRelation {
     structType(getTableSchema(tableRef))
   }
 
+  /** Retrieves a series of SQL queries from the option with key `key` */
+  def getSQL(key: String, options: Map[String, String]): Seq[String] =
+    options.filterKeys(_.toLowerCase startsWith key).toSeq.sortBy(_._1).map(_._2)
+
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
 
@@ -85,19 +97,15 @@ object VectorRelation {
    *  used directly with Vector jdbc. The parameters are stored in the second element of the
    *  returned tuple
    */
-  def convertFilter(filter: Filter): (String, Seq[Any]) = {
-    filter match {
-      case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))
-      case sources.LessThan(attribute, value) => (s"${quote(attribute)} < ?", Seq(value))
-      case sources.LessThanOrEqual(attribute, value) => (s"${quote(attribute)} <= ?", Seq(value))
-      case sources.GreaterThan(attribute, value) => (s"${quote(attribute)} > ?", Seq(value))
-      case sources.GreaterThanOrEqual(attribute, value) => (s"${quote(attribute)} >= ?", Seq(value))
-      case sources.In(attribute, values) =>
-        (quote(attribute) + " IN " + values.map(_ => "?").mkString("(", ", ", ")"), values.toSeq)
-      case _ =>
-        throw new UnsupportedOperationException(
-          s"It's not a valid filter $filter to be pushed down, only >, <, >=, <= and In are allowed.")
-    }
+  def convertFilter(filter: Filter): (String, Seq[Any]) = filter match {
+    case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))
+    case sources.LessThan(attribute, value) => (s"${quote(attribute)} < ?", Seq(value))
+    case sources.LessThanOrEqual(attribute, value) => (s"${quote(attribute)} <= ?", Seq(value))
+    case sources.GreaterThan(attribute, value) => (s"${quote(attribute)} > ?", Seq(value))
+    case sources.GreaterThanOrEqual(attribute, value) => (s"${quote(attribute)} >= ?", Seq(value))
+    case sources.In(attribute, values) => (quote(attribute) + " IN " + values.map(_ => "?").mkString("(", ", ", ")"), values.toSeq)
+    case _ => throw new UnsupportedOperationException(
+      s"It's not a valid filter $filter to be pushed down, only >, <, >=, <= and In are allowed.")
   }
 
   /**

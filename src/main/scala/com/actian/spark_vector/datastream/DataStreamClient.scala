@@ -24,14 +24,18 @@ import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.vector.VectorException
 import com.actian.spark_vector.vector.ErrorCodes
+import com.actian.spark_vector.BooleanExpr
 
 /**
  * A client to prepare loading and issue the load `SQL` query to Vector
  * @param vectorProps connection information
  * @param table to which table this client will load data
+ *
+ * @note This client opens a JDBC connection when instantiated. To prevent leaks,
+ *  the [[close]] method must be called
  */
-private[datastream] case class DataStreamClient(vectorProps: VectorConnectionProperties, table: String) extends Serializable with Logging {
-  private lazy val jdbc = {
+case class DataStreamClient(vectorProps: VectorConnectionProperties, table: String) extends Serializable with Logging {
+  private val jdbc = {
     val ret = new VectorJDBC(vectorProps)
     ret.autoCommit(false)
     ret
@@ -43,19 +47,8 @@ private[datastream] case class DataStreamClient(vectorProps: VectorConnectionPro
   private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
-  private def executeSql(sql: String, whereParams: Seq[Any] = Seq.empty[Any]): Future[Int] = Future {
-    val ret = try {
-      if (whereParams.isEmpty) {
-        jdbc.executeStatement(sql)
-      } else {
-        jdbc.executePreparedStatement(sql, whereParams)
-      }
-    } catch {
-      case e: SQLException =>
-        close()
-        throw new VectorException(e.getErrorCode, e.getMessage, e)
-    }
-    ret
+  private def executeSql(sql: String, whereParams: Seq[Any] = Seq.empty): Future[Int] = Future {
+    whereParams.isEmpty.ifThenElse(jdbc.executeStatement(sql), jdbc.executePreparedStatement(sql, whereParams))
   }
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */

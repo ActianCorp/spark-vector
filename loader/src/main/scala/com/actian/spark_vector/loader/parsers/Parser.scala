@@ -73,6 +73,10 @@ sealed case class ArgOption[T: Read, O](
  *         Vector password
  *   -tt <value> | --vectorTargetTable <value>
  *         Vector target table
+ *   -preSQL <value> | --preSQL <value>
+ *         Queries to execute in Vector before loading, separated by ';'
+ *   -postSQL <value> | --postSQL <value>
+ *         Queries to execute in Vector after loading, separated by ';'
  *   -sh <value> | --skipHeader <value>
  *         Skip header row
  *   -en <value> | --encoding <value>
@@ -107,6 +111,10 @@ sealed case class ArgOption[T: Read, O](
  *         Vector password
  *   -tt <value> | --vectorTargetTable <value>
  *         Vector target table
+ *   -preSQL <value> | --preSQL <value>
+ *         Queries to execute in Vector before loading, separated by ';'
+ *   -postSQL <value> | --postSQL <value>
+ *         Queries to execute in Vector after loading, separated by ';'
  * Command: load orc [options]
  * Load an orc file
  *   -sf <value> | --sourceFile <value>
@@ -125,6 +133,10 @@ sealed case class ArgOption[T: Read, O](
  *         Vector password
  *   -tt <value> | --vectorTargetTable <value>
  *         Vector target table
+ *   -preSQL <value> | --preSQL <value>
+ *         Queries to execute in Vector before loading, separated by ';'
+ *   -postSQL <value> | --postSQL <value>
+ *         Queries to execute in Vector after loading, separated by ';'
  * }}}
  */
 object Args {
@@ -133,6 +145,11 @@ object Args {
     override def arity: Int = 1
 
     override def reads: (String) => Char = _.head
+  }
+
+  private implicit object ReadSeqString extends Read[Seq[String]] {
+    override def arity: Int = 1
+    override def reads: (String) => Seq[String] = _.split(";").toSeq
   }
 
   val load = new ArgDescription("load", "lh", "Read a file and load into Vector")
@@ -152,8 +169,12 @@ object Args {
     "vectorPass", "vp", "Vector password", _.vector.password, updateVector((o, v) => o.copy(password = Some(v))), false)
   val vectorTargetTable = ArgOption[String, String](
     "vectorTargetTable", "tt", "Vector target table", _.vector.targetTable, updateVector((o, v) => o.copy(targetTable = v)), true)
+  val preSQL = ArgOption[Seq[String], Option[Seq[String]]](
+    "preSQL", "preSQL", "Queries to execute in Vector before loading, separated by ';'", _.vector.preSQL, updateVector((o, v) => o.copy(preSQL = Some(v))), false)
+  val postSQL = ArgOption[Seq[String], Option[Seq[String]]](
+    "postSQL", "postSQL", "Queries to execute in Vector after loading, separated by ';'", _.vector.postSQL, updateVector((o, v) => o.copy(postSQL = Some(v))), false)
 
-  val vectorArgs = Seq(vectorHost, vectorInstance, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable)
+  val vectorArgs = Seq(vectorHost, vectorInstance, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
 
   val inputFile = ArgOption[String, String](
     "sourceFile", "sf", "Source file", _.general.sourceFile, updateGeneral((o, v) => o.copy(sourceFile = v.replace('\\', '/'))), true)

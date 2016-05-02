@@ -34,8 +34,8 @@ trait VectorOps {
      * Load a target Vector table from this RDD.
      *
      * @param schema Input RDD schema
-     * @param targetTable name of the table to load
      * @param vectorProps connection properties to the Vector instance
+     * @param targetTable name of the table to load
      * @param preSQL set of SQL statements to execute before loading begins
      * @param postSQL set of SQL statements to run after loading completes successfully. This SQL is executed
      *                only if the load works. The load is not rolled back if executing the postSQL fails.
@@ -44,13 +44,13 @@ trait VectorOps {
      * @return a <code>LoaderResult</code> instance which contains results of the load operation
      */
     def loadVector(rddSchema: StructType,
+      vectorProps: VectorConnectionProperties,       
       targetTable: String,
-      vectorProps: VectorConnectionProperties,
       preSQL: Option[Seq[String]] = None,
       postSQL: Option[Seq[String]] = None,
       fieldMap: Option[Map[String, String]] = None,
       createTable: Boolean = false): Long = {
-      Vector.loadVector(rdd, rddSchema, targetTable, vectorProps,
+      Vector.loadVector(rdd, rddSchema, vectorProps, targetTable,
         preSQL, postSQL, fieldMap, createTable)
     }
   }

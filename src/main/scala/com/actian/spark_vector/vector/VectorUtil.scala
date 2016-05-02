@@ -29,34 +29,38 @@ import com.actian.spark_vector.vector.VectorJDBC.withJDBC
  */
 private[vector] object VectorUtil extends Logging {
   /**
-   * Return the table schema as a `Seq[ColumnMetadata]` for the given table.
+   * Return the table schema as a sequence of `ColumnMetadata` for the given table.
    *
    * @param vectorProps Vector connection properties
    * @param targetTable name of the target table
-   * @return schema of the table as a `Seq[ColumnMetadata]`
+   *
    * @throws VectorException if the target table does not exist or if there are connection failures
    */
-  def getTableSchema(vectorProps: VectorConnectionProperties, targetTable: String,
-    createTableSQL: Option[String] = None): Seq[ColumnMetadata] = {
-    try {
-      withJDBC(vectorProps) { dbCxn =>
-        if (!dbCxn.tableExists(targetTable)) {
-          if (createTableSQL.isDefined) {
-            createTableSQL.foreach(dbCxn.executeStatement)
-          } else {
-            logError(s"$targetTable: target table does not exist")
-            throw new VectorException(NoSuchTable, targetTable + ": target table does not exist")
-          }
-        }
+  def getTableSchema(vectorProps: VectorConnectionProperties, targetTable: String, createTableSQL: Option[String] = None): Seq[ColumnMetadata] = try withJDBC(vectorProps) { dbCxn =>
+    getTableSchema(dbCxn, targetTable, createTableSQL)
+  } catch {
+    case e: SQLException =>
+      logError(s" Error connecting to Vector instance.", e)
+      throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance")
+  }
 
-        logDebug(s"$targetTable: target table exists")
-        dbCxn.columnMetadata(targetTable)
+  /** Return the table schema as a sequence of `ColumnMetadata` for the given table.  */
+  def getTableSchema(dbCxn: VectorJDBC, targetTable: String, createTableSQL: Option[String]): Seq[ColumnMetadata] = try {
+    if (!dbCxn.tableExists(targetTable)) {
+      if (createTableSQL.isDefined) {
+        createTableSQL.foreach(dbCxn.executeStatement)
+      } else {
+        logError(s"$targetTable: target table does not exist")
+        throw new VectorException(NoSuchTable, targetTable + ": target table does not exist")
       }
-    } catch {
-      case e: SQLException =>
-        logError(s" Error connecting to Vector instance.", e)
-        throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance")
     }
+
+    logDebug(s"$targetTable: target table exists")
+    dbCxn.columnMetadata(targetTable)
+  } catch {
+    case e: SQLException =>
+      logError(s"Cannot obtain column metadata for table $targetTable", e)
+      throw new VectorException(SqlException, s"Cannot obtain column metadata for table $targetTable")
   }
 
   private def uniqueString: String = new VMID().toString.toUpperCase.replaceAll("[:\\-]", "X")

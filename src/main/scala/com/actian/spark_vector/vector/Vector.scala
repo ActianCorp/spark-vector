@@ -18,22 +18,23 @@ package com.actian.spark_vector.vector
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
+import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.Row
 import org.apache.spark.SparkContext
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
-import com.actian.spark_vector.vector.VectorUtil._
+import com.actian.spark_vector.datastream.DataStreamClient
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
 
-
 /** Utility object that defines methods for loading data into Vector */
-object Vector {
+private[vector] object Vector extends Logging {
   import RDDUtil._
   import ResourceUtil._
-
+  import VectorUtil._
+  
   /**
    * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
    * using the connection information stored in `vectorProps`.
@@ -44,53 +45,52 @@ object Vector {
    * @param createTable specify if the table should be created if it does not exist
    */
   def loadVector(rdd: RDD[Seq[Any]],
-    rddSchema: StructType,
-    targetTable: String,
+    schema: StructType,
     vectorProps: VectorConnectionProperties,
+    targetTable: String,
     preSQL: Option[Seq[String]],
     postSQL: Option[Seq[String]],
     fieldMap: Option[Map[String, String]],
     createTable: Boolean = false): Long = {
-    val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
-    val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, rddSchema))
-    val tableMetadataSchema = getTableSchema(vectorProps, targetTable, optCreateTableSQL)
-    val tableStructTypeSchema = StructType(tableMetadataSchema.map(_.structField))
+    val client = new DataStreamClient(vectorProps, targetTable)
+    closeResourceAfterUse(client) {
+      val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
+      val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(targetTable, schema))
+      val tableSchema = getTableSchema(client.getJdbc, targetTable, optCreateTableSQL)
+      val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
 
-    // Apply the given field map return a sequence of field name, column name tuples
-    val field2Columns = applyFieldMap(resolvedFieldMap, rddSchema, tableStructTypeSchema)
-    // Validate the list of columns are OK to load
-    validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
+      // Apply the given field map return a sequence of field name, column name tuples
+      val field2Columns = applyFieldMap(resolvedFieldMap, schema, tableStructTypeSchema)
+      // Validate the list of columns are OK to load
+      validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
 
-    // If a subset of input fields are needed to load, select only the fields needed
-    val (inputRDD, inputType) = if (field2Columns.length < rddSchema.fields.length) {
-      selectFields(rdd, rddSchema, field2Columns.map(_.fieldName))
-    } else {
-      (rdd, rddSchema)
-    }
-    val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
-      field2Columns.map(i => i.columnName -> i.fieldName).toMap)
-
-    val writer = new DataStreamWriter[Seq[Any]](vectorProps, targetTable, tableMetadataSchema)
-    closeResourceOnFailure(writer.client) {
-      preSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
-    }
-
-    val insertRDD = new InsertRDD(finalRDD, writer)
-    val result = writer.initiateLoad
-    insertRDD.sparkContext.runJob(insertRDD, writer.write _)
-
-    // FIX ME
-    val rowCount = Await.result(result, Duration.Inf)
-    if (rowCount >= 0) {
-      // Run post-load SQL
-      closeResourceOnFailure(writer.client) {
-        postSQL.foreach(_.foreach(writer.client.getJdbc.executeStatement))
+      // If a subset of input fields are needed to load, select only the fields needed
+      val (inputRDD, inputType) = if (field2Columns.length < schema.fields.length) {
+        selectFields(rdd, schema, field2Columns.map(_.fieldName))
+      } else {
+        (rdd, schema)
       }
-      writer.commit
-    }
-    writer.client.getJdbc.close
+      val finalRDD = fillWithNulls(inputRDD, inputType, tableStructTypeSchema,
+        field2Columns.map(i => i.columnName -> i.fieldName).toMap)
 
-    rowCount
+      logDebug(s"""Executing preSQL queries: ${preSQL.mkString(",")}""")
+      preSQL.foreach(_.foreach(client.getJdbc.executeStatement))
+
+      client.prepareLoadDataStreams
+      val writeConf = client.getVectorEndpointConf
+      val writer = new DataStreamWriter[Seq[Any]](writeConf, targetTable, tableSchema)
+      val insertRDD = new InsertRDD(finalRDD, writeConf)
+      val result = client.startLoad
+      insertRDD.sparkContext.runJob(insertRDD, writer.write _)
+      // FIX ME
+      val rowCount = Await.result(result, Duration.Inf)
+      if (rowCount >= 0) {
+        logDebug(s"""Executing postSQL queries: ${postSQL.mkString(",")}""")
+        postSQL.foreach(_.foreach(client.getJdbc.executeStatement))
+        client.commit
+      }
+      rowCount
+    }
   }
 
   def unloadVector(sparkContext: SparkContext,
@@ -100,10 +100,15 @@ object Vector {
     selectColumns: String = "*",
     whereClause: String = "",
     whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
-    val reader = new DataStreamReader(vectorProps, targetTable, tableMetadataSchema)
-    val scanRDD = new ScanRDD(sparkContext, reader)
-    assert(whereClause.isEmpty == whereParams.isEmpty)
-    reader.initiateUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
-    scanRDD.asInstanceOf[RDD[Row]]
+    val client = new DataStreamClient(vectorProps, targetTable)
+    closeResourceAfterUse(client) {
+      client.prepareLoadDataStreams
+      val readConf = client.getVectorEndpointConf
+      val reader = new DataStreamReader(readConf, targetTable, tableMetadataSchema)
+      val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
+      assert(whereClause.isEmpty == whereParams.isEmpty)
+      client.startUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
+      scanRDD
+    }
   }
 }

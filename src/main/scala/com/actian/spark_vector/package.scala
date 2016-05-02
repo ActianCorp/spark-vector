@@ -38,7 +38,7 @@ package object spark_vector {
     def andThenPartial[C](g: PartialFunction[B, C]): PartialFunction[A, C] = Function.unlift(f.lift(_) flatMap g.lift)
   }
 
-  implicit class BooleanExpr[T](expr: Boolean) {
-    def ifThenElse[T](thenVal: T, elseVal: T): T = if (expr) thenVal else elseVal
+  implicit class BooleanExpr(expr: Boolean) {
+    def ifThenElse[T](thenVal: => T, elseVal: => T): T = if (expr) thenVal else elseVal
   }
 }

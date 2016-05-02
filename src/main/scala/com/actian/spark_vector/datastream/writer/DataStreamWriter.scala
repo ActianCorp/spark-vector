@@ -26,34 +26,20 @@ import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.IntSize
-import com.actian.spark_vector.datastream.{ DataStreamClient, DataStreamConnectionHeader, DataStreamConnector }
+import com.actian.spark_vector.datastream.{ VectorEndpointConf, DataStreamConnectionHeader, DataStreamConnector }
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
 import com.actian.spark_vector.util.ResourceUtil
 
 /**
  * Entry point for loading with spark-vector connector.
  *
- * @param vectorProps connection information to the leader node's SQL interface
+ * @param writeConf Write configuration to be used when connecting to the `DataStream` API
  * @param table The table loaded to
  * @param tableSchema of the table as a sequence of columns metadata
  */
-class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, table: String, tableMetadataSchema: Seq[ColumnMetadata])
-  extends Logging with Serializable {
-  import DataStreamWriter._
 
-  /**
-   * A client to connect to the `Vector`'s SQL interface through JDBC. Currently used to
-   * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit the load query.
-   *
-   * @note Available only on the driver.
-   */
-  @transient val client = DataStreamClient(vectorProps, table)
-  /** Write configuration to be used when connecting to the `DataStream` API */
-  lazy val writeConf = {
-    client.prepareLoadDataStreams
-    client.getVectorEndpointConf
-  }
-  private lazy val connector = DataStreamConnector(writeConf)
+class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata]) extends Logging with Serializable with Profiling {
+  private lazy val connector = new DataStreamConnector(writeConf)
 
   /**
    * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
@@ -66,20 +52,6 @@ class DataStreamWriter[T <% Seq[Any]](vectorProps: VectorConnectionProperties, t
       rowWriter.write(data)
     }
   )
-
-  /**
-   * Initiate the load, i.e. submit the SQL query to start loading from an external source.
-   *
-   * @note should only be called on the driver.
-   */
-  def initiateLoad: Future[Int] = client.startLoad
-
-  /**
-   * Commit the last transaction started by this `DataStreamWriter`'s client.
-   *
-   * @note should only be called on the driver.
-   */
-  def commit: Unit = client.commit
 }
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */

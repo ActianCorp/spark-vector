@@ -19,16 +19,14 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.{ Logging, Partition, SparkContext, TaskContext }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader) extends RDD[InternalRow](sc, Nil) with Logging {
-  /** Lazy-read configuration from `Vector` */
-  private val readConf = reader.readConf
+class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: TaskContext => RowReader) extends RDD[Row](sc, Nil) with Logging {
   /** Closed state for the datastream connection */
   private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */
@@ -38,14 +36,13 @@ class ScanRDD(@transient private val sc: SparkContext, reader: DataStreamReader)
 
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
 
-  override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
+  override def compute(split: Partition, taskContext: TaskContext): Iterator[Row] = {
     taskContext.addTaskCompletionListener { _ =>
       close(it, "RowReader")
-      close(reader.client, "DataStreamClient")
       closed = true
     }
-    it = reader.read(taskContext)
-    it
+    it = read(taskContext)
+    it.asInstanceOf[Iterator[Row]]
   }
 
   private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {

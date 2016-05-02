@@ -24,7 +24,7 @@ import java.nio.channels.SocketChannel
 import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
-import com.actian.spark_vector.datastream.{ DataStreamClient, DataStreamConnectionHeader, DataStreamConnector }
+import com.actian.spark_vector.datastream.{ VectorEndpointConf, DataStreamConnectionHeader, DataStreamConnector }
 import com.actian.spark_vector.colbuffer.IntSize
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.util.ResourceUtil
@@ -36,21 +36,8 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table to unload from
  * @param tableSchema of the table as a `StructType`
  */
-class DataStreamReader(vectorProps: VectorConnectionProperties, table: String, tableMetadataSchema: Seq[ColumnMetadata])
+class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata])
   extends Logging with Serializable with Profiling {
-  /**
-   * A client to connect to the `Vector`'s SQL interface through JDBC. Currently used to
-   * obtain `DataStream` connection information (# of streams, hosts, roles, etc.) and to submit
-   * the unload query.
-   *
-   * @note Available only on the driver.
-   */
-  @transient val client = DataStreamClient(vectorProps, table)
-  /** Write configuration to be used when connecting to the `DataStream` API */
-  lazy val readConf = {
-    client.prepareUnloadDataStreams
-    client.getVectorEndpointConf
-  }
   private lazy val connector = DataStreamConnector(readConf)
 
   /**
@@ -63,20 +50,6 @@ class DataStreamReader(vectorProps: VectorConnectionProperties, table: String, t
       RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
     }
   )
-
-  /**
-   * Initiate the unload, i.e. submit the SQL query to start unloading to an external source.
-   *
-   * @note should only be called on the driver.
-   */
-  def initiateUnload(preparedSelect: String, whereParams: Seq[Any]): Future[Int] = client.startUnload(preparedSelect, whereParams)
-
-  /**
-   * Commit the last transaction started by this `DataStreamReader`'s client.
-   *
-   * @note should only be called on the driver.
-   */
-  def commit: Unit = client.commit
 }
 
 /** Contains helpers to read binary data, conforming to `Vector`'s binary protocol */
