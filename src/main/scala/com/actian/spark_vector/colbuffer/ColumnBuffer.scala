@@ -77,7 +77,6 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
   /** Make valueType visible outside */
   val valueType = col.valueTypeIn
 
-  @throws(classOf[BufferOverflowException])
   def put(source: T): Unit = {
     col.put(source, values)
     if (col.nullable) {
@@ -85,8 +84,6 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
     }
   }
 
-  @throws(classOf[IllegalStateException])
-  @throws(classOf[BufferOverflowException])
   def putNull(): Unit = {
     if (!col.nullable) throw new IllegalStateException(s"Cannot store NULLs in non-nullable column '${col.name}'.")
     markers.put(NullMarker)
@@ -121,49 +118,45 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   private val isNullValue = Array.ofDim[Boolean](col.maxValueCount)
   private lazy val markers = Array.ofDim[Byte](col.maxValueCount)
 
-  private var left = 0
-  private var right = 0
+  private var leftPos = 0
+  private var rightPos = 0
 
   /** Make valueType visible outside */
   val valueType = col.valueTypeOut
 
-  private def isEmpty = left >= right
+  private def isEmpty = leftPos >= rightPos
 
-  @throws(classOf[BufferOverflowException])
   def fill(source: ByteBuffer, n: Int): Unit = {
     val nLimit = Math.min(n, maxValueCount)
-    if (nLimit > col.maxValueCount) throw new BufferOverflowException()
     if (col.nullable) {
       source.get(markers, 0, nLimit)
     }
     var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
     source.position(source.position + pad)
-    while (right < nLimit) {
-      isNullValue(right) = if (col.nullable) (markers(right) == NullMarker) else false
-      values(right) = col.get(source) // This returns a deserialized value to us
-      right += 1
+    while (rightPos < nLimit) {
+      isNullValue(rightPos) = col.nullable.ifThenElse(markers(rightPos) == NullMarker, false)
+      values(rightPos) = col.get(source) // This returns a deserialized value to us
+      rightPos += 1
     }
   }
 
-  @throws(classOf[IllegalStateException])
   def get(): T = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
-    val ret = values(left)
-    left = (left + 1) % right
+    val ret = values(leftPos)
+    leftPos = (leftPos + 1) % rightPos
     ret
   }
 
-  @throws(classOf[IllegalStateException])
   def getIsNull(): Boolean = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
-    isNullValue(left)
+    isNullValue(leftPos)
   }
 
-  override def position(): Int = right
+  override def position(): Int = rightPos
 
   override def clear(): Unit = {
-    left = 0
-    right = 0
+    leftPos = 0
+    rightPos = 0
   }
 }
 
@@ -217,7 +210,6 @@ object ColumnBuffer {
    * Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
    *  @return a `ColumnBuffer` object (or throws an exception if an appropiate `ColumnBuffer` was not found)
    */
-  @throws(classOf[Exception])
   private def apply(p: ColumnBufferBuildParams): ColumnBuffer[_, _] = PartialFunction.condOpt(p)(build) match {
     case Some(cb) => cb
     case None     => throw new Exception(s"Unable to find internal buffer for column '${p.name}' of type '${p.tpe}'")
