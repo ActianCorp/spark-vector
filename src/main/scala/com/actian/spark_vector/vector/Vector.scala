@@ -111,11 +111,11 @@ private[vector] object Vector extends Logging {
       client.startUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
       sparkContext.addSparkListener(new SparkListener() {
         override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd) {
-          logDebug(s"Unload ended @ ${applicationEnd.time}");
+          logDebug(s"Unload ended @ ${applicationEnd.time}")
           client.commit
           client.close
         }
-      });
+      })
       scanRDD.asInstanceOf[RDD[Row]]
     }
   }
