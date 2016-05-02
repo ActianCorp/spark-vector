@@ -1,3 +1,8 @@
+import uk.gov.hmrc.gitstamp.GitStampPlugin._
+import sbt.Package.ManifestAttributes
+
+lazy val extraBuildSettings = sys.props.get("buildNr").map(nr => Seq(packageOptions in (Compile, packageBin) += Package.ManifestAttributes("Build-number" -> nr))).getOrElse(Nil)
+
 lazy val commonSettings = Seq(
     organization := "com.actian",
     version := "1.0-SNAPSHOT",
@@ -9,7 +14,7 @@ lazy val commonSettings = Seq(
     EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     // no scala version suffix on published artifact
     crossPaths := false
-)
+) ++ gitStampSettings ++ extraBuildSettings
 
 lazy val commonDeps = Seq(
     "org.apache.spark" %% "spark-core" % "1.5.1" % "provided",
