@@ -16,6 +16,7 @@
 package com.actian.spark_vector.colbuffer.real
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
@@ -27,7 +28,6 @@ private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffe
 
 /** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
 private[colbuffer] object DoubleColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
-    case p if p.tpe == DoubleTypeId1 || p.tpe == DoubleTypeId2 || p.tpe == DoubleTypeId3 => new DoubleColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.DoubleType) andThen { new DoubleColumnBuffer(_) }
 }

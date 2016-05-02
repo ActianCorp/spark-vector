@@ -16,6 +16,7 @@
 package com.actian.spark_vector.colbuffer.integer
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
@@ -27,7 +28,6 @@ private class ShortColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer
 
 /** Builds a `ColumnBuffer` object for `smallint`, `integer2` types. */
 private[colbuffer] object ShortColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
-    case p if p.tpe == ShortTypeId1 || p.tpe == ShortTypeId2 => new ShortColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.ShortType) andThen { new ShortColumnBuffer(_) }
 }

@@ -32,21 +32,23 @@ case class ColumnMetadata(val name: String, val typeName: String, val nullable: 
   /**
    * Convert from column type name to data type and retain also its maximum allocation size
    */
-  private[this] def dataTypeInfo = typeName match {
-    case ByteTypeId1 | ByteTypeId2 => (ByteType, ByteSize)
-    case ShortTypeId1 | ShortTypeId2 => (ShortType, ShortSize)
-    case IntTypeId1 | IntTypeId2 => (IntegerType, IntSize)
-    case LongTypeId1 | LongTypeId2 => (LongType, LongSize)
-    case FloatTypeId1 | FloatTypeId2 => (FloatType, FloatSize)
-    case DoubleTypeId1 | DoubleTypeId2 | DoubleTypeId3 => (DoubleType, DoubleSize)
-    case DecimalTypeId1 | DecimalTypeId2 => (DecimalType(precision, scale), LongLongSize)
-    case BooleanTypeId => (BooleanType, ByteSize)
-    case DateTypeId => (DateType, IntSize)
-    case CharTypeId | NcharTypeId => (StringType, IntSize)
-    case VarcharTypeId | NvarcharTypeId | YearToMonthTypeId | DayToSecondTypeId => (StringType, precision + 1)
-    case TimeNZTypeId1 | TimeNZTypeId2 | TimeTZTypeId | TimeLZTypeId => (TimestampType, LongSize)
-    case TimestampNZTypeId1 | TimestampNZTypeId2  | TimestampTZTypeId  | TimestampLZTypeId  => (TimestampType, LongLongSize)
-    case _ => throw new Exception(s"Unsupported type '${typeName}' for column '${name}'.")
+  private[this] def dataTypeInfo =  VectorDataType(typeName) match {
+    case VectorDataType.ByteType => (ByteType, ByteSize)
+    case VectorDataType.ShortType => (ShortType, ShortSize)
+    case VectorDataType.IntegerType => (IntegerType, IntSize)
+    case VectorDataType.BigIntType => (LongType, LongSize)
+    case VectorDataType.FloatType => (FloatType, FloatSize)
+    case VectorDataType.DoubleType => (DoubleType, DoubleSize)
+    case VectorDataType.BooleanType => (BooleanType, ByteSize)
+    case VectorDataType.DecimalType => (DecimalType(precision, scale), LongLongSize)
+    case VectorDataType.DateType => (DateType, IntSize)
+    case VectorDataType.CharType | VectorDataType.NcharType => (StringType, IntSize)
+    case VectorDataType.VarcharType | VectorDataType.NvarcharType |
+         VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
+    case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
+    case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType   => (TimestampType, LongLongSize)
+    case VectorDataType.NotSupported =>
+      throw new VectorException(ErrorCodes.InvalidDataType, s"Unsupported vector type '${typeName}' for column '${name}'.")
   }
 
   def dataType: DataType = dataTypeInfo._1

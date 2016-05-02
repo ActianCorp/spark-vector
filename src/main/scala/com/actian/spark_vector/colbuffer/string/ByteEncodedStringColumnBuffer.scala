@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.string
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import scala.collection.mutable.ListBuffer
 
@@ -67,10 +68,8 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
   }
 
   private val buildConstLenMulti: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildConstLenMultiPartial andThenPartial {
-    /** `ColumnBuffer` object for `char` types (with precision > 1). */
-    case p if p.tpe == CharTypeId => new ByteLengthLimitedStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nchar` types (with precision > 1). */
-    case p if p.tpe == NcharTypeId => new CharLengthLimitedStringColumnBuffer(p)
+    (ofDataType(VectorDataType.CharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
+    (ofDataType(VectorDataType.NcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
 
   private val buildVarLenPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
@@ -78,10 +77,8 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
   }
 
   private val buildVarLen: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildVarLenPartial andThenPartial {
-    /** `ColumnBuffer` object for `varchar` types (with precision > 0). */
-    case p if p.tpe == VarcharTypeId => new ByteLengthLimitedStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nvarchar` types (with precision > 0). */
-    case p if p.tpe == NvarcharTypeId => new CharLengthLimitedStringColumnBuffer(p)
+    (ofDataType(VectorDataType.VarcharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
+    (ofDataType(VectorDataType.NvarcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildConstLenMulti orElse buildVarLen

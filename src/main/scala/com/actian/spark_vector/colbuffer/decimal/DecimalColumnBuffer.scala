@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.decimal
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.lang.Number
 import java.math.BigDecimal
@@ -84,8 +85,8 @@ private object DecimalLongLongColumnBuffer {
 
 /** Builds a `ColumnBuffer` object for for `decimal(<byte, short, int, long, long long>)` types. */
 private[colbuffer] object DecimalColumnBuffer extends ColumnBufferBuilder {
-  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
-    case p if (p.tpe == DecimalTypeId1 || p.tpe == DecimalTypeId2) && isInBounds(p.scale, (0, p.precision)) => p
+  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = ofDataType(VectorDataType.DecimalType) andThenPartial {
+    case p if isInBounds(p.scale, (0, p.precision)) => p
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildPartial andThenPartial {

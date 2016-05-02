@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.string
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -60,9 +61,7 @@ private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferB
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildPartial andThenPartial {
-    /** `ColumnBuffer` object for `char` types (with precision == 1). */
-    case p if p.tpe == CharTypeId => new ConstantLengthSingleByteStringColumnBuffer(p)
-    /** `ColumnBuffer` object for `nchar` types (with precision == 1). */
-    case p if p.tpe == NcharTypeId => new ConstantLengthSingleCharStringColumnBuffer(p)
+   (ofDataType(VectorDataType.CharType) andThen { new ConstantLengthSingleByteStringColumnBuffer(_) }) orElse
+   (ofDataType(VectorDataType.NcharType) andThen { new ConstantLengthSingleCharStringColumnBuffer(_) })
   }
 }

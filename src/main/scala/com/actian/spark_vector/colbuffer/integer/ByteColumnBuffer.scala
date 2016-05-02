@@ -16,6 +16,7 @@
 package com.actian.spark_vector.colbuffer.integer
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
@@ -27,7 +28,6 @@ private class ByteColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[
 
 /** Builds a `ColumnBuffer` object for `tinyint`, `integer1` types. */
 private[colbuffer] object ByteColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
-    case p if p.tpe == ByteTypeId1 || p.tpe == ByteTypeId2 => new ByteColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.ByteType) andThen { new ByteColumnBuffer(_) }
 }

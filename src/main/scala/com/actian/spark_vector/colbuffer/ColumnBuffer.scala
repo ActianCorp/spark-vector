@@ -22,8 +22,8 @@ import com.actian.spark_vector.colbuffer.singles._
 import com.actian.spark_vector.colbuffer.string._
 import com.actian.spark_vector.colbuffer.time._
 import com.actian.spark_vector.colbuffer.timestamp._
+import com.actian.spark_vector.vector.VectorDataType
 import com.actian.spark_vector.datastream.padding
-import com.actian.spark_vector.BooleanExpr
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -134,7 +134,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
     var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
     source.position(source.position + pad)
     while (rightPos < nLimit) {
-      isNullValue(rightPos) = col.nullable.ifThenElse(markers(rightPos) == NullMarker, false)
+      isNullValue(rightPos) = if (nullable) markers(rightPos) == NullMarker else false
       values(rightPos) = col.get(source) // This returns a deserialized value to us
       rightPos += 1
     }
@@ -166,6 +166,10 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
  */
 private[colbuffer] trait ColumnBufferBuilder {
   protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
+
+  protected def ofDataType(t: VectorDataType.EnumVal): PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
+    case p if VectorDataType(p.tpe) == t => p
+  }
 
   /** Get a new instance of `ColumnBuffer` for the given column type params. */
   private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]]

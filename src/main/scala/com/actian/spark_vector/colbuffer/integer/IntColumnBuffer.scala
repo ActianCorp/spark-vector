@@ -16,6 +16,7 @@
 package com.actian.spark_vector.colbuffer.integer
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
@@ -27,7 +28,6 @@ private class IntColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[I
 
 /** Builds a `ColumnBuffer` object for `integer`, `integer4` types. */
 private[colbuffer] object IntColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = {
-    case p if p.tpe == IntTypeId1 || p.tpe == IntTypeId2 => new IntColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.IntegerType) andThen { new IntColumnBuffer(_) }
 }

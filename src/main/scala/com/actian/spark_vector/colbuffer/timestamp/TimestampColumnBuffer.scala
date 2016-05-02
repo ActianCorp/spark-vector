@@ -21,6 +21,7 @@ import org.apache.spark.Logging
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.{ TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale }
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -115,22 +116,19 @@ private[colbuffer] object TimestampColumnBuffer extends ColumnBufferBuilder {
   private final val (nzlzIntScaleBounds, nzlzLongScaleBounds) = ((0, 7), (8, 9))
   private final val (tzIntScaleBounds, tzLongScaleBounds) = ((0, 4), (5, 9))
 
-  private val buildNZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] = {
-    case p if p.tpe == TimestampNZTypeId1 || p.tpe == TimestampNZTypeId2 => TimestampColumnBufferParams(p, new TimestampNZConverter(), true)
-  }
+  private val buildNZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] =
+    ofDataType(VectorDataType.TimestampType) andThen { TimestampColumnBufferParams(_, new TimestampNZConverter(), true) }
 
-  private val buildLZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] = {
-    case p if p.tpe == TimestampLZTypeId => TimestampColumnBufferParams(p, new TimestampLZConverter())
-  }
+  private val buildLZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] =
+    ofDataType(VectorDataType.TimestampLTZType) andThen { TimestampColumnBufferParams(_, new TimestampLZConverter()) }
 
   private val buildNZLZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = (buildNZPartial orElse buildLZPartial) andThenPartial {
     case nzlz if isInBounds(nzlz.cbParams.scale, nzlzIntScaleBounds) => new TimestampLongColumnBuffer(nzlz)
     case nzlz if isInBounds(nzlz.cbParams.scale, nzlzLongScaleBounds) => new TimestampLongLongColumnBuffer(nzlz)
   }
 
-  private val buildTZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] = {
-    case p if p.tpe == TimestampTZTypeId => TimestampColumnBufferParams(p, new TimestampTZConverter())
-  }
+  private val buildTZPartial: PartialFunction[ColumnBufferBuildParams, TimestampColumnBufferParams] =
+    ofDataType(VectorDataType.TimestampTZType) andThen { TimestampColumnBufferParams(_, new TimestampTZConverter()) }
 
   private val buildTZ: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildTZPartial andThenPartial {
     case tz if isInBounds(tz.cbParams.scale, tzIntScaleBounds) => new TimestampLongColumnBuffer(tz)
