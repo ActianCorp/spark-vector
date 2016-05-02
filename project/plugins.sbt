@@ -1,4 +1,7 @@
 resolvers += Classpaths.sbtPluginReleases
+resolvers += Resolver.url("hmrc-sbt-plugin-releases", url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
+
+addSbtPlugin("uk.gov.hmrc" % "sbt-git-stamp" % "5.2.0")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.4")
 
