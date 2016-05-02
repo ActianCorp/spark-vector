@@ -39,6 +39,6 @@ package object spark_vector {
   }
 
   implicit class BooleanExpr(expr: Boolean) {
-    def ifThenElse[T](thenVal: => T, elseVal: => T): T = if (expr) thenVal else elseVal
+    def ifThenElse[T](thenFn: => T, elseFn: => T): T = if (expr) thenFn else elseFn
   }
 }
