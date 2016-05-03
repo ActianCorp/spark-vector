@@ -124,14 +124,15 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
       profile("columns buffering")
       fillColumnBuffers(vector)
       profileEnd
-      // if hasNext read data we'll print two profiles here
-      profilePrint
     }
     numTuples -= 1
     read()
   }
 
-  def close(): Unit = tap.close
+  def close(): Unit = {
+    profilePrint
+    tap.close
+  }
 }
 
 object RowReader {

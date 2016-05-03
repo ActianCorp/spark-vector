@@ -44,17 +44,17 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
     vectors
   }
 
-  def read()(implicit reuseByteBuffer: ByteBuffer): ByteBuffer = {
+  def read()(implicit reuseBuffer: ByteBuffer): ByteBuffer = {
     if (!remaining) throw new NoSuchElementException("Empty data stream.")
     if (isNextVectorBuffered) {
       isNextVectorBuffered = false
     } else {
-      vector = readVector(reuseByteBuffer)
+      vector = readVector(reuseBuffer)
     }
     vector
   }
 
-  def isEmpty()(implicit reuseByteBuffer: ByteBuffer): Boolean = {
+  def isEmpty()(implicit reuseBuffer: ByteBuffer): Boolean = {
     if (remaining) read()
     isNextVectorBuffered = true
     !remaining
