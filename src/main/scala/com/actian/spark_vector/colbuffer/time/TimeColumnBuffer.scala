@@ -18,8 +18,7 @@ package com.actian.spark_vector.colbuffer.time
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
 import com.actian.spark_vector.colbuffer._
-import com.actian.spark_vector.colbuffer.util.{
-  TimeConversion, PowersOfTen, MillisecondsScale, NanosecondsScale, NanosecondsInMinute, TimeMaskSize }
+import com.actian.spark_vector.colbuffer.util.{ TimeConversion, PowersOfTen, MillisecondsScale, NanosecondsScale, NanosecondsInMinute, TimeMaskSize }
 import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer

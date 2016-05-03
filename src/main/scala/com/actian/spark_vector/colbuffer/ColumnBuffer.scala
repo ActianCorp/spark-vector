@@ -134,21 +134,21 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
     var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
     source.position(source.position + pad)
     while (rightPos < nLimit) {
-      isNullValue(rightPos) = if (nullable) markers(rightPos) == NullMarker else false
+      isNullValue(rightPos) = if (col.nullable) markers(rightPos) == NullMarker else false
       values(rightPos) = col.get(source) // This returns a deserialized value to us
       rightPos += 1
     }
   }
 
   def get(): T = {
-    if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
+    if (isEmpty) throw new IllegalStateException("Empty buffer.")
     val ret = values(leftPos)
     leftPos = if (leftPos + 1 >= rightPos) 0 else leftPos + 1
     ret
   }
 
   def isNextNull(): Boolean = {
-    if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
+    if (isEmpty) throw new IllegalStateException("Empty buffer.")
     isNullValue(leftPos)
   }
 
