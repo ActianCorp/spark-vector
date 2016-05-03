@@ -29,6 +29,10 @@ import com.actian.spark_vector.sql.TableRef
 import play.api.libs.json._
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
+import java.net.InetSocketAddress
+import java.nio.channels.ServerSocketChannel
+import resource._
+import scala.io.Source
 
 object Main extends App with Logging {
   private val conf = new SparkConf()
@@ -39,13 +43,12 @@ object Main extends App with Logging {
 
   private lazy val handler = new RequestHandler(sqlContext)
 
-  @inline def finished(line: String): Boolean = {
-    line == null || line == "<END>"
-  }
-
   logInfo("Spark-Vector provider initialized and starting listening for requests...")
 
-  Iterator.continually(Console.readLine).takeWhile(!finished(_)).foreach { line =>
-    handler.handle(line)
+  for {
+    server <- managed(ServerSocketChannel.open.bind(new InetSocketAddress(8512)))
+  } {
+    while (true)
+      handler.handle(server.accept)
   }
 }

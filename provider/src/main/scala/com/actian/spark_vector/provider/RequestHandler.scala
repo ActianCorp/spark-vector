@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicLong
 import com.actian.spark_vector.vector.VectorException
 import scala.util.Success
 import scala.util.Failure
+import java.nio.channels.SocketChannel
+import com.actian.spark_vector.reader.DataStreamReader
 
 case class RequestResult(jobId: String, result: String)
 
@@ -27,7 +29,9 @@ class RequestHandler(sqlContext: SQLContext) extends Logging {
 
   private val id = new AtomicLong(0L)
 
-  private def run(json: String): Future[RequestResult] = Future {
+  private def run(implicit socket: SocketChannel): Future[RequestResult] = Future {
+    val json = DataStreamReader.readWithByteBuffer { DataStreamReader.readString _ }
+    logDebug(s"Got new json request: ${json}")
     val job: Job = Json.fromJson[Job](Json.parse(json)).fold(errors => {
       throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toJson(errors)}")
     }, job => job)
@@ -38,7 +42,6 @@ class RequestHandler(sqlContext: SQLContext) extends Logging {
         throw new IllegalArgumentException(s"All part jobs must have the format specified in their options, but query ${job.query_id}, part ${part.part_id} doesn't")
       }
     } {
-      logDebug("Got new JSON request...")
       val vectorTable = register(part)
       val select = selectStatement(format, part)
 
@@ -47,17 +50,19 @@ class RequestHandler(sqlContext: SQLContext) extends Logging {
     RequestResult(job.query_id.toString, "Success")
   }
 
-  def handle(json: String): Unit = run(json) onComplete {
+  def handle(implicit socket: SocketChannel): Unit = run onComplete {
     case Success(result) => handleSuccess(result)
-    case Failure(t) => handleFailure(json, t)
+    case Failure(t) => handleFailure(t)
   }
 
-  private def handleSuccess(result: RequestResult) = {
+  private def handleSuccess(result: RequestResult)(implicit socket: SocketChannel) = {
     logInfo(s"Job ${result.jobId} has succeeded")
+    socket.close
   }
 
-  private def handleFailure(json: String, cause: Throwable) = {
-    logError(s"Job ${json} has failed with exception ${cause.getMessage}\n${cause.getStackTraceString}")
+  private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = {
+    logError(s"Job has failed with exception ${cause}: ${cause.getMessage}\n${cause.getStackTraceString}")
+    socket.close
   }
 
   private def register(part: JobPart): String = {
