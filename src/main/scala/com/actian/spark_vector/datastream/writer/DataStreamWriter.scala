@@ -45,13 +45,11 @@ class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: Stri
    * This function is executed once for each partition of [[InsertRDD]] and it will open a socket connection, process all data
    * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
-  def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(
-    implicit socket => {
-      val headerInfo = connector.readExternalScanConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
-      val rowWriter = RowWriter(tableMetadataSchema, headerInfo, DataStreamSink())
-      rowWriter.write(data)
-    }
-  )
+  def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId)(implicit socket => {
+    val headerInfo = connector.readExternalScanConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
+    val rowWriter = RowWriter(tableMetadataSchema, headerInfo, DataStreamSink())
+    rowWriter.write(data)
+  })
 }
 
 /** Contains helpers to write binary data, conforming to `Vector`'s binary protocol */

@@ -19,8 +19,6 @@ import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 import com.actian.spark_vector.vector.VectorDataType
 
-import scala.collection.mutable.ListBuffer
-
 import org.apache.spark.unsafe.types.UTF8String
 
 import java.nio.ByteBuffer
@@ -39,12 +37,11 @@ private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferB
     // Do not reuse the byteArr. UTF8String doesn't make a copy of it internally.
     val byteArr = Array.fill(p.precision + 1)(0.toByte)
     var i = 0
-    byteArr(i) = buffer.get()
-    while (byteArr(i) != 0.toByte && i < byteArr.length) {
-      i += 1
+    do {
       byteArr(i) = buffer.get()
-    }
-    UTF8String.fromBytes(byteArr, 0, i)
+      i += 1
+    } while (byteArr(i - 1) != 0.toByte && i < byteArr.length)
+    UTF8String.fromBytes(byteArr, 0, i - 1)
   }
 }
 

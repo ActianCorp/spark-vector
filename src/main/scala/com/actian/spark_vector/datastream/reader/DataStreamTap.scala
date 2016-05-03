@@ -23,18 +23,18 @@ import com.actian.spark_vector.colbuffer.ColumnBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
-/** The `VectorTap` that reads a `Vector DataStream` from a socket as a `ByteBuffer` */
+/** The `VectorTap` that reads `Vector` vectors from a `Vector DataStream`'s socket as `ByteBuffer`s */
 private[reader] case class DataStreamTap(implicit val socket: SocketChannel) extends Logging with Serializable {
   import DataStreamReader._
 
   private final val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */
   private final val NumTuplesIndex = 4
 
-  private var vectors: ByteBuffer = _
-  private var tapOpened: Boolean = true
+  private var vector: ByteBuffer = _
+  private var isNextVectorBuffered = false
   private var remaining = true
 
-  private def readVectors(reuseByteBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseByteBuffer)) { vectors =>
+  private def readVector(reuseByteBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseByteBuffer)) { vectors =>
     val dataCode = vectors.getInt()
     if (dataCode != BinaryDataCode) throw new Exception(s"Invalid binary data code = ${dataCode}!")
     if (vectors.getInt(NumTuplesIndex) == 0) {
@@ -46,17 +46,17 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
 
   def read()(implicit reuseByteBuffer: ByteBuffer): ByteBuffer = {
     if (!remaining) throw new NoSuchElementException("Empty data stream.")
-    if (!tapOpened) {
-      tapOpened = true
+    if (isNextVectorBuffered) {
+      isNextVectorBuffered = false
     } else {
-      vectors = readVectors(reuseByteBuffer)
+      vector = readVector(reuseByteBuffer)
     }
-    vectors
+    vector
   }
 
   def isEmpty()(implicit reuseByteBuffer: ByteBuffer): Boolean = {
     if (remaining) read()
-    tapOpened = false
+    isNextVectorBuffered = true
     !remaining
   }
 

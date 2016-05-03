@@ -19,7 +19,7 @@ import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.{
-  TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute }
+  TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute, TimeMaskSize }
 import com.actian.spark_vector.vector.VectorDataType
 
 import java.math.BigInteger
@@ -81,8 +81,8 @@ private class TimestampNZConverter extends TimestampConversion.TimestampConverte
 
 private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
   // scalastyle:off magic.number
-  private final val TimeMaskBi = new BigInteger(timeMask)
-  private final val SecondsInMinuteBi = BigInteger.valueOf(SecondsInMinute)
+  private final val TimeMaskBI = new BigInteger(timeMask)
+  private final val SecondsInMinuteBI = BigInteger.valueOf(SecondsInMinute)
 
   /** Set the 117 most significant bits to 1 and the 11 least significant bits to 0. */
   private def timeMask: Array[Byte] = {
@@ -99,12 +99,12 @@ private class TimestampTZConverter extends TimestampConversion.TimestampConverte
 
   override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val scaledNanos = TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
-    scaledNanos.shiftLeft(11).and(TimeMaskBi)
+    scaledNanos.shiftLeft(TimeMaskSize).and(TimeMaskBI)
   }
 
   override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) = {
-    val timezoneSec = convertedSource.andNot(TimeMaskBi).multiply(SecondsInMinuteBi)
-    val (epochSeconds, subsecNanos) = TimestampConversion.unscaleTimestamp(convertedSource.shiftRight(11), scale)
+    val timezoneSec = convertedSource.andNot(TimeMaskBI).multiply(SecondsInMinuteBI)
+    val (epochSeconds, subsecNanos) = TimestampConversion.unscaleTimestamp(convertedSource.shiftRight(TimeMaskSize), scale)
     (epochSeconds - timezoneSec.longValue, subsecNanos)
   }
   // scalastyle:on magic.number

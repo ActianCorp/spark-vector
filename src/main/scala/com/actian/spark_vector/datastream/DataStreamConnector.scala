@@ -35,16 +35,15 @@ import com.actian.spark_vector.colbuffer.IntSize
  * is not stored in this container since we get it earlier from a JDBC query.
  */
 private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
+  private final val StatusCodeIndex = 0
+  private final val NumColsIndex = 4
+  private final val VectorSizeIndex = 8
+  private final val ColInfoIndex = 12
+
   // scalastyle:off magic.number
-  private def uByte(value: Byte) = if (value < 0) value + 256 else value
+  def uByte(value: Byte) = if (value < 0) value + 256 else value
 
-  val statusCode = header.getInt()
-
-  val numCols = header.getInt()
-
-  val vectorSize = header.getInt()
-
-  private def getStrLen() = {
+  def readStringLen(): Int = {
     var lenValue = uByte(header.get())
     var strLen = lenValue
     while (lenValue == 255) {
@@ -54,19 +53,23 @@ private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
     strLen
   }
 
-  private def getStr(len: Int, ignore: Boolean = true): Option[String] = {
+  def readString(len: Int, ignore: Boolean = true): Option[String] = {
     lazy val byteArr = Array.ofDim[Byte](len)
     var index = 0
     while (index < len) {
       val byte = header.get()
-      if (!ignore) byteArr(index) = byte
+      if (!ignore) {
+        byteArr(index) = byte
+      }
       index += 1
     }
-    if (!ignore) Option(new String(byteArr))
+    if (!ignore) {
+      Option(new String(byteArr))
+    }
     None
   }
 
-  private def parseCols[T: ClassTag](numCols: Int)(code: (Int, Array[T]) => Unit): Array[T] = {
+  def parseCols[T: ClassTag](numCols: Int)(code: (Int, Array[T]) => Unit): Array[T] = {
     val array = Array.ofDim[T](numCols)
     var i = 0
     while (i < numCols) {
@@ -76,26 +79,36 @@ private[datastream] case class DataStreamConnectionHeader(header: ByteBuffer) {
     array
   }
 
-  lazy val (isNullableCol, isConstCol) = (
-    parseCols(numCols) { (i, nullCol: Array[Boolean]) =>
-      val colNameLen = getStrLen()
-      getStr(colNameLen)
-      nullCol(i) = colNameLen == 0
-    },
-    parseCols(numCols) { (i, constCol: Array[Boolean]) =>
-      constCol(i) = header.getInt() == 1
-      getStr(getStrLen())
-      getStr(getStrLen())
-    }
-  )
-  // scalastyle:on magic.number
+  val statusCode = header.getInt(StatusCodeIndex)
 
-  require(statusCode >= 0, "Invalid status code (possible errors during connection).")
+  val numCols = header.getInt(NumColsIndex)
+
+  val vectorSize = header.getInt(VectorSizeIndex)
+
+  lazy val (isNullableCol, isConstCol) = {
+    header.position(ColInfoIndex)
+    val colInfoPair = (
+      parseCols(numCols) { (i, nullCol: Array[Boolean]) =>
+        val colNameLen = readStringLen()
+        readString(colNameLen)
+        nullCol(i) = colNameLen == 0
+      },
+      parseCols(numCols) { (i, constCol: Array[Boolean]) =>
+        constCol(i) = header.getInt() == 1
+        readString(readStringLen())
+        readString(readStringLen())
+      }
+    )
+    colInfoPair
+  }
+  //   scalastyle:on magic.number
 
   def validateColumnDataTypes(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
     // TODO: ugly parsing for sanity check, throwing some exceptions in case of inconsistencies
     this
   }
+
+  require(statusCode >= 0, "Invalid status code (possible errors during connection).")
 }
 
 /**

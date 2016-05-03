@@ -22,7 +22,7 @@ import java.nio.channels.SocketChannel
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnector }
 import com.actian.spark_vector.colbuffer.WriteColumnBuffer
 
-/** The `VectorSink` that flushes `ByteBuffers` through the `SocketChannel` `socket` to a `Vector DataStream` */
+/** The `VectorSink` that flushes `ByteBuffer`s to a `Vector DataStream`'s socket */
 private[writer] case class DataStreamSink(implicit socket: SocketChannel) extends Serializable {
   import DataStreamWriter._
 

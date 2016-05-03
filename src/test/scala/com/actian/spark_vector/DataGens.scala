@@ -56,7 +56,7 @@ object DataGens {
     digits <- listOfN(12, choose(0, 9))
   } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
-  // FIXME DecimalType doesn't exist yet in Spark 1.5.2
+  // FIXME DecimalType doesn't exist yet in scala testing
   val decimalGen: Gen[BigDecimal] = arbitrary[BigDecimal].filter(bd => (Try { BigDecimal(bd.toString) }).isSuccess)
 
   private val dateValueGen: Gen[Long] =

@@ -74,7 +74,7 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
   private val nullValue = Array.fill[Byte](col.alignSize)(0: Byte)
   lazy val markers = ByteBuffer.allocateDirect(col.maxValueCount).order(ByteOrder.nativeOrder())
 
-  /** Make valueType visible outside */
+  /** This stores the `classTag[T]` */
   val valueType = col.valueTypeIn
 
   def put(source: T): Unit = {
@@ -121,7 +121,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   private var leftPos = 0
   private var rightPos = 0
 
-  /** Make valueType visible outside */
+  /** This stores the `classTag[T]` */
   val valueType = col.valueTypeOut
 
   private def isEmpty = leftPos >= rightPos
@@ -143,11 +143,11 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   def get(): T = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
     val ret = values(leftPos)
-    leftPos = (leftPos + 1) % rightPos
+    leftPos = if (leftPos + 1 >= rightPos) 0 else leftPos + 1
     ret
   }
 
-  def getIsNull(): Boolean = {
+  def isNextNull(): Boolean = {
     if (isEmpty) throw new IllegalStateException(s"Empty buffer.")
     isNullValue(leftPos)
   }

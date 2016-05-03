@@ -20,9 +20,12 @@ import com.actian.spark_vector.colbuffer.LongLongSize
 import java.math.BigInteger
 import java.nio.ByteBuffer
 
-/** Helper functions and constants for `BigInteger` conversions. */
+/**
+ * Helper functions and constants for `BigInteger` conversions.
+ * @note do not call this object's methods concurrently
+ */
 object BigIntegerConversion {
-  val bigIntArray = Array.fill[Byte](LongLongSize)(0:Byte) /** Keep it in big-endian */
+  val bigIntArray = Array.fill[Byte](LongLongSize)(0: Byte) /** Keep it in big-endian */
 
   // scalastyle:off magic.number
   /**
@@ -31,11 +34,13 @@ object BigIntegerConversion {
    * like this and not in big-endian (network-wise)
    */
   final def putLongLongByteArray(buffer: ByteBuffer, value: BigInteger): Unit = {
-    val source = value.toByteArray() /** This is in big-endian */
+    val source = value.toByteArray()
+    /** This is in big-endian */
     val remaining = LongLongSize - source.length
     var sourceIndex = source.length - 1
 
-    while (sourceIndex >= 0) { /** Put in little-endian order */
+    while (sourceIndex >= 0) {
+      /** Put in little-endian order */
       buffer.put(source(sourceIndex))
       sourceIndex -= 1
     }
@@ -55,7 +60,8 @@ object BigIntegerConversion {
   final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
     var sourceIndex = bigIntArray.length - 1
 
-    while (sourceIndex >= 0) { /** Get in little-endian order */
+    while (sourceIndex >= 0) {
+      /** Get in little-endian order */
       bigIntArray(sourceIndex) = buffer.get()
       sourceIndex -= 1
     }

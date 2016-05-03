@@ -38,6 +38,8 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   extends Logging with Serializable with Profiling {
   import RowWriter._
 
+  implicit val accs = profileInit("total write", "next row", "column buffering", "writing to datastream")
+
   /**
    * A seq of write column buffers, one for each column of the loaded table, that will be used to serialize the
    * input `RDD` rows for the appropriate table columns
@@ -106,7 +108,6 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   def write[T <% Seq[Any]](data: Iterator[T]): Unit = {
     var i = 0
     var writtenTuples = 0
-    implicit val accs = profileInit("total write", "next row", "column buffering", "writing to datastream")
     profile("total write")
     do {
       i = 0

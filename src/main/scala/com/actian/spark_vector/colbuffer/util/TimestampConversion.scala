@@ -27,7 +27,7 @@ object TimestampConversion {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(SecondsBeforeEpochBI)
     val nanosTotal = secondsTotal.multiply(NanosecondsFactorBI).add(BigInteger.valueOf(subsecNanos))
     val adjustment = scale - NanosecondsScale
-    val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
+    val adjustmentFactor = BigInteger.valueOf(PowersOfTen(Math.abs(adjustment)))
 
     if (adjustment >= 0) {
       nanosTotal.multiply(adjustmentFactor)
@@ -38,7 +38,7 @@ object TimestampConversion {
 
   final def unscaleTimestamp(source: BigInteger, scale: Int): (Long, Long) = {
     val adjustment = scale - NanosecondsScale
-    val adjustmentFactor = BigInteger.valueOf(Math.pow(10, Math.abs(adjustment)).toLong)
+    val adjustmentFactor = BigInteger.valueOf(PowersOfTen(Math.abs(adjustment)))
 
     val newSource = if (adjustment >= 0) {
       source.divide(adjustmentFactor)

@@ -22,7 +22,11 @@ import org.apache.spark.sql.types._
 /**
  * Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
  */
-case class ColumnMetadata(val name: String, val typeName: String, val nullable: Boolean, val precision: Int, val scale: Int) extends Serializable {
+case class ColumnMetadata(val name: String,
+  val typeName: String,
+  val nullable: Boolean,
+  val precision: Int,
+  val scale: Int) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
    * @return a new `StructField` instance

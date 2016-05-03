@@ -24,7 +24,6 @@ import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.vector.VectorException
 import com.actian.spark_vector.vector.ErrorCodes
-import com.actian.spark_vector.BooleanExpr
 
 /**
  * A client to prepare loading and issue the load `SQL` query to Vector
@@ -47,8 +46,8 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
-  private def executeSql(sql: String, whereParams: Seq[Any] = Seq.empty): Future[Int] = Future {
-    whereParams.isEmpty.ifThenElse(jdbc.executeStatement(sql), jdbc.executePreparedStatement(sql, whereParams))
+  private def executeSql(sql: String, whereParams: Seq[Any] = Nil): Future[Int] = Future {
+    if (whereParams.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, whereParams)
   }
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */

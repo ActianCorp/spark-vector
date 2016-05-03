@@ -44,12 +44,10 @@ class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadat
    * This function is executed once for each partition of [[ScanRDD]]. Will open a socket connection, read all data assigned
    * to its corresponding partition (`taskContext.partitionId`) and return a row iterator (leaving the connection opened).
    */
-  def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId)(
-    implicit socket => {
-      val headerInfo = connector.readExternalInsertConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
-      RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
-    }
-  )
+  def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId)(implicit socket => {
+    val headerInfo = connector.readExternalInsertConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
+    RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
+  })
 }
 
 /** Contains helpers to read binary data, conforming to `Vector`'s binary protocol */
@@ -89,7 +87,7 @@ object DataStreamReader extends Logging {
   /** Read a byte buffer of length `len from `socket` */
   private def readByteBuffer(len: Int, reuseBufferOpt: Option[ByteBuffer] = None)(implicit socket: SocketChannel): ByteBuffer = closeResourceOnFailure(socket) {
     val buffer = reuseBufferOpt.getOrElse(ByteBuffer.allocateDirect(len))
-    logDebug(s"${if (!reuseBufferOpt.isEmpty) "Reusing" else "Creating a new"} byte buffer of size ${buffer.capacity}")
+    logTrace(s"${if (!reuseBufferOpt.isEmpty) "Reusing" else "Creating a new"} byte buffer of size ${buffer.capacity}")
     var i = 0
     buffer.clear()
     buffer.limit(len)

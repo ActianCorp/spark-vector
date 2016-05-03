@@ -27,7 +27,7 @@ import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
 import org.apache.spark.sql.catalyst.InternalRow
 
-import com.actian.spark_vector.{ BooleanExpr, Profiling }
+import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ByteSize, ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
@@ -35,6 +35,8 @@ import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader,
 class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
   extends Iterator[InternalRow] with Logging with Serializable with Profiling {
   import RowReader._
+
+  implicit val accs = profileInit("reading from datastream", "columns buffering")
 
   private val row = new SpecificMutableRow(tableMetadataSchema.map(_.dataType))
   private val numColumns = tableMetadataSchema.size
@@ -48,7 +50,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
       s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
     ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
-      headerInfo.isConstCol(i).ifThenElse(1, headerInfo.vectorSize), headerInfo.isNullableCol(i)))
+      (if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize), headerInfo.isNullableCol(i)))
   }
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
@@ -57,7 +59,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
 
   private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
     val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + cb.maxValueCount * (cb.nullable.ifThenElse(ByteSize, 0) + tableMetadataSchema(idx).maxDataSize)
+    pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableMetadataSchema(idx).maxDataSize)
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {
@@ -102,34 +104,31 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
     row
   }
 
-  private def setValAt(col: Int) = if (columnBufs(col).getIsNull()) {
+  private def setValAt(col: Int) = if (columnBufs(col).isNextNull) {
     row.setNullAt(col)
   } else {
     setValFromColumnBuffer(col)
   }
 
-  override def hasNext(): Boolean = numTuples > 0 || !tap.isEmpty
+  override def hasNext(): Boolean = numTuples > 0 || {
+    profile("reading from datastream")
+    val ret = !tap.isEmpty
+    profileEnd
+    ret
+  }
 
   override def next(): InternalRow = {
-    implicit val accs = profileInit("next row", "reading from datastream", "columns buffering")
-    profile("next row")
-    if (!hasNext) {
-      profileEnd
-      throw new NoSuchElementException("Empty row reader.")
-    }
+    if (!hasNext) throw new NoSuchElementException("Empty row reader.")
     if (numTuples == 0) {
-      profile("reading from datastream")
       val vector = tap.read()
-      profileEnd
       profile("columns buffering")
       fillColumnBuffers(vector)
       profileEnd
+      // if hasNext read data we'll print two profiles here
+      profilePrint
     }
     numTuples -= 1
-    val ret = read()
-    profileEnd
-    profilePrint
-    ret
+    read()
   }
 
   def close(): Unit = tap.close

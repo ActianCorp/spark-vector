@@ -20,6 +20,7 @@ package object util {
   // scalastyle:off magic.number
   final val PowersOfTen = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
   final val SecondsBeforeEpoch = 62167219200L
+  final val TimeMaskSize = 11
   final val SecondsInMinute = 60
   final val MillisecondsScale = 3
   final val MillisecondsInMinute = SecondsInMinute * PowersOfTen(MillisecondsScale)

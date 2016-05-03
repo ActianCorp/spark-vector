@@ -22,6 +22,9 @@ import org.apache.spark.sql.types.{ BooleanType, IntegerType, StringType, Struct
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{fromString => toUTF8}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.sources.Filter
 
 import org.scalacheck.Gen
 import org.scalatest.{ Inspectors, Matchers, fixture }
@@ -286,11 +289,8 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(func => Unit) { tableName =>
       rdd.loadVector(dataType, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
 
-      var resultsJDBC: Seq[Seq[Any]] = Seq.empty[Seq[Any]]
-      VectorJDBC.withJDBC(connectionProps)(cxn => {
-        resultsJDBC = cxn.query(s"select * from $tableName")
-        compareResults(resultsJDBC, expectedData, mappedIndices)
-      })
+      var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName"))
+      compareResults(resultsJDBC, expectedData, mappedIndices)
 
       val sqlContext = new SQLContext(fixture.sc)
       val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty)
