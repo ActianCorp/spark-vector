@@ -100,7 +100,7 @@ private[vector] object Vector extends Logging {
     tableMetadataSchema: Seq[ColumnMetadata],
     selectColumns: String = "*",
     whereClause: String = "",
-    whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
+    whereParams: Seq[Any] = Nil): RDD[Row] = {
     val client = new DataStreamClient(vectorProps, targetTable)
     closeResourceOnFailure(client) {
       client.prepareUnloadDataStreams

@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.{ Logging, SparkException }
-import org.apache.spark.sql.types.{ BooleanType, IntegerType, StringType, StructField, StructType }
+import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{fromString => toUTF8}
@@ -257,6 +257,32 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val (dataType, data) = (typedData.dataType, typedData.data)
       assertTableGeneration(fixture, dataType, data, Map.empty)
     })
+  }
+
+  test("generate table/constant column") { fixture =>
+    // FIXME: this is a hackish test to verify unload with a ct column (although this case is not often
+    // for simple/basic queries, but more complex ones in ExternalScans) using two different user 
+    // defined schemas, one for load and the other for unload; the latter has c1 defnied for the ct col
+    val schema = StructTypeUtil.createSchema("c0" -> IntegerType)
+    val data = Seq(Seq[Any](42), Seq[Any](43))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val schemaWithCtColumn = StructTypeUtil.createSchema("c0" -> IntegerType, "c1" -> ShortType)
+      val dataWithCtColumn = Seq(Seq[Any](42, 1), Seq[Any](43, 1)) // Should get back c0:42,43 (inserted) and c1:1,1 (constant expr)
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      // Create the buildScan with other schema and column metadata
+      val vectorRel = new VectorRelation(tableRef, Some(schemaWithCtColumn), sqlContext, Map.empty) { 
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
+          sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("c0", "integer4", false, 10, 0),
+            ColumnMetadata("c1", "integer2", false, 5, 0)), "c0,1")
+        }
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      resultsSpark shouldBe dataWithCtColumn
+    }
   }
 
   test("generate table/field mapping") { fixture =>

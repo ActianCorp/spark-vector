@@ -77,7 +77,7 @@ trait VectorOps {
       tableMetadataSchema: Seq[ColumnMetadata],
       selectColumns: String = "*",
       whereClause: String = "",
-      whereParams: Seq[Any] = Seq.empty[Any]): RDD[Row] = {
+      whereParams: Seq[Any] = Nil): RDD[Row] = {
       Vector.unloadVector(sc, vectorProps, targetTable, tableMetadataSchema,
         selectColumns, whereClause, whereParams)
     }
