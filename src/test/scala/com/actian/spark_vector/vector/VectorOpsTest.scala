@@ -281,7 +281,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       }
       val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
       val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
-      resultsSpark shouldBe dataWithCtColumn
+      resultsSpark.sortBy(_.mkString) shouldBe dataWithCtColumn
     }
   }
 

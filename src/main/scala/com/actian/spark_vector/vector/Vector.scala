@@ -118,7 +118,7 @@ private[vector] object Vector extends Logging {
           logDebug(s"Data stream client connection closed. Unload ended @ ${job.time}.")
         }
       })
-      scanRDD.asInstanceOf[RDD[Row]]
+      scanRDD
     }
   }
 }
