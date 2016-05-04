@@ -108,7 +108,9 @@ private[vector] object Vector extends Logging {
       val reader = new DataStreamReader(readConf, targetTable, tableMetadataSchema)
       val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
       assert(whereClause.isEmpty == whereParams.isEmpty)
-      client.startUnload(s"select ${selectColumns} from ${targetTable} ${whereClause}", whereParams)
+      var selectQuery = s"select ${selectColumns} from ${targetTable} ${whereClause}"
+      whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
+      client.startUnload(selectQuery)
       sparkContext.addSparkListener(new SparkListener() {
         override def onJobEnd(job: SparkListenerJobEnd) {
           client.commit

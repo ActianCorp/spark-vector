@@ -46,9 +46,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
-  private def executeSql(sql: String, whereParams: Seq[Any] = Nil): Future[Int] = Future {
-    if (whereParams.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, whereParams)
-  }
+  private def executeSql(sql: String): Future[Int] = Future { jdbc.executeStatement(sql) }
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */
   def getJdbc(): VectorJDBC = jdbc
@@ -78,9 +76,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   def startLoad(): Future[Int] = executeSql(startLoadSql(table))
 
   /** Start unloading data from Vector */
-  def startUnload(preparedSelect: String, whereParams: Seq[Any]): Future[Int] = {
-    executeSql(startUnloadSql(preparedSelect), whereParams)
-  }
+  def startUnload(selectQuery: String): Future[Int] = executeSql(startUnloadSql(selectQuery))
 
   /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit
