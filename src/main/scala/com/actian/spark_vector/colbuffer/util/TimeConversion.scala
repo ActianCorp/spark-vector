@@ -35,7 +35,7 @@ object TimeConversion {
     }
   }
 
-  @inline final def scaleNanos(unscaledNanos: Long, scale: Int): Long = unscaledNanos / PowersOfTen(NanosecondsScale  - scale)
+  @inline final def scaleNanos(unscaledNanos: Long, scale: Int): Long = unscaledNanos / PowersOfTen(NanosecondsScale - scale)
 
   @inline final def unscaleNanos(scaledNanos: Long, scale: Int): Long = scaledNanos * PowersOfTen(NanosecondsScale - scale)
 
@@ -63,7 +63,7 @@ object TimeConversion {
 
   /**
    * This trait should be used when implementing a type of time conversion,
-   * for example a time-zone converter using the upper helper functions.
+   * for example a timezone converter using the upper helper functions.
    */
   trait TimeConverter {
     def convert(nanos: Long, scale: Int): Long

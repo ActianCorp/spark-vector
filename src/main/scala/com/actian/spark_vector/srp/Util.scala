@@ -63,7 +63,6 @@ import scala.language.implicitConversions
  * Host:  S = (Av^u) ^ b              (computes session key)
  * Host:  K = H(S)
  */
-
 object Util {
   //H() is a hash function; e.g., SHA-512.
   /**
@@ -213,7 +212,7 @@ trait SRPServer extends ServerSRPParameter {
   /**
    * Saves the calculated user credentials- userName, s, v
    *  @param username user name
-   *  @param password The passwrod to be used to save user credentials
+   *  @param password The password to be used to save user credentials
    *  @return Tuple3[Array[Byte],Array[Byte],Array[Byte]] s,x and v
    */
   def saveUserCredentials(userName: String, password: String) = {

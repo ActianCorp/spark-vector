@@ -61,10 +61,11 @@ private[writer] case class DataStreamSink(implicit socket: SocketChannel) extend
   /** Writes buffered data to the socket, the header and the actual binary data */
   def write(len: Int, numTuples: Int, columnBufs: Seq[WriteColumnBuffer[_]]): Unit = {
     writeDataHeader(len, numTuples)
-    columnBufs.foreach { case cb =>
-      cb.flip()
-      writeDataColumn(cb)
-      cb.clear()
+    columnBufs.foreach {
+      case cb =>
+        cb.flip()
+        writeDataColumn(cb)
+        cb.clear()
     }
   }
 }

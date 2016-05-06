@@ -30,7 +30,6 @@ import java.nio.ByteOrder
 import java.nio.BufferOverflowException
 
 import scala.reflect.{ ClassTag, classTag }
-import scala.throws._
 
 /**
  * Abstract class to be used when implementing the class for a typed ColumnBuffer
@@ -46,7 +45,10 @@ import scala.throws._
  * @param nullable whether this column accepts null values or not
  */
 private[colbuffer] abstract class ColumnBuffer[@specialized IN: ClassTag, @specialized OUT: ClassTag](val name: String,
-  val maxValueCount: Int, val valueWidth: Int, val alignSize: Int, val nullable: Boolean) extends Serializable {
+    val maxValueCount: Int,
+    val valueWidth: Int,
+    val alignSize: Int,
+    val nullable: Boolean) extends Serializable {
   val valueTypeIn = classTag[IN]
   val valueTypeOut = classTag[OUT]
 
@@ -56,7 +58,7 @@ private[colbuffer] abstract class ColumnBuffer[@specialized IN: ClassTag, @speci
 }
 
 private[colbuffer] sealed abstract class RWColumnBuffer(col: ColumnBuffer[_, _])
-  extends Serializable {
+    extends Serializable {
   protected final val NullMarker = 1: Byte
   protected final val NonNullMarker = 0: Byte
 
@@ -162,7 +164,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
 
 /**
  * Trait to be used when implementing a companion object for a typed ColumnBuffer
- *  (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
+ * (e.g. object IntColumnBuffer extends ColumnBufferInstance[Int])
  */
 private[colbuffer] trait ColumnBufferBuilder {
   protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
@@ -177,17 +179,17 @@ private[colbuffer] trait ColumnBufferBuilder {
 
 /**
  * Case class to be used when trying to create a typed W/R column buffer object
- *  through the `newWriteBuffer` or `newReadBuffer` methods.
+ * through the `newWriteBuffer` or `newReadBuffer` methods.
  *
- *  @param name the column's name
- *  @param tpe the data type's name (required in lower cases)
- *  @param precision the data type's precision
- *  @param scale the data type's scale size
- *  @param maxValueCount the size of this column buffer (in tuple/value counts)
- *  @param nullable whether this column accepts null values or not
+ * @param name the column's name
+ * @param tpe the data type's name (required in lower cases)
+ * @param precision the data type's precision
+ * @param scale the data type's scale size
+ * @param maxValueCount the size of this column buffer (in tuple/value counts)
+ * @param nullable whether this column accepts null values or not
  */
 case class ColumnBufferBuildParams(name: String, tpe: String, precision: Int, scale: Int, maxValueCount: Int, nullable: Boolean)
-  extends Serializable {
+    extends Serializable {
   require(tpe == tpe.toLowerCase, s"Column type '${tpe}' should be in lower case letters.")
 }
 
@@ -212,11 +214,12 @@ object ColumnBuffer {
 
   /**
    * Get the `ColumnBuffer` object for the given `ColumnBufferBuildParams` params.
-   *  @return a `ColumnBuffer` object (or throws an exception if an appropiate `ColumnBuffer` was not found)
+   *
+   * @return a `ColumnBuffer` object (or throws an exception if an appropriate `ColumnBuffer` was not found)
    */
   private def apply(p: ColumnBufferBuildParams): ColumnBuffer[_, _] = PartialFunction.condOpt(p)(build) match {
     case Some(cb) => cb
-    case None     => throw new Exception(s"Unable to find internal buffer for column '${p.name}' of type '${p.tpe}'")
+    case None => throw new Exception(s"Unable to find internal buffer for column '${p.name}' of type '${p.tpe}'")
   }
 
   /**

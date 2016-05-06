@@ -22,16 +22,18 @@ import java.nio.ByteBuffer
 
 /**
  * Helper functions and constants for `BigInteger` conversions.
- * @note do not call this object's methods concurrently
+ *
+ * @note Do not call this object's methods concurrently
  */
 object BigIntegerConversion {
-  val bigIntArray = Array.fill[Byte](LongLongSize)(0: Byte) /** Keep it in big-endian */
+  val bigIntArray = Array.fill[Byte](LongLongSize)(0: Byte) // Keep it in big-endian
 
   // scalastyle:off magic.number
   /**
    * Puts a BigInteger to a ByteBuffer in little-endian order.
+   *
    * @note We need little-endian (cpu-wise) ordering due to Vector storing data
-   * like this and not in big-endian (network-wise)
+   * in this way and not in big-endian (network-wise)
    */
   final def putLongLongByteArray(buffer: ByteBuffer, value: BigInteger): Unit = {
     val source = value.toByteArray()
@@ -61,7 +63,7 @@ object BigIntegerConversion {
     var sourceIndex = bigIntArray.length - 1
 
     while (sourceIndex >= 0) {
-      /** Get in little-endian order */
+      /** Get from buffer in little-endian order and put in big-endian */
       bigIntArray(sourceIndex) = buffer.get()
       sourceIndex -= 1
     }

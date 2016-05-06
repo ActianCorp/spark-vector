@@ -32,7 +32,7 @@ class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointC
   /** Custom row iterator for reading `DataStream`s in row format */
   private var it: RowReader = _
 
-  override protected def getPartitions = (0 until readConf.vectorEndpoints.size).map(i => new Partition { def index = i }).toArray
+  override protected def getPartitions = (0 until readConf.vectorEndpoints.size).map(idx => new Partition { def index = idx }).toArray
 
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
 

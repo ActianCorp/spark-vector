@@ -23,7 +23,6 @@ import org.apache.spark.sql.types.StructType
 import com.actian.spark_vector.vector.VectorJDBC
 
 class DefaultSource extends RelationProvider with SchemaRelationProvider with CreatableRelationProvider with Logging {
-
   override def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation =
     VectorRelation(TableRef(parameters), sqlContext, parameters)
 
@@ -38,9 +37,7 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
       case SaveMode.Overwrite =>
         table.insert(data, true)
       case SaveMode.ErrorIfExists =>
-        val isEmpty = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-          cxn.isTableEmpty(tableRef.table)
-        }
+        val isEmpty = VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.isTableEmpty(tableRef.table) }
         if (isEmpty) {
           table.insert(data, false)
         } else {
@@ -49,9 +46,7 @@ class DefaultSource extends RelationProvider with SchemaRelationProvider with Cr
       case SaveMode.Append =>
         table.insert(data, false)
       case SaveMode.Ignore =>
-        val isEmpty = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-          cxn.isTableEmpty(tableRef.table)
-        }
+        val isEmpty = VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.isTableEmpty(tableRef.table) }
         if (isEmpty) {
           table.insert(data, false)
         }

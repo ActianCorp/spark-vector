@@ -37,7 +37,6 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table loaded to
  * @param tableSchema of the table as a sequence of columns metadata
  */
-
 class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata]) extends Logging with Serializable with Profiling {
   private lazy val connector = new DataStreamConnector(writeConf)
 

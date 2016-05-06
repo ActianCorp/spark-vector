@@ -245,8 +245,7 @@ object VectorJDBC extends Logging {
           cxn.close()
           logError(s"error executing SQL statement: '${statement}'", exc)
           throw VectorException(SqlExecutionError, s"Error executing SQL statement: '${statement}'")
-      }
-    )
+      })
     // Commit since all SQL statements ran OK
     cxn.commit()
   }

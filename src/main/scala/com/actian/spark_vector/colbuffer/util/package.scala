@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector.colbuffer
 
-/** Util functions vor various type conversions */
+/** Util functions for various type conversions */
 package object util {
   // scalastyle:off magic.number
   final val PowersOfTen = Seq(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)

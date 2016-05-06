@@ -33,7 +33,7 @@ import com.actian.spark_vector.colbuffer.{ ByteSize, ColumnBufferBuildParams, Co
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
 class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
-  extends Iterator[InternalRow] with Logging with Serializable with Profiling {
+    extends Iterator[InternalRow] with Logging with Serializable with Profiling {
   import RowReader._
 
   implicit val accs = profileInit("reading from datastream", "columns buffering")
@@ -46,30 +46,32 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * A seq of read column buffers, one for each column of the unloaded table, that will be used to deserialize the data
    * streams for the appropriate table columns
    */
-  private val columnBufs = tableMetadataSchema.zipWithIndex.map { case (col, i) =>
-    logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
-      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
-    ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
-      (if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize), headerInfo.isNullableCol(i)))
+  private val columnBufs = tableMetadataSchema.zipWithIndex.map {
+    case (col, i) =>
+      logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
+        s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
+      ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
+        (if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize), headerInfo.isNullableCol(i)))
   }
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
 
   private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocateDirect(reuseBufferSize)
 
-  private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
-    val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableMetadataSchema(idx).maxDataSize)
+  private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
+    case (pos, idx) =>
+      val cb = columnBufs(idx)
+      pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableMetadataSchema(idx).maxDataSize)
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {
     numTuples = vector.getInt()
-    vector.order(ByteOrder.LITTLE_ENDIAN) /** The data from Vector comes in LITTLE_ENDIAN */
+    vector.order(ByteOrder.LITTLE_ENDIAN) // The data from Vector comes in LITTLE_ENDIAN
     columnBufs.foreach { cb =>
       cb.clear
-      cb.fill(vector, numTuples) /** Consume and deserialize tuples from the vector byte buffer */
+      cb.fill(vector, numTuples) // Consume and deserialize tuples from the vector byte buffer
     }
-    vector.order(ByteOrder.BIG_ENDIAN) /** Go back to BIG_ENDIAN because this buffer is reused by DataStreamTap */
+    vector.order(ByteOrder.BIG_ENDIAN) // Go back to BIG_ENDIAN because this buffer is reused by DataStreamTap
     columnBufs
   }
 
@@ -77,7 +79,7 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * A list of calls (one per column buffer) to set typed values in the corresponding row's column position, and performing the necessary type casts
    * while reading the needed value from its `ReadColumnBuffer[_]`.
    *
-   * @note since read column buffers are exposed only through the `ReadColumnBuffer[_]` interface and we need to set the `SpecificMutableRow` with appropriate
+   * @note Since read column buffers are exposed only through the `ReadColumnBuffer[_]` interface and we need to set the `SpecificMutableRow` with appropriate
    * typed values, we make use of runtime reflection to determine the type of the generic parameter of the `ReadColumnBuffer[_]`
    */
   private def setValFromColumnBuffer(col: Int) = columnBufs(col).valueType match {

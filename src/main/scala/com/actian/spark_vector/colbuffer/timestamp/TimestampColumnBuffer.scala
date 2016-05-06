@@ -19,18 +19,26 @@ import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.{
-  TimestampConversion, TimeConversion, BigIntegerConversion, PowersOfTen, MillisecondsScale, SecondsInMinute, TimeMaskSize }
+  TimestampConversion,
+  TimeConversion,
+  BigIntegerConversion,
+  PowersOfTen,
+  MillisecondsScale,
+  SecondsInMinute,
+  TimeMaskSize
+}
 import com.actian.spark_vector.vector.VectorDataType
 
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.sql.Timestamp
 
-private case class TimestampColumnBufferParams(cbParams: ColumnBufferBuildParams, converter: TimestampConversion.TimestampConverter,
+private case class TimestampColumnBufferParams(cbParams: ColumnBufferBuildParams,
+  converter: TimestampConversion.TimestampConverter,
   adjustToUTC: Boolean = false)
 
-private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBufferParams, valueWidth: Int) extends
-  ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
+private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBufferParams, valueWidth: Int)
+    extends ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
   private val ts = new Timestamp(System.currentTimeMillis())
 
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
@@ -59,7 +67,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
 private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongSize) {
   override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(converted.longValue)
 
-  /* TODO: remove the need of new BigInteger obj for TimestampLong */
+  /** TODO: Remove the need of new BigInteger obj for TimestampLong */
   override protected def getConverted(buffer: ByteBuffer): BigInteger = BigInteger.valueOf(buffer.getLong())
 }
 

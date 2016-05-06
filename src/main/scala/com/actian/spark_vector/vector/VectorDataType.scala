@@ -40,7 +40,7 @@ object VectorDataType {
   case object IntervalDayToSecondType extends EnumVal
   case object NotSupported extends EnumVal
 
-  def apply(name: String) = name match {
+  def apply(name: String): EnumVal = name match {
     case "tinyint" | "integer1" | "schr" | "uchr" => ByteType
     case "smallint" | "integer2" | "ssht" | "usht" => ShortType
     case "integer" | "integer4" | "int" | "sint" | "uint" => IntegerType

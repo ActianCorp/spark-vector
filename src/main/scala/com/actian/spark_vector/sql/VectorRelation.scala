@@ -26,10 +26,9 @@ import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps, ColumnMetadata }
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
-  userSpecifiedSchema: Option[StructType],
-  override val sqlContext: SQLContext,
-  options: Map[String, String])
-  extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+    userSpecifiedSchema: Option[StructType],
+    override val sqlContext: SQLContext,
+    options: Map[String, String]) extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import VectorRelation._
   import VectorOps._
 
@@ -39,16 +38,14 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
-      VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-        cxn.executeStatement(s"delete from ${tableRef.table}")
-      }
+      VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${tableRef.table}") }
     }
 
     logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
-    val anySeqRDD = data.rdd.map(row => row.toSeq)
+    val anySeqRDD = data.rdd.map(_.toSeq)
     val preSQL = getSQL(LoadPreSQL, options)
     val postSQL = getSQL(LoadPostSQL, options)
-    // TODO could expose other options in Spark parameters
+    /** TODO: Could expose other options in Spark parameters */
     val rowCount = anySeqRDD.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
     logInfo(s"Loaded ${rowCount} records into table ${tableRef.table}")
   }
@@ -58,8 +55,8 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
     logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
-    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, 
-      tableMetadataSchema, selectColumns, whereClause, whereParams)
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, tableMetadataSchema,
+      selectColumns, whereClause, whereParams)
   }
 }
 
@@ -74,16 +71,14 @@ object VectorRelation {
     new VectorRelation(tableRef, None, sqlContext, options)
 
   /** Obtain the metadata containing the schema for the table referred by tableRef */
-  def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-    cxn.columnMetadata(tableRef.table)
-  }
+  def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] =
+    VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.columnMetadata(tableRef.table) }
 
-  private def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType = StructType(tableMetadataSchema.map(_.structField))
+  private def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType =
+    StructType(tableMetadataSchema.map(_.structField))
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
-  def structType(tableRef: TableRef): StructType = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-    structType(getTableSchema(tableRef))
-  }
+  def structType(tableRef: TableRef): StructType = structType(getTableSchema(tableRef))
 
   /** Retrieves a series of SQL queries from the option with key `key` */
   def getSQL(key: String, options: Map[String, String]): Seq[String] =
@@ -94,8 +89,8 @@ object VectorRelation {
 
   /**
    * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
-   *  used directly with Vector jdbc. The parameters are stored in the second element of the
-   *  returned tuple
+   * used directly with Vector jdbc. The parameters are stored in the second element of the
+   * returned tuple
    */
   def convertFilter(filter: Filter): (String, Seq[Any]) = filter match {
     case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))

@@ -43,9 +43,9 @@ class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpoi
       locations
     } else {
       rdd.dependencies match {
-        case Seq(x: OneToOneDependency[R]) => {
-          val parentRDD = x.rdd
-          val parentIndex = x.getParents(partition.index).head
+        case Seq(dep: OneToOneDependency[R]) => {
+          val parentRDD = dep.rdd
+          val parentIndex = dep.getParents(partition.index).head
           getPreferredLocationsRec(parentRDD, parentRDD.partitions(parentIndex))
         }
         case _ => locations
@@ -55,22 +55,21 @@ class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpoi
 
   /** Optimally assign RDD partitions to DataStreams, taking into account partition affinities */
   private val endPointsToParentPartitionsMap = {
-    val affinities = rdd.partitions.map {
-      case partition =>
-        getPreferredLocationsRec(rdd, partition)
-    }
+    val affinities = rdd.partitions.map(getPreferredLocationsRec(rdd, _))
 
     val ret = DataStreamPartitionAssignment(affinities, writeConf.vectorEndpoints)
-    logDebug(s"Computed endPointsToParentPartitionsMap and got: ${(0 until ret.length).map {
-      case idx =>
-        val vals = ret(idx)
-        s"Datastream $idx -> RDD partitions ${vals.length}: ${vals.take(partitionsPerDataStreamToPrint).mkString(",")} ${if (vals.length > partitionsPerDataStreamToPrint) "..." else ""}"
-    }}")
+    logDebug(s"Computed endPointsToParentPartitionsMap and got: ${
+      (0 until ret.length).map {
+        case idx =>
+          val vals = ret(idx)
+          s"Datastream $idx -> RDD partitions ${vals.length}: ${vals.take(partitionsPerDataStreamToPrint).mkString(",")} ${if (vals.length > partitionsPerDataStreamToPrint) "..." else ""}"
+      }
+    }")
     ret.map(_.map(rdd.partitions(_).index))
   }
 
-  override protected def getPartitions = (0 until writeConf.vectorEndpoints.length).map(x =>
-    DataStreamPartition(x, rdd, endPointsToParentPartitionsMap(x))).toArray
+  override protected def getPartitions = (0 until writeConf.vectorEndpoints.length).map(idx =>
+    DataStreamPartition(idx, rdd, endPointsToParentPartitionsMap(idx))).toArray
 
   override protected def getPreferredLocations(split: Partition) = {
     logDebug(s"getPreferredLocations is called for partition ${split.index} and we are returning ${writeConf.vectorEndpoints(split.index).host}")

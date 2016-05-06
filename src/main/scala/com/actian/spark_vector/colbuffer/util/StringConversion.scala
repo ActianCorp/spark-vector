@@ -32,8 +32,8 @@ object StringConversion {
       bytes
     } else {
       /**
-       *  Find from the end of the array the first byte which is a single
-       *  byte character or the start of a multi-byte character
+       * Find from the end of the array the first byte which is a single
+       * byte character or the start of a multi-byte character
        */
       var i = targetSize
       var ret = EmptyString

@@ -95,13 +95,12 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
       writeString(out, username)
       writeByteArray(out, A)
     }
-    val (s, b) =
-      readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
-        if (!readCode(in, sBCode)) {
-          throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
-        }
-        (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
+    val (s, b) = readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
+      if (!readCode(in, sBCode)) {
+        throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
       }
+      (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
+    }
     val B = b
     val u = super.u(A, B)
     val x = this.x(username.getBytes("ASCII"), s, password.getBytes("ASCII"))

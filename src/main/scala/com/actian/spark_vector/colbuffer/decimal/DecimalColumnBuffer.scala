@@ -24,8 +24,8 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends
-  ColumnBuffer[BigDecimal, BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
+private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int)
+    extends ColumnBuffer[BigDecimal, BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
   override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
 
   protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit

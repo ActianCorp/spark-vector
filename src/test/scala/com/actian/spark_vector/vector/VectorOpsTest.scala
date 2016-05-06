@@ -308,7 +308,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     val mappedIndices = if (fieldMapping.isEmpty) {
       (0 until dataType.fields.size).toSet
     } else {
-      dataType.fieldNames.zipWithIndex.filter(fi => fieldMapping.contains(fi._1)).map(_._2).toSet
+      dataType.fieldNames.zipWithIndex.filter(i => fieldMapping.contains(i._1)).map(_._2).toSet
     }
 
     val rdd = fixture.sc.parallelize(expectedData)

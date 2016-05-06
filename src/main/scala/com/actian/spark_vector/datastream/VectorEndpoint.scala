@@ -39,18 +39,16 @@ object VectorEndpoint extends Logging {
 
   private val getVectorEndPointSql: String = s"select $hostDbColumn, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
 
-  def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndpoint] = {
-    seq match {
-      case Seq(host: String, port: String, username: String, password: String) =>
-        Try {
-          val real_host = host match {
-            case "" => jdbcHost
-            case _ => host
-          }
-          VectorEndpoint(real_host, port.toInt, username, password)
-        }.toOption
-      case _ => None
-    }
+  def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndpoint] = seq match {
+    case Seq(host: String, port: String, username: String, password: String) =>
+      Try {
+        val real_host = host match {
+          case "" => jdbcHost
+          case _ => host
+        }
+        VectorEndpoint(real_host, port.toInt, username, password)
+      }.toOption
+    case _ => None
   }
 
   /** Issues a query through JDBC to obtain connection information from the `DataStreams` system table */

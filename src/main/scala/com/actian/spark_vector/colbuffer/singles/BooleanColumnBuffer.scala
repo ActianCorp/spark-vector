@@ -34,8 +34,8 @@ private class BooleanColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuff
 
 /** Builds a `ColumnBuffer` object for `boolean` types. */
 private[colbuffer] object BooleanColumnBuffer extends ColumnBufferBuilder {
-  private final val True = 1:Byte
-  private final val False = 0:Byte
+  private final val True = 1: Byte
+  private final val False = 0: Byte
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
     ofDataType(VectorDataType.BooleanType) andThen { new BooleanColumnBuffer(_) }

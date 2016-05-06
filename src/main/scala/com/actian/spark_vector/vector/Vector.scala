@@ -60,12 +60,12 @@ private[vector] object Vector extends Logging {
       val tableSchema = getTableSchema(client.getJdbc, targetTable, optCreateTableSQL)
       val tableStructTypeSchema = StructType(tableSchema.map(_.structField))
 
-      // Apply the given field map return a sequence of field name, column name tuples
+      /** Apply the given field map return a sequence of field name, column name tuples */
       val field2Columns = applyFieldMap(resolvedFieldMap, schema, tableStructTypeSchema)
       // Validate the list of columns are OK to load
       validateColumns(tableStructTypeSchema, field2Columns.map(_.columnName))
 
-      // If a subset of input fields are needed to load, select only the fields needed
+      /** If a subset of input fields are needed to load, select only the fields needed */
       val (inputRDD, inputType) = if (field2Columns.length < schema.fields.length) {
         selectFields(rdd, schema, field2Columns.map(_.fieldName))
       } else {
@@ -83,8 +83,7 @@ private[vector] object Vector extends Logging {
       val insertRDD = new InsertRDD(finalRDD, writeConf)
       val result = client.startLoad
       insertRDD.sparkContext.runJob(insertRDD, writer.write _)
-      // FIX ME
-      val rowCount = Await.result(result, Duration.Inf)
+      val rowCount = Await.result(result, Duration.Inf) // FIX ME
       if (rowCount >= 0) {
         logDebug(s"""Executing postSQL queries: ${postSQL.mkString(",")}""")
         postSQL.foreach(_.foreach(client.getJdbc.executeStatement))

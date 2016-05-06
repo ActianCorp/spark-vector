@@ -33,6 +33,8 @@ private[vector] object VectorUtil extends Logging {
    *
    * @param vectorProps Vector connection properties
    * @param targetTable name of the target table
+   * @param createTableSQL create table SQL query (by default None)
+   * @return sequence of `ColumnMetadata`s
    *
    * @throws VectorException if the target table does not exist or if there are connection failures
    */
@@ -44,7 +46,16 @@ private[vector] object VectorUtil extends Logging {
       throw new VectorException(SqlException, s"${vectorProps.toJdbcUrl}: Error connecting to Vector instance")
   }
 
-  /** Return the table schema as a sequence of `ColumnMetadata` for the given table.  */
+  /**
+   * Return the table schema as a sequence of `ColumnMetadata` for the given table (using
+   *
+   * @param dbCxn opened Vector JDBC connection
+   * @param targetTable name of the target table
+   * @param createTableSQL create table SQL query
+   * @return sequence of `ColumnMetadata`s
+   *
+   * @throws VectorException if the target table does not exist or if there are connection failures
+   */
   def getTableSchema(dbCxn: VectorJDBC, targetTable: String, createTableSQL: Option[String]): Seq[ColumnMetadata] = try {
     if (!dbCxn.tableExists(targetTable)) {
       if (createTableSQL.isDefined) {
@@ -54,7 +65,6 @@ private[vector] object VectorUtil extends Logging {
         throw new VectorException(NoSuchTable, targetTable + ": target table does not exist")
       }
     }
-
     logDebug(s"$targetTable: target table exists")
     dbCxn.columnMetadata(targetTable)
   } catch {
@@ -74,6 +84,7 @@ private[vector] object VectorUtil extends Logging {
    * @param rddSchema schema of the input data
    * @param tableSchema schema of the target table
    * @return sequence of tuples of type (field name, column name) enclosed in `Field2Column` case classes
+   *
    * @throws VectorException if a target table does not exist or a map is not provided and the
    *  cardinality of the input and target table are not equal
    */
@@ -103,8 +114,8 @@ private[vector] object VectorUtil extends Logging {
         }
       })
 
-      val fieldColumnNames = rddSchema.fieldNames.foldLeft(Seq[Field2Column]())((columnNames, inputFieldName) => {
-        fieldMap.get(inputFieldName) match {
+      val fieldColumnNames = rddSchema.fieldNames.foldLeft(Seq[Field2Column]()) {
+        case (columnNames, inputFieldName) => fieldMap.get(inputFieldName) match {
           case Some(targetColumnName) =>
             if (tableSchema.fieldNames.contains(targetColumnName)) {
               columnNames :+ Field2Column(inputFieldName, targetColumnName)
@@ -115,7 +126,7 @@ private[vector] object VectorUtil extends Logging {
             }
           case None => columnNames
         }
-      })
+      }
 
       if (fieldColumnNames.length == 0) {
         throw VectorException(

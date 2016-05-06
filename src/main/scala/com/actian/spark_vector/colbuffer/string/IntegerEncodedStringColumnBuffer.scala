@@ -23,8 +23,8 @@ import org.apache.spark.unsafe.types.UTF8String
 
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends
-  ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
+private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams)
+    extends ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
   override def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
     buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
   } else {
@@ -61,7 +61,7 @@ private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferB
   }
 
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildPartial andThenPartial {
-   (ofDataType(VectorDataType.CharType) andThen { new ConstantLengthSingleByteStringColumnBuffer(_) }) orElse
-   (ofDataType(VectorDataType.NcharType) andThen { new ConstantLengthSingleCharStringColumnBuffer(_) })
+    (ofDataType(VectorDataType.CharType) andThen { new ConstantLengthSingleByteStringColumnBuffer(_) }) orElse
+      (ofDataType(VectorDataType.NcharType) andThen { new ConstantLengthSingleCharStringColumnBuffer(_) })
   }
 }

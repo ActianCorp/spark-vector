@@ -25,11 +25,12 @@ import java.nio.ByteBuffer
 import java.sql.Timestamp
 import java.util.Calendar
 
-private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams, converter: TimeConversion.TimeConverter,
+private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams,
+  converter: TimeConversion.TimeConverter,
   adjustToUTC: Boolean = false)
 
-private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams,  valueWidth: Int) extends
-  ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
+private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams, valueWidth: Int)
+    extends ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
   private val ts = new Timestamp(System.currentTimeMillis())
 
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {

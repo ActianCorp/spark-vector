@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector.datastream
 
-import java.io.{ IOException, ObjectOutputStream }
+import java.io.ObjectOutputStream
 
 import scala.language.existentials
 
@@ -32,9 +32,8 @@ case class DataStreamPartition(index: Int, @transient rdd: RDD[_], parentIndices
   /** An array of parent partitions to be mapped (through a `NarrowDependency` to this `DataStreamPartition`) */
   var parents = parentIndices.map(rdd.partitions(_))
 
-  @throws(classOf[IOException])
   private def writeObject(oos: ObjectOutputStream) {
-    // Update the reference to parent split at the time of task serialization
+    /** Update the reference to parent split at the time of task serialization */
     parents = parentIndices.map(rdd.partitions(_))
     oos.defaultWriteObject()
   }

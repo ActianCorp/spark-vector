@@ -27,11 +27,12 @@ import com.actian.spark_vector.vector.ErrorCodes
 
 /**
  * A client to prepare loading and issue the load `SQL` query to Vector
+ *
  * @param vectorProps connection information
  * @param table to which table this client will load data
  *
  * @note This client opens a JDBC connection when instantiated. To prevent leaks,
- *  the [[close]] method must be called
+ * the [[close]] method must be called
  */
 case class DataStreamClient(vectorProps: VectorConnectionProperties, table: String) extends Serializable with Logging {
   private val jdbc = {

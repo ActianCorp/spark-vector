@@ -27,15 +27,14 @@ import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
-
 /**
-* Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
-*
-* @param tableMetadataSchema schema information for the `Vector` table/relation being loaded
-* @param vectorSize the max value count of the `Vector` tuple vectors
-*/
+ * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
+ *
+ * @param tableMetadataSchema schema information for the `Vector` table/relation being loaded
+ * @param vectorSize the max value count of the `Vector` tuple vectors
+ */
 class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink)
-  extends Logging with Serializable with Profiling {
+    extends Logging with Serializable with Profiling {
   import RowWriter._
 
   implicit val accs = profileInit("total write", "next row", "column buffering", "writing to datastream")
@@ -44,35 +43,37 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * A seq of write column buffers, one for each column of the loaded table, that will be used to serialize the
    * input `RDD` rows for the appropriate table columns
    */
-  private val columnBufs = tableMetadataSchema.map { case col =>
-    logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}," +
-      s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable}")
-    ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
-      col.nullable))
+  private val columnBufs = tableMetadataSchema.map {
+    case col =>
+      logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}," +
+        s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable}")
+      ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
+        col.nullable))
   }
 
   /**
    * A seq of functions (one per column buffer) to write values (Any for now) in the corresponding column buffer, and performing the necessary type casts.
    *
-   * @note since write column buffers are exposed only through the `WriteColumnBuffer[_]` interface and we need to cast the value(Any) to the expected type,
+   * @note Since write column buffers are exposed only through the `WriteColumnBuffer[_]` interface and we need to cast the value(Any) to the expected type,
    * we make use of runtime reflection to determine the type of the generic parameter of the `WriteColumnBuffer[_]`
    */
-  private val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map { case cb =>
-    val ret: (Any, WriteColumnBuffer[_]) => Unit = cb.valueType match {
-      case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
-      case y if y == classTag[Short] => writeValToColumnBuffer[Short]
-      case y if y == classTag[Int] => writeValToColumnBuffer[Int]
-      case y if y == classTag[Long] => writeValToColumnBuffer[Long]
-      case y if y == classTag[Double] => writeValToColumnBuffer[Double]
-      case y if y == classTag[Float] => writeValToColumnBuffer[Float]
-      case y if y == classTag[BigDecimal] => writeValToColumnBuffer[BigDecimal]
-      case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
-      case y if y == classTag[Date] => writeValToColumnBuffer[Date]
-      case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
-      case y if y == classTag[String] => writeValToColumnBuffer[String]
-      case y => throw new Exception(s"Unexpected buffer column type '${y}'")
-    }
-    ret
+  private val writeValFcns: Seq[(Any, WriteColumnBuffer[_]) => Unit] = columnBufs.map {
+    case cb =>
+      val ret: (Any, WriteColumnBuffer[_]) => Unit = cb.valueType match {
+        case y if y == classTag[Byte] => writeValToColumnBuffer[Byte]
+        case y if y == classTag[Short] => writeValToColumnBuffer[Short]
+        case y if y == classTag[Int] => writeValToColumnBuffer[Int]
+        case y if y == classTag[Long] => writeValToColumnBuffer[Long]
+        case y if y == classTag[Double] => writeValToColumnBuffer[Double]
+        case y if y == classTag[Float] => writeValToColumnBuffer[Float]
+        case y if y == classTag[BigDecimal] => writeValToColumnBuffer[BigDecimal]
+        case y if y == classTag[Boolean] => writeValToColumnBuffer[Boolean]
+        case y if y == classTag[Date] => writeValToColumnBuffer[Date]
+        case y if y == classTag[Timestamp] => writeValToColumnBuffer[Timestamp]
+        case y if y == classTag[String] => writeValToColumnBuffer[String]
+        case y => throw new Exception(s"Unexpected buffer column type '${y}'")
+      }
+      ret
   }
 
   private def writeValToColumnBuffer[T](value: Any, cb: WriteColumnBuffer[_]) = cb.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
@@ -96,9 +97,10 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
-  private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) { case (pos, idx) =>
-    val cb = columnBufs(idx)
-    pos + padding(pos, cb.alignSize) + cb.position
+  private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
+    case (pos, idx) =>
+      val cb = columnBufs(idx)
+      pos + padding(pos, cb.alignSize) + cb.position
   }
 
   /**

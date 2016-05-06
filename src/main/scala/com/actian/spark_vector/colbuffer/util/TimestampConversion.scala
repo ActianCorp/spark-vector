@@ -23,7 +23,7 @@ object TimestampConversion {
   private final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
   private final val NanosecondsFactorBI = BigInteger.valueOf(PowersOfTen(NanosecondsScale).toLong)
 
-  final def scaleTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger  = {
+  final def scaleTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(SecondsBeforeEpochBI)
     val nanosTotal = secondsTotal.multiply(NanosecondsFactorBI).add(BigInteger.valueOf(subsecNanos))
     val adjustment = scale - NanosecondsScale
@@ -53,7 +53,7 @@ object TimestampConversion {
 
   /**
    * This trait should be used when implementing a type of timestamp conversion,
-   * for example a timestamp-zone converter using the upper helper functions.
+   * for example a timezone converter using the upper helper functions.
    */
   trait TimestampConverter {
     def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger

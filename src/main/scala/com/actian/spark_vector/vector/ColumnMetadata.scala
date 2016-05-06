@@ -33,9 +33,7 @@ case class ColumnMetadata(val name: String,
    */
   val structField: StructField = StructField(name, dataType, nullable)
 
-  /**
-   * Convert from column type name to data type and retain also its maximum allocation size
-   */
+  /** Convert from column type name to data type and retain also its maximum allocation size */
   private[this] def dataTypeInfo =  VectorDataType(typeName) match {
     case VectorDataType.ByteType => (ByteType, ByteSize)
     case VectorDataType.ShortType => (ShortType, ShortSize)
@@ -48,7 +46,7 @@ case class ColumnMetadata(val name: String,
     case VectorDataType.DateType => (DateType, IntSize)
     case VectorDataType.CharType | VectorDataType.NcharType => (StringType, IntSize)
     case VectorDataType.VarcharType | VectorDataType.NvarcharType |
-         VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
+          VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
     case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
     case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType   => (TimestampType, LongLongSize)
     case VectorDataType.NotSupported =>
