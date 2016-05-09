@@ -18,8 +18,11 @@ package com.actian.spark_vector.datastream
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 import java.nio.ByteBuffer
+
 import org.apache.spark.Logging
+
 import scala.reflect.ClassTag
+
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.ColumnMetadata
@@ -60,19 +63,18 @@ private object DataStreamConnectionHeader {
         Array.fill[(Boolean, String, String)](numCols) {
           (header.getInt() == 1, readString(header), readString(header))
         })
-      var marker = false
-      headerColInfo.map {
-        case (name, (constant, _, _)) =>
+      headerColInfo.foldLeft((Seq[ColumnMetadata](), false)) {
+        case ((seq, isMarker), (name, (constant, _, _))) =>
           /** TODO: infer/parse column type info, obtain scale and precision info too */
           /** WARN: column name needs escaping in Vector */
-          if (marker) { // if true, previously it was a null marker
-            marker = false // and now is the actual column name
-            ColumnMetadata(name, "", true, 0, 0, constant) // make it a null col
+          if (isMarker) { // if true, previously it was a null marker and now is the actual column name
+            (seq :+ ColumnMetadata(name, "", true, 0, 0, constant), false) // make it a null col
+          } else if (name.isEmpty) {
+            (seq, true) // mark it as a marker, w/o adding column metadata
           } else {
-            marker = name.isEmpty
-            if (marker) null else ColumnMetadata(name, "", false, 0, 0, constant)
+            (seq :+ ColumnMetadata(name, "", false, 0, 0, constant), false) // make it a non-null col
           }
-      }.filter(_ != null).toSeq // clean-up null marker columns' metadata
+      }._1
     }
 
     new DataStreamConnectionHeader(statusCode, numCols, vectorSize, colInfo)
