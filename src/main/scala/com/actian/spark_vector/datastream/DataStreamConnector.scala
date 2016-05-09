@@ -31,7 +31,7 @@ import com.actian.spark_vector.colbuffer.IntSize
  *
  * @note We keep just a part of this info, the rest of it such as column names and their logical/physical types
  * is not stored in this container since we get it earlier from a JDBC query.
- * @note From `colInfo` only use the `name`, `nullable`, and `constant` fields.
+ * @note From `colInfo` only use the `nullable` and `constant` fields.
  */
 private[datastream] case class DataStreamConnectionHeader(statusCode: Int,
     numCols: Int,
@@ -60,11 +60,19 @@ private object DataStreamConnectionHeader {
         Array.fill[(Boolean, String, String)](numCols) {
           (header.getInt() == 1, readString(header), readString(header))
         })
+      var marker = false
       headerColInfo.map {
         case (name, (constant, _, _)) =>
-          /** FIXME: infer/parse type info, obtain scale and precision info too */
-          ColumnMetadata(name, "", name.isEmpty, 0, 0, constant)
-      }.toSeq
+          /** TODO: infer/parse column type info, obtain scale and precision info too */
+          /** WARN: column name needs escaping in Vector */
+          if (marker) { // if true, previously it was a null marker
+            marker = false // and now is the actual column name
+            ColumnMetadata(name, "", true, 0, 0, constant) // make it a null col
+          } else {
+            marker = name.isEmpty
+            if (marker) null else ColumnMetadata(name, "", false, 0, 0, constant)
+          }
+      }.filter(_ != null).toSeq // clean-up null marker columns' metadata
     }
 
     new DataStreamConnectionHeader(statusCode, numCols, vectorSize, colInfo)
