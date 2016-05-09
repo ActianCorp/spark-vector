@@ -64,15 +64,13 @@ private object DataStreamConnectionHeader {
           (header.getInt() == 1, readString(header), readString(header))
         })
       headerColInfo.foldLeft((Seq[ColumnMetadata](), false)) {
-        case ((seq, isMarker), (name, (constant, _, _))) =>
+        case ((seq, prevWasMarker), (name, (constant, _, _))) =>
           /** TODO: infer/parse column type info, obtain scale and precision info too */
           /** WARN: column name needs escaping in Vector */
-          if (isMarker) { // if true, previously it was a null marker and now is the actual column name
-            (seq :+ ColumnMetadata(name, "", true, 0, 0, constant), false) // make it a null col
-          } else if (name.isEmpty) {
+          if (name.isEmpty) {
             (seq, true) // mark it as a marker, w/o adding column metadata
           } else {
-            (seq :+ ColumnMetadata(name, "", false, 0, 0, constant), false) // make it a non-null col
+            (seq :+ ColumnMetadata(name, "", prevWasMarker, 0, 0, constant), false)
           }
       }._1
     }
