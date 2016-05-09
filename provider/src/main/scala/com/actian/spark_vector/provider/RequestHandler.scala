@@ -24,7 +24,7 @@ import com.actian.spark_vector.reader.DataStreamReader
 
 case class RequestResult(jobId: String, result: String)
 
-class RequestHandler(sqlContext: SQLContext) extends Logging {
+class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
   import Job._
 
   private val id = new AtomicLong(0L)
@@ -33,7 +33,7 @@ class RequestHandler(sqlContext: SQLContext) extends Logging {
     val json = DataStreamReader.readWithByteBuffer { DataStreamReader.readString _ }
     logDebug(s"Got new json request: ${json}")
     val job: Job = Json.fromJson[Job](Json.parse(json)).fold(errors => {
-      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toJson(errors)}")
+      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
     }, job => job)
 
     for {

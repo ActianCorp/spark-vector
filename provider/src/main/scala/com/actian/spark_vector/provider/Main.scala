@@ -41,13 +41,15 @@ object Main extends App with Logging {
   private val sc = new SparkContext(conf)
   private val sqlContext = new HiveContext(sc)
 
-  private lazy val handler = new RequestHandler(sqlContext)
-
-  logInfo("Spark-Vector provider initialized and starting listening for requests...")
+  private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
 
   for {
-    server <- managed(ServerSocketChannel.open.bind(new InetSocketAddress(8512)))
+    server <- managed(ServerSocketChannel.open.bind(null))
   } {
+    logInfo(s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}")
+    println(server.socket.getLocalPort)
+    println(handler.auth.username)
+    println(handler.auth.password)
     while (true)
       handler.handle(server.accept)
   }

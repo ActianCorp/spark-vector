@@ -31,7 +31,7 @@ lazy val loaderDeps = Seq(
 )
 
 lazy val providerDeps = Seq(
-    "com.typesafe.play" %% "play-json" % "2.4.6"
+    "com.typesafe.play" %% "play-json" % "2.3.10"
 )
 
 lazy val root = (project in file("."))
