@@ -56,8 +56,8 @@ private object DataStreamConnectionHeader {
     val colInfo = {
       header.position(ColInfoIndex)
       val headerColInfo = (
-        Array.tabulate[String](numCols) { _ => readString(header) } zip
-        Array.tabulate[(Boolean, String, String)](numCols) { _ =>
+        Array.fill[String](numCols) { readString(header) } zip
+        Array.fill[(Boolean, String, String)](numCols) {
           (header.getInt() == 1, readString(header), readString(header))
         })
       headerColInfo.map {
