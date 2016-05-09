@@ -18,11 +18,8 @@ package com.actian.spark_vector.datastream
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 import java.nio.ByteBuffer
-
 import org.apache.spark.Logging
-
 import scala.reflect.ClassTag
-
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.ColumnMetadata
@@ -34,18 +31,13 @@ import com.actian.spark_vector.colbuffer.IntSize
  *
  * @note We keep just a part of this info, the rest of it such as column names and their logical/physical types
  * is not stored in this container since we get it earlier from a JDBC query.
+ * @note From `colInfo` only use the `name`, `nullable`, and `constant` fields.
  */
 private[datastream] case class DataStreamConnectionHeader(statusCode: Int,
     numCols: Int,
     vectorSize: Int,
-    private val colInfo: Array[(Boolean, Boolean)]) { // For now only isNullable and isConst
-  def isNullableCol(i: Int): Boolean = colInfo(i)._1
-  def isConstCol(i: Int): Boolean = colInfo(i)._2
-
-  def validateColumnDataTypes(tableMetadataSchema: Seq[ColumnMetadata]): DataStreamConnectionHeader = {
-    /** TODO: Ugly parsing for sanity check, throwing some exceptions in case of inconsistencies */
-    this
-  }
+    colInfo: Seq[ColumnMetadata]) { // For now holding col info only for name, nullability and constants
+  /** TODO: Sanity check for column data types, throwing some exceptions in case of inconsistencies */
   require(statusCode >= 0, "Invalid status code (possible errors during connection).")
 }
 
@@ -58,34 +50,21 @@ private object DataStreamConnectionHeader {
   private final val ColInfoIndex = 12
 
   def apply(header: ByteBuffer): DataStreamConnectionHeader = {
-    def parseCols[T: ClassTag](numCols: Int)(code: (Int, Array[T]) => Unit): Array[T] = {
-      val array = Array.ofDim[T](numCols)
-      var i = 0
-      while (i < numCols) {
-        code(i, array)
-        i += 1
-      }
-      array
-    }
-
     val statusCode = header.getInt(StatusCodeIndex)
-
     val numCols = header.getInt(NumColsIndex)
-
     val vectorSize = header.getInt(VectorSizeIndex)
-
     val colInfo = {
       header.position(ColInfoIndex)
-      val colInfoPair = (
-        parseCols(numCols) { (i, nullCol: Array[Boolean]) =>
-          nullCol(i) = readString(header).isEmpty
-        },
-        parseCols(numCols) { (i, constCol: Array[Boolean]) =>
-          constCol(i) = header.getInt() == 1
-          readString(header)
-          readString(header)
+      val headerColInfo = (
+        Array.tabulate[String](numCols) { _ => readString(header) } zip
+        Array.tabulate[(Boolean, String, String)](numCols) { _ =>
+          (header.getInt() == 1, readString(header), readString(header))
         })
-      colInfoPair._1 zip colInfoPair._2
+      headerColInfo.map {
+        case (name, (constant, _, _)) =>
+          /** FIXME: infer/parse type info, obtain scale and precision info too */
+          ColumnMetadata(name, "", name.isEmpty, 0, 0, constant)
+      }.toSeq
     }
 
     new DataStreamConnectionHeader(statusCode, numCols, vectorSize, colInfo)

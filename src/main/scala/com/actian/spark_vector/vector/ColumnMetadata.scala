@@ -23,18 +23,19 @@ import org.apache.spark.sql.types._
  * Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
  */
 case class ColumnMetadata(val name: String,
-  val typeName: String,
-  val nullable: Boolean,
-  val precision: Int,
-  val scale: Int) extends Serializable {
+    val typeName: String,
+    val nullable: Boolean,
+    val precision: Int,
+    val scale: Int,
+    val constant: Boolean = false) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
    * @return a new `StructField` instance
    */
-  val structField: StructField = StructField(name, dataType, nullable)
+  lazy val structField: StructField = StructField(name, dataType, nullable)
 
   /** Convert from column type name to data type and retain also its maximum allocation size */
-  private[this] def dataTypeInfo =  VectorDataType(typeName) match {
+  private[this] def dataTypeInfo = VectorDataType(typeName) match {
     case VectorDataType.ByteType => (ByteType, ByteSize)
     case VectorDataType.ShortType => (ShortType, ShortSize)
     case VectorDataType.IntegerType => (IntegerType, IntSize)
@@ -46,9 +47,9 @@ case class ColumnMetadata(val name: String,
     case VectorDataType.DateType => (DateType, IntSize)
     case VectorDataType.CharType | VectorDataType.NcharType => (StringType, IntSize)
     case VectorDataType.VarcharType | VectorDataType.NvarcharType |
-          VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
+      VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
     case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
-    case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType   => (TimestampType, LongLongSize)
+    case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType => (TimestampType, LongLongSize)
     case VectorDataType.NotSupported =>
       throw new VectorException(ErrorCodes.InvalidDataType, s"Unsupported vector type '${typeName}' for column '${name}'.")
   }
@@ -57,5 +58,5 @@ case class ColumnMetadata(val name: String,
   def maxDataSize: Int = dataTypeInfo._2
 
   override def toString: String =
-    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}"
+    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}, constant: ${constant}"
 }

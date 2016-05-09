@@ -44,7 +44,7 @@ class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadat
    * to its corresponding partition (`taskContext.partitionId`) and return a row iterator (leaving the connection opened).
    */
   def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId) { implicit socket =>
-    val headerInfo = connector.readExternalInsertConnectionHeader().validateColumnDataTypes(tableMetadataSchema)
+    val headerInfo = connector.readExternalInsertConnectionHeader()
     RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
   }
 }

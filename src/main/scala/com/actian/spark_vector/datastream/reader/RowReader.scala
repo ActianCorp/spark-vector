@@ -49,9 +49,9 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   private val columnBufs = tableMetadataSchema.zipWithIndex.map {
     case (col, i) =>
       logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
-        s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.isNullableCol(i)}, constant = ${headerInfo.isConstCol(i)}")
+        s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.colInfo(i).nullable}, constant = ${headerInfo.colInfo(i).constant}")
       ColumnBuffer.newReadBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale,
-        (if (headerInfo.isConstCol(i)) 1 else headerInfo.vectorSize), headerInfo.isNullableCol(i)))
+        (if (headerInfo.colInfo(i).constant) 1 else headerInfo.vectorSize), headerInfo.colInfo(i).nullable))
   }
 
   private val reuseBufferSize = bytesToBeRead(DataStreamConnector.DataHeaderSize)
