@@ -51,11 +51,16 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    val selectColumns = if (requiredColumns.isEmpty) Left("*") else Right((true, requiredColumns))
+    val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
+      ("*", tableMetadataSchema)
+    } else {
+      val cols = requiredColumns.map(_.toLowerCase())
+      (requiredColumns.mkString(","), tableMetadataSchema.filter(col => cols.contains(col.name.toLowerCase())))
+    }
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
     logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
-    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, tableMetadataSchema,
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadataSchema,
       selectColumns, whereClause, whereParams)
   }
 }

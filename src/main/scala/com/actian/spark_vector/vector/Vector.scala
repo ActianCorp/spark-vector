@@ -102,10 +102,7 @@ private[vector] object Vector extends Logging {
    * @param vectorPros connection properties to the Vector instance
    * @param targetTable name of the table to unload
    * @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
-   * @param selectColumns either all columns (`*`) or a pair composed of a flag (first member)
-   *   to know whether to filter the `tableMetadataSchema` based on the subset of columns to select
-   *   (second member); the flag's purpose is to be used for testing, unless calling this method
-   *   explicitly the latter will be always set to `true`
+   * @param selectColumns string of select columns separated by comma
    * @param whereClause prepared string of a where clause
    * @param whereParams sequence of values for the prepared where clause
    *
@@ -115,24 +112,17 @@ private[vector] object Vector extends Logging {
     vectorProps: VectorConnectionProperties,
     targetTable: String,
     tableMetadataSchema: Seq[ColumnMetadata],
-    selectColumns: Either[String, (Boolean, Array[String])] = Left("*"),
+    selectColumns: String = "*",
     whereClause: String = "",
     whereParams: Seq[Any] = Nil): RDD[Row] = {
     val client = new DataStreamClient(vectorProps, targetTable)
     closeResourceOnFailure(client) {
       client.prepareUnloadDataStreams
       val readConf = client.getVectorEndpointConf
-      val (selectColumnsStr, selectTableMetadataSchema) = selectColumns match {
-        case Left("*") => ("*", tableMetadataSchema)
-        case Right((true, cols)) => (cols.mkString(","), tableMetadataSchema.filter(col =>
-          cols.map(_.toLowerCase()).contains(col.name.toLowerCase())))
-        case Right((false, cols)) => (cols.mkString(","), tableMetadataSchema)
-        case _ => throw new Exception("Invalid columns list in select statement.")
-      }
-      val reader = new DataStreamReader(readConf, targetTable, selectTableMetadataSchema)
+      val reader = new DataStreamReader(readConf, targetTable, tableMetadataSchema)
       val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
       assert(whereClause.isEmpty == whereParams.isEmpty)
-      var selectQuery = s"select ${selectColumnsStr} from ${targetTable} ${whereClause}"
+      var selectQuery = s"select ${selectColumns} from ${targetTable} ${whereClause}"
       whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
       client.startUnload(selectQuery)
       sparkContext.addSparkListener(new SparkListener() {
