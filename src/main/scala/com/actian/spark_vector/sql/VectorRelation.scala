@@ -54,7 +54,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
     val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
       ("*", tableMetadataSchema)
     } else {
-      val cols = requiredColumns.map(_.toLowerCase())
+      val cols = requiredColumns.map(_.toLowerCase()).toSet
       (requiredColumns.mkString(","), tableMetadataSchema.filter(col => cols.contains(col.name.toLowerCase())))
     }
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
