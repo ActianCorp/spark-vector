@@ -69,11 +69,12 @@ trait VectorOps {
      * @param targetTable name of the table to unload
      * @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
      * @param selectColumns either all columns (`*`) or a pair composed of a flag (first member)
-     *   to know whether to filter the `tableMetadataSchema` or not based on the (second member)
-     *   the subset of columns to select
+     *   to know whether to filter the `tableMetadataSchema` based on the subset of columns to select
+     *   (second member); the flag's purpose is to be used for testing, unless calling this method
+     *   explicitly the latter will be always set to `true`
      * @param whereClause prepared string of a where clause
      * @param whereParams sequence of values for the prepared where clause
-     * 
+     *
      * @return an <code>RDD[Row]</code> for the unload operation
      */
     def unloadVector(vectorProps: VectorConnectionProperties,
