@@ -17,18 +17,17 @@ package com.actian.spark_vector.vector
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-
 import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.Row
 import org.apache.spark.SparkContext
-
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.datastream.DataStreamClient
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
+import org.apache.spark.ContextCleaner
 
 /** Utility object that defines methods for loading data into Vector */
 private[vector] object Vector extends Logging {
@@ -126,10 +125,12 @@ private[vector] object Vector extends Logging {
       whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
       client.startUnload(selectQuery)
       sparkContext.addSparkListener(new SparkListener() {
-        override def onJobEnd(job: SparkListenerJobEnd) {
+        private var ended = false
+        override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
           client.commit
           client.close
           logDebug(s"Data stream client connection closed. Unload ended @ ${job.time}.")
+          ended = true
         }
       })
       scanRDD
