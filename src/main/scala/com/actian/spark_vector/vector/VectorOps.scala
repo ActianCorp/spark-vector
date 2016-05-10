@@ -38,9 +38,10 @@ trait VectorOps {
      * @param targetTable name of the table to load
      * @param preSQL set of SQL statements to execute before loading begins
      * @param postSQL set of SQL statements to run after loading completes successfully. This SQL is executed
-     *         only if the load works. The load is not rolled back if executing the postSQL fails.
+     *   only if the load works. The load is not rolled back if executing the postSQL fails.
      * @param fieldMap map of input field names to target columns (optional)
      * @param createTable if true, generates and executes a SQL create table statement based on the RDD schema
+     *
      * @return a <code>LoaderResult</code> instance which contains results of the load operation
      */
     def loadVector(rddSchema: StructType,
@@ -64,18 +65,21 @@ trait VectorOps {
     /**
      * Unload a target Vector table using this SparkContext.
      *
-     * @param vectorPros
-     * @param targetTable
-     * @param tableMetadataSchema
-     * @param selectColumns
-     * @param whereClause
-     * @param whereParams
+     * @param vectorPros connection properties to the Vector instance
+     * @param targetTable name of the table to unload
+     * @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
+     * @param selectColumns either all columns (`*`) or a pair composed of a flag (first member)
+     *   to know whether to filter the `tableMetadataSchema` or not based on the (second member)
+     *   the subset of columns to select
+     * @param whereClause prepared string of a where clause
+     * @param whereParams sequence of values for the prepared where clause
+     * 
      * @return an <code>RDD[Row]</code> for the unload operation
      */
     def unloadVector(vectorProps: VectorConnectionProperties,
       targetTable: String,
       tableMetadataSchema: Seq[ColumnMetadata],
-      selectColumns: String = "*",
+      selectColumns: Either[String, (Boolean, Array[String])] = Left("*"),
       whereClause: String = "",
       whereParams: Seq[Any] = Nil): RDD[Row] = {
       Vector.unloadVector(sc, vectorProps, targetTable, tableMetadataSchema,

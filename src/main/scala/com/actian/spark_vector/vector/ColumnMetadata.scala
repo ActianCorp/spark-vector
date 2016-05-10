@@ -30,6 +30,7 @@ case class ColumnMetadata(val name: String,
     val constant: Boolean = false) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
+   *
    * @return a new `StructField` instance
    */
   lazy val structField: StructField = StructField(name, dataType, nullable)

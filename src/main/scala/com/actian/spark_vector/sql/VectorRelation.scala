@@ -51,7 +51,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    val selectColumns = if (requiredColumns.isEmpty) "*" else requiredColumns.mkString(",")
+    val selectColumns = if (requiredColumns.isEmpty) Left("*") else Right((true, requiredColumns))
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
     logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
