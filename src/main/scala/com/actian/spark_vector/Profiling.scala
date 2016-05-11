@@ -31,10 +31,10 @@ case class ProfAccMap(accs: Map[String, ProfAcc], started: Stack[ProfAcc] = Stac
 
 /**
  * Trait to be used when profiling is needed. To profile a section of the code, the following steps should be followed:
- *  - Call [[profileInit]](<label_for_first_section>, <label_for_second_section>, ...) and store it into an implicit value
- *  - Use [[profile]](<section_name>) and [[profileEnd]] in a bracket opening/closing fashion, where the code between a
- *  [[profile]] call and its corresponding [[profileEnd]] will have its execution time measured and stored into its accumulator
- *  - Call [[profilePrint]] at the end to log the profiling information gathered
+ * - Call [[profileInit]](<label_for_first_section>, <label_for_second_section>, ...) and store it into an implicit value
+ * - Use [[profile]](<section_name>) and [[profileEnd]] in a bracket opening/closing fashion, where the code between a
+ * [[profile]] call and its corresponding [[profileEnd]] will have its execution time measured and stored into its accumulator
+ * - Call [[profilePrint]] at the end to log the profiling information gathered
  */
 trait Profiling {
   this: Logging =>

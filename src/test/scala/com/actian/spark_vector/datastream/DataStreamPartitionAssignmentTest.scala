@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import scala.util.Random
 
@@ -37,7 +37,7 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
 
   private def generateEndPoints(nA: Int) = for {
     i <- 0 until nA
-    endpoint = VectorEndPoint(s"host-$i", 1, "someuser", "somepassword")
+    endpoint = VectorEndpoint(s"host-$i", 1, "someuser", "somepassword")
   } yield endpoint
 
   private val lessPartitionsThanDataStreamsGen = for {

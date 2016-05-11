@@ -17,21 +17,26 @@ package com.actian.spark_vector.colbuffer.decimal
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.lang.Number
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int) extends
-  ColumnBuffer[BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
+private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int)
+    extends ColumnBuffer[BigDecimal, BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
   override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
 
-  @inline protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
+  protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
+
+  override def get(buffer: ByteBuffer): BigDecimal
 }
 
 private class DecimalByteColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ByteSize) {
-  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.put(unscaled.byteValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.put(unscaled.byteValue)
+
+  override def get(buffer: ByteBuffer): BigDecimal = BigDecimal.valueOf(buffer.get(), p.scale)
 }
 
 private object DecimalByteColumnBuffer {
@@ -39,7 +44,9 @@ private object DecimalByteColumnBuffer {
 }
 
 private class DecimalShortColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, ShortSize) {
-  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putShort(unscaled.shortValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putShort(unscaled.shortValue)
+
+  override def get(buffer: ByteBuffer): BigDecimal = BigDecimal.valueOf(buffer.getShort(), p.scale)
 }
 
 private object DecimalShortColumnBuffer {
@@ -47,7 +54,9 @@ private object DecimalShortColumnBuffer {
 }
 
 private class DecimalIntColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, IntSize) {
-  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putInt(unscaled.intValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putInt(unscaled.intValue)
+
+  override def get(buffer: ByteBuffer): BigDecimal = BigDecimal.valueOf(buffer.getInt(), p.scale)
 }
 
 private object DecimalIntColumnBuffer {
@@ -55,7 +64,9 @@ private object DecimalIntColumnBuffer {
 }
 
 private class DecimalLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongSize) {
-  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(unscaled.longValue())
+  override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = buffer.putLong(unscaled.longValue)
+
+  override def get(buffer: ByteBuffer): BigDecimal = BigDecimal.valueOf(buffer.getLong(), p.scale)
 }
 
 private object DecimalLongColumnBuffer {
@@ -64,6 +75,8 @@ private object DecimalLongColumnBuffer {
 
 private class DecimalLongLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongLongSize) {
   override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = BigIntegerConversion.putLongLongByteArray(buffer, unscaled)
+
+  override def get(buffer: ByteBuffer): BigDecimal = new BigDecimal(BigIntegerConversion.getLongLongByteArray(buffer), p.scale)
 }
 
 private object DecimalLongLongColumnBuffer {
@@ -72,11 +85,11 @@ private object DecimalLongLongColumnBuffer {
 
 /** Builds a `ColumnBuffer` object for for `decimal(<byte, short, int, long, long long>)` types. */
 private[colbuffer] object DecimalColumnBuffer extends ColumnBufferBuilder {
-  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
-    case p if p.tpe == DecimalTypeId && isInBounds(p.scale, (0, p.precision)) => p
+  private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = ofDataType(VectorDataType.DecimalType) andThenPartial {
+    case p if isInBounds(p.scale, (0, p.precision)) => p
   }
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildPartial andThenPartial {
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildPartial andThenPartial {
     /** `ColumnBuffer` object for `decimal(<byte>)` types. */
     case p if isInBounds(p.precision, DecimalByteColumnBuffer.PrecisionBounds) => new DecimalByteColumnBuffer(p)
     /** `ColumnBuffer` object for `decimal(<short>)` types. */

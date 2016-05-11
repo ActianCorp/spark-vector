@@ -15,24 +15,28 @@
  */
 package com.actian.spark_vector.colbuffer.singles
 
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
+
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 import java.sql.Date
 
-private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
-  override protected def put(source: Date, buffer: ByteBuffer): Unit = {
+private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date, Int](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
+  override def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
     buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
   }
+
+  override def get(buffer: ByteBuffer): Int = buffer.getInt() - DateColumnBuffer.DaysBeforeEpoch
 }
 
 /** Builds a `ColumnBuffer` object for `ansidate` types. */
 private[colbuffer] object DateColumnBuffer extends ColumnBufferBuilder {
   private final val DaysBeforeEpoch = 719528
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
-    case p if p.tpe == DateTypeId => new DateColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.DateType) andThen { new DateColumnBuffer(_) }
 }

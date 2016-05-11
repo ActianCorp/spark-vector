@@ -43,14 +43,21 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
     }
   }
 
-  test("tableExists for non-existant table") {
+  test("tableExists for non-existent table") {
     withJDBC(connectionProps) { cxn =>
       val exists = cxn.tableExists(doesNotExistTable)
       exists should be(false)
     }
   }
 
-  test("columnMetadata for non-existant table") {
+  test("tableExists for existent table") {
+    withJDBC(connectionProps) { cxn =>
+      val exists = cxn.tableExists(typeTable)
+      exists should be(true)
+    }
+  }
+
+  test("columnMetadata for non-existent table") {
     withJDBC(connectionProps) { cxn =>
       intercept[Exception] {
         cxn.columnMetadata(doesNotExistTable)
@@ -58,14 +65,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
     }
   }
 
-  test("tableExists for existing table") {
-    withJDBC(connectionProps) { cxn =>
-      val exists = cxn.tableExists(typeTable)
-      exists should be(true)
-    }
-  }
-
-  test("get column metadata for an existing table") {
+  test("columnMetadata for existent table") {
     withJDBC(connectionProps) { cxn =>
       cxn.columnMetadata(typeTable) should be(allTypesColumnMD)
     }
@@ -96,22 +96,21 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   test("multiple SQL statements") {
     val statements = Seq(
       s"insert into $testTable values (1)",
-      s"insert into $testTable values (2)")
+      s"insert into $testTable values (2)"
+    )
     executeStatements(connectionProps)(statements)
 
     VectorJDBC.withJDBC(connectionProps) { cxn =>
-      val rowCount = cxn.querySingleResult("select count(*) from " + testTable)
+      val rowCount = cxn.querySingleResult(s"select count(*) from $testTable")
       rowCount should be(Some(2))
     }
   }
 
-  test("Mix of statements that work and fail") {
-
+  test("mix of statements that work and fail") {
     val statements = Seq(
       s"insert into $testTable values (1)", // this works
       s"insert into $testTable values ('hello there')" // this doesn't
-      )
-
+    )
     val ex = intercept[VectorException] {
       executeStatements(connectionProps)(statements)
     }
@@ -121,7 +120,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
 
     // Ensure no data was committed since once query failed
     VectorJDBC.withJDBC(connectionProps) { cxn =>
-      val rowCount = cxn.querySingleResult("select count(*) from " + testTable)
+      val rowCount = cxn.querySingleResult(s"select count(*) from $testTable")
       rowCount should be(Some(0))
     }
   }

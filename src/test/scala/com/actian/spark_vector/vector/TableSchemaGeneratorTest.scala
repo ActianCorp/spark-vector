@@ -44,6 +44,7 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
     StructField("i", DateType, true),
     StructField("j", TimestampType, false),
     StructField("k", StringType, true))
+
   val defaultSchema = StructType(defaultFields)
 
   test("table schema") {

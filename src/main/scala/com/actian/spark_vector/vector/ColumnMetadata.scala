@@ -15,49 +15,49 @@
  */
 package com.actian.spark_vector.vector
 
+import com.actian.spark_vector.colbuffer._
+
 import org.apache.spark.sql.types._
 
 /**
  * Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
  */
-case class ColumnMetadata(val name: String, val typeName: String, val nullable: Boolean, val precision: Int, val scale: Int) extends Serializable {
-
+case class ColumnMetadata(val name: String,
+    val typeName: String,
+    val nullable: Boolean,
+    val precision: Int,
+    val scale: Int,
+    val constant: Boolean = false) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
+   *
    * @return a new `StructField` instance
    */
-  val structField: StructField = StructField(name, dataType, nullable)
+  lazy val structField: StructField = StructField(name, dataType, nullable)
 
-  // Convert from column type name to StructField data type
-  private[this] def dataType: DataType = {
-    typeName match {
-      case "boolean" => BooleanType
-      case "integer1" => ByteType
-      case "smallint" => ShortType
-      case "integer" => IntegerType
-      case "bigint" => LongType
-      case "float4" => FloatType
-      case "float" => DoubleType
-      case "decimal" => DecimalType(precision, scale)
-      case "money" => DecimalType(precision, scale)
-      case "char" => StringType
-      case "nchar" => StringType
-      case "varchar" => StringType
-      case "nvarchar" => StringType
-      case "ansidate" => DateType
-      case "time without time zone" => TimestampType
-      case "time with time zone" => TimestampType
-      case "time with local time zone" => TimestampType
-      case "timestamp without time zone" => TimestampType
-      case "timestamp with time zone" => TimestampType
-      case "timestamp with local time zone" => TimestampType
-      case "interval year to month" => StringType
-      case "interval day to year" => StringType
-      case _ => StringType
-    }
+  /** Convert from column type name to data type and retain also its maximum allocation size */
+  private[this] def dataTypeInfo = VectorDataType(typeName) match {
+    case VectorDataType.ByteType => (ByteType, ByteSize)
+    case VectorDataType.ShortType => (ShortType, ShortSize)
+    case VectorDataType.IntegerType => (IntegerType, IntSize)
+    case VectorDataType.BigIntType => (LongType, LongSize)
+    case VectorDataType.FloatType => (FloatType, FloatSize)
+    case VectorDataType.DoubleType => (DoubleType, DoubleSize)
+    case VectorDataType.BooleanType => (BooleanType, ByteSize)
+    case VectorDataType.DecimalType => (DecimalType(precision, scale), LongLongSize)
+    case VectorDataType.DateType => (DateType, IntSize)
+    case VectorDataType.CharType | VectorDataType.NcharType => (StringType, IntSize)
+    case VectorDataType.VarcharType | VectorDataType.NvarcharType |
+      VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
+    case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
+    case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType => (TimestampType, LongLongSize)
+    case VectorDataType.NotSupported =>
+      throw new VectorException(ErrorCodes.InvalidDataType, s"Unsupported vector type '${typeName}' for column '${name}'.")
   }
 
-  override def toString: String = {
-    "name: " + name + "; typeName: " + typeName + "; nullable: " + nullable + "; precision: " + precision + "; scale: " + scale
-  }
+  def dataType: DataType = dataTypeInfo._1
+  def maxDataSize: Int = dataTypeInfo._2
+
+  override def toString: String =
+    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}, constant: ${constant}"
 }

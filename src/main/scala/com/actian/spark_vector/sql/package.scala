@@ -16,6 +16,4 @@
 package com.actian.spark_vector
 
 /** Implements `SparkSQL` API, including a `BaseRelation` and a `RelationProvider` */
-package object sql {
-
-}
+package object sql {}

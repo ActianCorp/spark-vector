@@ -18,7 +18,5 @@ package com.actian.spark_vector.test.util
 import org.apache.spark.sql.types.{ DataType, StructField, StructType }
 
 object StructTypeUtil {
-
-  def createSchema(specs: (String, DataType)*): StructType =
-    StructType(specs.map { case (n, t) => StructField(n, t, true) })
+  def createSchema(specs: (String, DataType)*): StructType = StructType(specs.map { case (n, t) => StructField(n, t, true) })
 }

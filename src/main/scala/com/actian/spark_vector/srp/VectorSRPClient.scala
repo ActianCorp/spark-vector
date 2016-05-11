@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer.srp
+package com.actian.spark_vector.srp
 
 import java.nio.channels.SocketChannel
 import scala.BigInt
 import scala.annotation.tailrec
 import org.apache.spark.Logging
-import com.actian.spark_vector.writer.DataStreamWriter
-import com.actian.spark_vector.reader.DataStreamReader
+import com.actian.spark_vector.datastream.writer.DataStreamWriter
+import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorException
 
@@ -95,13 +95,12 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
       writeString(out, username)
       writeByteArray(out, A)
     }
-    val (s, b) =
-      readWithByteBuffer[(Array[Byte], Array[Byte])] { in =>
-        if (!readCode(in, sBCode)) {
-          throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
-        }
-        (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
+    val (s, b) = readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
+      if (!readCode(in, sBCode)) {
+        throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
       }
+      (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
+    }
     val B = b
     val u = super.u(A, B)
     val x = this.x(username.getBytes("ASCII"), s, password.getBytes("ASCII"))
@@ -112,7 +111,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
       writeCode(out, MCode)
       writeByteArray(out, clientM)
     }
-    val serverM = readWithByteBuffer[Array[Byte]] { in =>
+    val serverM = readWithByteBuffer[Array[Byte]]() { in =>
       if (!readCode(in, serverMCode)) {
         throw new VectorException(AuthError, "Unable to read code before verification of server M key")
       }
