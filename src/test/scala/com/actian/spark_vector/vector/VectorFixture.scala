@@ -40,7 +40,6 @@ trait VectorFixture {
 
   // Generate a create table statement from the column metadata
   def createTableStatement(tableName: String, columnMD: Seq[ColumnMetadata]) = {
-
     val colDefs = columnMD.map(columnMD => {
       Seq[String](columnMD.name, columnMD.typeName, if (!columnMD.nullable) "not null" else "").mkString(" ")
     }).mkString("(", ", ", ")")
@@ -72,13 +71,11 @@ trait VectorFixture {
     ColumnMetadata("iy2m_type", "interval year to month", true, 8, 0),
     ColumnMetadata("id2s_type", "interval day to second", true, 24, 0))
 
-  def admitRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = {
+  def admitRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) =
     createAdmitRDD(sparkContext, admitData)
-  }
 
-  def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = {
+  def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) =
     createAdmitRDD(sparkContext, admitDataWithNulls)
-  }
 
   private val admitData = Seq(
     Seq[Any](0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
@@ -97,7 +94,6 @@ trait VectorFixture {
     Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
 
   private def createAdmitRDD(sparkContext: SparkContext, data: Seq[Seq[Any]]): (RDD[Seq[Any]], StructType) = {
-
     val schema = StructType(Seq(
       StructField("student_id", IntegerType),
       StructField("admit", ShortType),
@@ -135,7 +131,5 @@ object VectorFixture extends VectorFixture {
 
   private val dateFormatter = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss_SSS")
 
-  private def generateTableName(prefix: String): String = {
-    prefix + dateFormatter.format(new Date())
-  }
+  private def generateTableName(prefix: String): String = prefix + dateFormatter.format(new Date())
 }

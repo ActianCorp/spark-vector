@@ -18,7 +18,14 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.{ Logging, SparkException }
-import org.apache.spark.sql.types.{ BooleanType, IntegerType, StringType, StructField, StructType }
+import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType }
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.unsafe.types.UTF8String
+import org.apache.spark.unsafe.types.UTF8String.{fromString => toUTF8}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.sources.Filter
+
 import org.scalacheck.Gen
 import org.scalatest.{ Inspectors, Matchers, fixture }
 import org.scalatest.prop.PropertyChecks
@@ -30,14 +37,16 @@ import com.actian.spark_vector.test.util.StructTypeUtil
 import com.actian.spark_vector.util.RDDUtil
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture.withTable
-import com.actian.spark_vector.vector.VectorOps.VectorRDDOps
+import com.actian.spark_vector.vector.VectorOps._
+import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
+import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
 /**
  * Test VectorOps
  */
 @IntegrationTest
-class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures with VectorFixture with Logging with Profiling {
-
+class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
+  with VectorFixture with Logging with Profiling {
   private val doesNotExistTable = "this_table_does_not_exist"
 
   def createAdmitTable(tableName: String): Unit = {
@@ -55,10 +64,9 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("load admission data") { sparkFixture =>
-
     withTable(createAdmitTable) { tableName =>
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      val result = rdd.loadVector(schema, tableName, connectionProps)
+      val result = rdd.loadVector(schema, connectionProps, tableName)
 
       result should be(6)
 
@@ -73,11 +81,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("load subset of admission data") { sparkFixture =>
-
     withTable(createAdmitTable) { tableName =>
       val fieldMap = Map("student_id" -> "a_student_id", "admit" -> "a_admit", "rank" -> "a_rank")
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      val result = rdd.loadVector(schema, tableName, connectionProps, fieldMap = Some(fieldMap))
+      val result = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(fieldMap))
+
       result should be(6)
 
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -91,11 +99,10 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("load admission data with preSQL") { sparkFixture =>
-
     withTable(createAdmitTable) { tableName =>
       val preSQL = Seq(s"insert into $tableName values (6, 1, 563, 3.4, 6)")
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      val result = rdd.loadVector(schema, tableName, connectionProps, preSQL = Some(preSQL))
+      val result = rdd.loadVector(schema, connectionProps, tableName, preSQL = Some(preSQL))
 
       result should be(6)
 
@@ -110,11 +117,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("load admission data with postSQL") { sparkFixture =>
-
     withTable(createAdmitTable) { tableName =>
       val postSQL = Seq(s"delete from $tableName where a_student_id > 0")
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      val result = rdd.loadVector(schema, tableName, connectionProps, postSQL = Some(postSQL))
+      val result = rdd.loadVector(schema, connectionProps, tableName, postSQL = Some(postSQL))
+
       result should be(6)
 
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -128,12 +135,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("load admission data with preSQL and postSQL") { sparkFixture =>
-
     withTable(createAdmitTable) { tableName =>
       val preSQL = Seq(s"insert into $tableName values (6, 1, 563, 3.4, 6)")
       val postSQL = Seq(s"delete from $tableName where a_student_id > 0 and a_student_id < 6")
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      val result = rdd.loadVector(schema, tableName, connectionProps, preSQL = Some(preSQL), postSQL = Some(postSQL))
+      val result = rdd.loadVector(schema, connectionProps, tableName, preSQL = Some(preSQL), postSQL = Some(postSQL))
 
       result should be(6)
 
@@ -151,7 +157,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val ex = intercept[SparkException] {
         val (rdd, schema) = admitRDDWithNulls(sparkFixture.sc)
-        rdd.loadVector(schema, tableName, connectionProps)
+        rdd.loadVector(schema, connectionProps, tableName)
       }
 
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -163,7 +169,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   test("target table does not exist") { sparkFixture =>
     val ex = intercept[VectorException] {
       val (rdd, schema) = admitRDD(sparkFixture.sc)
-      rdd.loadVector(schema, doesNotExistTable, connectionProps)
+      rdd.loadVector(schema, connectionProps, doesNotExistTable)
     }
 
     ex.errorCode should be(NoSuchTable)
@@ -173,7 +179,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val ex = intercept[VectorException] {
         val (rdd, schema) = admitRDD(sparkFixture.sc)
-        rdd.loadVector(schema, tableName, connectionProps, fieldMap = Some(Map("admit" -> "a_admit", "rank" -> "a_rank")))
+        rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("admit" -> "a_admit", "rank" -> "a_rank")))
       }
 
       ex.errorCode should be(MissingNonNullColumn)
@@ -185,7 +191,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val ex = intercept[VectorException] {
         val (rdd, schema) = admitRDD(sparkFixture.sc)
         val (rddToLoad, inputType) = RDDUtil.selectFields(rdd, schema, Seq("student_id", "admit", "gre", "gpa"))
-        rddToLoad.loadVector(inputType, tableName, connectionProps)
+        rddToLoad.loadVector(inputType, connectionProps, tableName)
       }
 
       ex.errorCode should be(InvalidNumberOfInputs)
@@ -196,7 +202,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val ex = intercept[VectorException] {
         val (rdd, schema) = wideRDD(sparkFixture.sc, 20)
-        rdd.loadVector(schema, tableName, connectionProps)
+        rdd.loadVector(schema, connectionProps, tableName)
       }
 
       ex.errorCode should be(InvalidNumberOfInputs)
@@ -207,7 +213,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val ex = intercept[VectorException] {
         val (rdd, schema) = admitRDD(sparkFixture.sc)
-        rdd.loadVector(schema, tableName, connectionProps, fieldMap = Some(Map("admit" -> "not-a-column")))
+        rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("admit" -> "not-a-column")))
       }
 
       ex.errorCode should be(NoSuchColumn)
@@ -218,7 +224,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val ex = intercept[VectorException] {
         val (rdd, schema) = admitRDD(sparkFixture.sc)
-        rdd.loadVector(schema, tableName, connectionProps, fieldMap = Some(Map("foo" -> "bar")))
+        rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("foo" -> "bar")))
       }
 
       ex.errorCode should be(NoSuchSourceField)
@@ -230,7 +236,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     val rdd = fixture.sc.parallelize(data)
     val tableName: String = "gentable"
     try {
-      rdd.loadVector(schema, tableName, connectionProps, createTable = true)
+      rdd.loadVector(schema, connectionProps, tableName, createTable = true)
       VectorJDBC.withJDBC(connectionProps)(cxn => {
         val result = cxn.query(s"select * from $tableName")
         result(0)(0) should be(value)
@@ -247,11 +253,54 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("generate table/gen", RandomizedTest) { fixture =>
-    {
-      forAll(DataGens.dataGen, minSuccessful(3))(typedData => {
-        val (dataType, data) = (typedData.dataType, typedData.data)
-        assertTableGeneration(fixture, dataType, data, Map.empty)
-      })
+    forAll(DataGens.dataGen, minSuccessful(3))(typedData => {
+      val (dataType, data) = (typedData.dataType, typedData.data)
+      assertTableGeneration(fixture, dataType, data, Map.empty)
+    })
+  }
+
+  test("generate table/constant column") { fixture =>
+    // FIXME: this is a hackish test to verify unload with a ct column (although this case is not often
+    // for simple/basic queries, but more complex ones in ExternalScans) using two different user
+    // defined schemas, one for load and the other for unload; the latter has c1 defnied for the ct col
+    val schema = StructTypeUtil.createSchema("i0" -> IntegerType)
+    val data = Seq(Seq[Any](42), Seq[Any](43))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val schemaWithCtColumn = StructTypeUtil.createSchema("i0" -> IntegerType, "si0" -> ShortType)
+      val dataWithCtColumn = Seq(Seq[Any](42, 1), Seq[Any](43, 1)) // Should get back c0:42,43 (inserted) and c1:1,1 (constant expr)
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      // Create the buildScan with other schema and column metadata
+      val vectorRel = new VectorRelation(tableRef, Some(schemaWithCtColumn), sqlContext, Map.empty) {
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
+          sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("i0", "integer4", false, 10, 0),
+            ColumnMetadata("si0", "integer2", false, 5, 0)), "i0, 1")
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      resultsSpark.sortBy(_.mkString) shouldBe dataWithCtColumn
+    }
+  }
+
+   test("generate table/filtered select on a subset of columns") { fixture =>
+    val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
+    val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val expectedData = Seq(Seq[Any](44, 46))
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+       val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
+          sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("i0", "integer4", false, 10, 0),
+            ColumnMetadata("i2", "integer4", false, 10, 0)), "i0, i2", "where i0 > ? and i1 > ?", Seq(43, 44))
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      resultsSpark shouldBe expectedData
     }
   }
 
@@ -261,40 +310,47 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     assertTableGeneration(fixture, schema, data, Map("i" -> "i", "b" -> "b"))
   }
 
-  private def assertTableGeneration(fixture: FixtureParam, dataType: StructType, data: Seq[Seq[Any]], fieldMapping: Map[String, String]): Unit = {
-    val expectedData = data.map(_.toSeq)
-    val mappedIndices = if (fieldMapping.isEmpty)
-      (0 until dataType.fields.size).toSet
-    else
-      dataType.fieldNames.zipWithIndex.filter(fi => fieldMapping.contains(fi._1)).map(_._2).toSet
-
-    val rdd = fixture.sc.parallelize(data)
-    withTable(func => Unit) { tableName =>
-      rdd.loadVector(dataType, tableName, connectionProps, fieldMap = Some(fieldMapping), createTable = true)
-      VectorJDBC.withJDBC(connectionProps)(cxn => {
-        val result = cxn.query(s"select * from $tableName")
-        result.size should be(expectedData.size)
-        Inspectors.forAll(result.sortBy(_.toString).zip(expectedData.sortBy(_.toString))) {
-          case (actRow, expRow) =>
-            actRow.size should be(expRow.size)
-            Inspectors.forAll(actRow.zip(expRow).zipWithIndex.filter(i => mappedIndices.contains(i._2)).map(_._1)) {
-              case (act: Date, exp: Date) => ()
-              case (act: Timestamp, exp: Timestamp) => ()
-              case (act, exp) => act should be(exp)
-            }
+  private def compareResults(result: Seq[Seq[Any]], expectedData: Seq[Seq[Any]], mappedIndices: Set[Int]) = {
+    result.size should be(expectedData.size)
+    Inspectors.forAll(result.sortBy(_.mkString).zip(expectedData.sortBy(_.mkString))) {
+      case (actRow, expRow) =>
+        actRow.size should be(expRow.size)
+        Inspectors.forAll(actRow.zip(expRow).zipWithIndex.filter(i => mappedIndices.contains(i._2)).map(_._1)) {
+          case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay should be(0)
+          case (act, exp) => act should be(exp)
         }
-      })
+     }
+  }
+
+  private def assertTableGeneration(fixture: FixtureParam, dataType: StructType, expectedData: Seq[Seq[Any]],
+    fieldMapping: Map[String, String]): Unit = {
+    val mappedIndices = if (fieldMapping.isEmpty) {
+      (0 until dataType.fields.size).toSet
+    } else {
+      dataType.fieldNames.zipWithIndex.filter(i => fieldMapping.contains(i._1)).map(_._2).toSet
+    }
+
+    val rdd = fixture.sc.parallelize(expectedData)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(dataType, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
+
+      var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName"))
+      compareResults(resultsJDBC, expectedData, mappedIndices)
+
+      val sqlContext = new SQLContext(fixture.sc)
+      val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty)
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      compareResults(resultsSpark, expectedData, mappedIndices)
     }
   }
 
   test("generate table/table already exists") { fixture =>
-    {
-      withTable(createAdmitTable) { tableName =>
-        val schema = StructType(Seq(StructField("i", IntegerType)))
-        val rdd = fixture.sc.parallelize(Seq.empty[Seq[Any]])
-        a[VectorException] should be thrownBy {
-          rdd.loadVector(schema, tableName, connectionProps, createTable = true)
-        }
+    withTable(createAdmitTable) { tableName =>
+      val schema = StructType(Seq(StructField("i", IntegerType)))
+      val rdd = fixture.sc.parallelize(Seq.empty[Seq[Any]])
+      a[VectorException] should be thrownBy {
+        rdd.loadVector(schema, connectionProps, tableName, createTable = true)
       }
     }
   }
@@ -318,7 +374,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         val lastTiming = accs.accs("load").acc
         profile("load")
         try {
-          rdd.loadVector(schema, tableName, connectionProps)
+          rdd.loadVector(schema, connectionProps, tableName)
         } catch {
           case e: Exception =>
         }

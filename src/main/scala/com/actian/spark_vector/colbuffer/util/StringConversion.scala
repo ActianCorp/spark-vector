@@ -32,8 +32,8 @@ object StringConversion {
       bytes
     } else {
       /**
-       *  Find from the end of the array the first byte which is a single
-       *  byte character or the start of a multi-byte character
+       * Find from the end of the array the first byte which is a single
+       * byte character or the start of a multi-byte character
        */
       var i = targetSize
       var ret = EmptyString
@@ -54,7 +54,7 @@ object StringConversion {
   }
 
   def truncateToUTF16CodeUnits(value: String, targetSize: Int): Array[Byte] = if (value.length() <= targetSize) {
-    value.getBytes(UTF8Charset);
+    value.getBytes(UTF8Charset)
   } else if (Character.isHighSurrogate(value.charAt(targetSize - 1))) {
     value.substring(0, targetSize - 1).getBytes(UTF8Charset);
   } else {

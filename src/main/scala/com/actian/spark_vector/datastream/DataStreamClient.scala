@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import java.sql.SQLException
+import java.sql.ResultSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import org.apache.spark.Logging
@@ -31,18 +32,22 @@ import com.actian.spark_vector.vector.ErrorCodes
  * @param table to which table this client will load data
  *
  * @note This client opens a JDBC connection when instantiated. To prevent leaks,
- *  the [[close]] method must be called
+ * the [[close]] method must be called
  */
-case class DataStreamClient(vectorProps: VectorConnectionProperties,
-    table: String) extends Serializable with Logging {
+case class DataStreamClient(vectorProps: VectorConnectionProperties, table: String) extends Serializable with Logging {
   private val jdbc = {
     val ret = new VectorJDBC(vectorProps)
     ret.autoCommit(false)
     ret
   }
 
-  private def startLoadSql(table: String) = s"copy table $table from external"
   private def prepareLoadSql(table: String) = s"prepare for x100 stream into $table"
+  private def startLoadSql(table: String) = s"copy table $table from external"
+
+  private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
+  private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
+
+  private def executeSql(sql: String): Future[Int] = Future { jdbc.executeStatement(sql) }
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */
   def getJdbc(): VectorJDBC = jdbc
@@ -54,21 +59,25 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties,
     jdbc.close
   }
 
-  /** Prepare loading data to Vector. This step may not be necessary anymore in the future */
-  def prepareDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
+  /** Prepare loading/unloading data to Vector. These steps may not be necessary anymore in the future */
+  def prepareLoadDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
+  def prepareUnloadDataStreams: Unit = jdbc.executeStatement(prepareUnloadSql(table))
 
   /**
    * Obtain the information about how many `DataStream`s Vector expects together with
    * locality information and authentication roles and tokens
    */
-  def getWriteConf(): WriteConf = {
-    val ret = WriteConf(jdbc)
-    logDebug(s"Got ${ret.vectorEndPoints.length} datastreams")
+  def getVectorEndpointConf(): VectorEndpointConf = {
+    val ret = VectorEndpointConf(jdbc)
+    logDebug(s"Got ${ret.vectorEndpoints.length} datastreams")
     ret
   }
 
   /** Start loading data to Vector */
-  def startLoad(): Future[Int] = Future { jdbc.executeStatement(startLoadSql(table)) }
+  def startLoad(): Future[Int] = executeSql(startLoadSql(table))
+
+  /** Start unloading data from Vector */
+  def startUnload(selectQuery: String): Future[Int] = executeSql(startUnloadSql(selectQuery))
 
   /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit
