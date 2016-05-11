@@ -43,5 +43,5 @@ object VectorTypeGen {
       "timestamp with time zone",
       "timestamp with local time zone",
       "interval year to month",
-      "interval day to year")
+      "interval day to second")
 }

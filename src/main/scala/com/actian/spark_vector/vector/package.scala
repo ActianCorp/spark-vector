@@ -20,5 +20,4 @@ package com.actian.spark_vector
  * to create tables when they do not exist (respecting input `DataFrame`'s schema), to obtain column metadata for `Vector` tables, and high level methods to initiate
  * loading to `Vector` tables.
  */
-package object vector {
-}
+package object vector {}
