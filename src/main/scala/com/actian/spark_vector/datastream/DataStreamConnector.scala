@@ -39,12 +39,12 @@ import com.actian.spark_vector.colbuffer.IntSize
 private[datastream] case class DataStreamConnectionHeader(statusCode: Int,
     numCols: Int,
     vectorSize: Int,
-    colInfo: Seq[ColumnMetadata]) { // For now holding col info only for name, nullability and constants
+    colInfo: Seq[ColumnMetadata]) extends Serializable { // For now holding col info only for name, nullability and constants
   /** TODO: Sanity check for column data types, throwing some exceptions in case of inconsistencies */
   require(statusCode >= 0, "Invalid status code (possible errors during connection).")
 }
 
-private object DataStreamConnectionHeader {
+private object DataStreamConnectionHeader extends Serializable {
   import DataStreamReader._
 
   private final val StatusCodeIndex = 0
@@ -74,7 +74,6 @@ private object DataStreamConnectionHeader {
           }
       }._1
     }
-
     new DataStreamConnectionHeader(statusCode, numCols, vectorSize, colInfo)
   }
 }

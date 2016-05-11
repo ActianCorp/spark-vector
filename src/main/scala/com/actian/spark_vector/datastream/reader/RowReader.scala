@@ -107,7 +107,8 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
   }
 
   private def setValAt(col: Int) = if (columnBufs(col).isNextNull) {
-    row.setNullAt(col)
+    row.setNullAt(col) // Set null and
+    readValFromColumnBuffer[Any](col) // step further
   } else {
     setValFromColumnBuffer(col)
   }
