@@ -37,7 +37,8 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table loaded to
  * @param tableSchema of the table as a sequence of columns metadata
  */
-class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata]) extends Logging with Serializable with Profiling {
+class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata])
+    extends Logging with Serializable with Profiling {
   private lazy val connector = new DataStreamConnector(writeConf)
 
   /**
@@ -45,7 +46,7 @@ class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, table: Stri
    * assigned to its corresponding partition (`taskContext.partitionId`) and then close the connection.
    */
   def write(taskContext: TaskContext, data: Iterator[T]): Unit = connector.withConnection(taskContext.partitionId) { implicit socket =>
-    val headerInfo = connector.readExternalScanConnectionHeader()
+    val headerInfo = connector.readConnectionHeader()
     val rowWriter = RowWriter(tableMetadataSchema, headerInfo, DataStreamSink())
     rowWriter.write(data)
   }

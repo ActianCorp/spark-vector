@@ -42,13 +42,13 @@ private[writer] case class DataStreamSink(implicit socket: SocketChannel) extend
   }
 
   private def writeDataColumn(cb: WriteColumnBuffer[_]): Unit = {
-    align(cb.alignSize)
-    writeByteBufferNoFlip(cb.values)
-    pos += cb.values.limit()
     if (cb.nullable) {
       writeByteBufferNoFlip(cb.markers)
       pos += cb.markers.limit()
     }
+    align(cb.alignSize)
+    writeByteBufferNoFlip(cb.values)
+    pos += cb.values.limit()
   }
 
   private def align(size: Int): Unit = padding(pos, size) match {

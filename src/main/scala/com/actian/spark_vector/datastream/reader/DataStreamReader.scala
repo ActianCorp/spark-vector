@@ -36,7 +36,8 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table to unload from
  * @param tableSchema of the table as a `StructType`
  */
-class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata]) extends Logging with Serializable with Profiling {
+class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata])
+    extends Logging with Serializable with Profiling {
   private lazy val connector = DataStreamConnector(readConf)
 
   /**
@@ -44,7 +45,7 @@ class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadat
    * to its corresponding partition (`taskContext.partitionId`) and return a row iterator (leaving the connection opened).
    */
   def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId) { implicit socket =>
-    val headerInfo = connector.readExternalInsertConnectionHeader()
+    val headerInfo = connector.readConnectionHeader()
     RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
   }
 }

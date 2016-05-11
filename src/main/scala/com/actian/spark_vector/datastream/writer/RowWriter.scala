@@ -97,10 +97,10 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
-  private def bytesToBeWritten(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
+  private def bytesToBeWritten(headerSize: Int, n: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
     case (pos, idx) =>
       val cb = columnBufs(idx)
-      pos + padding(pos, cb.alignSize) + cb.position
+      pos + padding(pos + (if (cb.nullable) n else 0), cb.alignSize) + cb.position
   }
 
   /**
@@ -123,7 +123,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
       }
       profileEnd
       profile("writing to datastream")
-      sink.write(bytesToBeWritten(DataStreamConnector.DataHeaderSize), i, columnBufs)
+      sink.write(bytesToBeWritten(DataStreamConnector.DataHeaderSize, i), i, columnBufs)
       writtenTuples += i
       profileEnd
     } while (i != 0)

@@ -27,6 +27,7 @@ import java.nio.channels.SocketChannel
 private[reader] case class DataStreamTap(implicit val socket: SocketChannel) extends Logging with Serializable {
   import DataStreamReader._
 
+  private final val SuccessCode = 0 // X100CPT_SUCCESS
   private final val BinaryDataCode = 5 // X100CPT_BINARY_DATA_V2
   private final val NumTuplesIndex = 4
 
@@ -35,8 +36,8 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
   private var remaining = true
 
   private def readVector(reuseByteBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseByteBuffer)) { vectors =>
-    val dataCode = vectors.getInt()
-    if (dataCode != BinaryDataCode) throw new Exception(s"Invalid binary data code = ${dataCode}!")
+    val packetType = vectors.getInt()
+    if (packetType != BinaryDataCode && packetType != SuccessCode) throw new Exception(s"Invalid packet type code = ${packetType}.")
     if (vectors.getInt(NumTuplesIndex) == 0) {
       logDebug(s"Empty data stream.")
       remaining = false

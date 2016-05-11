@@ -109,15 +109,8 @@ private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends 
     closeResourceOnFailure(socket) { op(socket) }
   }
 
-  def readExternalScanConnectionHeader()(implicit socket: SocketChannel): DataStreamConnectionHeader = {
-    readWithByteBuffer() { in => } // get_table_info column definition header
-    readWithByteBuffer() { in => } // actual data of the get_table_info
-    readWithByteBuffer() { in => } // end of get_table_info query
-    readWithByteBuffer() { in => DataStreamConnectionHeader(in) } // query response for data loading
-  }
-
-  def readExternalInsertConnectionHeader()(implicit socket: SocketChannel): DataStreamConnectionHeader =
-    readWithByteBuffer() { in => DataStreamConnectionHeader(in) } // query response for data unloading
+  def readConnectionHeader()(implicit socket: SocketChannel): DataStreamConnectionHeader =
+    readWithByteBuffer() { in => DataStreamConnectionHeader(in) } // query response for data loading/unloading
 }
 
 private[datastream] object DataStreamConnector {
