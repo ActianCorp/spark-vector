@@ -31,16 +31,14 @@ object ResourceUtil {
   }
 
   /** Close a resource after using it, regardless of whether an exception was thrown or not */
-  def closeResourceAfterUse[T, C <: { def close() }](closeable: C*)(code: => T): T =
-    try code finally {
-      closeable.foreach { _.close }
-    }
+  def closeResourceAfterUse[T, C <: { def close() }](closeable: C*)(code: => T): T = try code finally {
+    closeable.foreach { _.close }
+  }
 
   /** Close a resource if an exception was thrown */
-  def closeResourceOnFailure[T, C <: { def close() }](closeable: C*)(code: => T): T =
-    try code catch {
-      case e: Exception =>
-        closeable.foreach { _.close }
-        throw e
-    }
+  def closeResourceOnFailure[T, C <: { def close() }](closeable: C*)(code: => T): T = try code catch {
+    case e: Exception =>
+      closeable.foreach { _.close }
+      throw e
+  }
 }

@@ -16,16 +16,18 @@
 package com.actian.spark_vector.colbuffer.integer
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
-private class IntColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Int](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
-  override protected def put(source: Int, buffer: ByteBuffer): Unit = buffer.putInt(source)
+private class IntColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Int, Int](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
+  override def put(source: Int, buffer: ByteBuffer): Unit = buffer.putInt(source)
+
+  override def get(buffer: ByteBuffer): Int = buffer.getInt()
 }
 
 /** Builds a `ColumnBuffer` object for `integer`, `integer4` types. */
 private[colbuffer] object IntColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = {
-    case p if p.tpe == IntTypeId1 || p.tpe == IntTypeId2 => new IntColumnBuffer(p)
-  }
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.IntegerType) andThen { new IntColumnBuffer(_) }
 }
