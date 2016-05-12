@@ -18,11 +18,11 @@ package com.actian
 /**
  * Spark-Vector connector.
  *
- * With this connector, data can be loaded from Spark sources into `Vector` and results of `Vector` computations can be consumed in `Spark` and transformed into
- * a `DataFrame`. The first part is done in parallel: data coming from every input `RDD` partition is serialized using `Vector's` binary protocol and transfered
+ * With this connector, data can be loaded from `Spark` sources into `Vector` and results of `Vector` computations can be consumed in `Spark` and transformed into
+ * a `DataFrame`. Both operations are performed in parallel: the data coming from every input `RDD` partition is serialized using `Vector's` binary protocol and passed
  * through socket connections to `Vector` end points. Although there is a chance that network communication is incurred at this point, most of the time this connector
- * will try to assign only local `RDD` partitions to each `Vector` end point. On the other side, data is currently exported from `Vector` and ingested into `Spark`
- * using a JDBC connection to the leader `Vector` node. The code that also permits this second part to be executed in parallel will soon be added.
+ * will try to assign only local `RDD` partitions to each `Vector` end point. Respectively, `Vector` data is unloaded through socket connections and consumed in `Spark`
+ * into an `RDD`.
  *
  * Throughout the documentation we will use `DataStream` and `Vector` end point interchangeably. A `Vector DataStream` is the logical stream of consuming binary data in
  * `Vector`. Typically, these `DataStream`s will be executed in parallel (i.e. there will be as many threads as `DataStreams` allocated), but there will be cases when
