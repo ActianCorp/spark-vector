@@ -24,9 +24,7 @@ import org.apache.spark.sql.types.{DateType, StructField, StructType, TimestampT
 import com.actian.spark_vector.test.util.DateHelper.{ansiDateFor, timestampFor}
 
 object DateTimeDataFixture {
-  def timeRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = {
-    createTimeRDD(sparkContext, timeData)
-  }
+  def timeRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) = createTimeRDD(sparkContext, timeData)
 
   private[vector] val tz = TimeZone.getTimeZone("GMT-06:00")
 
@@ -54,7 +52,6 @@ object DateTimeDataFixture {
       ansiDateFor(2015, 4, 2)))
 
   private def createTimeRDD(sparkContext: SparkContext, data: Seq[Seq[Any]]): (RDD[Seq[Any]], StructType) = {
-
     val schema = StructType(Seq(
       StructField("tswtz", TimestampType),
       StructField("tsntz", TimestampType),

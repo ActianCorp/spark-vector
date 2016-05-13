@@ -15,8 +15,6 @@
  */
 package com.actian.spark_vector.loader
 
-import org.apache.spark.sql.types.StructType
-
 import com.actian.spark_vector.loader.command.ConstructVector
 import com.actian.spark_vector.loader.options.UserOptions
 import com.actian.spark_vector.loader.parsers.Parser

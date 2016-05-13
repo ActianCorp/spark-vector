@@ -29,9 +29,13 @@ package object provider {
 
   def generateUsername: String = {
     val prefix = "prov_"
-    val size = 63 - prefix.length
+    val UsernameLen = 63
+    val size = UsernameLen - prefix.length
     "prov_" + randomAsciiString(size)
   }
 
-  def generatePassword: String = randomAsciiString(255, "!@#$%^&")
+  def generatePassword: String = {
+    val PasswordLen = 255
+    randomAsciiString(PasswordLen, "!@#$%^&")
+  }
 }

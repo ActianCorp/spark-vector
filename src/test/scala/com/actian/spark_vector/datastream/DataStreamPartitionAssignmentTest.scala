@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.actian.spark_vector.writer
+package com.actian.spark_vector.datastream
 
 import scala.util.Random
 
@@ -35,6 +35,28 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
       .map(l => (0 until l.size).map(a => Random.shuffle((l(a) :+ (a % nB)).distinct.toIndexedSeq))) /* make sure that there is a match that evenly splits the partitions among nodes */
   } yield (nA, nB, edges)
 
+  private def generateEndPoints(nA: Int) = for {
+    i <- 0 until nA
+    endpoint = VectorEndpoint(s"host-$i", 1, "someuser", "somepassword")
+  } yield endpoint
+
+  private val lessPartitionsThanDataStreamsGen = for {
+    nB <- Gen.choose(3, 30)
+    nEndpoints <- Gen.choose(nB, 400)
+    nA <- Gen.choose(1, nEndpoints - 1)
+    replFactor <- Gen.choose(1, 4)
+    /** no affinity */
+    edges <- Gen.listOfN(nA, Seq.empty[String])
+  } yield (edges, generateEndPoints(nEndpoints))
+
+  private val randomMatchParamsGen = for {
+    nB <- Gen.choose(3, 50)
+    nA <- Gen.choose(0, 1200)
+    replFactor <- Gen.choose(1, 10)
+    /** make partitions have affinity to nodes that are not necessarily VectorEndpoints */
+    edges <- Gen.listOfN(nA, Gen.resize(replFactor, Gen.listOf(Gen.choose(0, nB * 2 - 1).map(b => s"host-$b"))))
+  } yield (edges, generateEndPoints(nB))
+
   test("finds the optimal (evenly split) match", RandomizedTest) {
     check(
       forAllNoShrink(perfectMatchParamsGen) {
@@ -48,6 +70,26 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
             val ret = assignment.matching.map(_.size)
             ret.max == numA / numB
           }
+      },
+      minSuccessful(1000))
+  }
+
+  test("finds the optimal match with less partitions than nodes", RandomizedTest) {
+    check(
+      forAllNoShrink(lessPartitionsThanDataStreamsGen) {
+        case (edges, endpoints) =>
+          val assignment = DataStreamPartitionAssignment(edges.toArray, endpoints)
+          assignment.map(_.size).max == 1
+      },
+      minSuccessful(1000))
+  }
+
+  test("any random matching works without errors", RandomizedTest) {
+    check(
+      forAllNoShrink(randomMatchParamsGen) {
+        case (edges, endpoints) =>
+          val assignment = DataStreamPartitionAssignment(edges.toArray, endpoints)
+          assignment.map(_.size).max <= edges.size
       },
       minSuccessful(1000))
   }

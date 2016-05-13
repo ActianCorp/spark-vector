@@ -19,15 +19,29 @@ import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.StringConversion
 import com.actian.spark_vector.vector.VectorDataType
 
+import org.apache.spark.unsafe.types.UTF8String
+
 import java.nio.ByteBuffer
 
-private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
-  override protected def put(source: String, buffer: ByteBuffer): Unit = {
+private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams)
+    extends ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
+  override def put(source: String, buffer: ByteBuffer): Unit = {
     buffer.put(encode(source))
-    buffer.put(0: Byte)
+    buffer.put(0.toByte)
   }
 
-  protected def encode(str: String): Array[Byte]
+  protected def encode(value: String): Array[Byte]
+
+  override def get(buffer: ByteBuffer): UTF8String = {
+    /** @note Do not reuse the byteArr. UTF8String doesn't make a copy of it internally. */
+    val byteArr = Array.fill(p.precision + 1)(0.toByte)
+    var i = 0
+    do {
+      byteArr(i) = buffer.get()
+      i += 1
+    } while (byteArr(i - 1) != 0.toByte && i < byteArr.length)
+    UTF8String.fromBytes(byteArr, 0, i - 1)
+  }
 }
 
 private class ByteLengthLimitedStringColumnBuffer(p: ColumnBufferBuildParams) extends ByteEncodedStringColumnBuffer(p) {
@@ -49,7 +63,7 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
     case p if p.precision > 1 => p
   }
 
-  private val buildConstLenMulti: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildConstLenMultiPartial andThenPartial {
+  private val buildConstLenMulti: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildConstLenMultiPartial andThenPartial {
     (ofDataType(VectorDataType.CharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
       (ofDataType(VectorDataType.NcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
@@ -58,10 +72,10 @@ private[colbuffer] object ByteEncodedStringColumnBuffer extends ColumnBufferBuil
     case p if p.precision > 0 => p
   }
 
-  private val buildVarLen: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildVarLenPartial andThenPartial {
+  private val buildVarLen: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildVarLenPartial andThenPartial {
     (ofDataType(VectorDataType.VarcharType) andThen { new ByteLengthLimitedStringColumnBuffer(_) }) orElse
       (ofDataType(VectorDataType.NvarcharType) andThen { new CharLengthLimitedStringColumnBuffer(_) })
   }
 
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] = buildConstLenMulti orElse buildVarLen
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildConstLenMulti orElse buildVarLen
 }

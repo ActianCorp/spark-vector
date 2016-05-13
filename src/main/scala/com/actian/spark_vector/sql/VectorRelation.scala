@@ -20,56 +20,56 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
-import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.reader.ScanRDD
-import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps }
-import com.actian.spark_vector.writer.WriteConf
-import com.actian.spark_vector.vector.VectorException
 
-private[spark_vector] class VectorRelation(tableRef: TableRef, userSpecifiedSchema: Option[StructType], override val sqlContext: SQLContext, writeConf: Option[WriteConf] = None)
-    extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+import com.actian.spark_vector.datastream.VectorEndpointConf
+import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
+
+private[spark_vector] class VectorRelation(tableRef: TableRef,
+    userSpecifiedSchema: Option[StructType],
+    override val sqlContext: SQLContext,
+    options: Map[String, String],
+    writeConf: Option[VectorEndpointConf] = None) extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+  import VectorRelation._
   import VectorOps._
 
-  override def schema: StructType =
-    userSpecifiedSchema.getOrElse(VectorRelation.structType(tableRef))
+  private lazy val tableMetadataSchema = getTableSchema(tableRef)
+  override def schema: StructType = userSpecifiedSchema.getOrElse(structType(tableMetadataSchema))
+  override def needConversion: Boolean = false
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
-      VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-        cxn.executeStatement(s"delete from ${tableRef.table}")
-      }
+      VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${tableRef.table}") }
     }
 
-    logInfo(s"Trying to insert rdd: $data into Vector table")
-    val anySeqRDD = data.rdd.map(row => row.toSeq)
-    // TODO could expose other options in Spark parameters
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.table, tableRef.toConnectionProps)
-    logInfo(s"loaded ${rowCount} records into table ${tableRef.table}")
+    logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
+    val anySeqRDD = data.rdd.map(_.toSeq)
+    val preSQL = getSQL(LoadPreSQL, options)
+    val postSQL = getSQL(LoadPostSQL, options)
+    /** TODO: Could expose other options in Spark parameters */
+    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
+    logInfo(s"Loaded ${rowCount} records into table ${tableRef.table}")
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    logDebug("vector: buildScan: columns: " + requiredColumns.mkString(", "))
-    logDebug("vector: buildScan: filters: " + filters.mkString(", "))
-
-    val columns =
-      if (requiredColumns.isEmpty) {
-        "*"
-      } else {
-        requiredColumns.mkString(",")
-      }
-
+    val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
+      ("*", tableMetadataSchema)
+    } else {
+      val cols = requiredColumns.map(_.toLowerCase()).toSet
+      (requiredColumns.mkString(","), tableMetadataSchema.filter(col => cols.contains(col.name.toLowerCase())))
+    }
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
-    val statement = s"select $columns from ${tableRef.table} $whereClause"
-    logDebug(s"Executing Vector select statement: $statement")
-    new ScanRDD(sqlContext.sparkContext, tableRef.toConnectionProps, statement, whereParams)
+
+    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadataSchema,
+      selectColumns, whereClause, whereParams)
   }
 }
 
-private[spark_vector] class VectorRelationWithSpecifiedSchema(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: WriteConf, override val sqlContext: SQLContext)
+private[spark_vector] class VectorRelationWithSpecifiedSchema(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf, override val sqlContext: SQLContext)
     extends BaseRelation with InsertableRelation with Logging {
   import VectorOps._
 
-  override def schema = StructType(columnMetadata.map(_.structField))
+  override def schema: StructType = StructType(columnMetadata.map(_.structField))
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
@@ -80,50 +80,57 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(table: String, col
 }
 
 object VectorRelation {
-  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext)
-  }
+  final val LoadPreSQL = "loadpresql"
+  final val LoadPostSQL = "loadpostsql"
 
-  def apply(tableRef: TableRef, sqlContext: SQLContext): VectorRelation = {
-    new VectorRelation(tableRef, None, sqlContext)
-  }
+  def apply(tableRef: TableRef, userSpecifiedSchema: Option[StructType], sqlContext: SQLContext, options: Map[String, String]): VectorRelation =
+    new VectorRelation(tableRef, userSpecifiedSchema, sqlContext, options)
 
-  def apply(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: WriteConf, sqlContext: SQLContext) = {
-    new VectorRelationWithSpecifiedSchema(table, columnMetadata, writeConf, sqlContext)
-  }
+  def apply(tableRef: TableRef, sqlContext: SQLContext, options: Map[String, String]): VectorRelation =
+    new VectorRelation(tableRef, None, sqlContext, options)
+
+  def apply(table: String, columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, sqlContext: SQLContext): VectorRelationWithSpecifiedSchema =
+    new VectorRelationWithSpecifiedSchema(table, columnMetadata, conf, sqlContext)
+
+  /** Obtain the metadata containing the schema for the table referred by tableRef */
+  def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] =
+    VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.columnMetadata(tableRef.table) }
+
+  private def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType =
+    StructType(tableMetadataSchema.map(_.structField))
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
-  def structType(tableRef: TableRef): StructType = {
-    VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-      val structFields = cxn.columnMetadata(tableRef.table, tableRef.cols).map(_.structField)
-      StructType(structFields)
-    }
+  def structType(tableRef: TableRef): StructType = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
+    val structFields = cxn.columnMetadata(tableRef.table, tableRef.cols).map(_.structField)
+    StructType(structFields)
   }
+
+  /** Retrieves a series of SQL queries from the option with key `key` */
+  def getSQL(key: String, options: Map[String, String]): Seq[String] =
+    options.filterKeys(_.toLowerCase startsWith key).toSeq.sortBy(_._1).map(_._2)
 
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
 
-  /** Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
-   *  used directly with Vector jdbc. The parameters are stored in the second element of the
-   *  returned tuple
+  /**
+   * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be
+   * used directly with Vector jdbc. The parameters are stored in the second element of the
+   * returned tuple
    */
-  def convertFilter(filter: Filter): (String, Seq[Any]) = {
-    filter match {
-      case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))
-      case sources.LessThan(attribute, value) => (s"${quote(attribute)} < ?", Seq(value))
-      case sources.LessThanOrEqual(attribute, value) => (s"${quote(attribute)} <= ?", Seq(value))
-      case sources.GreaterThan(attribute, value) => (s"${quote(attribute)} > ?", Seq(value))
-      case sources.GreaterThanOrEqual(attribute, value) => (s"${quote(attribute)} >= ?", Seq(value))
-      case sources.In(attribute, values) =>
-        (quote(attribute) + " IN " + values.map(_ => "?").mkString("(", ", ", ")"), values.toSeq)
-      case _ =>
-        throw new UnsupportedOperationException(
-          s"It's not a valid filter $filter to be pushed down, only >, <, >=, <= and In are allowed.")
-    }
+  def convertFilter(filter: Filter): (String, Seq[Any]) = filter match {
+    case sources.EqualTo(attribute, value) => (s"${quote(attribute)} = ?", Seq(value))
+    case sources.LessThan(attribute, value) => (s"${quote(attribute)} < ?", Seq(value))
+    case sources.LessThanOrEqual(attribute, value) => (s"${quote(attribute)} <= ?", Seq(value))
+    case sources.GreaterThan(attribute, value) => (s"${quote(attribute)} > ?", Seq(value))
+    case sources.GreaterThanOrEqual(attribute, value) => (s"${quote(attribute)} >= ?", Seq(value))
+    case sources.In(attribute, values) => (quote(attribute) + " IN " + values.map(_ => "?").mkString("(", ", ", ")"), values.toSeq)
+    case _ => throw new UnsupportedOperationException(
+      s"It's not a valid filter $filter to be pushed down, only >, <, >=, <= and In are allowed.")
   }
 
-  /** Given a sequence of filters, generate the where clause that can be used in the prepared statement
-   *  together with its parameters
+  /**
+   * Given a sequence of filters, generate the where clause that can be used in the prepared statement
+   * together with its parameters
    */
   def generateWhereClause(filters: Array[Filter]): (String, Seq[Any]) = {
     val convertedFilters = filters.map(convertFilter)

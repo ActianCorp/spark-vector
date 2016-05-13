@@ -19,9 +19,7 @@ import com.actian.spark_vector.vector.VectorConnectionProperties
 
 /** A reference to a `Vector` table */
 case class TableRef(host: String, instance: String, database: String, user: Option[String], password: Option[String], table: String, cols: Seq[String]) {
-  def toConnectionProps: VectorConnectionProperties = {
-    VectorConnectionProperties(host, instance, database, user, password)
-  }
+  def toConnectionProps: VectorConnectionProperties = VectorConnectionProperties(host, instance, database, user, password)
 }
 
 object TableRef {
@@ -35,4 +33,7 @@ object TableRef {
     val colsToLoad = parameters.get("cols").map(_.split(",").map(_.trim).toSeq).getOrElse(Nil)
     TableRef(host, instance, database, user, password, table, colsToLoad)
   }
+
+  def apply(connectionProps: VectorConnectionProperties, table: String): TableRef = TableRef(connectionProps.host,
+    connectionProps.instance, connectionProps.database, connectionProps.user, connectionProps.password, table, Nil)
 }

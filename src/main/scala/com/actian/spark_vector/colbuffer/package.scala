@@ -17,7 +17,7 @@ package com.actian.spark_vector
 
 /** Implements buffering (and value serialization) for `Vector` columns */
 package object colbuffer {
-  /** Common constants (for types and sizes) */
+  /** Common constants (for data sizes) */
   final val ByteSize = 1
   final val ShortSize = 2
   final val IntSize = 4

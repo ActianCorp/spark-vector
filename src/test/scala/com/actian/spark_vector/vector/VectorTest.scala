@@ -18,13 +18,14 @@ package com.actian.spark_vector.vector
 import org.apache.hadoop.fs.Path
 import org.apache.spark.{ Logging, SparkContext }
 import org.apache.spark.sql.types.{ StringType, StructField, StructType }
+
 import org.scalatest.{ FunSuite, Matchers }
 import org.scalatest.prop.PropertyChecks
 
 import com.actian.spark_vector.test.tags.IntegrationTest
 import com.actian.spark_vector.test.util.StructTypeUtil
 import com.actian.spark_vector.vector.ErrorCodes._
-import com.actian.spark_vector.vector.Vector.Field2Column
+import com.actian.spark_vector.vector.VectorUtil.Field2Column
 import com.actian.spark_vector.vector.VectorFixture.withTable
 
 class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorFixture with Logging {
@@ -37,7 +38,8 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
     }
 
     withTable(createTable) { tableName =>
-      val schema = Vector.getTableSchema(connectionProps, tableName).map(_.structField)
+      val schema = VectorUtil.getTableSchema(connectionProps, tableName).map(_.structField)
+
       schema should be(allTypesColumnMD.map(_.structField))
     }
   }
@@ -45,7 +47,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
   test("getTableSchema for non-existing table", IntegrationTest) {
     withTable(func => Unit) { tableName =>
       intercept[VectorException] {
-        Vector.getTableSchema(connectionProps, tableName)
+        VectorUtil.getTableSchema(connectionProps, tableName)
       }
     }
   }
@@ -53,7 +55,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
   test("getTableSchema with bad cxn props", IntegrationTest) {
     withTable(func => Unit) { tableName =>
       val ex = intercept[VectorException] {
-        Vector.getTableSchema(VectorConnectionProperties("host", "instance", "db"), tableName)
+        VectorUtil.getTableSchema(VectorConnectionProperties("host", "instance", "db"), tableName)
       }
 
       ex.errorCode should be(SqlException)
@@ -68,64 +70,57 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
   test("applyFieldMap") {
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType), ("b", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType))
-
-    val result = Vector.applyFieldMap(Map("a" -> "A", "b" -> "B"), sourceSchema, targetSchema)
+    val result = VectorUtil.applyFieldMap(Map("a" -> "A", "b" -> "B"), sourceSchema, targetSchema)
 
     result should be(sourceSchema.map(_.name).zip(targetSchema.reverseMap(_.name)).map { case (a: String, b: String) => Field2Column(a, b) })
   }
 
   test("applyFieldMap with an empty map") {
-
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType), ("b", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType))
+    val result = VectorUtil.applyFieldMap(Map(), sourceSchema, targetSchema)
 
-    val result = Vector.applyFieldMap(Map(), sourceSchema, targetSchema)
     result should be(sourceSchema.map(_.name).zip(targetSchema.map(_.name)).map { case (a: String, b: String) => Field2Column(a, b) })
   }
 
   test("applyFieldMap with an empty map and unbalanced cardinality") {
-
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType))
-
     val ex = intercept[VectorException] {
-      Vector.applyFieldMap(Map(), sourceSchema, targetSchema)
+      VectorUtil.applyFieldMap(Map(), sourceSchema, targetSchema)
     }
 
     ex.errorCode should be(InvalidNumberOfInputs)
   }
 
   test("applyFieldMap with too many inputs") {
-
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType), ("b", StringType), ("c", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType))
 
     val ex = intercept[VectorException] {
-      Vector.applyFieldMap(Map("a" -> "A", "b" -> "B", "c" -> "C"), sourceSchema, targetSchema)
+      VectorUtil.applyFieldMap(Map("a" -> "A", "b" -> "B", "c" -> "C"), sourceSchema, targetSchema)
     }
 
     ex.errorCode should be(InvalidNumberOfInputs)
   }
 
   test("applyFieldMap to non-existing column") {
-
     val sourceSchema = StructTypeUtil.createSchema(("a", StringType), ("b", StringType), ("c", StringType), ("d", StringType))
     val targetSchema = StructTypeUtil.createSchema(("B", StringType), ("A", StringType), ("C", StringType), ("E", StringType))
 
     val ex = intercept[VectorException] {
-      Vector.applyFieldMap(Map("a" -> "A", "b" -> "B", "c" -> "C", "d" -> "D"), sourceSchema, targetSchema)
+      VectorUtil.applyFieldMap(Map("a" -> "A", "b" -> "B", "c" -> "C", "d" -> "D"), sourceSchema, targetSchema)
     }
 
     ex.errorCode should be(NoSuchColumn)
   }
 
   test("applyFieldMap map has reference to non-existing field") {
-
     val sourceSchema = StructTypeUtil.createSchema(("b", StringType))
     val targetSchema = StructTypeUtil.createSchema(("A", StringType))
 
     val ex = intercept[VectorException] {
-      Vector.applyFieldMap(Map("a" -> "A"), sourceSchema, targetSchema)
+      VectorUtil.applyFieldMap(Map("a" -> "A"), sourceSchema, targetSchema)
     }
 
     ex.errorCode should be(NoSuchSourceField)
@@ -136,16 +131,16 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
     StructField("b", StringType, true)))
 
   test("validateColumns with required column") {
-    Vector.validateColumns(testColumns, Seq("a"))
+    VectorUtil.validateColumns(testColumns, Seq("a"))
   }
 
   test("validateColumns with all columns") {
-    Vector.validateColumns(testColumns, Seq("a", "b"))
+    VectorUtil.validateColumns(testColumns, Seq("a", "b"))
   }
 
   test("validateColumns excluding non-null column") {
     val ex = intercept[VectorException] {
-      Vector.validateColumns(testColumns, Seq("b"))
+      VectorUtil.validateColumns(testColumns, Seq("b"))
     }
 
     ex.errorCode should be(MissingNonNullColumn)

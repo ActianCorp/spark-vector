@@ -1,11 +1,24 @@
+/*
+ * Copyright 2016 Actian Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.actian.spark_vector.provider
 
-import com.actian.spark_vector.writer.VectorEndPoint
-import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
+import com.actian.spark_vector.datastream.{ VectorEndpoint, VectorEndpointConf }
 import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.writer.WriteConf
+
+import play.api.libs.json.Json
 
 private[provider] case class LogicalType(`type`: String,
   precision: Int,
@@ -39,12 +52,12 @@ private[provider] case class JobPart(part_id: String,
     column_infos: Seq[ColumnInfo],
     options: Map[String, String],
     datastream: DataStream) {
-  def writeConf: WriteConf = {
+  def writeConf: VectorEndpointConf = {
     val endpoints = for {
       spn <- datastream.streams_per_node
       i <- 0 until spn.nr
-    } yield VectorEndPoint(spn.host, spn.port, datastream.rolename, datastream.password)
-    WriteConf(endpoints.toIndexedSeq)
+    } yield VectorEndpoint(spn.host, spn.port, datastream.rolename, datastream.password)
+    VectorEndpointConf(endpoints.toIndexedSeq)
   }
 }
 
@@ -59,7 +72,6 @@ object JobPart {
 case class Job(transaction_id: Long, query_id: Long, `type`: String, parts: Seq[JobPart])
 
 object Job {
-  import JobPart._
   implicit val jobFormat = Json.format[Job]
   final val QueryId = "query_id"
   final val JobParts = "job_parts"

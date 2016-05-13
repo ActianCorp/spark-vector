@@ -21,4 +21,6 @@ case class VectorOptions(
   database: String = "",
   user: Option[String] = None,
   password: Option[String] = None,
-  targetTable: String = "")
+  targetTable: String = "",
+  preSQL: Option[Seq[String]] = None,
+  postSQL: Option[Seq[String]] = None)

@@ -20,12 +20,14 @@ import com.actian.spark_vector.vector.VectorDataType
 
 import java.nio.ByteBuffer
 
-private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Float](p.name, p.maxValueCount, FloatSize, FloatSize, p.nullable) {
+private class FloatColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Float, Float](p.name, p.maxValueCount, FloatSize, FloatSize, p.nullable) {
   override def put(source: Float, buffer: ByteBuffer): Unit = buffer.putFloat(source)
+
+  override def get(buffer: ByteBuffer): Float = buffer.getFloat()
 }
 
 /** Builds a `ColumnBuffer` object for `real`, `float4` types. */
 private[colbuffer] object FloatColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_]] =
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
     ofDataType(VectorDataType.FloatType) andThen { new FloatColumnBuffer(_) }
 }

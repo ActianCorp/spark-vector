@@ -18,6 +18,4 @@ package com.actian.spark_vector.vector
 /**
  * Exception interacting with Vector.
  */
-case class VectorException(val errorCode: Int,
-  message: String,
-  cause: Throwable = null) extends RuntimeException(message, cause)
+case class VectorException(val errorCode: Int, message: String, cause: Throwable = null) extends RuntimeException(message, cause)

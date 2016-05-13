@@ -16,29 +16,36 @@
 package com.actian.spark_vector.loader.command
 
 import org.apache.spark.sql.SQLContext
+
 import com.actian.spark_vector.loader.options.UserOptions
-import com.actian.spark_vector.sql.{ VectorRelation, TableRef }
-import com.actian.spark_vector.writer.WriteConf
+import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
 
 object VectorTempTable {
+  private def generateSQLOption(key: String, queries: Seq[String]): Seq[(String, String)] = for { i <- 0 until queries.size } yield {
+    (s"${key}${i}", s"${queries(i)}")
+  }
+
   private def parseOptions(config: UserOptions): Map[String, String] = {
-    Map("host" -> Some(config.vector.host),
-      "instance" -> Some(config.vector.instance),
-      "database" -> Some(config.vector.database),
-      "table" -> Some(config.vector.targetTable),
-      "user" -> config.vector.user,
-      "password" -> config.vector.password).filter(_._2.isDefined).mapValues(_.get)
+    val base = Seq("host" -> config.vector.host,
+      "instance" -> config.vector.instance,
+      "database" -> config.vector.database,
+      "table" -> config.vector.targetTable)
+    val optional = Seq(config.vector.user.map("host" -> _),
+      config.vector.password.map("password" -> _)).flatten ++
+      config.vector.preSQL.map(generateSQLOption("loadpresql", _)).getOrElse(Nil) ++
+      config.vector.postSQL.map(generateSQLOption("loadpostsql", _)).getOrElse(Nil)
+    (base ++ optional).toMap
   }
 
   /**
    * Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
    *
-   *  @return The name of the registered temporary table (for now = <vectorTargetTable>)
+   * @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
     val params = parseOptions(config)
     val tableName = params("table")
-    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), None, sqlContext)).registerTempTable(tableName)
+    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), sqlContext, Map.empty)).registerTempTable(tableName)
     sparkQuote(tableName)
   }
 }

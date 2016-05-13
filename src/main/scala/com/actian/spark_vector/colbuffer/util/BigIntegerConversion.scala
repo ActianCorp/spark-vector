@@ -15,33 +15,60 @@
  */
 package com.actian.spark_vector.colbuffer.util
 
+import com.actian.spark_vector.colbuffer.LongLongSize
+
 import java.math.BigInteger
+import java.nio.ByteBuffer
 
-/** Helper functions and constants for `BigInteger` conversions. */
+/**
+ * Helper functions and constants for `BigInteger` conversions.
+ *
+ * @note Do not call this object's methods concurrently
+ */
 object BigIntegerConversion {
-  // scalastyle:off magic.number
-  final def toLongLongByteArray(value: BigInteger): Array[Byte] = {
-    val source = value.toByteArray()
-    val target = Array.fill[Byte](16)(0:Byte)
-    val remaining = target.length - source.length
-    var sourceIndex = source.length - 1
-    var targetIndex = 0
+  val bigIntArray = Array.fill[Byte](LongLongSize)(0: Byte) // Keep it in big-endian
 
-    while (sourceIndex >= 0 && targetIndex < target.length) {
-      target.update(targetIndex, source(sourceIndex))
-      targetIndex += 1
+  // scalastyle:off magic.number
+  /**
+   * Puts a BigInteger to a ByteBuffer in little-endian order.
+   *
+   * @note We need little-endian (cpu-wise) ordering due to Vector storing data
+   * in this way and not in big-endian (network-wise)
+   */
+  final def putLongLongByteArray(buffer: ByteBuffer, value: BigInteger): Unit = {
+    val source = value.toByteArray()
+    /** This is in big-endian */
+    val remaining = LongLongSize - source.length
+    var sourceIndex = source.length - 1
+
+    while (sourceIndex >= 0) {
+      /** Put in little-endian order */
+      buffer.put(source(sourceIndex))
       sourceIndex -= 1
     }
 
     if (remaining > 0) {
       var index = 0
       while (index < remaining) {
-        target.update(source.length + index, if (value.signum() >= 0) 0 else 0xFF.toByte)
+        if (value.signum() >= 0) buffer.put(0.toByte) else buffer.put(0xFF.toByte)
         index += 1
       }
     }
+  }
 
-    target
+  /**
+   * Gets a BigInteger from a ByteBuffer in big-endian order.
+   */
+  final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
+    var sourceIndex = bigIntArray.length - 1
+
+    while (sourceIndex >= 0) {
+      /** Get from buffer in little-endian order and put in big-endian */
+      bigIntArray(sourceIndex) = buffer.get()
+      sourceIndex -= 1
+    }
+
+    new BigInteger(bigIntArray)
   }
   // scalastyle:on magic.number
 }

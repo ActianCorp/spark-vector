@@ -15,24 +15,12 @@
  */
 package com.actian.spark_vector.provider
 
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.hive.HiveContext
-import com.actian.spark_vector.loader.command.VectorTempTable
-import com.actian.spark_vector.writer.VectorEndPoint
-import org.apache.spark.Logging
-import com.actian.spark_vector.writer.WriteConf
-import com.actian.spark_vector.loader.command._
-import org.apache.spark.sql.DataFrame
-import com.actian.spark_vector.sql.VectorRelation
-import com.actian.spark_vector.sql.TableRef
-import play.api.libs.json._
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.databind.JsonMappingException
-import java.net.InetSocketAddress
 import java.nio.channels.ServerSocketChannel
-import resource._
-import scala.io.Source
+
+import org.apache.spark.{ Logging, SparkConf, SparkContext }
+import org.apache.spark.sql.hive.HiveContext
+
+import resource.managed
 
 object Main extends App with Logging {
   private val conf = new SparkConf()
