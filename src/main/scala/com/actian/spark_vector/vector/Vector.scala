@@ -129,9 +129,8 @@ private[vector] object Vector extends Logging {
       sparkContext.addSparkListener(new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
-          client.commit
           client.close
-          logDebug(s"Data stream client connection closed. Unload ended @ ${job.time}.")
+          logDebug(s"Unload job ended @ ${job.time}.")
           ended = true
         }
       })
