@@ -21,7 +21,7 @@ import org.apache.spark.{ Logging, SparkException }
 import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
-import org.apache.spark.unsafe.types.UTF8String.{fromString => toUTF8}
+import org.apache.spark.unsafe.types.UTF8String.{ fromString => toUTF8 }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.sources.Filter
@@ -46,7 +46,7 @@ import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
  */
 @IntegrationTest
 class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
-  with VectorFixture with Logging with Profiling {
+    with VectorFixture with Logging with Profiling {
   private val doesNotExistTable = "this_table_does_not_exist"
 
   def createAdmitTable(tableName: String): Unit = {
@@ -284,7 +284,28 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     }
   }
 
-   test("generate table/filtered select on a subset of columns") { fixture =>
+  test("generate table/filtered select on strings") { fixture =>
+    val schema = StructTypeUtil.createSchema("s0" -> StringType, "s1" -> StringType, "s2" -> StringType)
+    val data = Seq(Seq[Any]("abc", "def", "ghi"), Seq[Any]("def", "ghi", "jkl"), Seq[Any]("ghi", "jkl", "mno"))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val expectedData = Seq(Seq[Any]("def", "ghi", "jkl"))
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
+          sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("s0", "varchar", false, 5, 0),
+            ColumnMetadata("s1", "varchar", false, 5, 0), ColumnMetadata("s2", "varchar", false, 5, 0)),
+            "*", "where s0 = ? or s2 = ?", Seq("def", "jkl"))
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      resultsSpark shouldBe expectedData
+    }
+  }
+
+  test("generate table/filtered select on a subset of columns") { fixture =>
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
     val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
     val rdd = fixture.sc.parallelize(data)
@@ -293,7 +314,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val expectedData = Seq(Seq[Any](44, 46))
       val sqlContext = new SQLContext(fixture.sc)
       val tableRef = TableRef(connectionProps, tableName)
-       val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
         override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
           sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("i0", "integer4", false, 10, 0),
             ColumnMetadata("i2", "integer4", false, 10, 0)), "i0, i2", "where i0 > ? and i1 > ?", Seq(43, 44))
@@ -319,7 +340,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
           case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay should be(0)
           case (act, exp) => act should be(exp)
         }
-     }
+    }
   }
 
   private def assertTableGeneration(fixture: FixtureParam, dataType: StructType, expectedData: Seq[Seq[Any]],

@@ -17,9 +17,12 @@ package com.actian.spark_vector.datastream
 
 import java.sql.SQLException
 import java.sql.ResultSet
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
 import org.apache.spark.Logging
+
 import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.vector.VectorException
@@ -47,17 +50,36 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
-  private def executeSql(sql: String): Future[Int] = Future { jdbc.executeStatement(sql) }
+  /** Execute a sql (statement) within a future task */
+  private def executeSql(sql: String): Future[Int] = {
+    val f = Future { jdbc.executeStatement(sql) }
+    f onFailure {
+      case t =>
+        logError(s"Query ${sql} has failed.", t)
+        // FIXME: use rollback() instead when Vector will actually close the DataStreams after unrolling
+        close()
+    }
+    f
+  }
 
   /** The `JDBC` connection used by this client to communicate with `Vector` */
   def getJdbc(): VectorJDBC = jdbc
 
+  /**
+   * Abort sending data to Vector rolling back the open transaction
+   * @note the `JDBC` connection is not closed
+   */
+  def rollback(): Unit = synchronized(if (!jdbc.isClosed) {
+    logDebug("Rollback current transaction")
+    jdbc.rollback
+  })
+
   /** Abort sending data to Vector rolling back the open transaction and closing the `JDBC` connection */
-  def close(): Unit = {
-    logDebug("Closing DataStreamClient")
+  def close(): Unit = synchronized(if (!jdbc.isClosed) {
+    logDebug("Rollback current transaction and close DataStreamClient")
     jdbc.rollback
     jdbc.close
-  }
+  })
 
   /** Prepare loading/unloading data to Vector. These steps may not be necessary anymore in the future */
   def prepareLoadDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
