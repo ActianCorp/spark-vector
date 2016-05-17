@@ -33,10 +33,9 @@ import com.actian.spark_vector.util.ResourceUtil
  * Entry point for unloading with spark-vector connector.
  *
  * @param vectorProps connection information to the leader node's SQL interface
- * @param table The table to unload from
  * @param tableSchema of the table as a `StructType`
  */
-class DataStreamReader(readConf: VectorEndpointConf, table: String, tableMetadataSchema: Seq[ColumnMetadata])
+class DataStreamReader(readConf: VectorEndpointConf, tableMetadataSchema: Seq[ColumnMetadata])
     extends Logging with Serializable with Profiling {
   private lazy val connector = DataStreamConnector(readConf)
 

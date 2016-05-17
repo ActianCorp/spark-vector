@@ -53,7 +53,7 @@ object VectorDataType {
     case "nchar" => NcharType
     case "varchar" => VarcharType
     case "nvarchar" => NvarcharType
-    case "ansidate" => DateType
+    case "ansidate" | "date" => DateType
     case "time without time zone" | "time" => TimeType
     case "time with time zone" | "timetz" => TimeTZType
     case "time with local time zone" | "timeltz" => TimeLTZType

@@ -36,7 +36,7 @@ trait VectorOps {
      *
      * @param schema Input RDD schema
      * @param vectorProps connection properties to the Vector instance
-     * @param targetTable name of the table to load
+     * @param table name of the table to load
      * @param preSQL set of SQL statements to execute before loading begins
      * @param postSQL set of SQL statements to run after loading completes successfully. This SQL is executed
      *   only if the load works. The load is not rolled back if executing the postSQL fails.
@@ -45,18 +45,18 @@ trait VectorOps {
      *
      * @return a <code>LoaderResult</code> instance which contains results of the load operation
      */
-    def loadVector(rddSchema: StructType,
+    def loadVector(schema: StructType,
       vectorProps: VectorConnectionProperties,
-      targetTable: String,
+      table: String,
       preSQL: Option[Seq[String]] = None,
       postSQL: Option[Seq[String]] = None,
       fieldMap: Option[Map[String, String]] = None,
-      createTable: Boolean = false): Long = Vector.loadVector(rdd, rddSchema, targetTable, vectorProps, preSQL, postSQL, fieldMap, createTable)
+      createTable: Boolean = false): Long = Vector.loadVector(rdd, schema, table, vectorProps, preSQL, postSQL, fieldMap, createTable)
 
     /**
      * Load into a Vector table from the given RDD.
      *
-     *  This method should be used when the WriteConf is known ahead of type (e.g. was communicated
+     *  This method should be used when the VectorEndpointConf is known ahead of time (e.g. was communicated
      *  through a separate channel)
      *  @param schema RDD schema
      *  @param table Vector table to load to
@@ -64,11 +64,9 @@ trait VectorOps {
      *  the schema of the Vector table
      *  @param writeConf Write configuration to be used to connect to the `DataStream` API
      */
-    def loadVector(
-      schema: StructType,
-      table: String,
+    def loadVector(schema: StructType,
       tableColumnMetadata: Seq[ColumnMetadata],
-      writeConf: VectorEndpointConf): Unit = Vector.loadVector(rdd, schema, table, tableColumnMetadata, writeConf)
+      writeConf: VectorEndpointConf): Unit = Vector.loadVector(rdd, schema, tableColumnMetadata, writeConf)
   }
 
   /**
@@ -95,9 +93,21 @@ trait VectorOps {
       selectColumns: String = "*",
       whereClause: String = "",
       whereParams: Seq[Any] = Nil): RDD[Row] = {
-      Vector.unloadVector(sc, vectorProps, targetTable, tableMetadataSchema,
+      Vector.unloadVector(sc, targetTable, vectorProps, tableMetadataSchema,
         selectColumns, whereClause, whereParams)
     }
+
+    /**
+     * Unload a target Vector table using this SparkContext.
+     *
+     * This method should be used when the VectorEndpointConf is known ahead of time (e.g. was communicated through a separate channel)
+     *
+     * @param tableColumnMetadata sequence of `ColumnMetadata`
+     * @param readConf Read configuration for `Vector` end points
+     *
+     * @return an <code>RDD[Row]</code> for the unload operation
+     */
+    def unloadVector(tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = Vector.unloadVector(sc, tableColumnMetadata, readConf)
   }
 }
 

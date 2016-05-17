@@ -50,7 +50,7 @@ private[provider] case class JobPart(part_id: String,
     external_reference: String,
     format: Option[String],
     column_infos: Seq[ColumnInfo],
-    options: Map[String, String],
+    options: Option[Map[String, String]],
     datastream: DataStream) {
   def writeConf: VectorEndpointConf = {
     val endpoints = for {
@@ -73,18 +73,16 @@ case class Job(transaction_id: Long, query_id: Long, `type`: String, parts: Seq[
 
 object Job {
   implicit val jobFormat = Json.format[Job]
-  final val QueryId = "query_id"
-  final val JobParts = "job_parts"
-  final val PartId = "part_id"
-  final val VectorTableName = "vector_table_name"
-  final val SqlQuery = "spark_sql_query"
-  final val ColsToLoad = "cols_to_load"
-  final val Ref = "spark_ref"
-  final val Options = "options"
-  final val Format = "format"
-  final val DataStreams = "datastreams"
-  final val DataStreamHost = "host"
-  final val DataStreamPort = "port"
-  final val UserName = "username"
-  final val Password = "password"
+}
+
+case class JobMsg(part_id: String, code: Int, msg: String, stacktrace: Option[String])
+
+case class JobProfile(part_id: String, stage: String, time: Long)
+
+case class JobResult(transaction_id: Long, query_id: Long, success: Option[Boolean] = None, error: Option[Seq[JobMsg]] = None, warn: Option[Seq[JobMsg]] = None, profile: Option[Seq[JobProfile]] = None)
+
+object JobResult {
+  implicit val msgFormat = Json.format[JobMsg]
+  implicit val profileFormat = Json.format[JobProfile]
+  implicit val jobResultFormat = Json.format[JobResult]
 }

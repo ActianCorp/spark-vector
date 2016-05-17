@@ -104,10 +104,16 @@ private[vector] object Vector extends Logging {
     }
   }
 
-  def loadVector(rdd: RDD[Seq[Any]], rddSchema: StructType, table: String, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
+  def loadVector(rdd: RDD[Seq[Any]], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
     val tableSchema = StructType(tableColumnMetadata.map(_.structField))
     val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
     load(inputRDD, tableColumnMetadata, writeConf)
+  }
+
+  def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = {
+    val reader = new DataStreamReader(readConf, tableColumnMetadata)
+    val scanRDD = new ScanRDD(sc, readConf, reader.read _)
+    scanRDD
   }
 
   /**
@@ -126,20 +132,19 @@ private[vector] object Vector extends Logging {
    * @return an <code>RDD[Row]</code> for the unload operation
    */
   def unloadVector(sparkContext: SparkContext,
+    table: String,
     vectorProps: VectorConnectionProperties,
-    targetTable: String,
-    tableMetadataSchema: Seq[ColumnMetadata],
+    tableColumnMetadata: Seq[ColumnMetadata],
     selectColumns: String = "*",
     whereClause: String = "",
     whereParams: Seq[Any] = Nil): RDD[Row] = {
-    val client = new DataStreamClient(vectorProps, targetTable)
+    val client = new DataStreamClient(vectorProps, table)
     closeResourceOnFailure(client) {
       client.prepareUnloadDataStreams
       val readConf = client.getVectorEndpointConf
-      val reader = new DataStreamReader(readConf, targetTable, tableMetadataSchema)
-      val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
+      val scanRDD = unloadVector(sparkContext, tableColumnMetadata, readConf)
       assert(whereClause.isEmpty == whereParams.isEmpty)
-      var selectQuery = s"select ${selectColumns} from ${targetTable} ${whereClause}"
+      var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
       whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
       client.startUnload(selectQuery)
       sparkContext.addSparkListener(new SparkListener() {

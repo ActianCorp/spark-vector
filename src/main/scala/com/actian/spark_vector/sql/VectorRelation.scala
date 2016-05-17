@@ -23,17 +23,18 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
+import org.apache.spark.sql.sources.PrunedScan
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
     userSpecifiedSchema: Option[StructType],
     override val sqlContext: SQLContext,
-    options: Map[String, String],
-    writeConf: Option[VectorEndpointConf] = None) extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
+    options: Map[String, String]) extends BaseRelation with InsertableRelation with PrunedFilteredScan with Logging {
   import VectorRelation._
   import VectorOps._
 
-  private lazy val tableMetadataSchema = getTableSchema(tableRef)
-  override def schema: StructType = userSpecifiedSchema.getOrElse(structType(tableMetadataSchema))
+  private lazy val tableMetadata = getTableSchema(tableRef)
+
+  override def schema: StructType = userSpecifiedSchema.getOrElse(structType(tableMetadata))
   override def needConversion: Boolean = false
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
@@ -51,31 +52,35 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
-      ("*", tableMetadataSchema)
-    } else {
-      val cols = requiredColumns.map(_.toLowerCase()).toSet
-      (requiredColumns.mkString(","), tableMetadataSchema.filter(col => cols.contains(col.name.toLowerCase())))
-    }
+    val selectColumns = if (requiredColumns.isEmpty) "*" else requiredColumns.mkString(",")
+    val selectTableMetadata = pruneColumns(requiredColumns, tableMetadata)
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
     logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
-    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadataSchema,
+    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadata,
       selectColumns, whereClause, whereParams)
   }
 }
 
-private[spark_vector] class VectorRelationWithSpecifiedSchema(table: String, columnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf, override val sqlContext: SQLContext)
-    extends BaseRelation with InsertableRelation with Logging {
+private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, override val sqlContext: SQLContext)
+    extends BaseRelation with InsertableRelation with PrunedScan with Logging {
   import VectorOps._
+  import VectorRelation._
 
   override def schema: StructType = StructType(columnMetadata.map(_.structField))
+
+  override def needConversion: Boolean = false
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
-    data.rdd.map(row => row.toSeq).loadVector(data.schema, table, columnMetadata, writeConf)
+    data.rdd.map(row => row.toSeq).loadVector(data.schema, columnMetadata, conf)
+  }
+
+  override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
+    val requiredColumnsMetadata = pruneColumns(requiredColumns, columnMetadata)
+    sqlContext.sparkContext.unloadVector(requiredColumnsMetadata, conf)
   }
 }
 
@@ -89,8 +94,8 @@ object VectorRelation {
   def apply(tableRef: TableRef, sqlContext: SQLContext, options: Map[String, String]): VectorRelation =
     new VectorRelation(tableRef, None, sqlContext, options)
 
-  def apply(table: String, columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, sqlContext: SQLContext): VectorRelationWithSpecifiedSchema =
-    new VectorRelationWithSpecifiedSchema(table, columnMetadata, conf, sqlContext)
+  def apply(columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, sqlContext: SQLContext): VectorRelationWithSpecifiedSchema =
+    new VectorRelationWithSpecifiedSchema(columnMetadata, conf, sqlContext)
 
   /** Obtain the metadata containing the schema for the table referred by tableRef */
   def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] =
@@ -139,5 +144,13 @@ object VectorRelation {
     } else {
       ("", Nil)
     }
+  }
+
+  /** Selects the subset of columns (represented by `ColumnMetadata` structures) as required by `requiredColumns` */
+  def pruneColumns(requiredColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] = if (requiredColumns.isEmpty) {
+    columnMetadata
+  } else {
+    val cols = requiredColumns.map(_.toLowerCase).toSet
+    columnMetadata.filter(col => cols.contains(col.name.toLowerCase))
   }
 }
