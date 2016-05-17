@@ -51,8 +51,8 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
   /** Execute a sql (statement) within a future task */
-  private def executeSql(sql: String): Future[Int] = {
-    val f = Future { jdbc.executeStatement(sql) }
+  private def executeSql(sql: String, params: Seq[Any] = Nil): Future[Int] = {
+    val f = Future { if (params.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, params) }
     f onFailure {
       case t =>
         logError(s"Query ${sql} has failed.", t)
@@ -99,7 +99,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   def startLoad(): Future[Int] = executeSql(startLoadSql(table))
 
   /** Start unloading data from Vector */
-  def startUnload(selectQuery: String): Future[Int] = executeSql(startUnloadSql(selectQuery))
+  def startUnload(selectQuery: String, whereParams: Seq[Any]): Future[Int] = executeSql(startUnloadSql(selectQuery), whereParams)
 
   /** Commit the transaction opened by this client */
   def commit: Unit = jdbc.commit

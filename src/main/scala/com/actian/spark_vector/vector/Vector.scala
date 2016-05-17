@@ -124,8 +124,7 @@ private[vector] object Vector extends Logging {
       val scanRDD = new ScanRDD(sparkContext, readConf, reader.read _)
       assert(whereClause.isEmpty == whereParams.isEmpty)
       var selectQuery = s"select ${selectColumns} from ${targetTable} ${whereClause}"
-      whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
-      client.startUnload(selectQuery)
+      client.startUnload(selectQuery, whereParams)
       sparkContext.addSparkListener(new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {

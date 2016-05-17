@@ -128,7 +128,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
 
   /** Execute the update prepared `SQL` query specified by `sql` */
   def executePreparedStatement(sql: String, params: Seq[Any]): Int =
-    withPreparedStatement(sql, _.setParams(params).executeUpdate(sql))
+    withPreparedStatement(sql, _.setParams(params).executeUpdate)
 
   /** Return true if there is a table named `tableName` in Vector */
   def tableExists(tableName: String): Boolean = if (!tableName.isEmpty) {
