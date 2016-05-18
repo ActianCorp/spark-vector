@@ -17,6 +17,7 @@ package com.actian.spark_vector.colbuffer.real
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.vector.VectorDataType
+import com.actian.spark_vector.colbuffer.util.PowersOfTen
 
 import java.nio.ByteBuffer
 
@@ -26,8 +27,22 @@ private class DoubleColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffe
   override def get(buffer: ByteBuffer): Double = buffer.getDouble()
 }
 
-/** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision` types. */
+private class MoneyColumnBuffer(p: ColumnBufferBuildParams) extends DoubleColumnBuffer(p) {
+  /** @note Vector stores `money` values as `double`s w/o scale and considers it only for printing */
+  private final val ScaleFactor = PowersOfTen(p.scale)
+
+  override def put(source: Double, buffer: ByteBuffer): Unit = buffer.putDouble(source * ScaleFactor)
+
+  override def get(buffer: ByteBuffer): Double = buffer.getDouble() / ScaleFactor
+}
+
+/** Builds a `ColumnBuffer` object for `float`, `float8`, `double precision`, `dbl`, `money` types. */
 private[colbuffer] object DoubleColumnBuffer extends ColumnBufferBuilder {
-  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+  private val buildDouble: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
     ofDataType(VectorDataType.DoubleType) andThen { new DoubleColumnBuffer(_) }
+
+  private val buildMoney: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
+    ofDataType(VectorDataType.MoneyType) andThen { new MoneyColumnBuffer(_) }
+
+  override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] = buildDouble orElse buildMoney
 }
