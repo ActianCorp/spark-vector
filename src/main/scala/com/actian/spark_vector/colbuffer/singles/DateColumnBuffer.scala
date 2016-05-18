@@ -25,18 +25,18 @@ import java.nio.ByteBuffer
 import java.sql.Date
 
 private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date, Int](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
+  private final val DaysBeforeEpoch = 719528
+
   override def put(source: Date, buffer: ByteBuffer): Unit = {
     TimeConversion.convertLocalDateToUTC(source)
-    buffer.putInt((source.getTime() / MillisecondsInDay + DateColumnBuffer.DaysBeforeEpoch).toInt)
+    buffer.putInt((source.getTime() / MillisecondsInDay + DaysBeforeEpoch).toInt)
   }
 
-  override def get(buffer: ByteBuffer): Int = buffer.getInt() - DateColumnBuffer.DaysBeforeEpoch
+  override def get(buffer: ByteBuffer): Int = buffer.getInt() - DaysBeforeEpoch
 }
 
 /** Builds a `ColumnBuffer` object for `ansidate` types. */
 private[colbuffer] object DateColumnBuffer extends ColumnBufferBuilder {
-  private final val DaysBeforeEpoch = 719528
-
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
     ofDataType(VectorDataType.DateType) andThen { new DateColumnBuffer(_) }
 }

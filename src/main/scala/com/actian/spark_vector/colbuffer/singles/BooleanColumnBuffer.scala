@@ -21,22 +21,22 @@ import com.actian.spark_vector.vector.VectorDataType
 import java.nio.ByteBuffer
 
 private class BooleanColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Boolean, Boolean](p.name, p.maxValueCount, BooleanSize, BooleanSize, p.nullable) {
+  private final val True = 1: Byte
+  private final val False = 0: Byte
+
   override def put(source: Boolean, buffer: ByteBuffer): Unit = source.booleanValue() match {
-    case true => buffer.put(BooleanColumnBuffer.True)
-    case false => buffer.put(BooleanColumnBuffer.False)
+    case true => buffer.put(True)
+    case false => buffer.put(False)
   }
 
   override def get(buffer: ByteBuffer): Boolean = buffer.get() match {
-    case BooleanColumnBuffer.True => true
-    case BooleanColumnBuffer.False => false
+    case True => true
+    case False => false
   }
 }
 
 /** Builds a `ColumnBuffer` object for `boolean` types. */
 private[colbuffer] object BooleanColumnBuffer extends ColumnBufferBuilder {
-  private final val True = 1: Byte
-  private final val False = 0: Byte
-
   override private[colbuffer] val build: PartialFunction[ColumnBufferBuildParams, ColumnBuffer[_, _]] =
     ofDataType(VectorDataType.BooleanType) andThen { new BooleanColumnBuffer(_) }
 }
