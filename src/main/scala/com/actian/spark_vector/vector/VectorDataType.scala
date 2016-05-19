@@ -24,6 +24,7 @@ object VectorDataType {
   case object BigIntType extends EnumVal
   case object FloatType extends EnumVal
   case object DoubleType extends EnumVal
+  case object MoneyType extends EnumVal
   case object DecimalType extends EnumVal
   case object CharType extends EnumVal
   case object NcharType extends EnumVal
@@ -47,8 +48,9 @@ object VectorDataType {
     case "bigint" | "integer8" | "slng" | "ulng" | "uidx" => BigIntType
     case "float4" | "real" | "flt" => FloatType
     case "float" | "float8" | "double precision" | "dbl" => DoubleType
+    case "money" => MoneyType
     case "boolean" | "bool" => BooleanType
-    case "decimal" | "money" => DecimalType
+    case "decimal" => DecimalType
     case "char" => CharType
     case "nchar" => NcharType
     case "varchar" => VarcharType

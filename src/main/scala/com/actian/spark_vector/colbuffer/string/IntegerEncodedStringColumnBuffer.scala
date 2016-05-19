@@ -25,8 +25,10 @@ import java.nio.ByteBuffer
 
 private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBufferBuildParams)
     extends ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, IntSize, IntSize, p.nullable) {
+  protected final val Whitespace = '\u0020'
+
   override def put(source: String, buffer: ByteBuffer): Unit = if (source.isEmpty()) {
-    buffer.putInt(IntegerEncodedStringColumnBuffer.Whitespace)
+    buffer.putInt(Whitespace)
   } else {
     buffer.putInt(encode(source))
   }
@@ -38,7 +40,7 @@ private[colbuffer] abstract class IntegerEncodedStringColumnBuffer(p: ColumnBuff
 
 private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {
   override protected def encode(value: String): Int = if (StringConversion.truncateToUTF8Bytes(value, 1).length == 0) {
-    IntegerEncodedStringColumnBuffer.Whitespace
+    Whitespace
   } else {
     value.codePointAt(0)
   }
@@ -46,7 +48,7 @@ private class ConstantLengthSingleByteStringColumnBuffer(p: ColumnBufferBuildPar
 
 private class ConstantLengthSingleCharStringColumnBuffer(p: ColumnBufferBuildParams) extends IntegerEncodedStringColumnBuffer(p) {
   override protected def encode(value: String): Int = if (Character.isHighSurrogate(value.charAt(0))) {
-    IntegerEncodedStringColumnBuffer.Whitespace
+    Whitespace
   } else {
     value.codePointAt(0)
   }
@@ -54,8 +56,6 @@ private class ConstantLengthSingleCharStringColumnBuffer(p: ColumnBufferBuildPar
 
 /** Builds a `ColumnBuffer` object for `char`, `nchar` integer-encoded types. */
 private[colbuffer] object IntegerEncodedStringColumnBuffer extends ColumnBufferBuilder {
-  final val Whitespace = '\u0020'
-
   private val buildPartial: PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
     case p if p.precision == 1 => p
   }
