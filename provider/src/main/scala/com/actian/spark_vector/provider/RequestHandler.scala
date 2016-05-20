@@ -31,6 +31,7 @@ import com.actian.spark_vector.sql.VectorRelation
 
 import play.api.libs.json.{ JsError, Json }
 import org.apache.spark.sql.DataFrame
+import com.actian.spark_vector.datastream.writer.DataStreamWriter
 
 class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
   import Job._
@@ -40,16 +41,16 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   private def run(implicit socket: SocketChannel): Future[JobResult] = Future {
     val json = DataStreamReader.readWithByteBuffer() { DataStreamReader.readString _ }
     logDebug(s"Got new json request: ${json}")
-    val job: Job = Json.fromJson[Job](Json.parse(json)).fold(errors => {
+    Json.fromJson[Job](Json.parse(json)).fold(errors => {
       throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
     }, job => job)
-
-    for {
+  } flatMap { job =>
+    val jobPartF: Seq[Future[Unit]] = for {
       part <- job.parts
-      format <- part.format.orElse {
+    } yield Future[Unit] {
+      val format = part.format.getOrElse {
         throw new IllegalArgumentException(s"All part jobs must have the format specified, but query ${job.query_id}, part ${part.part_id} doesn't")
       }
-    } {
       val vectorDf = vectorDF(part)
       part.operator_type match {
         case "scan" => {
@@ -60,8 +61,9 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
         case "insert" => writeDF(format, vectorDf, part)
         case _ => throw new IllegalArgumentException(s"Unknown operator type: ${part.operator_type} in job ${job.query_id}, part ${part.part_id}")
       }
-    }
-    JobResult(job.transaction_id, job.query_id, success = Some(true))
+    }.transform(identity, JobException(_, job, part))
+    val ret = jobPartF.foldLeft(Future { () }) { case (acc, next) => acc flatMap { _ => next } }
+    ret.map { _ => JobResult(job.transaction_id, job.query_id, success = Some(JobSuccess)) }
   }
 
   def handle(implicit socket: SocketChannel): Unit = run onComplete {
@@ -69,13 +71,27 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     case Failure(t) => handleFailure(t)
   }
 
+  private def writeJobResult(result: JobResult)(implicit socket: SocketChannel) =
+    DataStreamWriter.writeWithByteBuffer { DataStreamWriter.writeStringV2(_, Json.toJson(result).toString) }
+
   private def handleSuccess(result: JobResult)(implicit socket: SocketChannel) = {
     logInfo(s"Job tr_id:${result.transaction_id}, query_id:${result.query_id} has succeeded")
+    writeJobResult(result)
     socket.close
   }
 
   private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = {
-    logError(s"Job has failed with exception ${cause}: ${cause.getMessage}\n${cause.getStackTraceString}")
+    val result = cause match {
+      case JobException(e, job, part) => {
+        logError(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
+        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), -1, cause.getMessage, Some(cause.getStackTraceString)))))
+      }
+      case _ => {
+        logError("Job failed while receiving/parsing json", cause)
+        JobResult(-1, -1, error = Some(Seq(JobMsg(None, -1, cause.getMessage, Some(cause.getStackTraceString)))))
+      }
+    }
+    writeJobResult(result)
     socket.close
   }
 
@@ -92,15 +108,22 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   private def selectStatement(format: String, part: JobPart): String = {
     val options = part.options.getOrElse(Map.empty[String, String])
-    val df = format match {
-      case "parquet" => sqlContext.read.options(options).parquet(part.external_reference)
-      case "csv" => sqlContext.read.options(options).format("com.databricks.spark.csv").load(part.external_reference)
-      case "orc" => sqlContext.read.options(options).orc(part.external_reference)
-      case _ => sqlContext.read.options(options).format(format).load(part.external_reference)
+    val table = format match {
+      case "hive" => part.external_reference
+      case _ => {
+        val df = format match {
+          case "parquet" => sqlContext.read.options(options).parquet(part.external_reference)
+          case "csv" => sqlContext.read.options(options).format("com.databricks.spark.csv").load(part.external_reference)
+          case "orc" => sqlContext.read.options(options).orc(part.external_reference)
+          case _ => sqlContext.read.options(options).format(format).load(part.external_reference)
+        }
+        val inputTable = s"in_${part.external_table_name}_${id.incrementAndGet}"
+        df.registerTempTable(inputTable)
+        inputTable
+      }
     }
-    val inputTable = s"in_${part.external_table_name}_${id.incrementAndGet}"
-    df.registerTempTable(inputTable)
-    s"select ${part.column_infos.map(ci => sparkQuote(ci.column_name)).mkString(", ")} from ${sparkQuote(inputTable)}"
+
+    s"select ${part.column_infos.map(ci => sparkQuote(ci.column_name)).mkString(", ")} from ${sparkQuote(table)}"
   }
 
   private def writeDF(format: String, df: DataFrame, part: JobPart): Unit = {
@@ -109,6 +132,11 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       case "parquet" => df.write.options(options).parquet(part.external_reference)
       case "csv" => df.write.options(options).format("com.databricks.spark.csv").save(part.external_reference)
       case "orc" => df.write.options(options).orc(part.external_reference)
+      case "hive" => {
+        val inputTable = s"in_${part.external_reference}_${id.incrementAndGet}"
+        df.registerTempTable(inputTable)
+        sqlContext.sql(s"insert into ${sparkQuote(part.external_reference)} select * from ${sparkQuote(inputTable)}")
+      }
       case _ => df.write.options(options).format(format).save(part.external_reference)
     }
   }

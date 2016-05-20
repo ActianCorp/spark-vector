@@ -68,6 +68,9 @@ object DataStreamWriter extends Logging {
   /** Write an ASCII encoded string to `out` */
   def writeString(out: DataOutputStream, s: String): Unit = writeByteArray(out, s.getBytes("ASCII"))
 
+  /** Write a null-terminated ASCII encoded string to `out`, without its preceding length */
+  def writeStringV2(out: DataOutputStream, s: String): Unit = { out.write(s.getBytes("ASCII")); out.write(0) }
+
   /** Write a `ByteArray` `a` to `out` */
   def writeByteArray(out: DataOutputStream, a: Array[Byte]): Unit = {
     writeLength(out, a.length)

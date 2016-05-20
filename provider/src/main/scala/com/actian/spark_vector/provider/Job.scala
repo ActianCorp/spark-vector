@@ -18,23 +18,23 @@ package com.actian.spark_vector.provider
 import com.actian.spark_vector.datastream.{ VectorEndpoint, VectorEndpointConf }
 import com.actian.spark_vector.vector.ColumnMetadata
 
-import play.api.libs.json.Json
+import play.api.libs.json.{ Format, JsObject, Json, Reads, Writes }
 
 private[provider] case class LogicalType(`type`: String,
   precision: Int,
   scale: Int)
 
 private[provider] case class ColumnInfo(column_name: String,
-    logical_type: LogicalType,
-    physical_type: String,
-    nullable: Boolean,
-    is_const: Boolean) {
+  logical_type: LogicalType,
+  physical_type: String,
+  nullable: Boolean,
+  is_const: Boolean) {
   implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale)
 }
 
 private[provider] case class StreamPerNode(nr: Int,
-    port: Int,
-    host: String) {
+  port: Int,
+  host: String) {
   private val ReasonableThreadsPerNode = 1024
   require(nr <= ReasonableThreadsPerNode)
 }
@@ -45,13 +45,13 @@ private[provider] case class DataStream(
   streams_per_node: Seq[StreamPerNode])
 
 private[provider] case class JobPart(part_id: String,
-    external_table_name: String,
-    operator_type: String,
-    external_reference: String,
-    format: Option[String],
-    column_infos: Seq[ColumnInfo],
-    options: Option[Map[String, String]],
-    datastream: DataStream) {
+  external_table_name: String,
+  operator_type: String,
+  external_reference: String,
+  format: Option[String],
+  column_infos: Seq[ColumnInfo],
+  options: Option[Map[String, String]],
+  datastream: DataStream) {
   def writeConf: VectorEndpointConf = {
     val endpoints = for {
       spn <- datastream.streams_per_node
@@ -75,14 +75,24 @@ object Job {
   implicit val jobFormat = Json.format[Job]
 }
 
-case class JobMsg(part_id: String, code: Int, msg: String, stacktrace: Option[String])
+trait JobStatus
+object JobStatus extends JobStatus {
+  implicit val ackFormat = Format[JobStatus](Reads { _.validate[JsObject] map (_ => JobStatus) }, Writes { _ => JsObject(Nil) })
+}
+
+case object JobSuccess extends JobStatus
+case object JobAck extends JobStatus
+
+case class JobMsg(part_id: Option[String], code: Int, msg: String, stacktrace: Option[String])
 
 case class JobProfile(part_id: String, stage: String, time: Long)
 
-case class JobResult(transaction_id: Long, query_id: Long, success: Option[Boolean] = None, error: Option[Seq[JobMsg]] = None, warn: Option[Seq[JobMsg]] = None, profile: Option[Seq[JobProfile]] = None)
+case class JobResult(transaction_id: Long, query_id: Long, success: Option[JobStatus] = None, ack: Option[JobStatus] = None, error: Option[Seq[JobMsg]] = None, warn: Option[Seq[JobMsg]] = None, profile: Option[Seq[JobProfile]] = None)
 
 object JobResult {
   implicit val msgFormat = Json.format[JobMsg]
   implicit val profileFormat = Json.format[JobProfile]
   implicit val jobResultFormat = Json.format[JobResult]
 }
+
+case class JobException(cause: Throwable, job: Job, part: JobPart) extends Throwable(cause)
