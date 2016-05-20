@@ -23,15 +23,14 @@ import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{ DataFrame, SQLContext }
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
+import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.loader.command.sparkQuote
 import com.actian.spark_vector.sql.VectorRelation
 
 import play.api.libs.json.{ JsError, Json }
-import org.apache.spark.sql.DataFrame
-import com.actian.spark_vector.datastream.writer.DataStreamWriter
 
 class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
   import Job._
@@ -45,25 +44,25 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
     }, job => job)
   } flatMap { job =>
-    val jobPartF: Seq[Future[Unit]] = for {
-      part <- job.parts
-    } yield Future[Unit] {
-      val format = part.format.getOrElse {
-        throw new IllegalArgumentException(s"All part jobs must have the format specified, but query ${job.query_id}, part ${part.part_id} doesn't")
-      }
-      val vectorDf = vectorDF(part)
-      part.operator_type match {
-        case "scan" => {
-          val vectorTable = register(part.external_table_name, vectorDf)
-          val select = selectStatement(format, part)
-          sqlContext.sql(s"insert into ${sparkQuote(vectorTable)} $select")
+    var jobPartAccum = Future { () }
+    for { part <- job.parts } {
+      jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
+        val format = part.format.getOrElse {
+          throw new IllegalArgumentException(s"All part jobs must have the format specified, but query ${job.query_id}, part ${part.part_id} doesn't")
         }
-        case "insert" => writeDF(format, vectorDf, part)
-        case _ => throw new IllegalArgumentException(s"Unknown operator type: ${part.operator_type} in job ${job.query_id}, part ${part.part_id}")
-      }
-    }.transform(identity, JobException(_, job, part))
-    val ret = jobPartF.foldLeft(Future { () }) { case (acc, next) => acc flatMap { _ => next } }
-    ret.map { _ => JobResult(job.transaction_id, job.query_id, success = Some(JobSuccess)) }
+        val vectorDf = vectorDF(part)
+        part.operator_type match {
+          case "scan" => {
+            val vectorTable = register(part.external_table_name, vectorDf)
+            val select = selectStatement(format, part)
+            sqlContext.sql(s"insert into ${sparkQuote(vectorTable)} $select")
+          }
+          case "insert" => writeDF(format, vectorDf, part)
+          case _ => throw new IllegalArgumentException(s"Unknown operator type: ${part.operator_type} in job ${job.query_id}, part ${part.part_id}")
+        }
+      }.transform(identity, JobException(_, job, part)))
+    }
+    jobPartAccum.map { _ => JobResult(job.transaction_id, job.query_id, success = Some(JobSuccess)) }
   }
 
   def handle(implicit socket: SocketChannel): Unit = run onComplete {

@@ -21,6 +21,7 @@ import org.apache.spark.{ Logging, SparkConf, SparkContext }
 import org.apache.spark.sql.hive.HiveContext
 
 import resource.managed
+import java.net.InetAddress
 
 object Main extends App with Logging {
   private val conf = new SparkConf()
@@ -35,9 +36,10 @@ object Main extends App with Logging {
     server <- managed(ServerSocketChannel.open.bind(null))
   } {
     logInfo(s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}")
-    println(server.socket.getLocalPort)
-    println(handler.auth.username)
-    println(handler.auth.password)
+    println("vector_provider_hostname=" + InetAddress.getLocalHost.getHostName)
+    println("vector_provider_port=" + server.socket.getLocalPort)
+    println("vector_provider_username=" + handler.auth.username)
+    println("vector_provider_password=" + handler.auth.password)
     while (true)
       handler.handle(server.accept)
   }
