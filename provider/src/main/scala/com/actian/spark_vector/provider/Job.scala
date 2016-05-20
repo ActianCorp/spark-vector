@@ -87,7 +87,13 @@ case class JobMsg(part_id: Option[String], code: Int, msg: String, stacktrace: O
 
 case class JobProfile(part_id: String, stage: String, time: Long)
 
-case class JobResult(transaction_id: Long, query_id: Long, success: Option[JobStatus] = None, ack: Option[JobStatus] = None, error: Option[Seq[JobMsg]] = None, warn: Option[Seq[JobMsg]] = None, profile: Option[Seq[JobProfile]] = None)
+case class JobResult(transaction_id: Long,
+  query_id: Long,
+  success: Option[JobStatus] = None,
+  ack: Option[JobStatus] = None,
+  error: Option[Seq[JobMsg]] = None,
+  warn: Option[Seq[JobMsg]] = None,
+  profile: Option[Seq[JobProfile]] = None)
 
 object JobResult {
   implicit val msgFormat = Json.format[JobMsg]
