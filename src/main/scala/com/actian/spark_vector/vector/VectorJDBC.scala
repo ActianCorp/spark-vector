@@ -200,8 +200,11 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     rowCount.map(_ == 0).getOrElse(throw new VectorException(SqlException, s"No result for count on table '${tableName}'"))
   }
 
+  /** Check if Vector `JDBC` connection is closed */
+  def isClosed(): Boolean = dbCxn.isClosed
+
   /** Close the Vector `JDBC` connection */
-  def close(): Unit = dbCxn.close
+  def close(): Unit = dbCxn.close()
 
   /** Set auto-commit to ON/OFF for this `JDBC` connection */
   def autoCommit(value: Boolean): Unit = dbCxn.setAutoCommit(value)

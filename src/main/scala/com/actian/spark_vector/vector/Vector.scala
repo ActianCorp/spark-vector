@@ -63,14 +63,13 @@ private[vector] object Vector extends Logging {
     insertRDD.sparkContext.runJob(insertRDD, writer.write _)
   }
 
-  /**
-   * Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
-   * using the connection information stored in `vectorProps`.
+  /** Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
+   *  using the connection information stored in `vectorProps`.
    *
-   * @param preSQL specify some queries to be executed before loading, in the same transaction
-   * @param postSQL specify some queries to be executed after loading, in the same transaction
-   * @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
-   * @param createTable specify if the table should be created if it does not exist
+   *  @param preSQL specify some queries to be executed before loading, in the same transaction
+   *  @param postSQL specify some queries to be executed after loading, in the same transaction
+   *  @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
+   *  @param createTable specify if the table should be created if it does not exist
    */
   def loadVector(rdd: RDD[Seq[Any]],
     rddSchema: StructType,
@@ -116,20 +115,19 @@ private[vector] object Vector extends Logging {
     scanRDD
   }
 
-  /**
-   * Given a `Spark Context` try to unload the Vector table `targetTable` using the connection
-   * information stored in `vectorProps`.
-   * @note We need a `SQL Context` first with a `DataFrame` generated for the select query
+  /** Given a `Spark Context` try to unload the Vector table `targetTable` using the connection
+   *  information stored in `vectorProps`.
+   *  @note We need a `SQL Context` first with a `DataFrame` generated for the select query
    *
-   * @param sparkContext spark context
-   * @param vectorPros connection properties to the Vector instance
-   * @param targetTable name of the table to unload
-   * @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
-   * @param selectColumns string of select columns separated by comma
-   * @param whereClause prepared string of a where clause
-   * @param whereParams sequence of values for the prepared where clause
+   *  @param sparkContext spark context
+   *  @param vectorPros connection properties to the Vector instance
+   *  @param targetTable name of the table to unload
+   *  @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
+   *  @param selectColumns string of select columns separated by comma
+   *  @param whereClause prepared string of a where clause
+   *  @param whereParams sequence of values for the prepared where clause
    *
-   * @return an <code>RDD[Row]</code> for the unload operation
+   *  @return an <code>RDD[Row]</code> for the unload operation
    */
   def unloadVector(sparkContext: SparkContext,
     table: String,
@@ -145,14 +143,12 @@ private[vector] object Vector extends Logging {
       val scanRDD = unloadVector(sparkContext, tableColumnMetadata, readConf)
       assert(whereClause.isEmpty == whereParams.isEmpty)
       var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
-      whereParams.foreach { param => selectQuery = selectQuery.replaceFirst("\\?", param.toString) }
-      client.startUnload(selectQuery)
+      client.startUnload(selectQuery, whereParams)
       sparkContext.addSparkListener(new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
-          client.commit
           client.close
-          logDebug(s"Data stream client connection closed. Unload ended @ ${job.time}.")
+          logDebug(s"Unload job ended @ ${job.time}.")
           ended = true
         }
       })

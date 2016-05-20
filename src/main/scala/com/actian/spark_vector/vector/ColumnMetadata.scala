@@ -42,7 +42,7 @@ case class ColumnMetadata(val name: String,
     case VectorDataType.IntegerType => (IntegerType, IntSize)
     case VectorDataType.BigIntType => (LongType, LongSize)
     case VectorDataType.FloatType => (FloatType, FloatSize)
-    case VectorDataType.DoubleType => (DoubleType, DoubleSize)
+    case VectorDataType.DoubleType | VectorDataType.MoneyType => (DoubleType, DoubleSize)
     case VectorDataType.BooleanType => (BooleanType, ByteSize)
     case VectorDataType.DecimalType => (DecimalType(precision, scale), LongLongSize)
     case VectorDataType.DateType => (DateType, IntSize)

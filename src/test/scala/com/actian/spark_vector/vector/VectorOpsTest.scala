@@ -41,12 +41,11 @@ import com.actian.spark_vector.vector.VectorOps._
 import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
 import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
-/**
- * Test VectorOps
+/** Test VectorOps
  */
 @IntegrationTest
 class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
-    with VectorFixture with Logging with Profiling {
+  with VectorFixture with Logging with Profiling {
   private val doesNotExistTable = "this_table_does_not_exist"
 
   def createAdmitTable(tableName: String): Unit = {
@@ -281,6 +280,27 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
       val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
       resultsSpark.sortBy(_.mkString) shouldBe dataWithCtColumn
+    }
+  }
+
+  test("generate table/filtered select on strings") { fixture =>
+    val schema = StructTypeUtil.createSchema("s0" -> StringType, "s1" -> StringType, "s2" -> StringType)
+    val data = Seq(Seq[Any]("abc", "def", "ghi"), Seq[Any]("def", "ghi", "jkl"), Seq[Any]("ghi", "jkl", "mno"))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val expectedData = Seq(Seq[Any]("def", "ghi", "jkl"))
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
+          sqlContext.sparkContext.unloadVector(connectionProps, tableName, Seq(ColumnMetadata("s0", "varchar", false, 5, 0),
+            ColumnMetadata("s1", "varchar", false, 5, 0), ColumnMetadata("s2", "varchar", false, 5, 0)),
+            "*", "where s0 = ? or s2 = ?", Seq("def", "jkl"))
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      resultsSpark shouldBe expectedData
     }
   }
 
