@@ -24,6 +24,8 @@ import resource.managed
 import java.net.InetAddress
 
 object Main extends App with Logging {
+  import ProviderAuth._
+
   private val conf = new SparkConf()
     .setAppName("Spark-Vector external tables provider")
     .set("spark.task.maxFailures", "1")

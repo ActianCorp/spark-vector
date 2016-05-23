@@ -30,17 +30,16 @@ object VectorTempTable {
       "instance" -> config.vector.instance,
       "database" -> config.vector.database,
       "table" -> config.vector.targetTable)
-    val optional = Seq(config.vector.user.map("host" -> _),
+    val optional = Seq(config.vector.user.map("user" -> _),
       config.vector.password.map("password" -> _)).flatten ++
       config.vector.preSQL.map(generateSQLOption("loadpresql", _)).getOrElse(Nil) ++
       config.vector.postSQL.map(generateSQLOption("loadpostsql", _)).getOrElse(Nil)
     (base ++ optional).toMap
   }
 
-  /**
-   * Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
+  /** Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
    *
-   * @return The name of the registered temporary table (for now = <vectorTargetTable>)
+   *  @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
     val params = parseOptions(config)

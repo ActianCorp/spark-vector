@@ -63,7 +63,7 @@ private[vector] object Vector extends Logging {
     insertRDD.sparkContext.runJob(insertRDD, writer.write _)
   }
 
-  /** Given an `rdd` with data types specified by `schema`, try to load it to the Vector table `targetTable`
+  /** Given an `rdd` with data types specified by `rddSchema`, try to load it to the Vector table `table`
    *  using the connection information stored in `vectorProps`.
    *
    *  @param preSQL specify some queries to be executed before loading, in the same transaction
@@ -103,12 +103,28 @@ private[vector] object Vector extends Logging {
     }
   }
 
+  /** Given an `rdd` with data types specified by `rddSchema`, try to load it to the Vector table `table`, try to load it directly
+   *  without any SQL connection.
+   *
+   *  @param tableColumnMetadata the expected table column data type information
+   *  @param writeConf datastream configuration for writing
+   */
   def loadVector(rdd: RDD[Seq[Any]], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
     val tableSchema = StructType(tableColumnMetadata.map(_.structField))
     val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
     load(inputRDD, tableColumnMetadata, writeConf)
   }
 
+  /** Given a `Spark Context` try to unload a Vector table (name is omitted since it isn't needed).
+   *
+   *  @note We need a `SQL Context` first with a `DataFrame` generated for the select query
+   *
+   *  @param sc spark context
+   *  @param tableColumnMetadata column type information for the unloaded table
+   *  @param readConf datastream configuration for reading
+   *
+   *  @return an <code>RDD[Row]</code> for the unload operation
+   */
   def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = {
     val reader = new DataStreamReader(readConf, tableColumnMetadata)
     val scanRDD = new ScanRDD(sc, readConf, reader.read _)
@@ -119,10 +135,10 @@ private[vector] object Vector extends Logging {
    *  information stored in `vectorProps`.
    *  @note We need a `SQL Context` first with a `DataFrame` generated for the select query
    *
-   *  @param sparkContext spark context
+   *  @param sc spark context
+   *  @param table name of the table to unload
    *  @param vectorPros connection properties to the Vector instance
-   *  @param targetTable name of the table to unload
-   *  @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
+   *  @param tableColumnMetadata sequence of `ColumnMetadata` obtained for `targetTable`
    *  @param selectColumns string of select columns separated by comma
    *  @param whereClause prepared string of a where clause
    *  @param whereParams sequence of values for the prepared where clause

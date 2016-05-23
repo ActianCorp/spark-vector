@@ -39,8 +39,7 @@ private[provider] case class StreamPerNode(nr: Int,
   require(nr <= ReasonableThreadsPerNode)
 }
 
-private[provider] case class DataStream(
-  rolename: String,
+private[provider] case class DataStream(rolename: String,
   password: String,
   streams_per_node: Seq[StreamPerNode])
 

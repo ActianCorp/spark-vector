@@ -15,27 +15,4 @@
  */
 package com.actian.spark_vector
 
-import scala.util.Random
-
-package object provider {
-  def randomAsciiString(n: Int, nonAlphaNumericChars: String = "", nonAlphaNumericCharPercentage: Double = .1): String = if (nonAlphaNumericChars.length == 0) {
-    Random.alphanumeric.take(n).mkString
-  } else {
-    val alphaPercentage = 1.0 - nonAlphaNumericCharPercentage
-    val alphaNumericN = (alphaPercentage * n).toInt
-    Random.shuffle(Random.alphanumeric.take(alphaNumericN).toSeq ++
-      Stream.continually(Random.nextInt(nonAlphaNumericChars.length)).map(nonAlphaNumericChars).take(n - alphaNumericN).toSeq).mkString
-  }
-
-  def generateUsername: String = {
-    val prefix = "prov_"
-    val UsernameLen = 63
-    val size = UsernameLen - prefix.length
-    "prov_" + randomAsciiString(size)
-  }
-
-  def generatePassword: String = {
-    val PasswordLen = 255
-    randomAsciiString(PasswordLen, "!@#$%^&")
-  }
-}
+package object provider {}
