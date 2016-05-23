@@ -54,12 +54,14 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
     val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
       ("*", tableMetadataSchema)
     } else {
-      val cols = requiredColumns.map(_.toLowerCase()).toSet
-      (requiredColumns.mkString(","), tableMetadataSchema.filter(col => cols.contains(col.name.toLowerCase())))
+      (requiredColumns.mkString(","), requiredColumns.map { col =>
+        tableMetadataSchema.find(_.name.equalsIgnoreCase(col)).getOrElse(
+          throw new IllegalArgumentException(s"Column '${col}' not found in table metadata schema."))
+      }.toSeq)
     }
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
-    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
+    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
     sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadataSchema,
       selectColumns, whereClause, whereParams)
   }
