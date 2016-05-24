@@ -56,7 +56,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
     val selectTableMetadata = pruneColumns(requiredColumns, tableMetadata)
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
 
-    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} where ${whereClause}")
+    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
     sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadata,
       selectColumns, whereClause, whereParams)
   }
@@ -152,10 +152,7 @@ object VectorRelation {
   def pruneColumns(requiredColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] = if (requiredColumns.isEmpty) {
     columnMetadata
   } else {
-    for {
-      col <- requiredColumns
-      colMetadata <- columnMetadata
-      if col.equalsIgnoreCase(colMetadata.name)
-    } yield colMetadata
+    requiredColumns.map(col => columnMetadata.find(_.name.equalsIgnoreCase(col)).getOrElse(
+      throw new IllegalArgumentException(s"Column '${col}' not found in table metadata schema.")))
   }
 }

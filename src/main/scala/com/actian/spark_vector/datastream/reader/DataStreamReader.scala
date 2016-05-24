@@ -41,9 +41,9 @@ class DataStreamReader(readConf: VectorEndpointConf, tableMetadataSchema: Seq[Co
 
   /**
    * This function is executed once for each partition of [[ScanRDD]]. Will open a socket connection, read all data assigned
-   * to its corresponding partition (`taskContext.partitionId`) and return a row iterator (leaving the connection opened).
+   * to its corresponding `partitionId` and return a row iterator (leaving the connection opened).
    */
-  def read(taskContext: TaskContext): RowReader = connector.newConnection(taskContext.partitionId) { implicit socket =>
+  def read(partitionId: Int): RowReader = connector.newConnection(partitionId) { implicit socket =>
     val headerInfo = connector.readConnectionHeader()
     RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
   }
