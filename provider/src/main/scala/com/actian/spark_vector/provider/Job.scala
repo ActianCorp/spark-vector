@@ -149,5 +149,5 @@ private[provider] object JobResult {
   implicit val jobResultFormat = Json.format[JobResult]
 }
 
-/** Wrap an exception in a class that contains additional information about the [[Job]] that has thrown this exception */
+/** Wrap an exception in a class that contains additional information about the `Job` that has thrown this exception */
 case class JobException(cause: Throwable, job: Job, part: JobPart) extends Throwable(cause)
