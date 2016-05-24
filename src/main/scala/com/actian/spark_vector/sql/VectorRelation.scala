@@ -62,12 +62,18 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   }
 }
 
+/**
+ * Relation to be used when the column information is known ahead of time.
+ *
+ * @param columnMetadata metadata about columns that are contained in this relation
+ * @param conf Datastream configuration for reading/writing
+ */
 private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, override val sqlContext: SQLContext)
     extends BaseRelation with InsertableRelation with PrunedScan with Logging {
   import VectorOps._
   import VectorRelation._
 
-  override def schema: StructType = StructType(columnMetadata.map(_.structField))
+  override def schema: StructType = structType(columnMetadata)
 
   override def needConversion: Boolean = false
 
@@ -99,16 +105,12 @@ object VectorRelation {
 
   /** Obtain the metadata containing the schema for the table referred by tableRef */
   def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] =
-    VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.columnMetadata(tableRef.table) }
+    VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.columnMetadata(tableRef.table, tableRef.cols) }
 
-  private def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType =
-    StructType(tableMetadataSchema.map(_.structField))
+  def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType = StructType(tableMetadataSchema.map(_.structField))
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
-  def structType(tableRef: TableRef): StructType = VectorJDBC.withJDBC(tableRef.toConnectionProps) { cxn =>
-    val structFields = cxn.columnMetadata(tableRef.table, tableRef.cols).map(_.structField)
-    StructType(structFields)
-  }
+  def structType(tableRef: TableRef): StructType = structType(getTableSchema(tableRef))
 
   /** Retrieves a series of SQL queries from the option with key `key` */
   def getSQL(key: String, options: Map[String, String]): Seq[String] =
@@ -150,7 +152,10 @@ object VectorRelation {
   def pruneColumns(requiredColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] = if (requiredColumns.isEmpty) {
     columnMetadata
   } else {
-    val cols = requiredColumns.map(_.toLowerCase).toSet
-    columnMetadata.filter(col => cols.contains(col.name.toLowerCase))
+    for {
+      col <- requiredColumns
+      colMetadata <- columnMetadata
+      if col.equalsIgnoreCase(colMetadata.name)
+    } yield colMetadata
   }
 }

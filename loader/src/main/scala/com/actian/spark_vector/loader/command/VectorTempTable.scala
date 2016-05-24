@@ -45,7 +45,7 @@ object VectorTempTable {
   def register(config: UserOptions, sqlContext: SQLContext): String = {
     val params = parseOptions(config)
     val tableName = params("table")
-    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), sqlContext, Map.empty[String, String])).registerTempTable(tableName)
+    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), sqlContext, params)).registerTempTable(tableName)
     sparkQuote(tableName)
   }
 }

@@ -29,6 +29,7 @@ import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.loader.command.sparkQuote
 import com.actian.spark_vector.sql.VectorRelation
+import com.actian.spark_vector.util.ResourceUtil._
 
 import play.api.libs.json.{ JsError, Json }
 
@@ -43,9 +44,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   private val id = new AtomicLong(0L)
 
-  /**
-   * Given a socket connection, read the JSON request for external resources and process its parts
-   */
+  /** Given a socket connection, read the JSON request for external resources and process its parts */
   private def run(implicit socket: SocketChannel): Future[JobResult] = Future {
     val json = DataStreamReader.readWithByteBuffer() { DataStreamReader.readString _ }
     logDebug(s"Got new json request: ${json}")
@@ -86,14 +85,13 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     DataStreamWriter.writeWithByteBuffer { DataStreamWriter.writeStringV2(_, Json.toJson(result).toString) }
 
   /** Handle the success of a query request */
-  private def handleSuccess(result: JobResult)(implicit socket: SocketChannel) = {
+  private def handleSuccess(result: JobResult)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
     logInfo(s"Job tr_id:${result.transaction_id}, query_id:${result.query_id} has succeeded")
     writeJobResult(result)
-    socket.close
   }
 
   /** Handle the failure of a query request */
-  private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = {
+  private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
     val result = cause match {
       case JobException(e, job, part) => {
         logError(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
@@ -105,7 +103,6 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       }
     }
     writeJobResult(result)
-    socket.close
   }
 
   /** Given a job part, create the dataframe to subsequently be used to read/insert data into Vector */

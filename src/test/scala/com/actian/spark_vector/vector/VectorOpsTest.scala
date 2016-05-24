@@ -41,11 +41,10 @@ import com.actian.spark_vector.vector.VectorOps._
 import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
 import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
-/** Test VectorOps
- */
+/** Test VectorOps */
 @IntegrationTest
 class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
-  with VectorFixture with Logging with Profiling {
+    with VectorFixture with Logging with Profiling {
   private val doesNotExistTable = "this_table_does_not_exist"
 
   def createAdmitTable(tableName: String): Unit = {
