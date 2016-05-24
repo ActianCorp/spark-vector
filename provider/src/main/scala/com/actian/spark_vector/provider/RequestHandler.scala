@@ -32,11 +32,20 @@ import com.actian.spark_vector.sql.VectorRelation
 
 import play.api.libs.json.{ JsError, Json }
 
+/**
+ * Handler for requests from Vector
+ *
+ * @param sqlContext context to use
+ * @param auth authentication information to be verified on each request
+ */
 class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
   import Job._
 
   private val id = new AtomicLong(0L)
 
+  /**
+   * Given a socket connection, read the JSON request for external resources and process its parts
+   */
   private def run(implicit socket: SocketChannel): Future[JobResult] = Future {
     val json = DataStreamReader.readWithByteBuffer() { DataStreamReader.readString _ }
     logDebug(s"Got new json request: ${json}")
@@ -44,6 +53,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
     }, job => job)
   } flatMap { job =>
+    /** An accumulator to ensure parts are run sequentially */
     var jobPartAccum = Future { () }
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
@@ -65,20 +75,24 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     jobPartAccum.map { _ => JobResult(job.transaction_id, job.query_id, success = Some(JobSuccess)) }
   }
 
+  /** Start a future to handle a new external datasource query request */
   def handle(implicit socket: SocketChannel): Unit = run onComplete {
     case Success(result) => handleSuccess(result)
     case Failure(t) => handleFailure(t)
   }
 
+  /** Write the job `result` to the socket, in JSON */
   private def writeJobResult(result: JobResult)(implicit socket: SocketChannel) =
     DataStreamWriter.writeWithByteBuffer { DataStreamWriter.writeStringV2(_, Json.toJson(result).toString) }
 
+  /** Handle the success of a query request */
   private def handleSuccess(result: JobResult)(implicit socket: SocketChannel) = {
     logInfo(s"Job tr_id:${result.transaction_id}, query_id:${result.query_id} has succeeded")
     writeJobResult(result)
     socket.close
   }
 
+  /** Handle the failure of a query request */
   private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = {
     val result = cause match {
       case JobException(e, job, part) => {
@@ -94,17 +108,24 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     socket.close
   }
 
+  /** Given a job part, create the dataframe to subsequently be used to read/insert data into Vector */
   private def vectorDF(part: JobPart): DataFrame = {
     val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.writeConf, sqlContext)
     sqlContext.baseRelationToDataFrame(rel)
   }
 
+  /** Helper function to register a dataframe as a temp table with a given `prefix` */
   private def register(prefix: String, df: DataFrame): String = {
     val ret = s"${prefix}_${id.incrementAndGet}"
     df.registerTempTable(ret)
     ret
   }
 
+  /**
+   * Given a job part of "scan" type, generate the SparkSQL statement that can be used to retrieve data from Vector
+   *
+   * @param format the format of the external data source
+   */
   private def selectStatement(format: String, part: JobPart): String = {
     val options = part.options.getOrElse(Map.empty[String, String])
     val table = format match {
@@ -125,6 +146,11 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     s"select ${part.column_infos.map(ci => sparkQuote(ci.column_name)).mkString(", ")} from ${sparkQuote(table)}"
   }
 
+  /**
+   * Given a job part of "insert" type, write the data contained in `df` to Vector
+   *
+   * @param format the format of the external data source
+   */
   private def writeDF(format: String, df: DataFrame, part: JobPart): Unit = {
     val options = part.options.getOrElse(Map.empty[String, String])
     format match {

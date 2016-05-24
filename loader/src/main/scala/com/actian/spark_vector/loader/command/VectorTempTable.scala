@@ -37,9 +37,10 @@ object VectorTempTable {
     (base ++ optional).toMap
   }
 
-  /** Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
+  /**
+   * Based on `config`, register a temporary table as the source of the `Vector` table being loaded to
    *
-   *  @return The name of the registered temporary table (for now = <vectorTargetTable>)
+   * @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
   def register(config: UserOptions, sqlContext: SQLContext): String = {
     val params = parseOptions(config)

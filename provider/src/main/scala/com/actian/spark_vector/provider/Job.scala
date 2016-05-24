@@ -34,10 +34,7 @@ private[provider] case class ColumnInfo(column_name: String,
 
 private[provider] case class StreamPerNode(nr: Int,
   port: Int,
-  host: String) {
-  private val ReasonableThreadsPerNode = 1024
-  require(nr <= ReasonableThreadsPerNode)
-}
+  host: String)
 
 private[provider] case class DataStream(rolename: String,
   password: String,

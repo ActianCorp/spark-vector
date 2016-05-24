@@ -20,6 +20,11 @@ import scala.util.Random
 case class ProviderAuth(username: String, password: String)
 
 object ProviderAuth {
+  /**
+   * Generate a random Ascii string containing alpha numeric characters + some non alpha numeric characters as specified by `nonAlphaNumericChars`
+   *
+   * @param nonAlphaNumericCharPercentage percentage of non alpha numeric characters in the generated string
+   */
   def randomAsciiString(n: Int, nonAlphaNumericChars: String = "", nonAlphaNumericCharPercentage: Double = .1): String = if (nonAlphaNumericChars.length == 0) {
     Random.alphanumeric.take(n).mkString
   } else {
@@ -29,6 +34,11 @@ object ProviderAuth {
       Stream.continually(Random.nextInt(nonAlphaNumericChars.length)).map(nonAlphaNumericChars).take(n - alphaNumericN).toSeq).mkString
   }
 
+  /**
+   * Generate a username to be used when authenticating with the provider.
+   *
+   * @note the generated username will always start with a prefix 'prov_'
+   */
   def generateUsername: String = {
     val prefix = "prov_"
     val UsernameLen = 63
@@ -36,6 +46,11 @@ object ProviderAuth {
     "prov_" + randomAsciiString(size)
   }
 
+  /**
+   * Generates a password to be used when authenticated with the provider.
+   *
+   * @note the generated password will be composed of alpha numeric characters + '!@#$%^&'
+   */
   def generatePassword: String = {
     val PasswordLen = 255
     randomAsciiString(PasswordLen, "!@#$%^&")
