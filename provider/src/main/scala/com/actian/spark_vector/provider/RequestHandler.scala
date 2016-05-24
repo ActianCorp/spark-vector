@@ -82,7 +82,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   /** Write the job `result` to the socket, in JSON */
   private def writeJobResult(result: JobResult)(implicit socket: SocketChannel) =
-    DataStreamWriter.writeWithByteBuffer { DataStreamWriter.writeStringV2(_, Json.toJson(result).toString) }
+    DataStreamWriter.writeWithByteBuffer { DataStreamWriter.writeNullTerminatedString(_, Json.toJson(result).toString) }
 
   /** Handle the success of a query request */
   private def handleSuccess(result: JobResult)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
