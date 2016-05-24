@@ -94,7 +94,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
     val result = cause match {
       case JobException(e, job, part) => {
-        logError(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
+        logInfo(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
         JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), -1, cause.getMessage, Some(cause.getStackTraceString)))))
       }
       case _ => {
@@ -107,7 +107,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   /** Given a job part, create the dataframe to subsequently be used to read/insert data into Vector */
   private def vectorDF(part: JobPart): DataFrame = {
-    val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.writeConf, sqlContext)
+    val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.conf, sqlContext)
     sqlContext.baseRelationToDataFrame(rel)
   }
 

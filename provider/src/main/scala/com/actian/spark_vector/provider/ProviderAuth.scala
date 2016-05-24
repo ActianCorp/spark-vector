@@ -40,10 +40,10 @@ object ProviderAuth {
    * @note the generated username will always start with a prefix 'prov_'
    */
   def generateUsername: String = {
-    val prefix = "prov_"
-    val UsernameLen = 63
-    val size = UsernameLen - prefix.length
-    "prov_" + randomAsciiString(size)
+    val Prefix = "prov_"
+    val UsernameMaxLen = 63
+    val size = UsernameMaxLen - Prefix.length
+    s"${Prefix}${randomAsciiString(size)}"
   }
 
   /**
@@ -52,7 +52,7 @@ object ProviderAuth {
    * @note the generated password will be composed of alpha numeric characters + '!@#$%^&'
    */
   def generatePassword: String = {
-    val PasswordLen = 255
-    randomAsciiString(PasswordLen, "!@#$%^&")
+    val PasswordMaxLen = 255
+    randomAsciiString(PasswordMaxLen, "!@#$%^&")
   }
 }

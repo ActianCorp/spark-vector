@@ -34,15 +34,12 @@ object Main extends App with Logging {
 
   private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
 
-  for {
-    server <- managed(ServerSocketChannel.open.bind(null))
-  } {
+  for { server <- managed(ServerSocketChannel.open.bind(null)) } {
     logInfo(s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}")
-    println("vector_provider_hostname=" + InetAddress.getLocalHost.getHostName)
-    println("vector_provider_port=" + server.socket.getLocalPort)
-    println("vector_provider_username=" + handler.auth.username)
-    println("vector_provider_password=" + handler.auth.password)
-    while (true)
-      handler.handle(server.accept)
+    println(s"vector_provider_hostname=${InetAddress.getLocalHost.getHostName}")
+    println(s"vector_provider_port=${server.socket.getLocalPort}")
+    println(s"vector_provider_username=${handler.auth.username}")
+    println(s"vector_provider_password=${handler.auth.password}")
+    while (true) handler.handle(server.accept)
   }
 }
