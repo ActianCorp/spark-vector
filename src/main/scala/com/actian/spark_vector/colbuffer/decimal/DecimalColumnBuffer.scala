@@ -18,7 +18,6 @@ package com.actian.spark_vector.colbuffer.decimal
 import java.math.{ BigDecimal, BigInteger }
 import java.nio.ByteBuffer
 
-import com.actian.spark_vector.ComposePartial
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
 import com.actian.spark_vector.vector.VectorDataType

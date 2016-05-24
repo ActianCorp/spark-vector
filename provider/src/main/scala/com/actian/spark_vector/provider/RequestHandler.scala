@@ -95,11 +95,11 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     val result = cause match {
       case JobException(e, job, part) => {
         logInfo(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
-        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), -1, cause.getMessage, Some(cause.getStackTraceString)))))
+        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = cause.getMessage, stacktrace = Some(cause.getStackTraceString)))))
       }
       case _ => {
         logError("Job failed while receiving/parsing json", cause)
-        JobResult(-1, -1, error = Some(Seq(JobMsg(None, -1, cause.getMessage, Some(cause.getStackTraceString)))))
+        JobResult(-1, -1, error = Some(Seq(JobMsg(msg = cause.getMessage, stacktrace = Some(cause.getStackTraceString)))))
       }
     }
     writeJobResult(result)

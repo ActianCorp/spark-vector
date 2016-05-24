@@ -116,7 +116,7 @@ private[provider] case object JobAck extends JobAck {
  * @param msg The detailed message
  * @param stacktrace Stack trace of the point in the code where the message was generated
  */
-private[provider] case class JobMsg(part_id: Option[String], code: Int, msg: String, stacktrace: Option[String])
+private[provider] case class JobMsg(part_id: Option[String] = None, code: Option[Int] = None, msg: String, stacktrace: Option[String])
 
 /**
  * Profile information for the query request
