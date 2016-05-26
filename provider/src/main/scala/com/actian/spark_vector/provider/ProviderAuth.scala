@@ -16,8 +16,17 @@
 package com.actian.spark_vector.provider
 
 import scala.util.Random
+import com.actian.spark_vector.srp.VectorSRPServer
 
-case class ProviderAuth(username: String, password: String)
+case class ProviderAuth(username: String, password: String) {
+  val srpServer = {
+    val ret = new VectorSRPServer
+    ret.saveUserCredentials(username, password)
+    ret
+  }
+
+  def doAuthentication: Boolean = !username.isEmpty && !password.isEmpty
+}
 
 object ProviderAuth {
   /**

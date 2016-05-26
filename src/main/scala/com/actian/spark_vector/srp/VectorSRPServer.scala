@@ -1,0 +1,66 @@
+/*
+ * Copyright 2016 Actian Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.actian.spark_vector.srp
+
+import org.apache.spark.Logging
+import java.nio.channels.SocketChannel
+import com.actian.spark_vector.datastream.reader.DataStreamReader._
+import com.actian.spark_vector.datastream.writer.DataStreamWriter._
+import com.actian.spark_vector.vector.{ ErrorCodes, VectorException }
+
+class VectorSRPServer extends SRPServer with Logging {
+  import VectorSRP._
+  import ErrorCodes._
+
+  private val userCreds = collection.mutable.Map.empty[String, (Array[Byte], Array[Byte])]
+
+  override def N: BigInt = VectorSRP.vectorN
+
+  override def g: BigInt = VectorSRP.vectorG
+
+  override def save(userName: String, s: Array[Byte], v: Array[Byte]): Unit = userCreds += userName -> (s, v)
+
+  override def findSV(userName: String): Option[Tuple2[Array[Byte], Array[Byte]]] = userCreds.get(userName)
+
+  def authenticate(implicit socket: SocketChannel) = {
+    val (username, aVal) = readWithByteBuffer() { in =>
+      if (!readCode(in, authCode)) throw new VectorException(AuthError, "Didn't receive auth code on authentication")
+      val I = readString(in)
+      val Aval = readByteArray(in)
+      (I, Aval)
+    }
+    getSessionWithClientParameters(username, aVal) match {
+      case Some((sesVal, kVal, s, bVal)) => {
+        writeWithByteBuffer { out =>
+          writeCode(out, sBCode)
+          writeString(out, s)
+          writeByteArray(out, bVal)
+        }
+        val clientM = readWithByteBuffer() { in =>
+          if (!readCode(in, MCode)) throw new VectorException(AuthError, "Unable to read code before verification of client M key")
+          readByteArray(in)
+        }
+        if (!clientM.sameElements(VectorSRPClient.M(username, Util.removeBitSign(BigInt(s, 16).toByteArray), aVal, bVal, kVal)))
+          throw new VectorException(AuthError, "Client M differs from server M")
+        writeWithByteBuffer { out =>
+          writeCode(out, serverMCode)
+          writeByteArray(out, Util.H(aVal ++ clientM ++ kVal))
+        }
+      }
+      case None => throw new VectorException(AuthError, s"Username $username is not recognized")
+    }
+  }
+}

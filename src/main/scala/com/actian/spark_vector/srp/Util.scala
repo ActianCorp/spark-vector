@@ -232,14 +232,14 @@ trait SRPServer extends ServerSRPParameter {
    * @return Option[Tuple4[String,String,String,String]] An Option Tuple of sessionId, Hash(sessionId), s, B
    *
    */
-  def getSessionWithClientParameters(userName: String, AVal: String) = {
+  def getSessionWithClientParameters(userName: String, AVal: Array[Byte]) = {
 
     val sv = findSV(userName)
     if (sv.isEmpty) {
       None
     } else {
       val (s, v) = sv.get
-      val Abi = BigInt(AVal, 16)
+      val Abi = BigInt(addBitSign(AVal))
 
       if (Abi == 0) throw new Exception("Invalid parameter A")
 
@@ -248,7 +248,7 @@ trait SRPServer extends ServerSRPParameter {
       val BVal = B(v, bVal)
       val uVal = u(A, BVal)
       val sessionId = S(A, v, uVal, bVal)
-      Some((sessionId.toHexString, H(sessionId).toHexString, s.toHexString, BVal.toHexString))
+      Some((sessionId, H(sessionId), s.toHexString, BVal))
     }
   }
 
