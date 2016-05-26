@@ -37,18 +37,7 @@ object VectorSRPClient extends ClientSRPParameter with Logging {
   /** Override to match the one on the `Vector` side */
   override def g: BigInt = VectorSRP.vectorG
 
-  def x(I: Array[Byte], s: Array[Byte], password: Array[Byte]): Array[Byte] =
-    H(s, H(I ++ (":".getBytes("ASCII")), password))
-
-  def M(username: String, s: Array[Byte], A: Array[Byte], B: Array[Byte], K: Array[Byte]): Array[Byte] = {
-    val HN = H(Util.removeBitSign(N.toByteArray))
-    val Hg = H(g.toByteArray)
-    val HI = H(username.getBytes("ASCII"))
-    val HNxorHg = HN.zip(Hg).map { case (left, right) => (left ^ right).toByte }
-    H(HNxorHg ++ HI ++ s ++ A ++ B ++ K)
-  }
-
-  /** Authenticate by sending the sequence of messages exchanged during SRP through `socket` */
+  /** Authenticate by sending the sequence of messages exchanged during SRP through `socket`, acting as the client */
   def authenticate(username: String, password: String)(implicit socket: SocketChannel): Unit = {
     val a = super.a
     val A = super.A(a)
@@ -57,16 +46,16 @@ object VectorSRPClient extends ClientSRPParameter with Logging {
       writeString(out, username)
       writeByteArray(out, A)
     }
-    val (s, b) = readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
+    val (s, b): (Array[Byte], Array[Byte]) = readWithByteBuffer[(Array[Byte], Array[Byte])]() { in =>
       if (!readCode(in, sBCode)) {
-        throw new VectorException(AuthError, "Unable to read Ok code after exchanging username and A")
+        throw new VectorException(AuthError, "Authentication failed: unable to read Ok code after exchanging username and A")
       }
-      (Util.removeBitSign(BigInt(readString(in), 16).toByteArray), readByteArray(in))
+      (BigInt(readString(in), 16), readByteArray(in))
     }
     val B = b
     val u = super.u(A, B)
-    val x = this.x(username.getBytes("ASCII"), s, password.getBytes("ASCII"))
-    val S = super.S(BigInt(addBitSign(x)), BigInt(addBitSign(B)), BigInt(a), BigInt(addBitSign(u)))
+    val x = super.x(s, username, password)
+    val S = super.S(x, B, a, u)
     val K = H(S)
     val clientM = M(username, s, A, B, K)
     writeWithByteBuffer { out =>
@@ -75,12 +64,12 @@ object VectorSRPClient extends ClientSRPParameter with Logging {
     }
     val serverM = readWithByteBuffer[Array[Byte]]() { in =>
       if (!readCode(in, serverMCode)) {
-        throw new VectorException(AuthError, "Unable to read code before verification of server M key")
+        throw new VectorException(AuthError, "Authentication failed: unable to read code before verification of server M key")
       }
       readByteArray(in)
     }
     if (!H(A ++ clientM ++ K).sameElements(serverM)) {
-      throw new VectorException(AuthError, "M and serverM differ")
+      throw new VectorException(AuthError, "Authentication failed: M and serverM differ")
     }
   }
 }
