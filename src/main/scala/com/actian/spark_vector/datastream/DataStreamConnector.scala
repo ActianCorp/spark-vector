@@ -92,8 +92,7 @@ private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends 
     logDebug(s"Opening a socket to $host")
     implicit val socket = SocketChannel.open()
     socket.connect(new InetSocketAddress(host.host, host.port))
-    val srpClient = new VectorSRPClient(host.username, host.password)
-    closeResourceOnFailure(socket) { srpClient.authenticate }
+    closeResourceOnFailure(socket) { VectorSRPClient.authenticate(host.username, host.password) }
     socket
   }
 

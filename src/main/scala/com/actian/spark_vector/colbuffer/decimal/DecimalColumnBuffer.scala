@@ -15,14 +15,12 @@
  */
 package com.actian.spark_vector.colbuffer.decimal
 
+import java.math.{ BigDecimal, BigInteger }
+import java.nio.ByteBuffer
+
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util.BigIntegerConversion
 import com.actian.spark_vector.vector.VectorDataType
-
-import java.lang.Number
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.nio.ByteBuffer
 
 private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int)
     extends ColumnBuffer[BigDecimal, BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
