@@ -30,10 +30,10 @@ import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader,
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
  *
- * @param tableMetadataSchema schema information for the `Vector` table/relation being loaded
+ * @param tableColumnMetadata schema information for the `Vector` table/relation being loaded
  * @param vectorSize the max value count of the `Vector` tuple vectors
  */
-class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink)
+class RowWriter(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink)
     extends Logging with Serializable with Profiling {
   import RowWriter._
 
@@ -43,7 +43,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * A seq of write column buffers, one for each column of the loaded table, that will be used to serialize the
    * input `RDD` rows for the appropriate table columns
    */
-  private val columnBufs = tableMetadataSchema.map {
+  private val columnBufs = tableColumnMetadata.map {
     case col =>
       logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}," +
         s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable}")
@@ -97,7 +97,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    * After rows are buffered into column buffers, this function is called to determine the message length that will be sent through the socket. This value is equal to
    * the total amount of data buffered + a header size + some trash bytes used to properly align data types
    */
-  private def bytesToBeWritten(headerSize: Int, n: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
+  private def bytesToBeWritten(headerSize: Int, n: Int): Int = (0 until tableColumnMetadata.size).foldLeft(headerSize) {
     case (pos, idx) =>
       val cb = columnBufs(idx)
       pos + padding(pos + (if (cb.nullable) n else 0), cb.alignSize) + cb.position

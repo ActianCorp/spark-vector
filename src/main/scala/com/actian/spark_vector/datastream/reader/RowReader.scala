@@ -32,21 +32,21 @@ import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ByteSize, ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
-class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
+class RowReader(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
     extends Iterator[InternalRow] with Logging with Serializable with Profiling {
   import RowReader._
 
   implicit val accs = profileInit("reading from datastream", "columns buffering")
 
-  private val row = new SpecificMutableRow(tableMetadataSchema.map(_.dataType))
-  private val numColumns = tableMetadataSchema.size
+  private val row = new SpecificMutableRow(tableColumnMetadata.map(_.dataType))
+  private val numColumns = tableColumnMetadata.size
   private var numTuples = 0
 
   /**
    * A seq of read column buffers, one for each column of the unloaded table, that will be used to deserialize the data
    * streams for the appropriate table columns
    */
-  private val columnBufs = tableMetadataSchema.zipWithIndex.map {
+  private val columnBufs = tableColumnMetadata.zipWithIndex.map {
     case (col, i) =>
       logDebug(s"Trying to create a read-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
         s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${headerInfo.colInfo(i).nullable}, constant = ${headerInfo.colInfo(i).constant}")
@@ -58,10 +58,10 @@ class RowReader(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
 
   private implicit val reuseBuffer: ByteBuffer = ByteBuffer.allocateDirect(reuseBufferSize)
 
-  private def bytesToBeRead(headerSize: Int): Int = (0 until tableMetadataSchema.size).foldLeft(headerSize) {
+  private def bytesToBeRead(headerSize: Int): Int = (0 until tableColumnMetadata.size).foldLeft(headerSize) {
     case (pos, idx) =>
       val cb = columnBufs(idx)
-      pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableMetadataSchema(idx).maxDataSize)
+      pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableColumnMetadata(idx).maxDataSize)
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {

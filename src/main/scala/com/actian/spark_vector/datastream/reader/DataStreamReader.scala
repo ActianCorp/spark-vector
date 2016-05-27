@@ -35,7 +35,7 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param vectorProps connection information to the leader node's SQL interface
  * @param tableSchema of the table as a `StructType`
  */
-class DataStreamReader(readConf: VectorEndpointConf, tableMetadataSchema: Seq[ColumnMetadata])
+class DataStreamReader(readConf: VectorEndpointConf, tableColumnMetadata: Seq[ColumnMetadata])
     extends Logging with Serializable with Profiling {
   private lazy val connector = DataStreamConnector(readConf)
 
@@ -45,7 +45,7 @@ class DataStreamReader(readConf: VectorEndpointConf, tableMetadataSchema: Seq[Co
    */
   def read(partitionId: Int): RowReader = connector.newConnection(partitionId) { implicit socket =>
     val headerInfo = connector.readConnectionHeader()
-    RowReader(tableMetadataSchema, headerInfo, DataStreamTap())
+    RowReader(tableColumnMetadata, headerInfo, DataStreamTap())
   }
 }
 

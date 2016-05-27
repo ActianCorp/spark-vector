@@ -18,12 +18,11 @@ package com.actian.spark_vector.sql
 import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
-import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
+import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan, PrunedScan }
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
-import org.apache.spark.sql.sources.PrunedScan
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
     userSpecifiedSchema: Option[StructType],
@@ -107,7 +106,7 @@ private[spark_vector] object VectorRelation {
   def getTableSchema(tableRef: TableRef): Seq[ColumnMetadata] =
     VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.columnMetadata(tableRef.table, tableRef.cols) }
 
-  def structType(tableMetadataSchema: Seq[ColumnMetadata]): StructType = StructType(tableMetadataSchema.map(_.structField))
+  def structType(tableColumnMetadata: Seq[ColumnMetadata]): StructType = StructType(tableColumnMetadata.map(_.structField))
 
   /** Obtain the structType containing the schema for the table referred by tableRef */
   def structType(tableRef: TableRef): StructType = structType(getTableSchema(tableRef))
