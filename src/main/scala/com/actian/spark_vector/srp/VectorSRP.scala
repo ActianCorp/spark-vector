@@ -15,6 +15,7 @@
  */
 package com.actian.spark_vector.srp
 
+// scalastyle:off magic.number
 /** Contains some `Vector` constants to be used while authenticating and what algorithm to use */
 object VectorSRP {
   /* The following are taken from RFC 5054, 8192-bit group. Override to match the one on the `Vector` side */
@@ -64,3 +65,4 @@ object VectorSRP {
   final val serverMCode = Array(4, 1, 3)
   final val shaAlgorithm = "SHA-512"
 }
+// scalastyle:on magic.number
