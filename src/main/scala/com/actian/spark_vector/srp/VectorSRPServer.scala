@@ -41,6 +41,7 @@ class VectorSRPServer extends SRPServer with Logging {
 
   override def findSV(userName: String): Option[Tuple2[Array[Byte], Array[Byte]]] = userCreds.get(userName)
 
+  /** Authenticate by sending the equence of messages exchanged during SRP through `socket`, acting as the server */
   def authenticate(implicit socket: SocketChannel) = {
     val (username, aVal) = readWithByteBuffer() { in =>
       if (!readCode(in, authCode)) throw new VectorException(AuthError, "Authentication failed: didn't receive auth code on authentication")

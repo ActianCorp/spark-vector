@@ -29,7 +29,7 @@ import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.loader.command.sparkQuote
 import com.actian.spark_vector.sql.VectorRelation
-import com.actian.spark_vector.util.ResourceUtil._
+import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 
 import play.api.libs.json.{ JsError, Json }
 
@@ -63,8 +63,17 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     var jobPartAccum = Future { () }
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
-        val format = part.format.getOrElse {
-          throw new IllegalArgumentException(s"All part jobs must have the format specified, but query ${job.query_id}, part ${part.part_id} doesn't")
+        val format = part.format.orElse(PartialFunction.condOpt[String, String](part.external_reference.split("\\.").last) {
+          _ match {
+            case "csv" => "csv"
+            case "parquet" => "parquet"
+            case "json" => "json"
+            case "orc" => "orc"
+            case "avro" => "avro"
+          }
+        }).getOrElse {
+          throw new IllegalArgumentException(s"""Could not derive format of external reference ${part.external_reference},
+            in part ${part.part_id}, trid=${job.transaction_id}, qid=${job.query_id}. Please specify an explicit format in the 'create external table' SQL definition.""")
         }
         val vectorDf = vectorDF(part)
         part.operator_type match {
