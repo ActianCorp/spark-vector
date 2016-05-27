@@ -32,7 +32,7 @@ lazy val connectorDeps = Seq(
 lazy val loaderDeps = Seq(
     "com.github.scopt" %% "scopt" % "3.3.0",
     "com.typesafe" % "config" % "1.3.0",
-    "com.databricks" %% "spark-csv" % "1.2.0"
+    "com.databricks" %% "spark-csv" % "1.4.0"
 )
 
 lazy val providerDeps = Seq(
