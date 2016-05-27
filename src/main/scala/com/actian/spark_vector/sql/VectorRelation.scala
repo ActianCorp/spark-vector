@@ -90,7 +90,7 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
   }
 }
 
-object VectorRelation {
+private[spark_vector] object VectorRelation {
   final val LoadPreSQL = "loadpresql"
   final val LoadPostSQL = "loadpostsql"
 

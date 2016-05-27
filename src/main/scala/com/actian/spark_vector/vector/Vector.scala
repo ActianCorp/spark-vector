@@ -48,12 +48,11 @@ private[vector] object Vector extends Logging {
     validateColumns(targetSchema, field2Columns.map(_.columnName))
 
     // If a subset of input fields are needed to load, select only the fields needed
-    val (inputRDD, inputType) =
-      if (field2Columns.length < rddSchema.fields.length) {
-        selectFields(rdd, rddSchema, field2Columns.map(_.fieldName))
-      } else {
-        (rdd, rddSchema)
-      }
+    val (inputRDD, inputType) = if (field2Columns.length < rddSchema.fields.length) {
+      selectFields(rdd, rddSchema, field2Columns.map(_.fieldName))
+    } else {
+      (rdd, rddSchema)
+    }
     fillWithNulls(inputRDD, inputType, targetSchema,
       field2Columns.map(i => i.columnName -> i.fieldName).toMap)
   }
@@ -70,7 +69,7 @@ private[vector] object Vector extends Logging {
    *
    * @param preSQL specify some queries to be executed before loading, in the same transaction
    * @param postSQL specify some queries to be executed after loading, in the same transaction
-   * @param fieldMap specify how the input `RDD` columns should be mapped to `targetTable` columns
+   * @param fieldMap specify how the input `RDD` columns should be mapped to `table` columns
    * @param createTable specify if the table should be created if it does not exist
    */
   def loadVector(rdd: RDD[Seq[Any]],
@@ -135,14 +134,14 @@ private[vector] object Vector extends Logging {
   }
 
   /**
-   * Given a `Spark Context` try to unload the Vector table `targetTable` using the connection
+   * Given a `Spark Context` try to unload the Vector table `table` using the connection
    * information stored in `vectorProps`.
    * @note We need a `SQL Context` first with a `DataFrame` generated for the select query
    *
    * @param sc spark context
    * @param table name of the table to unload
    * @param vectorPros connection properties to the Vector instance
-   * @param tableColumnMetadata sequence of `ColumnMetadata` obtained for `targetTable`
+   * @param tableColumnMetadata sequence of `ColumnMetadata` obtained for `table`
    * @param selectColumns string of select columns separated by comma
    * @param whereClause prepared string of a where clause
    * @param whereParams sequence of values for the prepared where clause

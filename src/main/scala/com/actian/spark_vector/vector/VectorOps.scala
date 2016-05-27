@@ -79,8 +79,8 @@ trait VectorOps {
      * Unload a target Vector table using this SparkContext.
      *
      * @param vectorPros connection properties to the Vector instance
-     * @param targetTable name of the table to unload
-     * @param tableMetadataSchema sequence of `ColumnMetadata` obtained for `targetTable`
+     * @param table name of the table to unload
+     * @param tableColumnMetadata sequence of `ColumnMetadata` obtained for `table`
      * @param selectColumns string of select columns separated by comma
      * @param whereClause prepared string of a where clause
      * @param whereParams sequence of values for the prepared where clause
@@ -88,12 +88,12 @@ trait VectorOps {
      * @return an <code>RDD[Row]</code> for the unload operation
      */
     def unloadVector(vectorProps: VectorConnectionProperties,
-      targetTable: String,
-      tableMetadataSchema: Seq[ColumnMetadata],
+      table: String,
+      tableColumnMetadata: Seq[ColumnMetadata],
       selectColumns: String = "*",
       whereClause: String = "",
       whereParams: Seq[Any] = Nil): RDD[Row] = {
-      Vector.unloadVector(sc, targetTable, vectorProps, tableMetadataSchema,
+      Vector.unloadVector(sc, table, vectorProps, tableColumnMetadata,
         selectColumns, whereClause, whereParams)
     }
 
