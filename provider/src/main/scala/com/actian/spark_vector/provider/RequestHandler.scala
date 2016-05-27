@@ -48,11 +48,9 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   /** Given a socket connection, read the JSON request for external resources and process its parts */
   private def run(implicit socket: SocketChannel): Future[JobResult] = Future {
-    if (auth.doAuthentication)
-      auth.srpServer.authenticate
+    if (auth.doAuthentication) auth.srpServer.authenticate
     val json = DataStreamReader.readWithByteBuffer() { in =>
-      if (in.getInt != RequestPktType)
-        throw new IllegalArgumentException(s"Invalid packet type received for query request")
+      if (in.getInt != RequestPktType) throw new IllegalArgumentException(s"Invalid packet type received for query request")
       DataStreamReader.readString(in)
     }
     logDebug(s"Got new json request: ${json}")

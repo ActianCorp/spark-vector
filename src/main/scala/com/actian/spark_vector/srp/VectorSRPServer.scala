@@ -42,7 +42,7 @@ class VectorSRPServer extends SRPServer with Logging {
   override def findSV(userName: String): Option[Tuple2[Array[Byte], Array[Byte]]] = userCreds.get(userName)
 
   /** Authenticate by sending the equence of messages exchanged during SRP through `socket`, acting as the server */
-  def authenticate(implicit socket: SocketChannel) = {
+  def authenticate(implicit socket: SocketChannel): Unit = {
     val (username, aVal) = readWithByteBuffer() { in =>
       if (!readCode(in, authCode)) throw new VectorException(AuthError, "Authentication failed: didn't receive auth code on authentication")
       val I = readString(in)
@@ -63,8 +63,7 @@ class VectorSRPServer extends SRPServer with Logging {
           readByteArray(in)
         }
         logTrace(s"Received clientM=${clientM.toHexString}, server version is ${VectorSRPClient.M(username, s, aVal, bVal, kVal).toHexString}")
-        if (!clientM.sameElements(VectorSRPClient.M(username, s, aVal, bVal, kVal)))
-          throw new VectorException(AuthError, "Authentication failed: client M differs from server M")
+        if (!clientM.sameElements(VectorSRPClient.M(username, s, aVal, bVal, kVal))) throw new VectorException(AuthError, "Authentication failed: client M differs from server M")
         writeWithByteBuffer { out =>
           writeCode(out, serverMCode)
           writeByteArray(out, M(aVal, clientM, kVal))
