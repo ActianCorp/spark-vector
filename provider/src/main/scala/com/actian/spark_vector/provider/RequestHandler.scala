@@ -32,6 +32,7 @@ import com.actian.spark_vector.sql.VectorRelation
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 
 import play.api.libs.json.{ JsError, Json }
+import org.apache.spark.sql.SaveMode
 
 /**
  * Handler for requests from Vector
@@ -166,16 +167,14 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
    */
   private def writeDF(format: String, df: DataFrame, part: JobPart): Unit = {
     val options = part.options.getOrElse(Map.empty[String, String])
+    /** TODO(): Make this user configurable? */
+    val mode = SaveMode.Append
     format match {
-      case "parquet" => df.write.options(options).parquet(part.external_reference)
-      case "csv" => df.write.options(options).format("com.databricks.spark.csv").save(part.external_reference)
-      case "orc" => df.write.options(options).orc(part.external_reference)
-      case "hive" => {
-        val inputTable = s"in_${part.external_reference}_${id.incrementAndGet}"
-        df.registerTempTable(inputTable)
-        sqlContext.sql(s"insert into ${sparkQuote(part.external_reference)} select * from ${sparkQuote(inputTable)}")
-      }
-      case _ => df.write.options(options).format(format).save(part.external_reference)
+      case "parquet" => df.write.mode(mode).options(options).parquet(part.external_reference)
+      case "csv" => df.write.mode(mode).options(options).format("com.databricks.spark.csv").save(part.external_reference)
+      case "orc" => df.write.mode(mode).options(options).orc(part.external_reference)
+      case "hive" => df.write.mode(mode).saveAsTable(part.external_reference)
+      case _ => df.write.mode(mode).options(options).format(format).save(part.external_reference)
     }
   }
 }
