@@ -29,6 +29,7 @@ package com.actian.spark_vector.srp
 
 import java.security._
 import scala.language.implicitConversions
+import org.apache.spark.Logging
 
 // scalastyle:off
 /**
@@ -88,17 +89,21 @@ object Util {
 
   implicit def hexBytesWrapper(bytes: Array[Byte]) = new HexVal(bytes)
 
-  def removeBitSign(x: Array[Byte]) =
+  private def removeBitSign(x: Array[Byte]) =
     x(0) match {
       case 0 => x.tail
       case _ => x
     }
 
-  def addBitSign(x: Array[Byte]) =
+  private def addBitSign(x: Array[Byte]) =
     x(0) & 128 match {
       case 0 => x
       case _ => Array(0.toByte) ++ x
     }
+
+  implicit def positiveBigInt(v: Array[Byte]): BigInt = BigInt(addBitSign(v))
+
+  implicit def bigIntToByteArrayWithoutSign(v: BigInt): Array[Byte] = removeBitSign(v.toByteArray)
 }
 
 /**
@@ -106,7 +111,7 @@ object Util {
  * functionality to generate random bytes, and g ^ x (mod N). The SRP parameters
  * are calculated using SRp version 6a.
  */
-trait SRPParameter {
+trait SRPParameter extends Logging {
   import Util._
   val sr = new SecureRandom
 
@@ -118,20 +123,25 @@ trait SRPParameter {
   def g = BigInt("2", 16)
 
   //k is a parameter derived by both sides; for example, k = H(N, g).
-  def k = H(removeBitSign(N.toByteArray), removeBitSign(g.toByteArray))
+  def k = H(N, g)
 
   //u is calculated by both client and server
   def u(A: Array[Byte], B: Array[Byte]) = H(A, B)
 
   // g ^ x (mod N)
-  def gPowXModN(x: Array[Byte]) = g modPow (BigInt(x), N)
+  def gPowXModN(x: Array[Byte]) = g modPow (x, N)
 
   //Generates 32 random byte array
   def gen32RandomBytes = {
     val bytes: Array[Byte] = new Array(32)
     sr.nextBytes(bytes)
-    bytes(0) = 0 //Always a positive random number
     bytes
+  }
+
+  def x(s: Array[Byte], username: String, password: String): Array[Byte] = {
+    val ret = H(s, H(s"$username:$password".getBytes("ASCII")))
+    logTrace(s"x = ${ret.toHexString}")
+    ret
   }
 }
 
@@ -143,19 +153,31 @@ trait ClientSRPParameter extends SRPParameter {
   import Util._
 
   //S= (B - kg^x) ^ (a + ux)   (mod N)
-  def S(x: BigInt, B: BigInt, a: BigInt, u: BigInt) = {
+  def S(x: BigInt, B: BigInt, a: BigInt, u: BigInt): Array[Byte] = {
     val bx = g.modPow(x, N)
-    val btmp = ((B + N * BigInt(k)) - (BigInt(k) * bx)).mod(N)
-    val Sclient = (btmp modPow (a + (u * x), N)).mod(N)
-    removeBitSign(Sclient.toByteArray)
+    val btmp = ((B + N * k) - (k * bx)).mod(N)
+    (btmp modPow (a + (u * x), N)).mod(N)
   }
 
-  def a = gen32RandomBytes
+  def a: Array[Byte] = gen32RandomBytes
 
-  def x(s: Array[Byte], password: Array[Byte]) = H(s, password)
+  def A(abytes: Array[Byte]): Array[Byte] = gPowXModN(abytes)
 
-  def A(abytes: Array[Byte]) = removeBitSign(gPowXModN(abytes).toByteArray)
-
+  //M1 = H([H(N) xor H(g)], H(I), s, A, B, K)
+  def M(username: String, s: Array[Byte], A: Array[Byte], B: Array[Byte], K: Array[Byte]): Array[Byte] = {
+    logTrace(s"N = ${bigIntToByteArrayWithoutSign(N).toHexString}")
+    val HN = H(N)
+    logTrace(s"HN = ${HN.toHexString}")
+    val Hg = H(g)
+    logTrace(s"Hg = ${Hg.toHexString}")
+    val HI = H(username.getBytes("ASCII"))
+    logTrace(s"HI = ${HI.toHexString}")
+    val HNxorHg = HN.zip(Hg).map { case (left, right) => (left ^ right).toByte }
+    logTrace(s"HNxorHg = ${HNxorHg.toHexString}")
+    val ret = H(HNxorHg ++ HI ++ s ++ A ++ B ++ K)
+    logTrace(s"clientM = ${ret.toHexString}")
+    ret
+  }
 }
 
 /**
@@ -169,35 +191,30 @@ trait ServerSRPParameter extends SRPParameter {
   /**
    * @return Tuple2 _1: salt, _2: x
    */
-  def x(password: String) = {
+  def x(username: String, password: String): (Array[Byte], Array[Byte]) = {
     val bytes: Array[Byte] = gen32RandomBytes
-    (bytes, H(bytes, password.getBytes()))
+    (bytes, x(bytes, username, password))
   }
 
   //The host stores v using:
   //v = g^x (mod N)                  (computes password verifier)
-  def v(x: Array[Byte]) = gPowXModN(x).toByteArray
+  def v(x: Array[Byte]): Array[Byte] = gPowXModN(x)
 
   def b = gen32RandomBytes
 
   //B = kv + g^b (mod N)
-  def B(vVal: Array[Byte], bVal: Array[Byte]) =
-    (BigInt(k) * BigInt(vVal) + gPowXModN(bVal)).mod(N).toByteArray
+  def B(vVal: Array[Byte], bVal: Array[Byte]): Array[Byte] =
+    (k * vVal + gPowXModN(bVal)).mod(N)
 
   //S = (Av^u) ^ b (mod N)
-  def S(A: Array[Byte], vVal: Array[Byte], u: Array[Byte], bVal: Array[Byte]) =
-    ((BigInt(vVal).modPow(BigInt(u), N)) * (BigInt(A))).mod(N).modPow(BigInt(bVal), N).mod(N).toByteArray
+  def S(A: Array[Byte], vVal: Array[Byte], u: Array[Byte], bVal: Array[Byte]): Array[Byte] =
+    (vVal.modPow(u, N) * A).mod(N).modPow(bVal, N)
 
-  //M = H(K) //Simplified, override if necessary
-  def M(Kval: String) = {
-    import Util._
-    H(BigInt(Kval, 16).toByteArray).toHexString
-  }
-
-  //M = H(M,K) //Simplified, override if necessary
-  def verifier(Kval: String, Mval: String) = {
-    import Util._
-    H(BigInt(Mval, 16).toByteArray, BigInt(Kval, 16).toByteArray).toHexString
+  //M2 = H(A, M1, K)
+  def M(A: Array[Byte], clientM: Array[Byte], K: Array[Byte]): Array[Byte] = {
+    val ret = Util.H(A ++ clientM ++ K)
+    logTrace(s"serverM = ${ret.toHexString}")
+    ret
   }
 }
 
@@ -216,7 +233,7 @@ trait SRPServer extends ServerSRPParameter {
    *  @return Tuple3[Array[Byte],Array[Byte],Array[Byte]] s,x and v
    */
   def saveUserCredentials(userName: String, password: String) = {
-    val (sVal, xVal) = x(password)
+    val (sVal, xVal) = x(userName, password)
     val vVal = v(xVal)
     save(userName, sVal, vVal)
     (sVal, xVal, vVal)
@@ -232,23 +249,22 @@ trait SRPServer extends ServerSRPParameter {
    * @return Option[Tuple4[String,String,String,String]] An Option Tuple of sessionId, Hash(sessionId), s, B
    *
    */
-  def getSessionWithClientParameters(userName: String, AVal: String) = {
+  def getSessionWithClientParameters(userName: String, A: Array[Byte]) = {
 
     val sv = findSV(userName)
     if (sv.isEmpty) {
       None
     } else {
       val (s, v) = sv.get
-      val Abi = BigInt(AVal, 16)
-
-      if (Abi == 0) throw new Exception("Invalid parameter A")
-
-      val A = Abi.toByteArray
       val bVal = b
+      logTrace(s"b = ${b.toHexString}")
       val BVal = B(v, bVal)
+      logTrace(s"B = ${BVal.toHexString}")
       val uVal = u(A, BVal)
+      logTrace(s"u = ${uVal.toHexString}")
       val sessionId = S(A, v, uVal, bVal)
-      Some((sessionId.toHexString, H(sessionId).toHexString, s.toHexString, BVal.toHexString))
+      logTrace(s"S = ${sessionId.toHexString}")
+      Some((sessionId, H(sessionId), s, BVal))
     }
   }
 

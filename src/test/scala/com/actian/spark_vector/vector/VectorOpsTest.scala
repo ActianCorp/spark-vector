@@ -41,9 +41,7 @@ import com.actian.spark_vector.vector.VectorOps._
 import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
 import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
-/**
- * Test VectorOps
- */
+/** Test VectorOps */
 @IntegrationTest
 class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
     with VectorFixture with Logging with Profiling {
@@ -359,7 +357,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       compareResults(resultsJDBC, expectedData, mappedIndices)
 
       val sqlContext = new SQLContext(fixture.sc)
-      val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty)
+      val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty[String, String])
       val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
       val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
       compareResults(resultsSpark, expectedData, mappedIndices)

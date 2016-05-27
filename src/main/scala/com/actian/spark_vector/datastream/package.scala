@@ -45,7 +45,7 @@ package com.actian.spark_vector
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector` yet.
  */
 package object datastream {
-   /** Helper to determine how much padding (# of trash bytes) needs to be written to properly align a type with size `typeSize`, given that we are currently at `pos` */
+  /** Helper to determine how much padding (# of trash bytes) needs to be written to properly align a type with size `typeSize`, given that we are currently at `pos` */
   def padding(pos: Int, typeSize: Int): Int = if ((pos & (typeSize - 1)) != 0) {
     typeSize - (pos & (typeSize - 1))
   } else {

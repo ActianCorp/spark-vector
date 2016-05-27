@@ -102,10 +102,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   private def withPreparedStatement[T](query: String, op: PreparedStatement => T): T =
     managed(dbCxn.prepareStatement(query)).map(op).resolve()
 
-  /**
-   * Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package,
-   * mapping the `ResultSet` to a new type as specified by `op`
-   */
+  /** Execute a `SQL` query closing resources on failures, using scala-arm's `resource` package, mapping the `ResultSet` to a new type as specified by `op` */
   def executeQuery[T](sql: String)(op: ResultSet => T): T =
     withStatement(statement => managed(statement.executeQuery(sql)).map(op)).resolve()
 
@@ -116,10 +113,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     (stmt, rs)
   }
 
-  /**
-   * Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package,
-   *  mapping the `ResultSet` to a new type as specified by `op`
-   */
+  /** Execute a prepared `SQL` query closing resources on failures, using scala-arm's `resource` package, mapping the `ResultSet` to a new type as specified by `op` */
   def executePreparedQuery[T](sql: String, params: Seq[Any])(op: ResultSet => T): T =
     withPreparedStatement(sql, statement => op(statement.setParams(params).executeQuery))
 
@@ -133,8 +127,8 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   /** Return true if there is a table named `tableName` in Vector */
   def tableExists(tableName: String): Boolean = if (!tableName.isEmpty) {
     try {
-      val sql = s"SELECT COUNT(*) FROM ${quote(tableName)} WHERE 1=0"
-      executeQuery(sql)(_ != null)
+      val sql = s"SELECT COUNT(*) FROM ${quote(tableName)} WHERE 1=?"
+      withPreparedStatement(sql, statement => true)
     } catch {
       case exc: Exception =>
         val message = exc.getLocalizedMessage // FIXME check for english text on localized message...?
@@ -152,9 +146,14 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
    * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
    * as there are columns in the table. Each element contains the name, type, nullability, precision
    * and scale of its corresponding column in `tableName`
+   *
+   * @param cols If not empty, contains the columns for which the metadata needs to be retrieved (if empty, all columns have their metadata retrieved)
    */
-  def columnMetadata(tableName: String): Seq[ColumnMetadata] = try {
-    val sql = s"SELECT * FROM ${quote(tableName)}  WHERE 1=?"
+  def columnMetadata(tableName: String, cols: Seq[String] = Nil): Seq[ColumnMetadata] = try {
+    logTrace(s"Trying to get table column metadata for table $tableName and columns $cols")
+    val colStr = if (cols.isEmpty) "*" else cols.mkString(",")
+    val sql = s"SELECT $colStr FROM ${quote(tableName)}  WHERE 1=?"
+    logTrace(s"The generated sql statement for retrieving table metadata is $sql")
     withPreparedStatement(sql, statement => {
       val metaData = statement.getMetaData
       for (columnIndex <- 1 to metaData.getColumnCount) yield {
@@ -228,9 +227,7 @@ object VectorJDBC extends Logging {
     managed(new VectorJDBC(cxnProps)).map(op).resolve()
 
   /**
-   * Run the given sequence of SQL statements in order. No results are returned.
-   * A failure will cause any changes to be rolled back. An empty set of statements
-   * is ignored.
+   * Run the given sequence of SQL statements in order. No results are returned. A failure will cause any changes to be rolled back. An empty set of statements is ignored.
    *
    * @param vectorProps connection properties
    * @param statements sequence of SQL statements to execute

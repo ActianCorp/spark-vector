@@ -3,7 +3,7 @@
 target/
 /.project
 /.classpath
-/.cache
+*.cache-*
 /data/
 /src/main/resources/log4j.properties
 /.settings/
@@ -12,3 +12,5 @@ target/
 src/test/resources/log4j.properties
 project/target
 project/project
+/loader/
+/provider/
