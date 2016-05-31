@@ -6,7 +6,7 @@ This connector works with both Vector SMP and VectorH MPP.
 
 ## API documentation
 
-[Spark-Vector Connector](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) and [Spark-Vector Loader](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.package) Scaladocs.
+[Spark-Vector Connector](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) Scaladocs.
 
 ## Requirements
 
@@ -116,6 +116,10 @@ The Spark-Vector loader is a command line client utility that provides the abili
 #### Building
 
     sbt loader/assembly
+    
+#### API documentation
+
+[Loader scaladocs](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.package)
 
 #### Usage: CSV
 
@@ -159,6 +163,11 @@ The Spark-Vector provider is a Spark application serves Vector requests for exte
 #### Building
 
     sbt provider/assembly
+
+#### API docs
+
+[Provider scaladoc](http://actiancorp.github.io/spark-vector/provider/#com.actian.spark_vector.provider.package)
+
 
 ## Unit testing
 
