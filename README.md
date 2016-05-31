@@ -152,6 +152,14 @@ The entire list of options is available [here](http://actiancorp.github.io/spark
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load --help
 ```
 
+### Spark-Vector provider
+
+The Spark-Vector provider is a Spark application serves Vector requests for external data sources.
+
+#### Building
+
+    sbt provider/assembly
+
 ## Unit testing
 
     sbt '; set javaOptions ++= "-Dvector.host=vectorhost -Dvector.instance=VI -Dvector.database=databasename -Dvector.user= -Dvector.password=".split(" ").toSeq; test'
