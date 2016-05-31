@@ -35,7 +35,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="constant">constant: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
       </h4>
       
@@ -81,7 +81,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="com.actian.spark_vector.vector.ColumnMetadata#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String,typeName:String,nullable:Boolean,precision:Int,scale:Int):com.actian.spark_vector.vector.ColumnMetadata"></a>
+      <a id="&lt;init&gt;(name:String,typeName:String,nullable:Boolean,precision:Int,scale:Int,constant:Boolean):com.actian.spark_vector.vector.ColumnMetadata"></a>
       <a id="&lt;init&gt;:ColumnMetadata"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -89,7 +89,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="constant">constant: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
       </span>
       </h4>
       
@@ -199,6 +199,32 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#constant" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="constant:Boolean"></a>
+      <a id="constant:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">constant</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#dataType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dataType:org.apache.spark.sql.types.DataType"></a>
+      <a id="dataType:DataType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dataType</span><span class="result">: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -257,6 +283,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#maxDataSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="maxDataSize:Int"></a>
+      <a id="maxDataSize:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxDataSize</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
     </li><li name="com.actian.spark_vector.vector.ColumnMetadata#name" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="name:String"></a>
       <a id="name:String"></a>
@@ -354,13 +393,15 @@
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
         <span class="name">structField</span><span class="result">: <span class="extype" name="org.apache.spark.sql.types.StructField">StructField</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Convert the given column metadata into a <code>StructField</code> representing the column</p><div class="fullcomment"><div class="comment cmt"><p>Convert the given column metadata into a <code>StructField</code> representing the column</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a new <code>StructField</code> instance
+      <p class="shortcomment cmt">Convert the given column metadata into a <code>StructField</code> representing the column
+</p><div class="fullcomment"><div class="comment cmt"><p>Convert the given column metadata into a <code>StructField</code> representing the column
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a new <code>StructField</code> instance
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

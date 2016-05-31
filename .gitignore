@@ -7,4 +7,10 @@ loader/target
 .settings
 loader/.classpath
 loader/.settings
+provider/src
+provider/target
+provider/.classpath
+provider/.settings
+*.cache-main
+*.cache-tests
 

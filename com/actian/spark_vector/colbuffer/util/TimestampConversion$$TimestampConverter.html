@@ -40,7 +40,8 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This trait should be used when implementing a type of timestamp conversion,
- for example a timestamp-zone converter using the upper helper functions.</p></div><div class="toggleContainer block">
+for example a timezone converter using the upper helper functions.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -85,15 +86,28 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="com.actian.spark_vector.colbuffer.util.TimestampConversion.TimestampConverter#convert" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="convert(epochSeconds:Long,subsecNanos:Long,offsetSeconds:Int,scale:Int):java.math.BigInteger"></a>
-      <a id="convert(Long,Long,Int,Int):BigInteger"></a>
+      <a id="convert(epochSeconds:Long,subsecNanos:Long,scale:Int):java.math.BigInteger"></a>
+      <a id="convert(Long,Long,Int):BigInteger"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">convert</span><span class="params">(<span name="epochSeconds">epochSeconds: <span class="extype" name="scala.Long">Long</span></span>, <span name="subsecNanos">subsecNanos: <span class="extype" name="scala.Long">Long</span></span>, <span name="offsetSeconds">offsetSeconds: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>
+        <span class="name">convert</span><span class="params">(<span name="epochSeconds">epochSeconds: <span class="extype" name="scala.Long">Long</span></span>, <span name="subsecNanos">subsecNanos: <span class="extype" name="scala.Long">Long</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimestampConversion.TimestampConverter#deconvert" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="deconvert(convertedValue:java.math.BigInteger,scale:Int):(Long,Long)"></a>
+      <a id="deconvert(BigInteger,Int):(Long,Long)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">deconvert</span><span class="params">(<span name="convertedValue">convertedValue: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Long">Long</span>)</span>
       </span>
       </h4>
       

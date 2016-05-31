@@ -24,9 +24,9 @@
         </head>
         <body class="value">
       <div id="definition">
-        <a href="ColumnBuffer.html" title="Go to companion"><img src="../../../../lib/object_to_class_big.png" /></a>
+        <img src="../../../../lib/object_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.colbuffer">colbuffer</a></p>
-        <h1><a href="ColumnBuffer.html" title="Go to companion">ColumnBuffer</a></h1>
+        <h1>ColumnBuffer</h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,13 +35,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnBuffer</span>
+        <span class="name">ColumnBuffer</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>This is a <code>Factory</code> implementation of <code>ColumnBuffers</code>.</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.colbuffer.ColumnBuffer"><span>ColumnBuffer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.colbuffer.ColumnBuffer"><span>ColumnBuffer</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -150,20 +150,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(p:com.actian.spark_vector.colbuffer.ColumnBufferBuildParams):Option[com.actian.spark_vector.colbuffer.ColumnBuffer[_]]"></a>
-      <a id="apply(ColumnBufferBuildParams):Option[ColumnBuffer[_]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="p">p: <a href="ColumnBufferBuildParams.html" class="extype" name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams">ColumnBufferBuildParams</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="ColumnBuffer.html" class="extype" name="com.actian.spark_vector.colbuffer.ColumnBuffer">ColumnBuffer</a>[_]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Get the <code>ColumnBuffer</code> object for the given <code>ColumnBufferBuildParams</code> params.</p><div class="fullcomment"><div class="comment cmt"><p>Get the <code>ColumnBuffer</code> object for the given <code>ColumnBufferBuildParams</code> params.</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>an Option embedding the <code>ColumnBuffer</code> object (or an empty option if a <code>ColumnBuffer</code> was not found)
-</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -293,6 +279,32 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#newReadBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="newReadBuffer(p:com.actian.spark_vector.colbuffer.ColumnBufferBuildParams):com.actian.spark_vector.colbuffer.ReadColumnBuffer[_]"></a>
+      <a id="newReadBuffer(ColumnBufferBuildParams):ReadColumnBuffer[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">newReadBuffer</span><span class="params">(<span name="p">p: <a href="ColumnBufferBuildParams.html" class="extype" name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams">ColumnBufferBuildParams</a></span>)</span><span class="result">: <a href="ReadColumnBuffer.html" class="extype" name="com.actian.spark_vector.colbuffer.ReadColumnBuffer">ReadColumnBuffer</a>[_]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get a <code>ReadColumnBuffer</code> object for the given <code>ColumnBufferBuildParams</code> params.</p>
+    </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer#newWriteBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="newWriteBuffer(p:com.actian.spark_vector.colbuffer.ColumnBufferBuildParams):com.actian.spark_vector.colbuffer.WriteColumnBuffer[_]"></a>
+      <a id="newWriteBuffer(ColumnBufferBuildParams):WriteColumnBuffer[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">newWriteBuffer</span><span class="params">(<span name="p">p: <a href="ColumnBufferBuildParams.html" class="extype" name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams">ColumnBufferBuildParams</a></span>)</span><span class="result">: <a href="WriteColumnBuffer.html" class="extype" name="com.actian.spark_vector.colbuffer.WriteColumnBuffer">WriteColumnBuffer</a>[_]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get a <code>WriteColumnBuffer</code> object for the given <code>ColumnBufferBuildParams</code> params.</p>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -411,7 +423,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

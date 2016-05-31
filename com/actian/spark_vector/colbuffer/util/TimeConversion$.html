@@ -94,7 +94,7 @@
       </span>
       </h4>
       <p class="comment cmt">This trait should be used when implementing a type of time conversion,
- for example a time-zone converter using the upper helper functions.</p>
+for example a timezone converter using the upper helper functions.</p>
     </li></ol>
             </div>
 
@@ -225,6 +225,32 @@
       </span>
       </h4>
       
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#convertUTCToLocalDate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="convertUTCToLocalDate(date:java.sql.Date):Unit"></a>
+      <a id="convertUTCToLocalDate(Date):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertUTCToLocalDate</span><span class="params">(<span name="date">date: <span class="extype" name="java.sql.Date">Date</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#convertUTCToLocalTimestamp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="convertUTCToLocalTimestamp(time:java.sql.Timestamp):Unit"></a>
+      <a id="convertUTCToLocalTimestamp(Timestamp):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertUTCToLocalTimestamp</span><span class="params">(<span name="time">time: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -322,29 +348,16 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#normalizedTime" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="normalizedTime(nanos:Long):Long"></a>
-      <a id="normalizedTime(Long):Long"></a>
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#normalizeTime" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="normalizeTime(source:java.sql.Timestamp):Long"></a>
+      <a id="normalizeTime(Timestamp):Long"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">final </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">normalizedTime</span><span class="params">(<span name="nanos">nanos: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#normalizedTime" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="normalizedTime(source:java.sql.Timestamp):Long"></a>
-      <a id="normalizedTime(Timestamp):Long"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">normalizedTime</span><span class="params">(<span name="source">source: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+        <span class="name">normalizeTime</span><span class="params">(<span name="source">source: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
       </h4>
       
@@ -374,32 +387,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#scaledTime" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="scaledTime(nanos:Long,scale:Int):Long"></a>
-      <a id="scaledTime(Long,Int):Long"></a>
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#scaleNanos" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="scaleNanos(unscaledNanos:Long,scale:Int):Long"></a>
+      <a id="scaleNanos(Long,Int):Long"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">final </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">scaledTime</span><span class="params">(<span name="nanos">nanos: <span class="extype" name="scala.Long">Long</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+        <span class="name">scaleNanos</span><span class="params">(<span name="unscaledNanos">unscaledNanos: <span class="extype" name="scala.Long">Long</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
       </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#scaledTime" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="scaledTime(source:java.sql.Timestamp,scale:Int):Long"></a>
-      <a id="scaledTime(Timestamp,Int):Long"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">scaledTime</span><span class="params">(<span name="source">source: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
-      </span>
-      </h4>
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -413,19 +416,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#timeInNanos" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="timeInNanos(source:java.sql.Timestamp):Long"></a>
-      <a id="timeInNanos(Timestamp):Long"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">timeInNanos</span><span class="params">(<span name="source">source: <span class="extype" name="java.sql.Timestamp">Timestamp</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -439,6 +429,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.colbuffer.util.TimeConversion#unscaleNanos" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="unscaleNanos(scaledNanos:Long,scale:Int):Long"></a>
+      <a id="unscaleNanos(Long,Int):Long"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">unscaleNanos</span><span class="params">(<span name="scaledNanos">scaledNanos: <span class="extype" name="scala.Long">Long</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

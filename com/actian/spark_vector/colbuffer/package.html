@@ -81,22 +81,8 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBuffer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ColumnBuffer[T]extendsAnyRef"></a>
-      <a id="ColumnBuffer[T]:ColumnBuffer[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="ColumnBuffer.html"><span class="name">ColumnBuffer</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Abstract class to be used when implementing the class for a typed ColumnBuffer
- (e.</p>
-    </li><li name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ColumnBufferBuildParamsextendsProductwithSerializable"></a>
+              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnBufferBuildParamsextendsSerializablewithProduct"></a>
       <a id="ColumnBufferBuildParams:ColumnBufferBuildParams"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -104,11 +90,37 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ColumnBufferBuildParams.html"><span class="name">ColumnBufferBuildParams</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tpe">tpe: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxValueCount">maxValueCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ColumnBufferBuildParams.html"><span class="name">ColumnBufferBuildParams</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tpe">tpe: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxValueCount">maxValueCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Case class to be used when trying to create a typed column buffer object
- using the <code>ColumnBuffer(..)</code> apply-factory call with data type specific params.</p>
+      <p class="comment cmt">Case class to be used when trying to create a typed W/R column buffer object
+through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</p>
+    </li><li name="com.actian.spark_vector.colbuffer.ReadColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ReadColumnBuffer[T]extendsRWColumnBuffer"></a>
+      <a id="ReadColumnBuffer[T]:ReadColumnBuffer[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ReadColumnBuffer.html"><span class="name">ReadColumnBuffer</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.colbuffer.RWColumnBuffer">RWColumnBuffer</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.colbuffer.WriteColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="WriteColumnBuffer[T]extendsRWColumnBuffer"></a>
+      <a id="WriteColumnBuffer[T]:WriteColumnBuffer[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="WriteColumnBuffer.html"><span class="name">WriteColumnBuffer</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.colbuffer.RWColumnBuffer">RWColumnBuffer</span></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -129,19 +141,6 @@
       </span>
       </h4>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#BooleanTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="BooleanTypeId:String(&quot;boolean&quot;)"></a>
-      <a id="BooleanTypeId:String(&quot;boolean&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">BooleanTypeId</span><span class="result">: String(&quot;boolean&quot;)</span>
-      </span>
-      </h4>
-      
     </li><li name="com.actian.spark_vector.colbuffer.package#ByteSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ByteSize:Int(1)"></a>
       <a id="ByteSize:Int(1)"></a>
@@ -154,46 +153,7 @@
         <span class="name">ByteSize</span><span class="result">: Int(1)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Common constants (for types and sizes)</p>
-    </li><li name="com.actian.spark_vector.colbuffer.package#ByteTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ByteTypeId1:String(&quot;tinyint&quot;)"></a>
-      <a id="ByteTypeId1:String(&quot;tinyint&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ByteTypeId1</span><span class="result">: String(&quot;tinyint&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#ByteTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ByteTypeId2:String(&quot;integer1&quot;)"></a>
-      <a id="ByteTypeId2:String(&quot;integer1&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ByteTypeId2</span><span class="result">: String(&quot;integer1&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#CharTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CharTypeId:String(&quot;char&quot;)"></a>
-      <a id="CharTypeId:String(&quot;char&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">CharTypeId</span><span class="result">: String(&quot;char&quot;)</span>
-      </span>
-      </h4>
-      
+      <p class="shortcomment cmt">Common constants (for data sizes)</p>
     </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ColumnBuffer"></a>
       <a id="ColumnBuffer:ColumnBuffer"></a>
@@ -203,7 +163,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="ColumnBuffer$.html"><span class="name">ColumnBuffer</span></a>
+        <a href="ColumnBuffer$.html"><span class="name">ColumnBuffer</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">This is a <code>Factory</code> implementation of <code>ColumnBuffers</code>.</p>
@@ -220,32 +180,6 @@
       </span>
       </h4>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#DateTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DateTypeId:String(&quot;ansidate&quot;)"></a>
-      <a id="DateTypeId:String(&quot;ansidate&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DateTypeId</span><span class="result">: String(&quot;ansidate&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#DecimalTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DecimalTypeId:String(&quot;decimal&quot;)"></a>
-      <a id="DecimalTypeId:String(&quot;decimal&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DecimalTypeId</span><span class="result">: String(&quot;decimal&quot;)</span>
-      </span>
-      </h4>
-      
     </li><li name="com.actian.spark_vector.colbuffer.package#DoubleSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DoubleSize:Int(8)"></a>
       <a id="DoubleSize:Int(8)"></a>
@@ -256,45 +190,6 @@
       </span>
       <span class="symbol">
         <span class="name">DoubleSize</span><span class="result">: Int(8)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#DoubleTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DoubleTypeId1:String(&quot;float&quot;)"></a>
-      <a id="DoubleTypeId1:String(&quot;float&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DoubleTypeId1</span><span class="result">: String(&quot;float&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#DoubleTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DoubleTypeId2:String(&quot;float8&quot;)"></a>
-      <a id="DoubleTypeId2:String(&quot;float8&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DoubleTypeId2</span><span class="result">: String(&quot;float8&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#DoubleTypeId3" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DoubleTypeId3:String(&quot;doubleprecision&quot;)"></a>
-      <a id="DoubleTypeId3:String(&quot;doubleprecision&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DoubleTypeId3</span><span class="result">: String(&quot;double precision&quot;)</span>
       </span>
       </h4>
       
@@ -311,32 +206,6 @@
       </span>
       </h4>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#FloatTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="FloatTypeId1:String(&quot;real&quot;)"></a>
-      <a id="FloatTypeId1:String(&quot;real&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">FloatTypeId1</span><span class="result">: String(&quot;real&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#FloatTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="FloatTypeId2:String(&quot;float4&quot;)"></a>
-      <a id="FloatTypeId2:String(&quot;float4&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">FloatTypeId2</span><span class="result">: String(&quot;float4&quot;)</span>
-      </span>
-      </h4>
-      
     </li><li name="com.actian.spark_vector.colbuffer.package#IntSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="IntSize:Int(4)"></a>
       <a id="IntSize:Int(4)"></a>
@@ -347,32 +216,6 @@
       </span>
       <span class="symbol">
         <span class="name">IntSize</span><span class="result">: Int(4)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#IntTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="IntTypeId1:String(&quot;integer&quot;)"></a>
-      <a id="IntTypeId1:String(&quot;integer&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">IntTypeId1</span><span class="result">: String(&quot;integer&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#IntTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="IntTypeId2:String(&quot;integer4&quot;)"></a>
-      <a id="IntTypeId2:String(&quot;integer4&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">IntTypeId2</span><span class="result">: String(&quot;integer4&quot;)</span>
       </span>
       </h4>
       
@@ -402,58 +245,6 @@
       </span>
       </h4>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#LongTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LongTypeId1:String(&quot;bigint&quot;)"></a>
-      <a id="LongTypeId1:String(&quot;bigint&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LongTypeId1</span><span class="result">: String(&quot;bigint&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#LongTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LongTypeId2:String(&quot;integer8&quot;)"></a>
-      <a id="LongTypeId2:String(&quot;integer8&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LongTypeId2</span><span class="result">: String(&quot;integer8&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#NcharTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="NcharTypeId:String(&quot;nchar&quot;)"></a>
-      <a id="NcharTypeId:String(&quot;nchar&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">NcharTypeId</span><span class="result">: String(&quot;nchar&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#NvarcharTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="NvarcharTypeId:String(&quot;nvarchar&quot;)"></a>
-      <a id="NvarcharTypeId:String(&quot;nvarchar&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">NvarcharTypeId</span><span class="result">: String(&quot;nvarchar&quot;)</span>
-      </span>
-      </h4>
-      
     </li><li name="com.actian.spark_vector.colbuffer.package#ShortSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ShortSize:Int(2)"></a>
       <a id="ShortSize:Int(2)"></a>
@@ -464,149 +255,6 @@
       </span>
       <span class="symbol">
         <span class="name">ShortSize</span><span class="result">: Int(2)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#ShortTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ShortTypeId1:String(&quot;smallint&quot;)"></a>
-      <a id="ShortTypeId1:String(&quot;smallint&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ShortTypeId1</span><span class="result">: String(&quot;smallint&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#ShortTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ShortTypeId2:String(&quot;integer2&quot;)"></a>
-      <a id="ShortTypeId2:String(&quot;integer2&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ShortTypeId2</span><span class="result">: String(&quot;integer2&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimeLZTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimeLZTypeId:String(&quot;timewithlocaltimezone&quot;)"></a>
-      <a id="TimeLZTypeId:String(&quot;timewithlocaltimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimeLZTypeId</span><span class="result">: String(&quot;time with local time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimeNZTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimeNZTypeId1:String(&quot;time&quot;)"></a>
-      <a id="TimeNZTypeId1:String(&quot;time&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimeNZTypeId1</span><span class="result">: String(&quot;time&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimeNZTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimeNZTypeId2:String(&quot;timewithouttimezone&quot;)"></a>
-      <a id="TimeNZTypeId2:String(&quot;timewithouttimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimeNZTypeId2</span><span class="result">: String(&quot;time without time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimeTZTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimeTZTypeId:String(&quot;timewithtimezone&quot;)"></a>
-      <a id="TimeTZTypeId:String(&quot;timewithtimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimeTZTypeId</span><span class="result">: String(&quot;time with time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimestampLZTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimestampLZTypeId:String(&quot;timestampwithlocaltimezone&quot;)"></a>
-      <a id="TimestampLZTypeId:String(&quot;timestampwithlocaltimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimestampLZTypeId</span><span class="result">: String(&quot;timestamp with local time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimestampNZTypeId1" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimestampNZTypeId1:String(&quot;timestamp&quot;)"></a>
-      <a id="TimestampNZTypeId1:String(&quot;timestamp&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimestampNZTypeId1</span><span class="result">: String(&quot;timestamp&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimestampNZTypeId2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimestampNZTypeId2:String(&quot;timestampwithouttimezone&quot;)"></a>
-      <a id="TimestampNZTypeId2:String(&quot;timestampwithouttimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimestampNZTypeId2</span><span class="result">: String(&quot;timestamp without time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#TimestampTZTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TimestampTZTypeId:String(&quot;timestampwithtimezone&quot;)"></a>
-      <a id="TimestampTZTypeId:String(&quot;timestampwithtimezone&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TimestampTZTypeId</span><span class="result">: String(&quot;timestamp with time zone&quot;)</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.colbuffer.package#VarcharTypeId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="VarcharTypeId:String(&quot;varchar&quot;)"></a>
-      <a id="VarcharTypeId:String(&quot;varchar&quot;)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">VarcharTypeId</span><span class="result">: String(&quot;varchar&quot;)</span>
       </span>
       </h4>
       
@@ -622,7 +270,7 @@
         <a href="util/package.html"><span class="name">util</span></a>
       </span>
       </h4>
-      <p class="comment cmt">Util functions vor various type conversions</p>
+      <p class="comment cmt">Util functions for various type conversions</p>
     </li></ol>
             </div>
 

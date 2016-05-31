@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>srp - com.actian.spark_vector.srp</title>
+          <meta name="description" content="srp - com.actian.spark vector.srp" />
+          <meta name="keywords" content="srp com.actian.spark vector.srp" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'com.actian.spark_vector.srp.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
+        <h1>srp</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">srp</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.actian.spark_vector.srp.ClientSRPParameter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ClientSRPParameterextendsSRPParameter"></a>
+      <a id="ClientSRPParameter:ClientSRPParameter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ClientSRPParameter.html"><span class="name">ClientSRPParameter</span></a><span class="result"> extends <a href="SRPParameter.html" class="extype" name="com.actian.spark_vector.srp.SRPParameter">SRPParameter</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> The trait that defines the calculations required on the
+ client side- S, a, x and A
+</p>
+    </li><li name="com.actian.spark_vector.srp.SRPParameter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SRPParameterextendsLogging"></a>
+      <a id="SRPParameter:SRPParameter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SRPParameter.html"><span class="name">SRPParameter</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The base trait that defines N, g, k, u SRP parameters and provides
+functionality to generate random bytes, and g ^ x (mod N). The SRP parameters
+are calculated using SRp version 6a.
+</p>
+    </li><li name="com.actian.spark_vector.srp.SRPServer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SRPServerextendsServerSRPParameter"></a>
+      <a id="SRPServer:SRPServer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SRPServer.html"><span class="name">SRPServer</span></a><span class="result"> extends <a href="ServerSRPParameter.html" class="extype" name="com.actian.spark_vector.srp.ServerSRPParameter">ServerSRPParameter</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The trait that needs to be extended to get SRP server side
+computations.</p>
+    </li><li name="com.actian.spark_vector.srp.ServerSRPParameter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ServerSRPParameterextendsSRPParameter"></a>
+      <a id="ServerSRPParameter:ServerSRPParameter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ServerSRPParameter.html"><span class="name">ServerSRPParameter</span></a><span class="result"> extends <a href="SRPParameter.html" class="extype" name="com.actian.spark_vector.srp.SRPParameter">SRPParameter</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> The trait that defines the calculations required on the
+ server side- S, x, v and B
+</p>
+    </li><li name="com.actian.spark_vector.srp.VectorSRPServer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorSRPServerextendsSRPServerwithLogging"></a>
+      <a id="VectorSRPServer:VectorSRPServer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorSRPServer.html"><span class="name">VectorSRPServer</span></a><span class="result"> extends <a href="SRPServer.html" class="extype" name="com.actian.spark_vector.srp.SRPServer">SRPServer</a> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Server for SRP authentication as implemented in Vector.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.actian.spark_vector.srp.Util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Util"></a>
+      <a id="Util:Util"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Util$.html"><span class="name">Util</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">The SRP 6a version as defined at http://srp.</p>
+    </li><li name="com.actian.spark_vector.srp.VectorSRP" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorSRP"></a>
+      <a id="VectorSRP:VectorSRP"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorSRP$.html"><span class="name">VectorSRP</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Contains some <code>Vector</code> constants to be used while authenticating and what algorithm to use</p>
+    </li><li name="com.actian.spark_vector.srp.VectorSRPClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorSRPClient"></a>
+      <a id="VectorSRPClient:VectorSRPClient"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorSRPClient$.html"><span class="name">VectorSRPClient</span></a><span class="result"> extends <a href="ClientSRPParameter.html" class="extype" name="com.actian.spark_vector.srp.ClientSRPParameter">ClientSRPParameter</a> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Performs authentication to <code>Vector</code> with SRP (Secure Remote Password) protocol</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+    </body>
+      </html>

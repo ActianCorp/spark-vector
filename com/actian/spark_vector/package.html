@@ -39,11 +39,11 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark-Vector connector.</p><p>With this connector, data can be loaded from Spark sources into <code>Vector</code> and results of <code>Vector</code> computations can be consumed in <code>Spark</code> and transformed into
-a <code>DataFrame</code>. The first part is done in parallel: data coming from every input <code>RDD</code> partition is serialized using <code>Vector's</code> binary protocol and transfered
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark-Vector connector.</p><p>With this connector, data can be loaded from <code>Spark</code> sources into <code>Vector</code> and results of <code>Vector</code> computations can be consumed in <code>Spark</code> and transformed into
+a <code>DataFrame</code>. Both operations are performed in parallel: the data coming from every input <code>RDD</code> partition is serialized using <code>Vector's</code> binary protocol and passed
 through socket connections to <code>Vector</code> end points. Although there is a chance that network communication is incurred at this point, most of the time this connector
-will try to assign only local <code>RDD</code> partitions to each <code>Vector</code> end point. On the other side, data is currently exported from <code>Vector</code> and ingested into <code>Spark</code>
-using a JDBC connection to the leader <code>Vector</code> node. The code that also permits this second part to be executed in parallel will soon be added.</p><p>Throughout the documentation we will use <code>DataStream</code> and <code>Vector</code> end point interchangeably. A <code>Vector DataStream</code> is the logical stream of consuming binary data in
+will try to assign only local <code>RDD</code> partitions to each <code>Vector</code> end point. Respectively, <code>Vector</code> data is unloaded through socket connections and consumed in <code>Spark</code>
+into an <code>RDD</code>.</p><p>Throughout the documentation we will use <code>DataStream</code> and <code>Vector</code> end point interchangeably. A <code>Vector DataStream</code> is the logical stream of consuming binary data in
 <code>Vector</code>. Typically, these <code>DataStream</code>s will be executed in parallel (i.e. there will be as many threads as <code>DataStreams</code> allocated), but there will be cases when
 a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On the other hand, each connection to a <code>Vector</code> end point maps to exactly one <code>DataStream</code>.
 </p></div><div class="toggleContainer block">
@@ -161,19 +161,19 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       </span>
       </h4>
       <p class="comment cmt">Implements buffering (and value serialization) for <code>Vector</code> columns</p>
-    </li><li name="com.actian.spark_vector.reader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="reader"></a>
-      <a id="reader:reader"></a>
+    </li><li name="com.actian.spark_vector.datastream" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="datastream"></a>
+      <a id="datastream:datastream"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a href="reader/package.html"><span class="name">reader</span></a>
+        <a href="datastream/package.html"><span class="name">datastream</span></a>
       </span>
       </h4>
-      
+      <p class="comment cmt">Spark -&gt; Vector loading part</p>
     </li><li name="com.actian.spark_vector.sql" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="sql"></a>
       <a id="sql:sql"></a>
@@ -187,6 +187,19 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       </span>
       </h4>
       <p class="comment cmt">Implements <code>SparkSQL</code> API, including a <code>BaseRelation</code> and a <code>RelationProvider</code></p>
+    </li><li name="com.actian.spark_vector.srp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="srp"></a>
+      <a id="srp:srp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="srp/package.html"><span class="name">srp</span></a>
+      </span>
+      </h4>
+      
     </li><li name="com.actian.spark_vector.util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="util"></a>
       <a id="util:util"></a>
@@ -215,19 +228,6 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <p class="comment cmt">This package contains a series of helpers to create and manage JDBC connections to <code>Vector</code>, to define the equivalence of <code>SparkSQL</code> and <code>Vector</code> data types,
 to create tables when they do not exist (respecting input <code>DataFrame</code>'s schema), to obtain column metadata for <code>Vector</code> tables, and high level methods to initiate
 loading to <code>Vector</code> tables.</p>
-    </li><li name="com.actian.spark_vector.writer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="writer"></a>
-      <a id="writer:writer"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a href="writer/package.html"><span class="name">writer</span></a>
-      </span>
-      </h4>
-      <p class="comment cmt">Spark -&gt; Vector loading part</p>
     </li></ol>
             </div>
 

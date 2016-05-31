@@ -93,24 +93,10 @@ loading to <code>Vector</code> tables.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="constant">constant: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
       </h4>
       <p class="comment cmt">Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.</p>
-    </li><li name="com.actian.spark_vector.vector.DataStreamPartition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataStreamPartitionextendsPartitionwithProductwithSerializable"></a>
-      <a id="DataStreamPartition:DataStreamPartition"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="DataStreamPartition.html"><span class="name">DataStreamPartition</span></a><span class="params">(<span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[_]</span>, <span name="parentIndices">parentIndices: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result"> extends <span class="extype" name="org.apache.spark.Partition">Partition</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">A partition corresponding to one <code>DataStream</code>
-</p>
     </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ResultSetIterator[T]extendsIterator[T]"></a>
       <a id="ResultSetIterator[T]:ResultSetIterator[T]"></a>
@@ -124,32 +110,6 @@ loading to <code>Vector</code> tables.
       </span>
       </h4>
       <p class="comment cmt">Iterator over an ResultSet</p>
-    </li><li name="com.actian.spark_vector.vector.ResultSetRowIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ResultSetRowIteratorextendsResultSetIterator[org.apache.spark.sql.Row]withLoggingwithProfiling"></a>
-      <a id="ResultSetRowIterator:ResultSetRowIterator"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="ResultSetRowIterator.html"><span class="name">ResultSetRowIterator</span></a><span class="result"> extends <a href="ResultSetIterator.html" class="extype" name="com.actian.spark_vector.vector.ResultSetIterator">ResultSetIterator</a>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span> with <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Extracts <code>Rows</code> out of a <code>ResultSet</code></p>
-    </li><li name="com.actian.spark_vector.vector.VectorConnectionHeader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="VectorConnectionHeaderextendsProductwithSerializable"></a>
-      <a id="VectorConnectionHeader:VectorConnectionHeader"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="VectorConnectionHeader.html"><span class="name">VectorConnectionHeader</span></a><span class="params">(<span name="statusCode">statusCode: <span class="extype" name="scala.Int">Int</span></span>, <span name="vectorSize">vectorSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Container for Vector connection partial header message.</p>
     </li><li name="com.actian.spark_vector.vector.VectorConnectionProperties" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorConnectionPropertiesextendsSerializablewithProduct"></a>
       <a id="VectorConnectionProperties:VectorConnectionProperties"></a>
@@ -224,19 +184,6 @@ loading to <code>Vector</code> tables.
       </h4>
       <p class="comment cmt">Error codes to return in exceptions from Vector ops
 </p>
-    </li><li name="com.actian.spark_vector.vector.LoadVector" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LoadVector"></a>
-      <a id="LoadVector:LoadVector"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="LoadVector$.html"><span class="name">LoadVector</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Utility object that defines methods for loading data into Vector</p>
     </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ResultSetIterator"></a>
       <a id="ResultSetIterator:ResultSetIterator"></a>
@@ -263,16 +210,16 @@ loading to <code>Vector</code> tables.
       </span>
       </h4>
       
-    </li><li name="com.actian.spark_vector.vector.VectorConnectionHeader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="VectorConnectionHeader"></a>
-      <a id="VectorConnectionHeader:VectorConnectionHeader"></a>
+    </li><li name="com.actian.spark_vector.vector.VectorDataType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorDataType"></a>
+      <a id="VectorDataType:VectorDataType"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="VectorConnectionHeader$.html"><span class="name">VectorConnectionHeader</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="VectorDataType$.html"><span class="name">VectorDataType</span></a>
       </span>
       </h4>
       

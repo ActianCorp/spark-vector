@@ -226,22 +226,23 @@
       </h4>
       <p class="shortcomment cmt">Close the Vector <code>JDBC</code> connection</p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#columnMetadata" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="columnMetadata(tableName:String):Seq[com.actian.spark_vector.vector.ColumnMetadata]"></a>
-      <a id="columnMetadata(String):Seq[ColumnMetadata]"></a>
+      <a id="columnMetadata(tableName:String,cols:Seq[String]):Seq[com.actian.spark_vector.vector.ColumnMetadata]"></a>
+      <a id="columnMetadata(String,Seq[String]):Seq[ColumnMetadata]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">columnMetadata</span><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>
+        <span class="name">columnMetadata</span><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cols">cols: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Nil</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Retrieve the <code>ColumnMetadata</code>s for table <code>tableName</code> as a sequence containing as many elements
 as there are columns in the table.</p><div class="fullcomment"><div class="comment cmt"><p>Retrieve the <code>ColumnMetadata</code>s for table <code>tableName</code> as a sequence containing as many elements
 as there are columns in the table. Each element contains the name, type, nullability, precision
 and scale of its corresponding column in <code>tableName</code>
-</p></div></div>
+</p></div><dl class="paramcmts block"><dt class="param">cols</dt><dd class="cmt"><p>If not empty, contains the columns for which the metadata needs to be retrieved (if empty, all columns have their metadata retrieved)
+</p></dd></dl></div>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#commit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="commit():Unit"></a>
       <a id="commit():Unit"></a>
@@ -306,9 +307,20 @@ and scale of its corresponding column in <code>tableName</code>
         <span class="name">executePreparedQuery</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="sql">sql: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="params">params: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="params">(<span name="op">op: (<span class="extype" name="java.sql.ResultSet">ResultSet</span>) ⇒ <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.executePreparedQuery.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.executePreparedQuery.T">T</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Execute a prepared <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package,
- mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
-</p>
+      <p class="shortcomment cmt">Execute a prepared <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package, mapping the <code>ResultSet</code> to a new type as specified by <code>op</code></p>
+    </li><li name="com.actian.spark_vector.vector.VectorJDBC#executePreparedStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="executePreparedStatement(sql:String,params:Seq[Any]):Int"></a>
+      <a id="executePreparedStatement(String,Seq[Any]):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">executePreparedStatement</span><span class="params">(<span name="sql">sql: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="params">params: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Execute the update prepared <code>SQL</code> query specified by <code>sql</code></p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#executeQuery" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="executeQuery[T](sql:String)(op:java.sql.ResultSet=&gt;T):T"></a>
       <a id="executeQuery[T](String)((ResultSet)⇒T):T"></a>
@@ -321,9 +333,7 @@ and scale of its corresponding column in <code>tableName</code>
         <span class="name">executeQuery</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="sql">sql: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span name="op">op: (<span class="extype" name="java.sql.ResultSet">ResultSet</span>) ⇒ <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.executeQuery.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.executeQuery.T">T</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Execute a <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package,
-mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
-</p>
+      <p class="shortcomment cmt">Execute a <code>SQL</code> query closing resources on failures, using scala-arm's <code>resource</code> package, mapping the <code>ResultSet</code> to a new type as specified by <code>op</code></p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#executeStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="executeStatement(sql:String):Int"></a>
       <a id="executeStatement(String):Int"></a>
@@ -408,6 +418,19 @@ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.VectorJDBC#isClosed" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="isClosed():Boolean"></a>
+      <a id="isClosed():Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isClosed</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Check if Vector <code>JDBC</code> connection is closed</p>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -654,7 +677,7 @@ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
         <span class="name">query</span><span class="params">(<span name="sql">sql: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="params">params: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]]</span>
       </span>
       </h4>
-      
+      <p class="shortcomment cmt">Execute a select prepared query on Vector and return the results as a matrix of elements</p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC#query" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="query(sql:String):Seq[Seq[Any]]"></a>
       <a id="query(String):Seq[Seq[Any]]"></a>
@@ -790,32 +813,6 @@ mapping the <code>ResultSet</code> to a new type as specified by <code>op</code>
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.VectorJDBC#withPreparedStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="withPreparedStatement[T](query:String,op:java.sql.PreparedStatement=&gt;T):T"></a>
-      <a id="withPreparedStatement[T](String,(PreparedStatement)⇒T):T"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">withPreparedStatement</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="query">query: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="op">op: (<span class="extype" name="java.sql.PreparedStatement">PreparedStatement</span>) ⇒ <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.withPreparedStatement.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.withPreparedStatement.T">T</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Execute a <code>JDBC</code> prepared statement closing resources on failures, using scala-arm's <code>resource</code> package</p>
-    </li><li name="com.actian.spark_vector.vector.VectorJDBC#withStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="withStatement[T](op:java.sql.Statement=&gt;T):T"></a>
-      <a id="withStatement[T]((Statement)⇒T):T"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">withStatement</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="op">op: (<span class="extype" name="java.sql.Statement">Statement</span>) ⇒ <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.withStatement.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.vector.VectorJDBC.withStatement.T">T</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Execute a <code>JDBC</code> statement closing resources on failures, using scala-arm's <code>resource</code> package</p>
     </li></ol>
             </div>
 
