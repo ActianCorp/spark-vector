@@ -79,7 +79,8 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
           case "scan" => {
             val vectorTable = register(part.external_table_name, vectorDf)
             val select = selectStatement(format, part)
-            sqlContext.sql(s"insert into ${sparkQuote(vectorTable)} $select")
+            logDebug(s"Select statement issued for reading external data: $select")
+            sqlContext.sql(s"insert into table ${sparkQuote(vectorTable)} $select")
           }
           case "insert" => writeDF(format, vectorDf, part)
           case _ => throw new IllegalArgumentException(s"Unknown operator type: ${part.operator_type} in job ${job.query_id}, part ${part.part_id}")

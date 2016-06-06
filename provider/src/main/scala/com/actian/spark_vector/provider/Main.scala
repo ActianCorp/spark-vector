@@ -19,6 +19,7 @@ import java.nio.channels.ServerSocketChannel
 
 import org.apache.spark.{ Logging, SparkConf, SparkContext }
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.SQLContext
 
 import resource.managed
 import java.net.InetAddress
@@ -29,8 +30,13 @@ object Main extends App with Logging {
   private val conf = new SparkConf()
     .setAppName("Spark-Vector external tables provider")
     .set("spark.task.maxFailures", "1")
+    .set("spark.sql.caseSensitive", "false")
+  logDebug(s"Spark-Vector provider config options: ${conf.getAll.toMap}")
   private val sc = new SparkContext(conf)
-  private val sqlContext = new HiveContext(sc)
+  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", false))
+    new HiveContext(sc)
+  else
+    new SQLContext(sc)
 
   private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
 
