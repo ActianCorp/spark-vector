@@ -324,6 +324,25 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       resultsSpark shouldBe expectedData
     }
   }
+  
+   test("generate table/empty required columns, e.g. count(*)") { fixture =>
+    val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
+    val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
+    val rdd = fixture.sc.parallelize(data)
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+        override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
+          // We use a "select count(*)" within Vector and create an RDD to shuffle count(*) empty rows.
+          super.buildScan(Array.empty, Array.empty)
+      }
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      val resultsSpark = dataframe.collect.toSeq // This returns count(*) empty rows
+      resultsSpark.length shouldBe data.length
+    }
+  }
 
   test("generate table/field mapping") { fixture =>
     val schema = StructTypeUtil.createSchema("i" -> IntegerType, "s" -> StringType, "b" -> BooleanType)

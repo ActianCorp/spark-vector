@@ -21,6 +21,7 @@ import org.apache.spark.sql.{ Row, DataFrame, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps, ColumnMetadata }
@@ -38,7 +39,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     if (overwrite) {
-      VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${tableRef.table}") }
+      VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${quote(tableRef.table)}") }
     }
 
     logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
@@ -51,19 +52,26 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-    val (selectColumns, selectTableMetadataSchema) = if (requiredColumns.isEmpty) {
-      ("*", tableMetadataSchema)
-    } else {
-      (requiredColumns.mkString(","), requiredColumns.map { col =>
-        tableMetadataSchema.find(_.name.equalsIgnoreCase(col)).getOrElse(
-          throw new IllegalArgumentException(s"Column '${col}' not found in table metadata schema."))
-      }.toSeq)
-    }
     val (whereClause, whereParams) = VectorRelation.generateWhereClause(filters)
-
-    logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
-    sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadataSchema,
-      selectColumns, whereClause, whereParams)
+    if (requiredColumns.isEmpty) {
+      val countQuery = s"select count(*) from ${quote(tableRef.table)} ${whereClause}"
+      logInfo(s"Required columns is empty, execute Vector prepared count query: ${countQuery}")
+      VectorJDBC.withJDBC(tableRef.toConnectionProps) {
+        _.executePreparedQuery[RDD[Row]](countQuery, whereParams) { rs =>
+          if (!rs.next()) {
+            throw new IllegalStateException(s"Could not read the result set of '${countQuery}'.")
+          }
+          val numRows = rs.getLong(1)
+          logDebug(s"Create empty RDD from the count(*) of ${numRows} row(s).")
+          sqlContext.sparkContext.parallelize(1L to numRows).map(_ => InternalRow.empty).asInstanceOf[RDD[Row]]
+        }
+      }
+    } else {
+      val (selectColumns, selectTableMetadata) = (requiredColumns.mkString(","), pruneColumns(requiredColumns, tableMetadataSchema))
+      logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
+      sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadata,
+        selectColumns, whereClause, whereParams)
+    }
   }
 }
 
@@ -122,4 +130,9 @@ object VectorRelation {
       ("", Nil)
     }
   }
+
+  /** Selects the subset of columns (represented by `ColumnMetadata` structures) as required by `selectColumns` */
+  def pruneColumns(selectColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] = 
+    selectColumns.map(col => columnMetadata.find(_.name.equalsIgnoreCase(col)).getOrElse(
+      throw new IllegalArgumentException(s"Column '${col}' not found in table metadata schema.")))
 }
