@@ -61,7 +61,8 @@ class RowReader(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
   private def bytesToBeRead(headerSize: Int): Int = (0 until tableColumnMetadata.size).foldLeft(headerSize) {
     case (pos, idx) =>
       val cb = columnBufs(idx)
-      pos + padding(pos, cb.alignSize) + cb.maxValueCount * ((if (cb.nullable) ByteSize else 0) + tableColumnMetadata(idx).maxDataSize)
+      val afterNullMarkers = pos + (if (cb.nullable) ByteSize else 0) * cb.maxValueCount
+      afterNullMarkers + padding(afterNullMarkers, cb.alignSize) + cb.maxValueCount * tableColumnMetadata(idx).maxDataSize
   }
 
   private def fillColumnBuffers(vector: ByteBuffer) = {
