@@ -46,7 +46,7 @@ case class ColumnMetadata(val name: String,
     case VectorDataType.BooleanType => (BooleanType, ByteSize)
     case VectorDataType.DecimalType => (DecimalType(precision, scale), LongLongSize)
     case VectorDataType.DateType => (DateType, IntSize)
-    case VectorDataType.CharType | VectorDataType.NcharType => (StringType, IntSize)
+    case VectorDataType.CharType | VectorDataType.NcharType => (StringType, if (precision == 1) IntSize else precision + 1)
     case VectorDataType.VarcharType | VectorDataType.NvarcharType |
       VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
     case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
