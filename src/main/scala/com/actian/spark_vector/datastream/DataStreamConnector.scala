@@ -16,18 +16,16 @@
 package com.actian.spark_vector.datastream
 
 import java.net.InetSocketAddress
-import java.nio.channels.SocketChannel
 import java.nio.ByteBuffer
+import java.nio.channels.SocketChannel
 
 import org.apache.spark.Logging
 
-import scala.reflect.ClassTag
-
-import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
-import com.actian.spark_vector.datastream.reader.DataStreamReader
-import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.srp.VectorSRPClient
 import com.actian.spark_vector.colbuffer.IntSize
+import com.actian.spark_vector.datastream.reader.DataStreamReader
+import com.actian.spark_vector.srp.VectorSRPClient
+import com.actian.spark_vector.util.ResourceUtil.{ closeResourceAfterUse, closeResourceOnFailure }
+import com.actian.spark_vector.vector.{ ColumnMetadata, VectorNet }
 
 /**
  * Container for the datastream connection header info.
@@ -85,6 +83,7 @@ private object DataStreamConnectionHeader extends Serializable {
  * ports of the hosts where they are expected and authentication information
  */
 private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends Logging with Serializable {
+  import DataStreamConnector._
   import DataStreamReader._
 
   private def openSocketChannel(idx: Int): SocketChannel = {
@@ -92,7 +91,11 @@ private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends 
     logDebug(s"Opening a socket to $host")
     implicit val socket = SocketChannel.open()
     socket.connect(new InetSocketAddress(host.host, host.port))
-    closeResourceOnFailure(socket) { VectorSRPClient.authenticate(host.username, host.password) }
+    closeResourceOnFailure(socket) {
+      VectorNet.clientCheckVersion()
+      VectorSRPClient.authenticate(host.username, host.password)
+      VectorNet.writeClientType(DataStreamClientType)
+    }
     socket
   }
 
@@ -115,6 +118,7 @@ private[datastream] class DataStreamConnector(conf: VectorEndpointConf) extends 
 private[datastream] object DataStreamConnector {
   /** @note This is the binary data header's size (NOT the connection header's size) */
   final val DataHeaderSize = IntSize /* messageLength */ + IntSize /* binaryDataCode */ + IntSize /* numTuples */
+  private final val DataStreamClientType = 2 /* CLIENTTYPE_DATASTREAM */
 
   def apply(conf: VectorEndpointConf): DataStreamConnector = new DataStreamConnector(conf)
 }

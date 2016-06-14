@@ -33,10 +33,11 @@ object Main extends App with Logging {
     .set("spark.sql.caseSensitive", "false")
   logDebug(s"Spark-Vector provider config options: ${conf.getAll.toMap}")
   private val sc = new SparkContext(conf)
-  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", false))
+  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", false)) {
     new HiveContext(sc)
-  else
+  } else {
     new SQLContext(sc)
+  }
 
   private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
 
