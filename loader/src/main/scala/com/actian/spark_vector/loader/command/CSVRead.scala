@@ -19,6 +19,7 @@ import org.apache.spark.Logging
 import org.apache.spark.sql.SQLContext
 
 import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.sql.sparkQuote
 
 object CSVRead extends Logging {
   private def parseOptions(options: UserOptions): String = {

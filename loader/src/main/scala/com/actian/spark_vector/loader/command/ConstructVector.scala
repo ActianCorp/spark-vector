@@ -22,6 +22,7 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.loader.options.UserOptions
 import com.actian.spark_vector.loader.parsers.Args
+import resource.managed
 
 object ConstructVector {
   /**
@@ -46,9 +47,8 @@ object ConstructVector {
       case m => throw new IllegalArgumentException(s"Invalid configuration mode: ${m}")
     }
 
-    val targetTempTable = VectorTempTable.register(config, sqlContext)
-
-    // Load the line item data into Vector
-    sqlContext.sql(s"insert into table ${targetTempTable} ${select}")
+    for (targetTempTable <- managed(VectorTempTable.register(config, sqlContext))) {
+      sqlContext.sql(s"insert into table ${targetTempTable.quotedName} ${select}")
+    }
   }
 }

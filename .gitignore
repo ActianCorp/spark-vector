@@ -12,5 +12,6 @@ target/
 src/test/resources/log4j.properties
 project/target
 project/project
-/loader/
-/provider/
+bin
+loader/bin
+provider/bin
