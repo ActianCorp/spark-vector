@@ -162,7 +162,7 @@ private[spark_vector] object VectorRelation {
   }
 
   /** Selects the subset of columns (represented by `ColumnMetadata` structures) as required by `selectColumns` */
-  def pruneColumns(selectColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] = 
+  def pruneColumns(selectColumns: Array[String], columnMetadata: Seq[ColumnMetadata]): Seq[ColumnMetadata] =
     selectColumns.map(col => columnMetadata.find(_.name.equalsIgnoreCase(col)).getOrElse(
       throw new IllegalArgumentException(s"Column '${col}' not found in table metadata schema.")))
 }

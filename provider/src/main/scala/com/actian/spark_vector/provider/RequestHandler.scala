@@ -23,16 +23,16 @@ import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.{ DataFrame, SQLContext }
+import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.loader.command.sparkQuote
 import com.actian.spark_vector.sql.VectorRelation
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
+import com.actian.spark_vector.vector.VectorNet
 
 import play.api.libs.json.{ JsError, Json }
-import org.apache.spark.sql.SaveMode
 
 /**
  * Handler for requests from Vector
@@ -44,11 +44,15 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   import Job._
 
   private val id = new AtomicLong(0L)
-  private final val RequestPktType = 6
+  private final val RequestPktType = 6 /* X100CPT_PROVIDER_REQUEST */
+  private final val ProviderVersion = 1 /* ET_V_1 */
+  private final val ExpectedClientType = 3 /* CLIENTTYPE_ETPROVIDER */
 
   /** Given a socket connection, read the JSON request for external resources and process its parts */
   private def run(implicit socket: SocketChannel): Future[JobResult] = Future {
+    VectorNet.serverCheckVersion(ProviderVersion)
     if (auth.doAuthentication) auth.srpServer.authenticate
+    VectorNet.readClientType(ExpectedClientType)
     val json = DataStreamReader.readWithByteBuffer() { in =>
       if (in.getInt != RequestPktType) throw new IllegalArgumentException(s"Invalid packet type received for query request")
       DataStreamReader.readString(in)
