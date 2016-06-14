@@ -31,7 +31,7 @@ object Main extends App with Logging {
     .setAppName("Spark-Vector external tables provider")
     .set("spark.task.maxFailures", "1")
     .set("spark.sql.caseSensitive", "false")
-  logDebug(s"Spark-Vector provider config options: ${conf.getAll.toMap}")
+  logInfo(s"Starting Spark-Vector provider with config options: ${conf.getAll.toMap}")
   private val sc = new SparkContext(conf)
   private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", false)) {
     new HiveContext(sc)
@@ -41,6 +41,9 @@ object Main extends App with Logging {
 
   private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
 
+  sys.addShutdownHook {
+    logInfo("Shutting down Spark-Vector provider...")
+  }
   for { server <- managed(ServerSocketChannel.open.bind(null)) } {
     logInfo(s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}")
     println(s"vector_provider_hostname=${InetAddress.getLocalHost.getHostName}")

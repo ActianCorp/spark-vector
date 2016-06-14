@@ -62,6 +62,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
     }, job => job)
   } flatMap { job =>
+    logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")
     /** An accumulator to ensure parts are run sequentially */
     var jobPartAccum = Future { () }
     for { part <- job.parts } {
@@ -114,7 +115,8 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
     val result = cause match {
       case JobException(e, job, part) => {
-        logInfo(s"Job tr_id=${job.transaction_id}, query_id=${job.query_id} failed for part ${part.part_id}", cause)
+        logInfo(s"Job tr_id:${job.transaction_id}, query_id:${job.query_id} failed for part ${part.part_id}. Reason: ${cause.getMessage}")
+        logDebug(s"tr_id:${job.transaction_id}, query_id:${job.query_id}", cause)
         JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = cause.getMessage, stacktrace = Some(cause.getStackTraceString)))))
       }
       case _ => {
