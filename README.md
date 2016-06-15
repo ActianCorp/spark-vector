@@ -23,7 +23,7 @@ Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build,
 ## Using with Spark shell/submit
 This module can be added to Spark using the `--jars` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.0-SNAPSHOT.jar
+    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-1.1-SNAPSHOT.jar
 
 Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `databasename`
 
@@ -126,7 +126,7 @@ The Spark-Vector loader is a command line client utility that provides the abili
 Loading CSV files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load csv -sf hdfs://namenode:port/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load csv -sf hdfs://namenode:port/tmp/file.csv
 -vh vectorhost -vi VI -vd databasename -tt vector_table -sc " "
 ```
 
@@ -135,7 +135,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading Parquet files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
@@ -144,7 +144,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading ORC files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load orc -sf hdfs://namenode:port/tmp/file.orc
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load orc -sf hdfs://namenode:port/tmp/file.orc
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
@@ -153,7 +153,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 The entire list of options is available [here](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.parsers.Args$) or can be retrieved with:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.0-SNAPSHOT.jar load --help
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load --help
 ```
 
 ### Spark-Vector provider
