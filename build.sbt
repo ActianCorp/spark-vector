@@ -5,7 +5,7 @@ lazy val extraBuildSettings = sys.props.get("buildNr").map(nr => Seq(packageOpti
 
 lazy val commonSettings = Seq(
     organization := "com.actian",
-    version := "1.0-SNAPSHOT",
+    version := "1.0",
     scalaVersion := "2.10.4",
     libraryDependencies ++= commonDeps,
     fork in Test := true,
