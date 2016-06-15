@@ -18,7 +18,7 @@ package com.actian.spark_vector.loader.command
 import org.apache.spark.sql.SQLContext
 
 import com.actian.spark_vector.loader.options.UserOptions
-import com.actian.spark_vector.sql.{ TableRef, VectorRelation }
+import com.actian.spark_vector.sql.{ SparkSqlTable, TableRef, TempTable, VectorRelation }
 
 object VectorTempTable {
   private def generateSQLOption(key: String, queries: Seq[String]): Seq[(String, String)] = for { i <- 0 until queries.size } yield {
@@ -42,10 +42,10 @@ object VectorTempTable {
    *
    * @return The name of the registered temporary table (for now = <vectorTargetTable>)
    */
-  def register(config: UserOptions, sqlContext: SQLContext): String = {
+  def register(config: UserOptions, sqlContext: SQLContext): SparkSqlTable = {
     val params = parseOptions(config)
     val tableName = params("table")
-    sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), sqlContext, params)).registerTempTable(tableName)
-    sparkQuote(tableName)
+    val df = sqlContext.baseRelationToDataFrame(VectorRelation(TableRef(params), sqlContext, params))
+    TempTable(tableName, df)
   }
 }

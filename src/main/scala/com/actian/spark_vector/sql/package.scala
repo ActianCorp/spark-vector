@@ -16,4 +16,11 @@
 package com.actian.spark_vector
 
 /** Implements `SparkSQL` API, including a `BaseRelation` and a `RelationProvider` */
-package object sql {}
+package object sql {
+  def sparkQuote(name: String): String = s"`$name`"
+
+  def colsSelectStatement(cols: Option[Seq[String]]): String = cols match {
+    case None | Some(Nil) => "*" /* it is legal in SparkSql to execute 'select * from zero_cols_table' */
+    case Some(seq) => seq.map(sparkQuote).mkString(", ")
+  }
+}

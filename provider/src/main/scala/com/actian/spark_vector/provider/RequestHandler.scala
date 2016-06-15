@@ -16,23 +16,23 @@
 package com.actian.spark_vector.provider
 
 import java.nio.channels.SocketChannel
-import java.util.concurrent.atomic.AtomicLong
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 
 import org.apache.spark.Logging
-import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext, SaveMode }
+import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
-import com.actian.spark_vector.loader.command.sparkQuote
-import com.actian.spark_vector.sql.VectorRelation
-import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
+import com.actian.spark_vector.sql._
+import com.actian.spark_vector.util.ResourceUtil.{ closeResourceAfterUse, closeResourceOnFailure }
 import com.actian.spark_vector.vector.VectorNet
 
 import play.api.libs.json.{ JsError, Json }
+import resource.managed
 
 /**
  * Handler for requests from Vector
@@ -43,7 +43,6 @@ import play.api.libs.json.{ JsError, Json }
 class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
   import Job._
 
-  private val id = new AtomicLong(0L)
   private final val RequestPktType = 6 /* X100CPT_PROVIDER_REQUEST */
   private final val ProviderVersion = 1 /* ET_V_1 */
   private final val ExpectedClientType = 3 /* CLIENTTYPE_ETPROVIDER */
@@ -64,30 +63,12 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   } flatMap { job =>
     logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")
     /** An accumulator to ensure parts are run sequentially */
-    var jobPartAccum = Future { () }
+    var jobPartAccum = Future()
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
-        val format = part.format.orElse(PartialFunction.condOpt[String, String](part.external_reference.split("\\.").last) {
-          _ match {
-            case "csv" => "csv"
-            case "parquet" => "parquet"
-            case "json" => "json"
-            case "orc" => "orc"
-            case "avro" => "avro"
-          }
-        }).getOrElse {
-          throw new IllegalArgumentException(s"""Could not derive format of external reference ${part.external_reference},
-            in part ${part.part_id}, trid=${job.transaction_id}, qid=${job.query_id}. Please specify an explicit format in the 'create external table' SQL definition.""")
-        }
-        val vectorDf = vectorDF(part)
         part.operator_type match {
-          case "scan" => {
-            val vectorTable = register(part.external_table_name, vectorDf)
-            val select = selectStatement(format, part)
-            logDebug(s"Select statement issued for reading external data: $select")
-            sqlContext.sql(s"insert into table ${sparkQuote(vectorTable)} $select")
-          }
-          case "insert" => writeDF(format, vectorDf, part)
+          case "scan" => handleScan(part)
+          case "insert" => handleInsert(part)
           case _ => throw new IllegalArgumentException(s"Unknown operator type: ${part.operator_type} in job ${job.query_id}, part ${part.part_id}")
         }
       }.transform(identity, JobException(_, job, part)))
@@ -128,27 +109,40 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   }
 
   /** Given a job part, create the dataframe to subsequently be used to read/insert data into Vector */
-  private def vectorDF(part: JobPart): DataFrame = {
+  private def getVectorDF(part: JobPart): DataFrame = {
     val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.conf, sqlContext)
     sqlContext.baseRelationToDataFrame(rel)
   }
 
-  /** Helper function to register a dataframe as a temp table with a given `prefix` */
-  private def register(prefix: String, df: DataFrame): String = {
-    val ret = s"${prefix}_${id.incrementAndGet}"
-    df.registerTempTable(ret)
-    ret
-  }
+  /** Given a job part, retrieve its options, if any, or else an empty Map */
+  private def getOptions(part: JobPart): Map[String, String] = part.options.getOrElse(Map.empty[String, String])
 
   /**
-   * Given a job part of "scan" type, generate the SparkSQL statement that can be used to retrieve data from Vector
-   *
-   * @param format the format of the external data source
+   * Given a job part, return the format of the external table, according to the following logic:
+   * 1) return the explicit part.format, if specified
+   * 2) return the extension of part.external_reference, if recognized
+   * 3) throw IllegalArgumentException otherwise
    */
-  private def selectStatement(format: String, part: JobPart): String = {
-    val options = part.options.getOrElse(Map.empty[String, String])
+  private def getFormat(part: JobPart): String =
+    part.format.orElse(PartialFunction.condOpt[String, String](part.external_reference.split("\\.").last) {
+      _ match {
+        case "csv" => "csv"
+        case "parquet" => "parquet"
+        case "json" => "json"
+        case "orc" => "orc"
+        case "avro" => "avro"
+      }
+    }).getOrElse {
+      throw new IllegalArgumentException(s"""Could not derive format of external reference ${part.external_reference},
+        in part ${part.part_id}. Please specify an explicit format in the 'create external table' SQL definition.""")
+    }
+
+  /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
+  private def getExternalTable(part: JobPart): SparkSqlTable = {
+    val options = getOptions(part)
+    val format = getFormat(part)
     val table = format match {
-      case "hive" => part.external_reference
+      case "hive" => HiveTable(part.external_reference)
       case _ => {
         val df = format match {
           case "parquet" => sqlContext.read.options(options).parquet(part.external_reference)
@@ -156,22 +150,43 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
           case "orc" => sqlContext.read.options(options).orc(part.external_reference)
           case _ => sqlContext.read.options(options).format(format).load(part.external_reference)
         }
-        val inputTable = s"in_${part.external_table_name}_${id.incrementAndGet}"
-        df.registerTempTable(inputTable)
-        inputTable
+        TempTable("src", df)
       }
     }
-
-    s"select ${part.column_infos.map(ci => sparkQuote(ci.column_name)).mkString(", ")} from ${sparkQuote(table)}"
+    if (part.column_infos.isEmpty) {
+      val dfNoCols = closeResourceAfterUse(table) {
+        val selectCountStarStatement = s"select count(*) from ${table.quotedName}"
+        val numTuples = sqlContext.sql(selectCountStarStatement).first().getLong(0)
+        val rddNoCols = sqlContext.sparkContext.parallelize(1L to numTuples).map(_ => Row.empty)
+        sqlContext.createDataFrame(rddNoCols, StructType(Seq.empty))
+      }
+      TempTable("src_no_cols", dfNoCols)
+    } else {
+      table
+    }
   }
 
-  /**
-   * Given a job part of "insert" type, write the data contained in `df` to Vector
-   *
-   * @param format the format of the external data source
-   */
-  private def writeDF(format: String, df: DataFrame, part: JobPart): Unit = {
-    val options = part.options.getOrElse(Map.empty[String, String])
+  /** Handle a job part of type "scan" by inserting into the VectorDF all tuples read from the external table. */
+  private def handleScan(part: JobPart): Unit = {
+    require(part.operator_type == "scan")
+    for {
+      externalTable <- managed(getExternalTable(part))
+      vectorTable <- managed(TempTable(part.external_table_name, getVectorDF(part)))
+    } {
+      val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
+      val selectStatement = s"select $cols from ${externalTable.quotedName}"
+      val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
+      logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
+      sqlContext.sql(wholeStatement)
+    }
+  }
+
+  /** Handle a job part of type "insert" by writing into the external table all tuples coming from the VectorDF. */
+  private def handleInsert(part: JobPart): Unit = {
+    require(part.operator_type == "insert")
+    val df = getVectorDF(part)
+    val options = getOptions(part)
+    val format = getFormat(part)
     /** TODO(): Make this user configurable? */
     val mode = SaveMode.Append
     format match {

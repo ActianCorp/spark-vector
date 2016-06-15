@@ -18,6 +18,7 @@ package com.actian.spark_vector.loader.command
 import org.apache.spark.sql.SQLContext
 
 import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.sql.{ sparkQuote, colsSelectStatement }
 
 object ParquetRead {
   /**
