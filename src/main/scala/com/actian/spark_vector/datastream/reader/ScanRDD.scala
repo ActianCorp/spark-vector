@@ -28,21 +28,25 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
  */
 class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[Row](sc, Nil) with Logging {
   /** Closed state for the datastream connection */
-  private var closed = false
+  @volatile private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */
-  private var it: RowReader = _
+  @volatile private var it: RowReader = _
 
   override protected def getPartitions = (0 until readConf.vectorEndpoints.size).map(idx => new Partition { def index = idx }).toArray
 
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
 
   override def compute(split: Partition, taskContext: TaskContext): Iterator[Row] = {
-    taskContext.addTaskCompletionListener { _ =>
-      close(it, "RowReader")
-      closed = true
-    }
+    taskContext.addTaskCompletionListener { _ => closeAll }
+    /** @todo Once we move to Spark 1.6 we can also addTaskFailureListener with closeAll */
+    closed = false
     it = read(split.index)
     it.asInstanceOf[Iterator[Row]]
+  }
+
+  private def closeAll(): Unit = if (!closed) {
+    close(it, "RowReader")
+    closed = true
   }
 
   private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {
