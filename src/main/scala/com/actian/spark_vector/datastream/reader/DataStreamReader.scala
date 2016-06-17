@@ -90,7 +90,7 @@ object DataStreamReader extends Logging {
     var i = 0
     buffer.clear()
     buffer.limit(len)
-    while (i < len) {
+    while (i < len && socket.isConnected) {
       val j = socket.read(buffer)
       if (j <= 0) throw new Exception(
         s"Connection to Vector end point has been closed or amount of data communicated does not match the message length")

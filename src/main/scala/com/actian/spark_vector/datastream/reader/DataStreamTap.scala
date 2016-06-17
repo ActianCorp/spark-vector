@@ -35,7 +35,7 @@ private[reader] case class DataStreamTap(implicit val socket: SocketChannel) ext
   private var isNextVectorBuffered = false
   private var remaining = true
 
-  private def readVector(reuseByteBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseByteBuffer)) { vectors =>
+  private def readVector(reuseBuffer: ByteBuffer): ByteBuffer = readWithByteBuffer(Option(reuseBuffer)) { vectors =>
     val packetType = vectors.getInt()
     if (packetType != BinaryDataCode && packetType != SuccessCode) throw new Exception(s"Invalid packet type code = ${packetType}.")
     if (vectors.getInt(NumTuplesIndex) == 0) {
