@@ -148,7 +148,7 @@ private[vector] object Vector extends Logging {
    *
    * @return an <code>RDD[Row]</code> for the unload operation
    */
-  def unloadVector(sparkContext: SparkContext,
+  def unloadVector(sc: SparkContext,
     table: String,
     vectorProps: VectorConnectionProperties,
     tableColumnMetadata: Seq[ColumnMetadata],
@@ -159,16 +159,16 @@ private[vector] object Vector extends Logging {
     closeResourceOnFailure(client) {
       client.prepareUnloadDataStreams
       val readConf = client.getVectorEndpointConf
-      val scanRDD = unloadVector(sparkContext, tableColumnMetadata, readConf)
+      val scanRDD = unloadVector(sc, tableColumnMetadata, readConf)
       assert(whereClause.isEmpty == whereParams.isEmpty)
       var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
       client.startUnload(selectQuery, whereParams)
-      sparkContext.addSparkListener(new SparkListener() {
+      sc.addSparkListener(new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
           client.close
-          logDebug(s"Unload job ended @ ${job.time}.")
           ended = true
+          logDebug(s"Unload job ended @ ${job.time}.")
         }
       })
       scanRDD
