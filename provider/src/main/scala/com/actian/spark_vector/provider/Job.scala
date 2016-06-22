@@ -27,9 +27,8 @@ private[provider] case class LogicalType(`type`: String,
 private[provider] case class ColumnInfo(column_name: String,
     logical_type: LogicalType,
     physical_type: String,
-    nullable: Boolean,
-    is_const: Boolean) {
-  implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale, is_const)
+    nullable: Boolean) {
+  implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale)
 }
 
 /** How many streams does `Vector` expect on the node with host name `host`, at `port` */
