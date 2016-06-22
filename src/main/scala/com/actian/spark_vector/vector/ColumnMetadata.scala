@@ -26,8 +26,7 @@ case class ColumnMetadata(val name: String,
     val typeName: String,
     val nullable: Boolean,
     val precision: Int,
-    val scale: Int,
-    val constant: Boolean = false) extends Serializable {
+    val scale: Int) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
    *
@@ -59,5 +58,5 @@ case class ColumnMetadata(val name: String,
   def maxDataSize: Int = dataTypeInfo._2
 
   override def toString: String =
-    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}, constant: ${constant}"
+    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}"
 }

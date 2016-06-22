@@ -32,12 +32,12 @@ import com.actian.spark_vector.vector.{ ColumnMetadata, VectorNet }
  *
  * @note We keep just a part of this info, the rest of it such as column names and their logical/physical types
  * is not stored in this container since we get it earlier from a JDBC query.
- * @note From `colInfo` only use the `nullable` and `constant` fields.
+ * @note From `colInfo` only use the `nullable` field.
  */
 private[datastream] case class DataStreamConnectionHeader(statusCode: Int,
     numCols: Int,
     vectorSize: Int,
-    colInfo: Seq[ColumnMetadata]) extends Serializable { // For now holding col info only for name, nullability and constants
+    colInfo: Seq[ColumnMetadata]) extends Serializable { // For now holding col info only for name and nullability
   /** TODO: Sanity check for column data types, throwing some exceptions in case of inconsistencies */
   require(statusCode >= 0, "Invalid status code (possible errors during connection).")
 }
@@ -62,13 +62,13 @@ private object DataStreamConnectionHeader extends Serializable {
           (header.getInt() == 1, readString(header), readString(header))
         })
       headerColInfo.foldLeft((Seq[ColumnMetadata](), false)) {
-        case ((seq, prevWasMarker), (name, (constant, _, _))) =>
+        case ((seq, prevWasMarker), (name, (_, _, _))) =>
           /** TODO: infer/parse column type info, obtain scale and precision info too */
           /** WARN: column name needs escaping in Vector */
           if (name.isEmpty) {
             (seq, true) // mark it as a marker, w/o adding column metadata
           } else {
-            (seq :+ ColumnMetadata(name, "", prevWasMarker, 0, 0, constant), false)
+            (seq :+ ColumnMetadata(name, "", prevWasMarker, 0, 0), false)
           }
       }._1
     }
