@@ -23,12 +23,13 @@ import scala.util.{ Failure, Success }
 
 import org.apache.spark.Logging
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, SaveMode }
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.sql._
-import com.actian.spark_vector.util.ResourceUtil.{ closeResourceAfterUse, closeResourceOnFailure }
+import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.vector.VectorNet
 
 import play.api.libs.json.{ JsError, Json }
@@ -92,17 +93,22 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     writeJobResult(result)
   }
 
+  /** Given a throwable, get its message + of all its causes */
+  private def getMessage(cause: Throwable): String = Iterator.iterate(cause)(_.getCause).takeWhile(_ != null).mkString(", caused by: ")
+
   /** Handle the failure of a query request */
   private def handleFailure(cause: Throwable)(implicit socket: SocketChannel) = closeResourceAfterUse(socket) {
     val result = cause match {
       case JobException(e, job, part) => {
-        logInfo(s"Job tr_id:${job.transaction_id}, query_id:${job.query_id} failed for part ${part.part_id}. Reason: ${cause.getMessage}")
+        val message = getMessage(e)
+        logInfo(s"Job tr_id:${job.transaction_id}, query_id:${job.query_id} failed for part ${part.part_id}. Reason: $message")
         logDebug(s"tr_id:${job.transaction_id}, query_id:${job.query_id}", cause)
-        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = cause.getMessage, stacktrace = Some(cause.getStackTraceString)))))
+        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = message, stacktrace = Some(cause.getStackTraceString)))))
       }
       case _ => {
+        val message = getMessage(cause)
         logError("Job failed while receiving/parsing json", cause)
-        JobResult(-1, -1, error = Some(Seq(JobMsg(msg = cause.getMessage, stacktrace = Some(cause.getStackTraceString)))))
+        JobResult(-1, -1, error = Some(Seq(JobMsg(msg = message, stacktrace = Some(cause.getStackTraceString)))))
       }
     }
     writeJobResult(result)
@@ -123,19 +129,25 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
    * 2) return the extension of part.external_reference, if recognized
    * 3) throw IllegalArgumentException otherwise
    */
-  private def getFormat(part: JobPart): String =
-    part.format.orElse(PartialFunction.condOpt[String, String](part.external_reference.split("\\.").last) {
-      _ match {
-        case "csv" => "csv"
-        case "parquet" => "parquet"
-        case "json" => "json"
-        case "orc" => "orc"
-        case "avro" => "avro"
-      }
+  private def getFormat(part: JobPart): String = {
+    val ret = part.format.orElse(PartialFunction.condOpt[String, String](part.external_reference.split("\\.").last) {
+      ext =>
+        ext match {
+          case "csv" | "parquet" | "json" | "orc" | "avro" => ext
+        }
     }).getOrElse {
       throw new IllegalArgumentException(s"""Could not derive format of external reference ${part.external_reference},
         in part ${part.part_id}. Please specify an explicit format in the 'create external table' SQL definition.""")
     }
+    checkFormat(ret)
+    ret
+  }
+
+  private def checkFormat(format: String): Unit = format match {
+    case "hive" | "orc" if !sqlContext.isInstanceOf[HiveContext] =>
+      throw new IllegalStateException(s"Reading ${format} sources requires Hive support. To enable this, set spark.vector.provider.hive to true in the spark_provider.conf file")
+    case _ =>
+  }
 
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
