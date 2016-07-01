@@ -153,7 +153,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   private def getExternalTable(part: JobPart): SparkSqlTable = {
     val options = getOptions(part)
     val format = getFormat(part)
-    val table = format match {
+    format match {
       case "hive" => HiveTable(part.external_reference)
       case _ => {
         val df = format match {
@@ -165,17 +165,6 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
         TempTable("src", df)
       }
     }
-    if (part.column_infos.isEmpty) {
-      val dfNoCols = closeResourceAfterUse(table) {
-        val selectCountStarStatement = s"select count(*) from ${table.quotedName}"
-        val numTuples = sqlContext.sql(selectCountStarStatement).first().getLong(0)
-        val rddNoCols = sqlContext.sparkContext.parallelize(1L to numTuples).map(_ => Row.empty)
-        sqlContext.createDataFrame(rddNoCols, StructType(Seq.empty))
-      }
-      TempTable("src_no_cols", dfNoCols)
-    } else {
-      table
-    }
   }
 
   /** Handle a job part of type "scan" by inserting into the VectorDF all tuples read from the external table. */
@@ -185,11 +174,19 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       externalTable <- managed(getExternalTable(part))
       vectorTable <- managed(TempTable(part.external_table_name, getVectorDF(part)))
     } {
-      val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
-      val selectStatement = s"select $cols from ${externalTable.quotedName}"
-      val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
-      logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
-      sqlContext.sql(wholeStatement)
+      if (part.column_infos.isEmpty) {
+        val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName}"
+        val numTuples = sqlContext.sql(selectCountStarStatement).first().getLong(0)
+        val rddNoCols = sqlContext.sparkContext.parallelize(1L to numTuples).map(_ => Row.empty)
+        val dfNoCols = sqlContext.createDataFrame(rddNoCols, StructType(Seq.empty))
+        dfNoCols.write.mode(SaveMode.Append).insertInto(vectorTable.tableName)
+      } else {
+        val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
+        val selectStatement = s"select $cols from ${externalTable.quotedName}"
+        val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
+        logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
+        sqlContext.sql(wholeStatement)
+      }
     }
   }
 
