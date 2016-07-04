@@ -23,17 +23,17 @@ import com.actian.spark_vector.Profiling
  * Trait that performs a special kind of matching in a bipartite graph:
  *  - Let `A` and `B` be the two classes of nodes in a bipartite graph
  *  - Let `edges` be the edges (`a -> b`)
+ *  - Let target be a sequence of integers, one for each b in B
  *  - For each `b` in `B`, define as `g(b)` as the number of nodes from `A` assigned to `b`
  *  - The goal of this algorithm is to assign each node from `a` in `A` to a node `b` in `B` such that there is an edge between
- *  `a` and `b` and `max(g(b))` is minimum for all `b` in `B`
+ *  `a` and `b` and `sum(|g(b) - target(b)|)` is minimum for all `b` in `B`
  *
  * This algorithm is very similar to Hopcroft-Karp's matching algorithm in bipartite graphs:
  *  - Create an initial matching
- *  - Define `target` = `nA / nB` rounded up, i.e. the ideal solution
- *  - Separate nodes from `B` into three classes: `b`s with `g(b) > target, = target and < target`
- *  - At each iteration try to find an alternating path starting from a node with `g(b) > target` to a node that has `g(b) < target`.
+ *  - Separate nodes from `B` into three classes: `b`s with `g(b) > target(b), = target(b) and < target(b)`
+ *  - At each iteration try to find an alternating path starting from a node with `g(b) > target(b)` to a node that has `g(b) < target(b)`.
  *  - By negating this alternate path, each node in `A` is still assigned to a node from `B` that it shares an edge with, but the sum
- *  of `|g(b) - target|` for every `b` in `B` is smaller.
+ *  of `|g(b) - target(b)|` for every `b` in `B` is smaller.
  *  - When there is no such alternating path anymore, we have reached the optimal solution
  *  - By trying to find more than one alternating path at each iteration, the complexity of the algorithm is improved to
  *  `|edges|sqrt(nA + nB)`. Since there is usually a constant number of `B`s a node from `A` shares an edge with, e.g. each HDFS
@@ -43,6 +43,7 @@ import com.actian.spark_vector.Profiling
 private[datastream] trait BipartiteAssignment extends Logging with Profiling {
   protected val nA: Int
   protected val nB: Int
+  protected val target: Seq[Int]
   protected val edges: IndexedSeq[IndexedSeq[Int]]
   private lazy val matchFor = mutableISeq.fill(nA)(-1)
   private lazy val matchedAperB = mutableISeq.fill(nB)(0)
@@ -60,11 +61,9 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
 
   private lazy val st = Stack.empty[(Int, Int)]
 
-  private lazy val target = nA / nB + (if (nA % nB != 0) 1 else 0)
-
   /**
    * Find an alternating path that respects the properties of the algorithm, i.e. starts from a node with
-   * `g(b) > target` and ends in a node with `g(b') < target`.
+   * `g(b) > target(b)` and ends in a node with `g(b') < target(b')`.
    *
    * @param offset The offset index in allAperB to look for potential next A's, to mark which edges (b -> a) have already
    * been traversed in previous calls to [[findPath]]
@@ -79,7 +78,7 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
       if (foundPath) matchFor(a) = edges(a)(edgeIdx + 1)
       if (edgeIdx == -1) {
         visited(a) = true
-        edges(a).find { b => b != matchFor(a) && matchedAperB(b) < target }.foreach { b =>
+        edges(a).find { b => b != matchFor(a) && matchedAperB(b) < target(b) }.foreach { b =>
           foundPath = true
           matchedAperB(b) += 1
           matchFor(a) = b
@@ -136,8 +135,8 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
     }
     profileEnd
     logMatching("Initial matching")
-    val more = (0 until nB).filter(matchedAperB(_) > target)
-    logDebug(s"Trying to get to target=$target and starting from nodes(in B): ${more.mkString(", ")}")
+    val more = (0 until nB).filter(b => matchedAperB(b) > target(b))
+    logDebug(s"Trying to get to target=${target} and starting from nodes(in B): ${more.mkString(", ")}")
 
     val visited = mutableISeq.fill(nA)(false)
     var repeat = true
@@ -151,7 +150,7 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
 
       repeat = false
       more.foreach { b =>
-        while (iterators(b).hasNext && matchedAperB(b) > target) {
+        while (iterators(b).hasNext && matchedAperB(b) > target(b)) {
           val a = iterators(b).next
           if (matchFor(a) == b && !visited(a)) {
             logTrace(s"Trying to revert edge $a -> $b")
@@ -186,6 +185,30 @@ private[datastream] trait BipartiteAssignment extends Logging with Profiling {
  * @param endpoints Vector end points
  */
 final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]) extends BipartiteAssignment {
+  implicit val accs = profileInit("prepare structures",
+    "match partitions with affinity to hosts",
+    "translate matching to assignment to endpoints",
+    "assign partitions without affinity",
+    "protect against skew")
+
+  private val (partitionsWithAffinity, partitionsWithoutAffinity, hosts, affinitiesToHosts) = prepareStructures
+  private val endPointsPerHost = (0 until endpoints.size).view.groupBy(e => hosts(endpoints(e).host))
+  private val numEndpointsPerHost = endPointsPerHost.mapValues(_.size)
+  protected val nA = partitionsWithAffinity.size
+  protected val nB = hosts.size
+  protected val edges = affinitiesToHosts
+  protected val target = {
+    var remA = nA
+    var remE = endpoints.size
+    def next(b: Int): Int = {
+      val ret = Math.round(remA.toDouble * numEndpointsPerHost(b) / remE).toInt
+      remA -= ret
+      remE -= numEndpointsPerHost(b)
+      ret
+    }
+    Seq.tabulate(nB)(next)
+  }
+
   private def verifyMatching: Unit = {
     def sanity = {
       var cnt = 0
@@ -221,8 +244,6 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
 
   private def matchingToEndpoints = {
     profile("translate matching to assignment to endpoints")
-    val endPointsPerHost = (0 until endpoints.size).view.groupBy(e => hosts(endpoints(e).host))
-    val numEndpointsPerHost = endPointsPerHost.mapValues(_.size)
     val partitionsAssignedPerHost = mutableISeq.tabulate(hosts.size)(matching(_).size)
     val assignment = mutableISeq((0 until hosts.size).view.flatMap { host =>
       val partitions = matching(host)
@@ -265,22 +286,36 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
     profileEnd
   }
 
-  implicit val accs = profileInit("prepare structures", "match partitions with affinity to hosts", "translate matching to assignment to endpoints", "assign partitions without affinity")
-
-  private val (partitionsWithAffinity, partitionsWithoutAffinity, hosts, affinitiesToHosts) = prepareStructures
-
-  protected val nA = partitionsWithAffinity.size
-  protected val nB = hosts.size
-  protected val edges = affinitiesToHosts
+  private def protectAgainstSkew = {
+    profile("protect against skew")
+    val endpointSet = collection.mutable.SortedSet((0 until endpoints.size).map(e => (assignment(e).size, e)): _*)
+    var i = 0
+    var j = endpoints.size - 1
+    var shifted = 0
+    while (endpointSet.lastKey._1 - endpointSet.firstKey._1 > DataStreamPartitionAssignment.MaxSkew) {
+      val (forA, a) = endpointSet.firstKey
+      val (forB, b) = endpointSet.lastKey
+      assignment(a) += assignment(b).remove(forB - 1)
+      endpointSet.remove((forA, a))
+      endpointSet.remove((forB, b))
+      endpointSet.add((forA + 1, a))
+      endpointSet.add((forB - 1, b))
+      shifted += 1
+    }
+    logDebug(s"To protect against skew, $shifted partitions have been assigned to remote nodes")
+    profileEnd
+  }
 
   matchPartitionsWithAffinity
   /** For each end point in `endpoints`, a sequence of partition indices that are assigned to that end point */
   val assignment: IndexedSeq[ArrayBuffer[Int]] = matchingToEndpoints
   matchPartitionsWithoutAffinity
+  protectAgainstSkew
   profilePrint
 }
 
 object DataStreamPartitionAssignment {
+  final val MaxSkew = 5
   def apply(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]): IndexedSeq[IndexedSeq[Int]] = {
     (new DataStreamPartitionAssignment(affinities, endpoints)).assignment
   }
