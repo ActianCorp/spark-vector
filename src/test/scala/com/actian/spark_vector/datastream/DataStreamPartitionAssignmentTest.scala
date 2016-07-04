@@ -23,10 +23,10 @@ import org.scalatest.{ Finders, FunSuite, Matchers }
 import org.scalatest.prop.Checkers.{ check, generatorDrivenConfig, minSuccessful }
 
 import com.actian.spark_vector.test.tags.RandomizedTest
+import org.apache.spark.Logging
 
-/** Tests of DataStreamPartitionAssignment
- */
-class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
+/** Tests of DataStreamPartitionAssignment */
+class DataStreamPartitionAssignmentTest extends FunSuite with Matchers with Logging {
   private val perfectMatchParamsGen = for {
     nB <- Gen.choose(1, 60)
     nA <- Gen.choose(1, 24).map(_ * nB) /* to be sure they split evenly */
@@ -57,6 +57,15 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
     edges <- Gen.listOfN(nA, Gen.resize(replFactor, Gen.listOf(Gen.choose(0, nB * 2 - 1).map(b => s"host-$b"))))
   } yield (edges, generateEndPoints(nB))
 
+  private val unevenEndpointsPerHostGen = for {
+    nB <- Gen.choose(3, 20)
+    nA <- Gen.choose(0, 1200)
+    /** all partitions are replicated on all nodes */
+    edges = (0 until nA).map(a => (0 until nB).map(b => s"host-$b"))
+    numEndpoints <- Gen.choose(3, 50)
+    endpoints <- Gen.listOfN(numEndpoints, Gen.choose(0, nB - 1).map(b => VectorEndpoint(s"host-$b", 1, "someuser", "somepassword")))
+  } yield (edges, endpoints.toIndexedSeq)
+
   test("finds the optimal (evenly split) match", RandomizedTest) {
     check(
       forAllNoShrink(perfectMatchParamsGen) {
@@ -66,6 +75,7 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
               val nA = numA
               val nB = numB
               val edges = e
+              val target = Seq.fill(nB)(numA / numB)
             }
             val ret = assignment.matching.map(_.size)
             ret.max == numA / numB
@@ -89,7 +99,18 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers {
       forAllNoShrink(randomMatchParamsGen) {
         case (edges, endpoints) =>
           val assignment = DataStreamPartitionAssignment(edges.toArray, endpoints)
-          assignment.map(_.size).max <= edges.size
+          val ret = assignment.map(_.size).max - assignment.map(_.size).min <= DataStreamPartitionAssignment.MaxSkew
+          ret
+      },
+      minSuccessful(1000))
+  }
+
+  test("matching detects unbalanced hosts", RandomizedTest) {
+    check(
+      forAllNoShrink(unevenEndpointsPerHostGen) {
+        case (edges, endpoints) =>
+          val assignment = DataStreamPartitionAssignment(edges.toArray, endpoints)
+          assignment.map(_.size).max <= assignment.map(_.size).min + 1
       },
       minSuccessful(1000))
   }
