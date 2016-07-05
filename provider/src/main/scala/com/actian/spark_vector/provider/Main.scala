@@ -33,7 +33,7 @@ object Main extends App with Logging {
     .set("spark.sql.caseSensitive", "false")
   logInfo(s"Starting Spark-Vector provider with config options: ${conf.getAll.toMap}")
   private val sc = new SparkContext(conf)
-  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", false)) {
+  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", true)) {
     new HiveContext(sc)
   } else {
     new SQLContext(sc)
