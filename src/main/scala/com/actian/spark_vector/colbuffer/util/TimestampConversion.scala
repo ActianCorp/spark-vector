@@ -16,12 +16,15 @@
 package com.actian.spark_vector.colbuffer.util
 
 import java.math.BigInteger
+import java.sql.Timestamp
 
 /** Helper functions and constants for `Timestamp` conversions. */
 object TimestampConversion {
   // scalastyle:off magic.number
   private final val SecondsBeforeEpochBI = BigInteger.valueOf(SecondsBeforeEpoch)
   private final val NanosecondsFactorBI = BigInteger.valueOf(PowersOfTen(NanosecondsScale).toLong)
+
+  def timestampSeconds(t: Timestamp): Long = floorDiv(t.getTime, PowersOfTen(MillisecondsScale))
 
   final def scaleTimestamp(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val secondsTotal = BigInteger.valueOf(epochSeconds).add(SecondsBeforeEpochBI)
