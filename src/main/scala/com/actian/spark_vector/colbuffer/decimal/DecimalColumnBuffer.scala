@@ -72,9 +72,11 @@ private object DecimalLongColumnBuffer {
 }
 
 private class DecimalLongLongColumnBuffer(p: ColumnBufferBuildParams) extends DecimalColumnBuffer(p, LongLongSize) {
+  private val byteArray = Array.fill[Byte](LongLongSize)(0: Byte)
+
   override protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit = BigIntegerConversion.putLongLongByteArray(buffer, unscaled)
 
-  override def get(buffer: ByteBuffer): BigDecimal = new BigDecimal(BigIntegerConversion.getLongLongByteArray(buffer), p.scale)
+  override def get(buffer: ByteBuffer): BigDecimal = new BigDecimal(BigIntegerConversion.getLongLongByteArray(buffer, byteArray), p.scale)
 }
 
 private object DecimalLongLongColumnBuffer {
