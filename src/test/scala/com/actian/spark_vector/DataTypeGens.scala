@@ -23,6 +23,7 @@ object DataTypeGens {
   import org.scalacheck.Gen._
 
   val DefaultMaxNumFields = 10
+  val MaxColumnNameLen = 30
 
   // FIXME DecimalType doesn't exist yet in Spark 1.5.2
   private val decimalTypeGen: Gen[DecimalType] = for {
@@ -40,7 +41,8 @@ object DataTypeGens {
     const(DoubleType),
     const(DateType),
     const(TimestampType),
-    const(StringType))
+    const(StringType),
+    const(DecimalType(38, 12)))
 
   val fieldGen: Gen[StructField] = for {
     name <- identifier
@@ -51,7 +53,7 @@ object DataTypeGens {
   // TODO ugly dance to avoid duplicate field names - find cleaner way
   val schemaGen: Gen[StructType] = for {
     initialNumFields <- choose(1, DefaultMaxNumFields)
-    fieldNames <- listOfN(initialNumFields, identifier)
+    fieldNames <- listOfN(initialNumFields, identifier.map(_.take(MaxColumnNameLen)))
     uniqueFieldNames = fieldNames.distinct
     numFields = uniqueFieldNames.size
     fieldTypes <- listOfN(numFields, dataTypeGen)

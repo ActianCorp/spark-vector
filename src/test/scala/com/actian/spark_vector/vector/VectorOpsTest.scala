@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.{ Logging, SparkException }
-import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType }
+import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{ fromString => toUTF8 }
@@ -251,7 +251,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("generate table/gen", RandomizedTest) { fixture =>
-    forAll(DataGens.dataGen, minSuccessful(3))(typedData => {
+    forAll(DataGens.dataGen, minSuccessful(20))(typedData => {
       val (dataType, data) = (typedData.dataType, typedData.data)
       assertTableGeneration(fixture, dataType, data, Map.empty)
     })
@@ -322,8 +322,8 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       resultsSpark shouldBe expectedData
     }
   }
-  
-   test("generate table/empty required columns, e.g. count(*)") { fixture =>
+
+  test("generate table/empty required columns, e.g. count(*)") { fixture =>
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
     val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
     val rdd = fixture.sc.parallelize(data)
@@ -350,13 +350,23 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   private def compareResults(result: Seq[Seq[Any]], expectedData: Seq[Seq[Any]], mappedIndices: Set[Int]) = {
     result.size should be(expectedData.size)
-    Inspectors.forAll(result.sortBy(_.mkString).zip(expectedData.sortBy(_.mkString))) {
-      case (actRow, expRow) =>
-        actRow.size should be(expRow.size)
-        Inspectors.forAll(actRow.zip(expRow).zipWithIndex.filter(i => mappedIndices.contains(i._2)).map(_._1)) {
-          case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay should be(0)
-          case (act, exp) => act should be(exp)
-        }
+    if (result.size > 0) Inspectors.forAll(result) {
+      case actRow =>
+        expectedData.find {
+          case expRow =>
+            expRow.size == actRow.size &&
+              (0 until expRow.size).filter(mappedIndices.contains).find {
+                case i =>
+                  !((actRow(i), expRow(i)) match {
+                    case (null, e) => e == null
+                    case (e, null) => e == null
+                    case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay == 0
+                    case (act: Double, exp: Double) => Math.abs(act - exp) < 1E20
+                    case (act: Float, exp: Float) => Math.abs(act - exp) < 1E20.toFloat
+                    case (act, exp) => act == exp
+                  })
+              }.isEmpty
+        }.map(_ => true).getOrElse(false) should be(true)
     }
   }
 

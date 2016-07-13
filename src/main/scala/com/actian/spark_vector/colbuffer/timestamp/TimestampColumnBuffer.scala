@@ -37,7 +37,7 @@ private[colbuffer] abstract class TimestampColumnBuffer(p: TimestampColumnBuffer
     if (p.adjustToUTC) {
       TimeConversion.convertLocalTimestampToUTC(source)
     }
-    val convertedSource = p.converter.convert(source.getTime() / PowersOfTen(MillisecondsScale), source.getNanos(), p.cbParams.scale)
+    val convertedSource = p.converter.convert(TimestampConversion.timestampSeconds(source), source.getNanos(), p.cbParams.scale)
     putConverted(convertedSource, buffer)
   }
 
