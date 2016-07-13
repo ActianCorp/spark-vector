@@ -1,7 +1,7 @@
 /*
  * Copyright 2016 Actian Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.actian.spark_vector.colbuffer
+
+import java.sql.Timestamp
 
 /** Util functions for various type conversions */
 package object util {
@@ -31,4 +33,9 @@ package object util {
   final val NanosecondsInHour = 60L * NanosecondsInMinute
   final val NanosecondsInDay = 24L * NanosecondsInHour
   // scalastyle:on magic.number
+
+  def floorDiv(x: Long, y: Long): Long = {
+    val ret = x / y
+    if (ret >= 0 || ret * y == x) ret else ret - 1
+  }
 }

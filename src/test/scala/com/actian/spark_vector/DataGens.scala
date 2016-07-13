@@ -18,7 +18,6 @@ package com.actian.spark_vector
 import java.{ sql => jsql }
 import java.util.Calendar
 
-import scala.BigDecimal
 import scala.collection.{ JavaConverters, Seq }
 import scala.util.Try
 
@@ -27,6 +26,7 @@ import org.apache.spark.sql.types._
 import org.scalacheck.{ Arbitrary, Gen }
 
 import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
+import java.math.BigDecimal
 
 object DataGens {
   import com.actian.spark_vector.DataTypeGens._
@@ -35,7 +35,7 @@ object DataGens {
 
   import scala.collection.JavaConverters._
 
-  val DefaultMaxRows = 100
+  val DefaultMaxRows = 2049
 
   val booleanGen: Gen[Boolean] = arbitrary[Boolean]
 
@@ -57,20 +57,20 @@ object DataGens {
   } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
   // FIXME DecimalType doesn't exist yet in scala testing
-  val decimalGen: Gen[BigDecimal] = arbitrary[BigDecimal].filter(bd => (Try { BigDecimal(bd.toString) }).isSuccess)
+  val decimalGen: Gen[BigDecimal] = arbitrary[scala.BigDecimal].filter(bd => Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
 
   private val dateValueGen: Gen[Long] =
-    choose(Calendar.getInstance().getTime().getTime(), (Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 103))
+    choose((Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 100000L), Calendar.getInstance().getTime().getTime())
 
   // @note normalize getTime so that we don't have diffs more than 1 day in between our {JDBC,Spark}results
-  val dateGen: Gen[jsql.Date] = new jsql.Date((Calendar.getInstance().getTimeInMillis() / MillisecondsInDay) * MillisecondsInDay)
+  val dateGen: Gen[jsql.Date] = dateValueGen.map(d => new jsql.Date(d / MillisecondsInDay * MillisecondsInDay))
 
   val timestampGen: Gen[jsql.Timestamp] = for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
 
   // FIXME allow empty strings (and filter externally for vector tests)
   // @note we donnot allow invalid UTF8 chars to be generated (from D800 to DFFF incl)
   val stringGen: Gen[String] =
-    arbitrary[String].map(_.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF'))).filter(!_.isEmpty)
+    arbitrary[String].map(s => if (s != null) s.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF')) else s).filter(s => s == null || !s.isEmpty)
 
   def valueGen(dataType: DataType): Gen[Any] = dataType match {
     case BooleanType => booleanGen
@@ -83,12 +83,13 @@ object DataGens {
     case TimestampType => timestampGen
     case DateType => dateGen
     case StringType => stringGen
+    case _: DecimalType => decimalGen
     case _ => throw new Exception("Invalid data type.")
   }
 
   def nullableValueGen(field: StructField): Gen[Any] = {
     val gen = valueGen(field.dataType)
-    if (field.nullable) gen /*TODO: frequency(9 -> gen, 1 -> const(null))*/ else gen
+    if (field.nullable) frequency(1 -> gen, 10 -> const(null)) else gen
   }
 
   def rowGen(schema: StructType): Gen[Seq[Any]] =
