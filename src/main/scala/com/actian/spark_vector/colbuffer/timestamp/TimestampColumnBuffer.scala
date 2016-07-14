@@ -64,11 +64,13 @@ private class TimestampLongColumnBuffer(p: TimestampColumnBufferParams) extends 
 }
 
 private class TimestampLongLongColumnBuffer(p: TimestampColumnBufferParams) extends TimestampColumnBuffer(p, LongLongSize) {
+  private val byteArray = Array.fill[Byte](LongLongSize)(0: Byte)
+
   override protected def putConverted(converted: BigInteger, buffer: ByteBuffer): Unit =
     BigIntegerConversion.putLongLongByteArray(buffer, converted)
 
   override protected def getConverted(buffer: ByteBuffer): BigInteger =
-    BigIntegerConversion.getLongLongByteArray(buffer)
+    BigIntegerConversion.getLongLongByteArray(buffer, byteArray)
 }
 
 private class TimestampNZConverter extends TimestampConversion.TimestampConverter {

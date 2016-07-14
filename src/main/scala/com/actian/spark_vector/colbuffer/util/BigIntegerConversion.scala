@@ -20,14 +20,8 @@ import com.actian.spark_vector.colbuffer.LongLongSize
 import java.math.BigInteger
 import java.nio.ByteBuffer
 
-/**
- * Helper functions and constants for `BigInteger` conversions.
- *
- * @note Do not call this object's methods concurrently
- */
+/** Helper functions and constants for `BigInteger` conversions. */
 object BigIntegerConversion {
-  val bigIntArray = Array.fill[Byte](LongLongSize)(0: Byte) // Keep it in big-endian
-
   // scalastyle:off magic.number
   /**
    * Puts a BigInteger to a ByteBuffer in little-endian order.
@@ -59,7 +53,7 @@ object BigIntegerConversion {
   /**
    * Gets a BigInteger from a ByteBuffer in big-endian order.
    */
-  final def getLongLongByteArray(buffer: ByteBuffer): BigInteger = {
+  final def getLongLongByteArray(buffer: ByteBuffer, bigIntArray: Array[Byte] = Array.fill[Byte](LongLongSize)(0: Byte)): BigInteger = {
     var sourceIndex = bigIntArray.length - 1
 
     while (sourceIndex >= 0) {
