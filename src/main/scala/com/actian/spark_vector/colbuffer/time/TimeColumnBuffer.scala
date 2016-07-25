@@ -15,15 +15,16 @@
  */
 package com.actian.spark_vector.colbuffer.time
 
+import java.nio.ByteBuffer
+import java.sql.Timestamp
+import java.util.{ Calendar, TimeZone }
+
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
+import com.actian.spark_vector.ComposePartial
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util._
 import com.actian.spark_vector.vector.VectorDataType
-
-import java.nio.ByteBuffer
-import java.sql.Timestamp
-import java.util.Calendar
 
 private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams,
   converter: TimeConversion.TimeConverter,
@@ -32,10 +33,11 @@ private case class TimeColumnBufferParams(cbParams: ColumnBufferBuildParams,
 private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams, valueWidth: Int)
     extends ColumnBuffer[Timestamp, Long](p.cbParams.name, p.cbParams.maxValueCount, valueWidth, valueWidth, p.cbParams.nullable) {
   private val ts = new Timestamp(System.currentTimeMillis())
+  private val cal = Calendar.getInstance
 
   override def put(source: Timestamp, buffer: ByteBuffer): Unit = {
     if (p.adjustToUTC) {
-      TimeConversion.convertLocalTimestampToUTC(source)
+      TimeConversion.convertLocalTimestampToUTC(source, cal)
     }
     val convertedSource = p.converter.convert(TimeConversion.normalizeTime(source), p.cbParams.scale)
     putConverted(convertedSource, buffer)
@@ -48,7 +50,7 @@ private[colbuffer] abstract class TimeColumnBuffer(p: TimeColumnBufferParams, va
     ts.setTime(TimeConversion.scaleNanos(deconvertedSource, MillisecondsScale))
     ts.setNanos((deconvertedSource % PowersOfTen(NanosecondsScale)).toInt)
     if (p.adjustToUTC) {
-      TimeConversion.convertUTCToLocalTimestamp(ts)
+      TimeConversion.convertUTCToLocalTimestamp(ts, cal)
     }
     DateTimeUtils.fromJavaTimestamp(ts)
   }
@@ -88,9 +90,10 @@ private class TimeTZConverter extends TimeConversion.TimeConverter {
 private[colbuffer] object TimeColumnBuffer extends ColumnBufferBuilder {
   private final val (nzlzIntScaleBounds, nzlzLongScaleBounds) = ((0, 4), (5, 9))
   private final val (tzIntScaleBounds, tzLongScaleBounds) = ((0, 1), (2, 9))
+  private val calIsNotUTC = Calendar.getInstance.getTimeZone != TimeZone.getTimeZone("UTC")
 
   private val buildNZPartial: PartialFunction[ColumnBufferBuildParams, TimeColumnBufferParams] =
-    ofDataType(VectorDataType.TimeType) andThen { TimeColumnBufferParams(_, new TimeNZLZConverter(), true) }
+    ofDataType(VectorDataType.TimeType) andThen { TimeColumnBufferParams(_, new TimeNZLZConverter(), calIsNotUTC) }
 
   private val buildLZPartial: PartialFunction[ColumnBufferBuildParams, TimeColumnBufferParams] =
     ofDataType(VectorDataType.TimeLTZType) andThen { TimeColumnBufferParams(_, new TimeNZLZConverter()) }

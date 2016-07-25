@@ -15,17 +15,18 @@
  */
 package com.actian.spark_vector.datastream.writer
 
-import java.sql.{ Date, Timestamp }
 import java.math.BigDecimal
+import java.sql.{ Date, Timestamp }
+
+import scala.reflect.classTag
 
 import org.apache.spark.Logging
-
-import scala.reflect.{ classTag, ClassTag }
+import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.Profiling
+import com.actian.spark_vector.colbuffer.{ ColumnBuffer, ColumnBufferBuildParams, WriteColumnBuffer }
+import com.actian.spark_vector.datastream.{ DataStreamConnectionHeader, DataStreamConnector, padding }
 import com.actian.spark_vector.vector.ColumnMetadata
-import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
-import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
 
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`
@@ -35,7 +36,6 @@ import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader,
  */
 class RowWriter(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, sink: DataStreamSink)
     extends Logging with Serializable with Profiling {
-  import RowWriter._
 
   implicit val accs = profileInit("total write", "next row", "column buffering", "writing to datastream")
 
@@ -79,7 +79,7 @@ class RowWriter(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
   private def writeValToColumnBuffer[T](value: Any, cb: WriteColumnBuffer[_]) = cb.asInstanceOf[WriteColumnBuffer[T]].put(value.asInstanceOf[T])
 
   /** Write a single `row` */
-  private def writeToColumnBuffer(row: Seq[Any]): Unit = {
+  private def writeToColumnBuffer(row: Row): Unit = {
     var i = 0
     while (i < row.length) { // writing all columns of this row to appropiate colbufs
       writeToColumnBuffer(row(i), columnBufs(i), writeValFcns(i))
@@ -107,7 +107,7 @@ class RowWriter(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
    * Reads rows from input iterator, buffers a vector of them and then flushes all through the socket, making sure to include
    * the message length, the binary packet type `BinaryDataCode`, the number of tuples, and the actual serialized column data
    */
-  def write[T <% Seq[Any]](data: Iterator[T]): Unit = {
+  def write[T <% Row](data: Iterator[T]): Unit = {
     var i = 0
     var writtenTuples = 0
     profile("total write")

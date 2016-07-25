@@ -19,7 +19,8 @@ import java.util.Date
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types.{ DateType, IntegerType, StringType, StructField, StructType }
 
 import com.actian.spark_vector.test.util.StructTypeUtil.createSchema
 
@@ -47,8 +48,8 @@ trait RDDFixtures {
     (inputRdd, inputSchema)
   }
 
-  def wideRDD(sc: SparkContext, columnCount: Int, rowCount: Int = 2): (RDD[Seq[Any]], StructType) = {
-    val data: Seq[Int] = 1 to columnCount
+  def wideRDD(sc: SparkContext, columnCount: Int, rowCount: Int = 2): (RDD[Row], StructType) = {
+    val data: Row = Row.fromSeq(1 to columnCount)
 
     val fields = for (i <- 1 to rowCount) yield {
       StructField("field_" + i, IntegerType, true)
@@ -57,7 +58,7 @@ trait RDDFixtures {
     val inputSchema = StructType(fields.toSeq)
 
     val input = for (i <- 1 to rowCount) yield {
-      data.asInstanceOf[Seq[Any]]
+      data
     }
 
     val inputRDD = sc.parallelize(input, 2)

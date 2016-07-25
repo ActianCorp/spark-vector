@@ -20,7 +20,8 @@ import java.util.Date
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.{ FloatType, IntegerType, ShortType, StructField, StructType }
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
 
 /**
  * Test utilities
@@ -71,29 +72,29 @@ trait VectorFixture {
     ColumnMetadata("iy2m_type", "interval year to month", true, 8, 0),
     ColumnMetadata("id2s_type", "interval day to second", true, 24, 0))
 
-  def admitRDD(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) =
+  def admitRDD(sparkContext: SparkContext): (RDD[Row], StructType) =
     createAdmitRDD(sparkContext, admitData)
 
-  def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Seq[Any]], StructType) =
+  def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Row], StructType) =
     createAdmitRDD(sparkContext, admitDataWithNulls)
 
   private val admitData = Seq(
-    Seq[Any](0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
-    Seq[Any](1, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
-    Seq[Any](2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
-    Seq[Any](3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
-    Seq[Any](4, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
-    Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
+    Row(0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
+    Row(1, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
+    Row(2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
+    Row(3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
+    Row(4, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
+    Row(5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
 
   private val admitDataWithNulls = Seq(
-    Seq[Any](0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
-    Seq[Any](null, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
-    Seq[Any](2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
-    Seq[Any](3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
-    Seq[Any](null, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
-    Seq[Any](5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
+    Row(0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
+    Row(null, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
+    Row(2, 1.toShort, 800.toShort, 4.0.toFloat, 1.toShort),
+    Row(3, 1.toShort, 640.toShort, 3.19.toFloat, 4.toShort),
+    Row(null, 0.toShort, 520.toShort, 2.93.toFloat, 4.toShort),
+    Row(5, 1.toShort, 760.toShort, 3.0.toFloat, 2.toShort))
 
-  private def createAdmitRDD(sparkContext: SparkContext, data: Seq[Seq[Any]]): (RDD[Seq[Any]], StructType) = {
+  private def createAdmitRDD(sparkContext: SparkContext, data: Seq[Row]): (RDD[Row], StructType) = {
     val schema = StructType(Seq(
       StructField("student_id", IntegerType),
       StructField("admit", ShortType),
