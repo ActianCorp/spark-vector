@@ -38,16 +38,17 @@ object RDDUtil {
   }
 
   /**
-   * Convert the given `rdd` with schema specified by `inputType` to a new `RDD` with schema `targetType`, mapping columns from input
-   * to target using the `targetToInput` map and filling the missing columns with nulls
+   * Map the input columns (as specified in `inputType`) to the target columns (as specified by `targetType`)
+   *
+   * @return Either None if the `targetType` has exactly the same columns as `inputType`
+   *  or An array of size equal to `targetType`.fields.size containing a mapping of `targetType` fields to `inputType` fields
    */
-  def fillWithNulls(rdd: RDD[Seq[Any]], inputType: StructType, targetType: StructType, targetToInput: Map[String, String]): RDD[Seq[Any]] = {
-    if (inputType.fields.size > targetType.fields.size) {
-      throw new IllegalArgumentException("There are more fields in the input type than in the target type")
-    }
+  def targetToInput(inputType: StructType, targetType: StructType, targetToInput: Map[String, String]): Option[IndexedSeq[Option[Int]]] = if (inputType.fields.size > targetType.fields.size) {
+    throw new IllegalArgumentException(s"There are more fields in the input type: $inputType than in the target type: $targetType")
+  } else if (inputType == targetType) {
+    None
+  } else {
     val inputNamesToIdx = (0 until inputType.fields.size).map { idx => inputType.fieldNames(idx) -> idx }.toMap
-    val targetNamesToInputIdx = (0 until targetType.fields.size).map { idx => targetToInput.get(targetType.fieldNames(idx)).map(inputNamesToIdx.get(_)).flatten }
-
-    rdd.map { row => targetNamesToInputIdx.map(_.map(row).getOrElse(null)) }
+    Some((0 until targetType.fields.size).map { idx => targetToInput.get(targetType.fieldNames(idx)).map(inputNamesToIdx.get(_)).flatten })
   }
 }

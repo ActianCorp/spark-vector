@@ -53,8 +53,9 @@ private[vector] object Vector extends Logging {
     } else {
       (rdd, rddSchema)
     }
-    fillWithNulls(inputRDD, inputType, targetSchema,
-      field2Columns.map(i => i.columnName -> i.fieldName).toMap)
+    val colMappingOpt = targetToInput(inputType, targetSchema, field2Columns.map(i => i.columnName -> i.fieldName).toMap)
+    logDebug(s"Mapping of cols before load is $colMappingOpt for inputTypeFields = ${inputType.fields.map(_.name).mkString(",")}, targetTypeFields = ${targetSchema.fields.map(_.name).mkString(",")}")
+    if (colMappingOpt.isDefined) inputRDD.map(row => colMappingOpt.get.map { i => if (i.isDefined) row(i.get) else null }) else inputRDD
   }
 
   private def load(rdd: RDD[Seq[Any]], columnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
