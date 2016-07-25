@@ -17,6 +17,7 @@ package com.actian.spark_vector.provider
 
 import com.actian.spark_vector.datastream.{ VectorEndpoint, VectorEndpointConf }
 import com.actian.spark_vector.vector.ColumnMetadata
+import com.actian.spark_vector.vector.PredicatePushdown.ValueRanges
 
 import play.api.libs.json.{ Format, JsObject, Json, Reads, Writes }
 
@@ -27,8 +28,9 @@ private[provider] case class LogicalType(`type`: String,
 private[provider] case class ColumnInfo(column_name: String,
     logical_type: LogicalType,
     physical_type: String,
-    nullable: Boolean) {
-  implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale)
+    nullable: Boolean,
+    value_ranges: Option[ValueRanges]) {
+  implicit def toColumnMetadata: ColumnMetadata = ColumnMetadata(column_name, logical_type.`type`, nullable, logical_type.precision, logical_type.scale, value_ranges)
 }
 
 /** How many streams does `Vector` expect on the node with host name `host`, at `port` */
