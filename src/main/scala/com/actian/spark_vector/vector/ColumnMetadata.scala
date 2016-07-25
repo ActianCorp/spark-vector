@@ -16,6 +16,7 @@
 package com.actian.spark_vector.vector
 
 import com.actian.spark_vector.colbuffer._
+import com.actian.spark_vector.vector.PredicatePushdown.ValueRanges
 
 import org.apache.spark.sql.types._
 
@@ -26,7 +27,8 @@ case class ColumnMetadata(val name: String,
     val typeName: String,
     val nullable: Boolean,
     val precision: Int,
-    val scale: Int) extends Serializable {
+    val scale: Int,
+    val valueRanges: Option[ValueRanges] = None) extends Serializable {
   /**
    * Convert the given column metadata into a `StructField` representing the column
    *
@@ -58,5 +60,5 @@ case class ColumnMetadata(val name: String,
   def maxDataSize: Int = dataTypeInfo._2
 
   override def toString: String =
-    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}"
+    s"name: ${name}, typeName: ${typeName}, dataType: ${dataType}, nullable: ${nullable}, precision: ${precision}, scale: ${scale}, value_ranges: ${valueRanges}"
 }

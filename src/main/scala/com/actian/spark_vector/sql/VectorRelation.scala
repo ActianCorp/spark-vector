@@ -24,6 +24,7 @@ import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
+import com.actian.spark_vector.vector.PredicatePushdown
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
     userSpecifiedSchema: Option[StructType],
@@ -38,6 +39,11 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
   override def needConversion: Boolean = false
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
+    logDebug("insert(): data: " + data)
+    require(data.schema == this.schema,
+      "data.schema is different than this.schema. \n" +
+        s"data.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+
     if (overwrite) {
       VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${quote(tableRef.table)}") }
     }
@@ -94,7 +100,12 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
     if (overwrite) {
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
-    data.rdd.map(row => row.toSeq).loadVector(data.schema, columnMetadata, conf)
+    require(data.schema == this.schema,
+      "data.schema is different than this.schema. \n" +
+        s"data.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+
+    val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
+    filteredData.rdd.map(row => row.toSeq).loadVector(data.schema, columnMetadata, conf)
   }
 
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
