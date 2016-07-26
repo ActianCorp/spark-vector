@@ -82,34 +82,15 @@ private class TimestampNZConverter extends TimestampConversion.TimestampConverte
 }
 
 private class TimestampTZConverter extends TimestampConversion.TimestampConverter {
-  // scalastyle:off magic.number
-  private final val TimeMaskBI = new BigInteger(timeMask)
-  private final val SecondsInMinuteBI = BigInteger.valueOf(SecondsInMinute)
-
-  /** Set the 117 most significant bits to 1 and the 11 least significant bits to 0. */
-  private def timeMask: Array[Byte] = {
-    val mask = new Array[Byte](LongLongSize)
-    mask.update(0, 0.toByte)
-    mask.update(1, 248.toByte)
-    var i = 2
-    while (i < mask.length) {
-      mask.update(i, 0xFF.toByte)
-      i += 1
-    }
-    mask
-  }
-
   override def convert(epochSeconds: Long, subsecNanos: Long, scale: Int): BigInteger = {
     val scaledNanos = TimestampConversion.scaleTimestamp(epochSeconds, subsecNanos, scale)
-    scaledNanos.shiftLeft(TimeMaskSize).and(TimeMaskBI)
+    scaledNanos.shiftLeft(TimeMaskSize)
   }
 
   override def deconvert(convertedSource: BigInteger, scale: Int): (Long, Long) = {
-    val timezoneSec = convertedSource.andNot(TimeMaskBI).multiply(SecondsInMinuteBI)
     val (epochSeconds, subsecNanos) = TimestampConversion.unscaleTimestamp(convertedSource.shiftRight(TimeMaskSize), scale)
-    (epochSeconds - timezoneSec.longValue, subsecNanos)
+    (epochSeconds, subsecNanos)
   }
-  // scalastyle:on magic.number
 }
 
 private class TimestampLZConverter extends TimestampNZConverter {
