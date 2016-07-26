@@ -77,13 +77,11 @@ private class TimeNZLZConverter extends TimeConversion.TimeConverter {
 }
 
 private class TimeTZConverter extends TimeConversion.TimeConverter {
-  private final val TimeMask = 0xFFFFFFFFFFFFF800L
-
   override def convert(unscaledNanos: Long, scale: Int): Long =
-    (TimeConversion.scaleNanos(unscaledNanos, scale) << TimeMaskSize) & TimeMask
+    (TimeConversion.scaleNanos(unscaledNanos, scale) << TimeMaskSize)
 
   override def deconvert(scaledNanos: Long, scale: Int): Long =
-    TimeConversion.unscaleNanos(scaledNanos >> TimeMaskSize, scale) - (scaledNanos & ~TimeMask) * NanosecondsInMinute
+    TimeConversion.unscaleNanos(scaledNanos >> TimeMaskSize, scale)
 }
 
 /** Builds a `ColumnBuffer` object for `time` (NZ, TZ, LZ) types. */
