@@ -45,7 +45,7 @@ class RowWriter(tableMetadataSchema: Seq[ColumnMetadata], headerInfo: DataStream
    */
   private val columnBufs = tableMetadataSchema.map {
     case col =>
-      logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}," +
+      logDebug(s"Trying to create a write-buffer of vectorsize = ${headerInfo.vectorSize} for column = ${col.name}, type = ${col.typeName}, " +
         s"precision = ${col.precision}, scale = ${col.scale}, nullable = ${col.nullable}")
       ColumnBuffer.newWriteBuffer(ColumnBufferBuildParams(col.name, col.typeName.toLowerCase, col.precision, col.scale, headerInfo.vectorSize,
         col.nullable))
