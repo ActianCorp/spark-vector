@@ -177,7 +177,8 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       if (part.column_infos.isEmpty) {
         val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName}"
         val numTuples = sqlContext.sql(selectCountStarStatement).first().getLong(0)
-        val rddNoCols = sqlContext.sparkContext.parallelize(1L to numTuples).map(_ => Row.empty)
+        val numEndpoints = part.datastream.streams_per_node.map(_.nr).sum
+        val rddNoCols = sqlContext.sparkContext.range(0L, numTuples, numSlices = numEndpoints).map(_ => Row.empty)
         val dfNoCols = sqlContext.createDataFrame(rddNoCols, StructType(Seq.empty))
         dfNoCols.write.mode(SaveMode.Append).insertInto(vectorTable.tableName)
       } else {
