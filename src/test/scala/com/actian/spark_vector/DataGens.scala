@@ -15,24 +15,24 @@
  */
 package com.actian.spark_vector
 
+import java.math.BigDecimal
 import java.{ sql => jsql }
 import java.util.Calendar
 
-import scala.collection.{ JavaConverters, Seq }
+import scala.collection.Seq
 import scala.util.Try
 
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-
-import org.scalacheck.{ Arbitrary, Gen }
+import org.scalacheck.Gen
 
 import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
-import java.math.BigDecimal
+import java.math.RoundingMode
 
 object DataGens {
   import com.actian.spark_vector.DataTypeGens._
   import org.scalacheck.Arbitrary._
   import org.scalacheck.Gen._
-
   import scala.collection.JavaConverters._
 
   val DefaultMaxRows = 2049
@@ -56,8 +56,8 @@ object DataGens {
     digits <- listOfN(12, choose(0, 9))
   } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
-  // FIXME DecimalType doesn't exist yet in scala testing
-  val decimalGen: Gen[BigDecimal] = arbitrary[scala.BigDecimal].filter(bd => Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
+  val decimalGen: Gen[BigDecimal] = arbitrary[scala.BigDecimal].filter(bd =>
+    bd.scale <= 12 && bd.precision <= 38 && Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
 
   private val dateValueGen: Gen[Long] =
     choose((Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 100000L), Calendar.getInstance().getTime().getTime())
@@ -92,15 +92,15 @@ object DataGens {
     if (field.nullable) frequency(1 -> gen, 10 -> const(null)) else gen
   }
 
-  def rowGen(schema: StructType): Gen[Seq[Any]] =
-    sequence(schema.fields.map(f => nullableValueGen(f))).map(l => Seq[Any](l.asScala: _*)) // TODO Huh? Why ju.ArrayList?!?
+  def rowGen(schema: StructType): Gen[Row] =
+    sequence(schema.fields.map(f => nullableValueGen(f))).map(l => Row.fromSeq(l.asScala)) // TODO Huh? Why ju.ArrayList?!?
 
-  def dataGenFor(schema: StructType, maxRows: Int): Gen[Seq[Seq[Any]]] = for {
+  def dataGenFor(schema: StructType, maxRows: Int): Gen[Seq[Row]] = for {
     numRows <- choose(1, maxRows)
     rows <- listOfN(numRows, rowGen(schema))
   } yield rows
 
-  case class TypedData(dataType: StructType, data: Seq[Seq[Any]])
+  case class TypedData(dataType: StructType, data: Seq[Row])
 
   val dataGen: Gen[TypedData] = for {
     schema <- schemaGen

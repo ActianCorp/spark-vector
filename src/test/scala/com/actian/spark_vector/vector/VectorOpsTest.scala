@@ -230,7 +230,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   private def assertSingleValue(fixture: FixtureParam, schema: StructType, value: Any): Any = {
-    val data = Seq(Seq[Any](value))
+    val data = Seq(Row(value))
     val rdd = fixture.sc.parallelize(data)
     val tableName: String = "gentable"
     try {
@@ -246,7 +246,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table") { fixture =>
     val schema = StructTypeUtil.createSchema("i" -> IntegerType, "s" -> StringType, "b" -> BooleanType)
-    val data = Seq(Seq[Any](42, "foo", true))
+    val data = Seq(Row(42, "foo", true))
     assertTableGeneration(fixture, schema, data, Map.empty)
   }
 
@@ -262,7 +262,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     // for simple/basic queries, but more complex ones in ExternalScans) using two different user
     // defined schemas, one for load and the other for unload; the latter has c1 defnied for the ct col
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType)
-    val data = Seq(Seq[Any](42), Seq[Any](43))
+    val data = Seq(Row(42), Row(43))
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
@@ -284,7 +284,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table/filtered select on strings") { fixture =>
     val schema = StructTypeUtil.createSchema("s0" -> StringType, "s1" -> StringType, "s2" -> StringType)
-    val data = Seq(Seq[Any]("abc", "def", "ghi"), Seq[Any]("def", "ghi", "jkl"), Seq[Any]("ghi", "jkl", "mno"))
+    val data = Seq(Row("abc", "def", "ghi"), Row("def", "ghi", "jkl"), Row("ghi", "jkl", "mno"))
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
@@ -305,7 +305,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table/filtered select on a subset of columns") { fixture =>
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
-    val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
+    val data = Seq(Row(42, 43, 44), Row(43, 44, 45), Row(44, 45, 46))
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
@@ -325,7 +325,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table/empty required columns, e.g. count(*)") { fixture =>
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
-    val data = Seq(Seq[Any](42, 43, 44), Seq[Any](43, 44, 45), Seq[Any](44, 45, 46))
+    val data = Seq(Row(42, 43, 44), Row(43, 44, 45), Row(44, 45, 46))
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
@@ -344,11 +344,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table/field mapping") { fixture =>
     val schema = StructTypeUtil.createSchema("i" -> IntegerType, "s" -> StringType, "b" -> BooleanType)
-    val data = Seq(Seq[Any](42, "foo", true))
+    val data = Seq(Row(42, "foo", true))
     assertTableGeneration(fixture, schema, data, Map("i" -> "i", "b" -> "b"))
   }
 
-  private def compareResults(result: Seq[Seq[Any]], expectedData: Seq[Seq[Any]], mappedIndices: Set[Int]) = {
+  private def compareResults(result: Seq[Row], expectedData: Seq[Row], mappedIndices: Set[Int]) = {
     result.size should be(expectedData.size)
     if (result.size > 0) Inspectors.forAll(result) {
       case actRow =>
@@ -370,7 +370,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     }
   }
 
-  private def assertTableGeneration(fixture: FixtureParam, dataType: StructType, expectedData: Seq[Seq[Any]],
+  private def assertTableGeneration(fixture: FixtureParam, dataType: StructType, expectedData: Seq[Row],
     fieldMapping: Map[String, String]): Unit = {
     val mappedIndices = if (fieldMapping.isEmpty) {
       (0 until dataType.fields.size).toSet
@@ -382,13 +382,13 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(func => Unit) { tableName =>
       rdd.loadVector(dataType, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
 
-      var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName"))
+      var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName")).map(Row.fromSeq)
       compareResults(resultsJDBC, expectedData, mappedIndices)
 
       val sqlContext = new SQLContext(fixture.sc)
       val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty[String, String])
       val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
-      val resultsSpark = dataframe.collect.map(_.toSeq).toSeq
+      val resultsSpark = dataframe.collect.toSeq
       compareResults(resultsSpark, expectedData, mappedIndices)
     }
   }
@@ -396,7 +396,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   test("generate table/table already exists") { fixture =>
     withTable(createAdmitTable) { tableName =>
       val schema = StructType(Seq(StructField("i", IntegerType)))
-      val rdd = fixture.sc.parallelize(Seq.empty[Seq[Any]])
+      val rdd = fixture.sc.parallelize(Seq.empty[Row])
       a[VectorException] should be thrownBy {
         rdd.loadVector(schema, connectionProps, tableName, createTable = true)
       }

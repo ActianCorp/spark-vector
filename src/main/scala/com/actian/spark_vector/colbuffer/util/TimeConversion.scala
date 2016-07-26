@@ -39,27 +39,25 @@ object TimeConversion {
 
   @inline final def unscaleNanos(scaledNanos: Long, scale: Int): Long = scaledNanos * PowersOfTen(NanosecondsScale - scale)
 
-  @inline private final def convertLocalDateHelper(date: Date, sign: Int = 1): Unit = {
-    val cal = Calendar.getInstance()
+  @inline private final def convertLocalDateHelper(date: Date, sign: Int = 1, cal: Calendar): Unit = {
     cal.setTime(date)
     date.setTime(date.getTime + sign * cal.get(Calendar.ZONE_OFFSET) + sign * cal.get(Calendar.DST_OFFSET))
   }
 
-  final def convertLocalDateToUTC(date: Date): Unit = convertLocalDateHelper(date)
+  final def convertLocalDateToUTC(date: Date, cal: Calendar): Unit = convertLocalDateHelper(date, 1, cal)
 
-  final def convertUTCToLocalDate(date: Date): Unit = convertLocalDateHelper(date, -1)
+  final def convertUTCToLocalDate(date: Date, cal: Calendar): Unit = convertLocalDateHelper(date, -1, cal)
 
-  @inline private final def convertLocalTimeHelper(time: Timestamp, sign: Int = 1): Unit = {
-    val cal = Calendar.getInstance()
+  @inline private final def convertLocalTimeHelper(time: Timestamp, sign: Int = 1, cal: Calendar): Unit = {
     val nanos = time.getNanos
     cal.setTimeInMillis(time.getTime)
     time.setTime(time.getTime + sign * cal.get(Calendar.ZONE_OFFSET) + sign * cal.get(Calendar.DST_OFFSET))
     time.setNanos(nanos)
   }
 
-  final def convertLocalTimestampToUTC(time: Timestamp): Unit = convertLocalTimeHelper(time)
+  final def convertLocalTimestampToUTC(time: Timestamp, cal: Calendar): Unit = convertLocalTimeHelper(time, 1, cal)
 
-  final def convertUTCToLocalTimestamp(time: Timestamp): Unit = convertLocalTimeHelper(time, -1)
+  final def convertUTCToLocalTimestamp(time: Timestamp, cal: Calendar): Unit = convertLocalTimeHelper(time, -1, cal)
 
   /**
    * This trait should be used when implementing a type of time conversion,
