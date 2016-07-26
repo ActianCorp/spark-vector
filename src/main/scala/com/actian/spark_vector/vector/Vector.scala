@@ -36,10 +36,10 @@ private[vector] object Vector extends Logging {
   import RDDUtil._
   import ResourceUtil._
 
-  private def prepareRDD(rdd: RDD[Seq[Any]],
+  private def prepareRDD(rdd: RDD[Row],
     rddSchema: StructType,
     targetSchema: StructType,
-    fieldMap: Option[Map[String, String]] = None): RDD[Seq[Any]] = {
+    fieldMap: Option[Map[String, String]] = None): RDD[Row] = {
     val resolvedFieldMap = fieldMap.getOrElse(Map.empty)
     // Apply the given field map return a sequence of field name, column name tuples
     val field2Columns = applyFieldMap(resolvedFieldMap, rddSchema, targetSchema)
@@ -55,12 +55,12 @@ private[vector] object Vector extends Logging {
     }
     val colMappingOpt = targetToInput(inputType, targetSchema, field2Columns.map(i => i.columnName -> i.fieldName).toMap)
     logDebug(s"Mapping of cols before load is $colMappingOpt for inputTypeFields = ${inputType.fields.map(_.name).mkString(",")}, targetTypeFields = ${targetSchema.fields.map(_.name).mkString(",")}")
-    if (colMappingOpt.isDefined) inputRDD.map(row => colMappingOpt.get.map { i => if (i.isDefined) row(i.get) else null }) else inputRDD
+    if (colMappingOpt.isDefined) inputRDD.map(row => Row.fromSeq(colMappingOpt.get.map { i => if (i.isDefined) row(i.get) else null })) else inputRDD
   }
 
-  private def load(rdd: RDD[Seq[Any]], columnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
+  private def load(rdd: RDD[Row], columnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
     val insertRDD = new InsertRDD(rdd, writeConf)
-    val writer = new DataStreamWriter[Seq[Any]](writeConf, columnMetadata)
+    val writer = new DataStreamWriter[Row](writeConf, columnMetadata)
     insertRDD.sparkContext.runJob(insertRDD, writer.write _)
   }
 
@@ -73,7 +73,7 @@ private[vector] object Vector extends Logging {
    * @param fieldMap specify how the input `RDD` columns should be mapped to `table` columns
    * @param createTable specify if the table should be created if it does not exist
    */
-  def loadVector(rdd: RDD[Seq[Any]],
+  def loadVector(rdd: RDD[Row],
     rddSchema: StructType,
     table: String,
     vectorProps: VectorConnectionProperties,
@@ -111,7 +111,7 @@ private[vector] object Vector extends Logging {
    * @param tableColumnMetadata the expected table column data type information
    * @param writeConf datastream configuration for writing
    */
-  def loadVector(rdd: RDD[Seq[Any]], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
+  def loadVector(rdd: RDD[Row], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
     val tableSchema = VectorRelation.structType(tableColumnMetadata)
     val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
     load(inputRDD, tableColumnMetadata, writeConf)

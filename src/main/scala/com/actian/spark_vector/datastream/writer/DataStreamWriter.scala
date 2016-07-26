@@ -20,15 +20,15 @@ import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 import scala.annotation.tailrec
-import scala.concurrent.Future
 
 import org.apache.spark.{ Logging, TaskContext }
+import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.IntSize
-import com.actian.spark_vector.datastream.{ VectorEndpointConf, DataStreamConnectionHeader, DataStreamConnector }
-import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
+import com.actian.spark_vector.datastream.{ DataStreamConnector, VectorEndpointConf }
 import com.actian.spark_vector.util.ResourceUtil
+import com.actian.spark_vector.vector.ColumnMetadata
 
 /**
  * Entry point for loading with spark-vector connector.
@@ -37,7 +37,7 @@ import com.actian.spark_vector.util.ResourceUtil
  * @param table The table loaded to
  * @param tableSchema of the table as a sequence of columns metadata
  */
-class DataStreamWriter[T <% Seq[Any]](writeConf: VectorEndpointConf, tableColumnMetadata: Seq[ColumnMetadata])
+class DataStreamWriter[T <% Row](writeConf: VectorEndpointConf, tableColumnMetadata: Seq[ColumnMetadata])
     extends Logging with Serializable with Profiling {
   private lazy val connector = new DataStreamConnector(writeConf)
 

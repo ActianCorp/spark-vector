@@ -30,7 +30,7 @@ trait VectorOps {
    *
    * @param rdd input RDD
    */
-  implicit class VectorRDDOps(rdd: RDD[Seq[Any]]) {
+  implicit class VectorRDDOps(rdd: RDD[Row]) {
     /**
      * Load a target Vector table from this RDD.
      *

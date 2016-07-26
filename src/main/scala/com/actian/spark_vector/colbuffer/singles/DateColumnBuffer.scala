@@ -15,20 +15,23 @@
  */
 package com.actian.spark_vector.colbuffer.singles
 
-import org.apache.spark.sql.catalyst.util.DateTimeUtils
+import java.nio.ByteBuffer
+import java.sql.Date
+import java.util.{ Calendar, TimeZone }
 
 import com.actian.spark_vector.colbuffer._
 import com.actian.spark_vector.colbuffer.util._
 import com.actian.spark_vector.vector.VectorDataType
 
-import java.nio.ByteBuffer
-import java.sql.Date
-
 private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date, Int](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
   private final val DaysBeforeEpoch = 719528
+  private val cal = Calendar.getInstance
+  private val calIsNotUTC = cal.getTimeZone != TimeZone.getTimeZone("UTC")
 
   override def put(source: Date, buffer: ByteBuffer): Unit = {
-    TimeConversion.convertLocalDateToUTC(source)
+    if (calIsNotUTC) {
+      TimeConversion.convertLocalDateToUTC(source, cal)
+    }
     buffer.putInt((source.getTime() / MillisecondsInDay + DaysBeforeEpoch).toInt)
   }
 

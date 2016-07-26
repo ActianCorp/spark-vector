@@ -315,7 +315,7 @@ final class DataStreamPartitionAssignment(affinities: Array[_ <: Seq[String]], e
 }
 
 object DataStreamPartitionAssignment {
-  final val MaxSkew = 5
+  final val MaxSkew = 2
   def apply(affinities: Array[_ <: Seq[String]], endpoints: IndexedSeq[VectorEndpoint]): IndexedSeq[IndexedSeq[Int]] = {
     (new DataStreamPartitionAssignment(affinities, endpoints)).assignment
   }

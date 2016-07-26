@@ -40,20 +40,17 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     logDebug("insert(): data: " + data)
-    require(data.schema == this.schema,
-      "data.schema is different than this.schema. \n" +
-        s"data.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+    require(data.schema == this.schema, "data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
 
     if (overwrite) {
       VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${quote(tableRef.table)}") }
     }
 
     logInfo(s"Insert rdd '${data}' into Vector table '${tableRef.table}'")
-    val anySeqRDD = data.rdd.map(_.toSeq)
     val preSQL = getSQL(LoadPreSQL, options)
     val postSQL = getSQL(LoadPostSQL, options)
     /** TODO: Could expose other options in Spark parameters */
-    val rowCount = anySeqRDD.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
+    val rowCount = data.rdd.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
     logInfo(s"Loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -100,12 +97,10 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
     if (overwrite) {
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
-    require(data.schema == this.schema,
-      "data.schema is different than this.schema. \n" +
-        s"data.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+    require(data.schema == this.schema, "data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
 
     val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
-    filteredData.rdd.map(row => row.toSeq).loadVector(data.schema, columnMetadata, conf)
+    filteredData.rdd.loadVector(data.schema, columnMetadata, conf)
   }
 
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
