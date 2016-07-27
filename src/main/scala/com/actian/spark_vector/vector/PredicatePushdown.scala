@@ -42,7 +42,7 @@ object PredicatePushdown extends Logging {
   /** Says whether or not Predicate Pushdown is supported on columns of the given `vectorTypeName`. */
   def typeIsSafeForPredPD(vectorTypeName: String): Boolean = typeIsSafeForPredPD(VectorDataType(vectorTypeName))
 
-  /** Converts the given `vectorLiteral`to the corresponding Spark literal, according to the specified `VectorDataType`. */
+  /** Converts the given `vectorLiteral` to the corresponding Spark literal, according to the specified `VectorDataType`. */
   def vectorLiteralToSparkLiteral(vectorLiteral: String, vectorDataType: EnumVal, sparkContext: SparkContext): String =
     vectorDataType match {
       case MoneyType => {
@@ -64,21 +64,22 @@ object PredicatePushdown extends Logging {
     }
 
   /**
-   * Textual representation of single value ranges for a particular column, consisting of a list of Strings.
+   * Textual representation of single value ranges for a particular column, consisting of a list of `String`s.
+   *
    * First element denotes the type of range, which can currently be of two types:
-   * - Bounded ranges = intervals with inclusive/exclusive lower and upper bounds
-   *     e.g. "()", "(]", "[)", "[]"
-   *     For this type of intervals, the second and third strings in the list represent the lower and upper bounds.
-   * - Unbounded ranges = intervals for which either the lower or the upper bound is (-)infinity
-   *     e.g. ">", ">=", "<=", "<"
-   *     For this types of intervals, the list is of size two and the second string represents the only bound
-   *     @note: We also include here ("==", x) as a shorter notation for ("[]", x, x)
+   *  - __Bounded ranges__: intervals with inclusive/exclusive lower and upper bounds (e.g. "()", "(]", "[)", "[]")
+   *   - For this type of intervals, the second and third strings in the list represent the lower and upper bounds.
+   *  - __Unbounded ranges__: intervals for which either the lower or the upper bound is (-)infinity (e.g. ">", ">=", "<=", "<")
+   *   - For this types of intervals, the list is of size two and the second string represents the only bound
+   *   - Note: We also include here ("==", x) as a shorter notation for ("[]", x, x)
    */
   type ValueRange = Seq[String]
 
   /**
-   * A `ValueRanges` object is a sequence of `ValueRange` elements and it is associated with a certain column.
-   * As such, all string bounds of all the `ValueRange`s are expected to be literals of that column's `VectorDataType`.
+   * A [[ValueRanges]] object is a sequence of [[ValueRange]] elements and it is associated with a certain column.
+   * As such, all string bounds of all the [[ValueRange]]s are expected to be literals of that column's [[VectorDataType]].
+   *
+   * The interpretation is that the individual ranges are union-ed (''or''-ed) together.
    */
   type ValueRanges = Seq[ValueRange]
 
@@ -108,9 +109,9 @@ object PredicatePushdown extends Logging {
 
   /**
    * Creates `Some(Column)` that represents the condition ("predicate"), in Spark's terms,
-   * corresponding to the given `columnMetadata`, if the latter has some `ValueRanges` specified
-   * and is of a type for which Predicate Pushdown is safe - @see `typeIsSafeForPredPD`.
-   * Otherwise returns `None`.
+   * corresponding to the given `columnMetadata`, if the latter has some [[ValueRanges]] specified
+   * and is of a type for which Predicate Pushdown is safe. Otherwise returns `None`.
+   *  @see `typeIsSafeForPredPD`
    */
   def filterForColumn(columnMetadata: ColumnMetadata, sparkContext: SparkContext): Option[Column] = columnMetadata match {
     case ColumnMetadata(columnName, typeName, _, _, _, Some(valueRanges)) => valueRanges match {
@@ -133,14 +134,14 @@ object PredicatePushdown extends Logging {
         }
 
         /* The condition for this column is a disjunction of conditions corresponding to
-         * the individual `ValueRange`s in the list. */
+         * the individual [[ValueRange]]s in the list. */
         Some(valueRanges.map(filterForColumn(sparkColumn, litToConstCol, _)).reduceLeft(_ or _))
       }
     }
     case _ => None /* There were no value ranges specified */
   }
 
-  /** Filters the given `df` according to the specified `ValueRanges`. */
+  /** Filters the given `df` according to any [[ValueRanges]] that its `columns` might have. */
   def applyFilters(df: DataFrame, columns: Seq[ColumnMetadata], sparkContext: SparkContext): DataFrame = {
     val filters = for {
       column <- columns

@@ -22,24 +22,24 @@ package com.actian.spark_vector
  * The sequence of operations is:
  *  - Given an input `RDD` with its corresponding data type information, its fields will either be matched to existing table's columns or they will help generate a
  *  `create table` SQL statement that will be first submitted to `Vector`.
- *  - Helpers [[RowWriter]] and [[DataStreamWriter]] objects are created and they contain all the needed information for a `Spark` worker to be able to process,
- *  serialize and write binary data to `Vector` end points.
- *  - An [[InsertRDD]] is created, containing as many partitions as there are `DataStreams` and that will create a `NarrowDependency` to the input `RDD`
+ *  - Helpers [[com.actian.spark_vector.datastream.writer.RowWriter]] and [[com.actian.spark_vector.datastream.writer.DataStreamWriter]] objects are created and they contain all the needed information
+ *  for a `Spark` worker to be able to process, serialize and write binary data to `Vector` end points.
+ *  - An [[com.actian.spark_vector.datastream.writer.InsertRDD]] is created, containing as many partitions as there are `DataStreams` and that will create a `NarrowDependency` to the input `RDD`
  *  - Driver initiates the load, issuing a SQL query to `Vector` leader node
- *  - Driver initiates Spark job => [[RowWriter]] and [[DataStreamWriter]] objects, part of the closure, are serialized and sent to worker processes
- *  - Each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when [[InsertRDD]] was created), serializes it into
+ *  - Driver initiates Spark job => `RowWriter` and `DataStreamWriter` objects, part of the closure, are serialized and sent to worker processes
+ *  - Each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when `InsertRDD` was created), serializes it into
  *  `ByteBuffers` and then flushes them through the socket towards one (and only one) predetermined `Vector` end point
  *  - During this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a `commit` or `abort` depending on whether any of the
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector` yet.
  *
  * Unloading from `Vector` to `Spark` will be initiated through the `SparkSQL`/`DataFrames` APIs.
  * The sequence of operations is:
- *  - Given a `SparkSQL` select query, a [[ScanRDD]] is created containing as many partitions as there are `DataStreams`
- *  - Helpers [[RowReader]] and [[DataStreamReader]] objects are created and they contain all the needed information for a `Spark` worker to be able to read binary data from `Vector`
- *  end points, deserialize and process it
+ *  - Given a `SparkSQL` select query, a [[com.actian.spark_vector.datastream.reader.ScanRDD]] is created containing as many partitions as there are `DataStreams`
+ *  - Helpers [[com.actian.spark_vector.datastream.reader.RowReader]] and [[com.actian.spark_vector.datastream.reader.DataStreamReader]] objects are created and they contain all the needed information
+ *  for a `Spark` worker to be able to read binary data from `Vector` end points, deserialize and process it
  *  - Driver initiates the unload, issuing a SQL query to `Vector` leader node
- *  - Driver initiates Spark job => [[RowReader]] and [[DataStreamReader]] objects, part of the closure, are serialized and sent to worker processes
- *  - Each worker process reads its corresponding read configuration and starts processing output data (as assigned by the driver when [[ScanRDD]] was created), deserializes it into
+ *  - Driver initiates Spark job => `RowReader` and `DataStreamReader` objects, part of the closure, are serialized and sent to worker processes
+ *  - Each worker process reads its corresponding read configuration and starts processing output data (as assigned by the driver when `ScanRDD` was created), deserializes it into
  *  `ByteBuffers` and then through an `Iterator[Row]` we can collect the data row by row
  *  - During this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a `commit` or `abort` depending on whether any of the
  *  workers failed. Note, we currently do not retry `Spark` workers since partial loading is not supported in `Vector` yet.
