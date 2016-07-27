@@ -55,10 +55,10 @@ OPTIONS (path "</span>hdfs:<span class="cmt">//namenode:8020/data/csv_file*", he
 <span class="lit">""</span><span class="lit">")
 
 val results = sqlContext.sql("</span><span class="lit">""</span>insert into table large_table select * from csv_files<span class="lit">""</span><span class="lit">")</span></pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
-$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.0</span>-SNAPSHOT.jar load csv -sf <span class="lit">"hdfs://namenode:8020/data/csv_file*"</span>
+$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.1</span>-SNAPSHOT.jar load csv -sf <span class="lit">"hdfs://namenode:8020/data/csv_file*"</span>
 -sc <span class="lit">"|"</span> -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>and</p><pre>sqlContext.read.parquet(<span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>).registerTempTable(<span class="lit">"parquet_file"</span>)
 sqlContext.sql(<span class="lit">""</span><span class="lit">"insert into table large_table select * from parquet_file"</span><span class="lit">""</span>)</pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
-$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.0</span>-SNAPSHOT.jar load parquet -sf <span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>
+$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">1.1</span>-SNAPSHOT.jar load parquet -sf <span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>
 -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>Of course, by using the <code>Spark-Vector</code> connector directly, one can load arbitrarily complex relations (not only files) into Vector and
 files of any format that <code>Spark</code> is able to read.</p><p>For a complete list of options available, see <a href="parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.
 </p></span></dd></dl><div class="toggleContainer block">

@@ -93,7 +93,7 @@ loading to <code>Vector</code> tables.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="constant">constant: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueRanges">valueRanges: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
       </h4>
       <p class="comment cmt">Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.</p>
@@ -184,6 +184,21 @@ loading to <code>Vector</code> tables.
       </h4>
       <p class="comment cmt">Error codes to return in exceptions from Vector ops
 </p>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PredicatePushdown"></a>
+      <a id="PredicatePushdown:PredicatePushdown"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PredicatePushdown$.html"><span class="name">PredicatePushdown</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Object that brings together a set of functions that are used for implementing &quot;Predicate Pushdown&quot;:
+A Vector query such as &quot;SELECT * from external_table where col = 10&quot; should not result in the provider
+sending the whole table to Vector, but only those tuples that pass the &quot;col = 10&quot; predicate.</p>
     </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ResultSetIterator"></a>
       <a id="ResultSetIterator:ResultSetIterator"></a>
@@ -236,6 +251,19 @@ loading to <code>Vector</code> tables.
       </span>
       </h4>
       
+    </li><li name="com.actian.spark_vector.vector.VectorNet" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorNet"></a>
+      <a id="VectorNet:VectorNet"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorNet$.html"><span class="name">VectorNet</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Helper functions for communicating with Vector.</p>
     </li><li name="com.actian.spark_vector.vector.VectorOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorOps"></a>
       <a id="VectorOps:VectorOps"></a>

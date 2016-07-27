@@ -657,15 +657,15 @@ execution time measured and stored into <code>acc</code>
               
         </dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.RowWriter#write" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="write[T](data:Iterator[T])(implicitevidence$1:T=&gt;Seq[Any]):Unit"></a>
-      <a id="write[T](Iterator[T])((T)⇒Seq[Any]):Unit"></a>
+      <a id="write[T](data:Iterator[T])(implicitevidence$1:T=&gt;org.apache.spark.sql.Row):Unit"></a>
+      <a id="write[T](Iterator[T])((T)⇒Row):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">write</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.RowWriter.write.T">T</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="com.actian.spark_vector.datastream.writer.RowWriter.write.T">T</span>) ⇒ <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">write</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.RowWriter.write.T">T</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="com.actian.spark_vector.datastream.writer.RowWriter.write.T">T</span>) ⇒ <span class="extype" name="org.apache.spark.sql.Row">Row</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Reads rows from input iterator, buffers a vector of them and then flushes all through the socket, making sure to include

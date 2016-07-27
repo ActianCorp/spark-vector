@@ -2,17 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>DataStreamWriter - com.actian.spark_vector.datastream.writer.DataStreamWriter</title>
-          <meta name="description" content="DataStreamWriter - com.actian.spark vector.datastream.writer.DataStreamWriter" />
-          <meta name="keywords" content="DataStreamWriter com.actian.spark vector.datastream.writer.DataStreamWriter" />
+          <title>PredicatePushdown - com.actian.spark_vector.vector.PredicatePushdown</title>
+          <meta name="description" content="PredicatePushdown - com.actian.spark vector.vector.PredicatePushdown" />
+          <meta name="keywords" content="PredicatePushdown com.actian.spark vector.vector.PredicatePushdown" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../index.html';
-            var hash = 'com.actian.spark_vector.datastream.writer.DataStreamWriter';
+            var url = '../../../../index.html';
+            var hash = 'com.actian.spark_vector.vector.PredicatePushdown$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -22,27 +22,29 @@
    	  </script>
     
         </head>
-        <body class="type">
+        <body class="value">
       <div id="definition">
-        <a href="DataStreamWriter$.html" title="Go to companion"><img src="../../../../../lib/class_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.datastream">datastream</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.datastream.writer">writer</a></p>
-        <h1><a href="DataStreamWriter$.html" title="Go to companion">DataStreamWriter</a></h1>
+        <img src="../../../../lib/object_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.vector">vector</a></p>
+        <h1>PredicatePushdown</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">DataStreamWriter</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
+        <span class="name">PredicatePushdown</span><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Entry point for loading with spark-vector connector.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Object that brings together a set of functions that are used for implementing &quot;Predicate Pushdown&quot;:
+A Vector query such as &quot;SELECT * from external_table where col = 10&quot; should not result in the provider
+sending the whole table to Vector, but only those tuples that pass the &quot;col = 10&quot; predicate.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -60,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.datastream.writer.DataStreamWriter"><span>DataStreamWriter</span></li><li class="in" name="com.actian.spark_vector.Profiling"><span>Profiling</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.vector.PredicatePushdown"><span>PredicatePushdown</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -78,25 +80,41 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="com.actian.spark_vector.datastream.writer.DataStreamWriter#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(writeConf:com.actian.spark_vector.datastream.VectorEndpointConf,tableColumnMetadata:Seq[com.actian.spark_vector.vector.ColumnMetadata])(implicitevidence$1:T=&gt;org.apache.spark.sql.Row):com.actian.spark_vector.datastream.writer.DataStreamWriter[T]"></a>
-      <a id="&lt;init&gt;:DataStreamWriter[T]"></a>
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ValueRange=Seq[String]"></a>
+      <a id="ValueRange:ValueRange"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">new</span>
+        <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">DataStreamWriter</span><span class="params">(<span name="writeConf">writeConf: <a href="../VectorEndpointConf.html" class="extype" name="com.actian.spark_vector.datastream.VectorEndpointConf">VectorEndpointConf</a></span>, <span name="tableColumnMetadata">tableColumnMetadata: <span class="extype" name="scala.Seq">Seq</span>[<a href="../../vector/ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: (<span class="extype" name="com.actian.spark_vector.datastream.writer.DataStreamWriter.T">T</span>) ⇒ <span class="extype" name="org.apache.spark.sql.Row">Row</span></span>)</span>
+        <span class="name">ValueRange</span><span class="result"> = <span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">writeConf</dt><dd class="cmt"><p>Write configuration to be used when connecting to the <code>DataStream</code> API</p></dd></dl></div>
+      <p class="shortcomment cmt">Textual representation of single value ranges for a particular column, consisting of a list of <code>String</code>s.</p><div class="fullcomment"><div class="comment cmt"><p>Textual representation of single value ranges for a particular column, consisting of a list of <code>String</code>s.</p><p>First element denotes the type of range, which can currently be of two types:</p><ul><li><u>Bounded ranges</u>: intervals with inclusive/exclusive lower and upper bounds (e.g. &quot;()&quot;, &quot;(]&quot;, &quot;[)&quot;, &quot;[]&quot;)<ul><li>For this type of intervals, the second and third strings in the list represent the lower and upper bounds.</li></ul></li><li><u>Unbounded ranges</u>: intervals for which either the lower or the upper bound is (-)infinity (e.g. &quot;&gt;&quot;, &quot;&gt;=&quot;, &quot;&lt;=&quot;, &quot;&lt;&quot;)<ul><li>For this types of intervals, the list is of size two and the second string represents the only bound</li><li>Note: We also include here (&quot;==&quot;, x) as a shorter notation for (&quot;[]&quot;, x, x)
+</li></ul></li></ul></div></div>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]"></a>
+      <a id="ValueRanges:ValueRanges"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ValueRanges</span><span class="result"> = <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="#ValueRange=Seq[String]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange">ValueRange</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">A <a href="#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a> object is a sequence of <a href="#ValueRange=Seq[String]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange">ValueRange</a> elements and it is associated with a certain column.</p><div class="fullcomment"><div class="comment cmt"><p>A <a href="#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a> object is a sequence of <a href="#ValueRange=Seq[String]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange">ValueRange</a> elements and it is associated with a certain column.
+As such, all string bounds of all the <a href="#ValueRange=Seq[String]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange">ValueRange</a>s are expected to be literals of that column's <a href="VectorDataType$.html" class="extype" name="com.actian.spark_vector.vector.VectorDataType">VectorDataType</a>.</p><p>The interpretation is that the individual ranges are union-ed (<i>or</i>-ed) together.
+</p></div></div>
     </li></ol>
             </div>
-
-        
 
         
 
@@ -167,6 +185,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#applyFilters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="applyFilters(df:org.apache.spark.sql.DataFrame,columns:Seq[com.actian.spark_vector.vector.ColumnMetadata],sparkContext:org.apache.spark.SparkContext):org.apache.spark.sql.DataFrame"></a>
+      <a id="applyFilters(DataFrame,Seq[ColumnMetadata],SparkContext):DataFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">applyFilters</span><span class="params">(<span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a>]</span>, <span name="sparkContext">sparkContext: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Filters the given <code>df</code> according to any <a href="#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a> that its <code>columns</code> might have.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -192,7 +223,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -225,6 +256,37 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#filterForColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="filterForColumn(columnMetadata:com.actian.spark_vector.vector.ColumnMetadata,sparkContext:org.apache.spark.SparkContext):Option[org.apache.spark.sql.Column]"></a>
+      <a id="filterForColumn(ColumnMetadata,SparkContext):Option[Column]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">filterForColumn</span><span class="params">(<span name="columnMetadata">columnMetadata: <a href="ColumnMetadata.html" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a></span>, <span name="sparkContext">sparkContext: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.sql.Column">Column</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates <code>Some(Column)</code> that represents the condition (&quot;predicate&quot;), in Spark's terms,
+corresponding to the given <code>columnMetadata</code>, if the latter has some <a href="#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a> specified
+and is of a type for which Predicate Pushdown is safe.</p><div class="fullcomment"><div class="comment cmt"><p>Creates <code>Some(Column)</code> that represents the condition (&quot;predicate&quot;), in Spark's terms,
+corresponding to the given <code>columnMetadata</code>, if the latter has some <a href="#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a> specified
+and is of a type for which Predicate Pushdown is safe. Otherwise returns <code>None</code>.</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><code>typeIsSafeForPredPD</code>
+</p></span></dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#filterForColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="filterForColumn(column:org.apache.spark.sql.Column,litToConstCol:String=&gt;org.apache.spark.sql.Column,range:com.actian.spark_vector.vector.PredicatePushdown.ValueRange):org.apache.spark.sql.Column"></a>
+      <a id="filterForColumn(Column,(String)⇒Column,ValueRange):Column"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">filterForColumn</span><span class="params">(<span name="column">column: <span class="extype" name="org.apache.spark.sql.Column">Column</span></span>, <span name="litToConstCol">litToConstCol: (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="org.apache.spark.sql.Column">Column</span></span>, <span name="range">range: <a href="#ValueRange=Seq[String]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRange">ValueRange</a></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.Column">Column</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a <code>Column</code> that represents the condition (&quot;predicate&quot;), in Spark's terms, that is expressed by the given <code>range</code></p>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -237,7 +299,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -452,19 +514,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#nameToAcc" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nameToAcc(name:String)(implicitpmap:com.actian.spark_vector.ProfAccMap):com.actian.spark_vector.ProfAcc"></a>
-      <a id="nameToAcc(String)(ProfAccMap):ProfAcc"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">nameToAcc</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <a href="../../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -504,62 +553,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profile(ProfAcc)(ProfAccMap):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">profile</span><span class="params">(<span name="acc">acc: <a href="../../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Start measuring time and record it in <code>acc</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Start measuring time and record it in <code>acc</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd><dt>Note</dt><dd><span class="cmt"><p>This function should always be used in combination with <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.writer.DataStreamWriter#profileEnd">profileEnd</a> in a similar way with opening and closing
-a sequence of brackets, where the code between a <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.writer.DataStreamWriter#profile">profile</a> call and its corresponding <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.writer.DataStreamWriter#profileEnd">profileEnd</a> will have its
-execution time measured and stored into <code>acc</code>
-</p></span></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profileEnd" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profileEnd(ProfAccMap):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">profileEnd</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.writer.DataStreamWriter#profile">profile</a> call</p><div class="fullcomment"><div class="comment cmt"><p>Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.writer.DataStreamWriter#profile">profile</a> call</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profileInit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profileInit(names:String*):com.actian.spark_vector.ProfAccMap"></a>
-      <a id="profileInit(String*):ProfAccMap"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">profileInit</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <a href="../../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Initialize profiling</p><div class="fullcomment"><div class="comment cmt"><p>Initialize profiling</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
-    </li><li name="com.actian.spark_vector.Profiling#profilePrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="profilePrint(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
-      <a id="profilePrint(ProfAccMap):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">profilePrint</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Print profile information using <code>log</code></p><div class="fullcomment"><div class="comment cmt"><p>Print profile information using <code>log</code></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -586,6 +579,45 @@ execution time measured and stored into <code>acc</code>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#typeIsSafeForPredPD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="typeIsSafeForPredPD(vectorTypeName:String):Boolean"></a>
+      <a id="typeIsSafeForPredPD(String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">typeIsSafeForPredPD</span><span class="params">(<span name="vectorTypeName">vectorTypeName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Says whether or not Predicate Pushdown is supported on columns of the given <code>vectorTypeName</code>.</p>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#typeIsSafeForPredPD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="typeIsSafeForPredPD(vectorDataType:com.actian.spark_vector.vector.VectorDataType.EnumVal):Boolean"></a>
+      <a id="typeIsSafeForPredPD(EnumVal):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">typeIsSafeForPredPD</span><span class="params">(<span name="vectorDataType">vectorDataType: <a href="VectorDataType$$EnumVal.html" class="extype" name="com.actian.spark_vector.vector.VectorDataType.EnumVal">EnumVal</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Says whether or not Predicate Pushdown is supported on columns of the given <code>vectorDataType</code>.</p>
+    </li><li name="com.actian.spark_vector.vector.PredicatePushdown#vectorLiteralToSparkLiteral" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="vectorLiteralToSparkLiteral(vectorLiteral:String,vectorDataType:com.actian.spark_vector.vector.VectorDataType.EnumVal,sparkContext:org.apache.spark.SparkContext):String"></a>
+      <a id="vectorLiteralToSparkLiteral(String,EnumVal,SparkContext):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">vectorLiteralToSparkLiteral</span><span class="params">(<span name="vectorLiteral">vectorLiteral: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="vectorDataType">vectorDataType: <a href="VectorDataType$$EnumVal.html" class="extype" name="com.actian.spark_vector.vector.VectorDataType.EnumVal">EnumVal</a></span>, <span name="sparkContext">sparkContext: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Converts the given <code>vectorLiteral</code> to the corresponding Spark literal, according to the specified <code>VectorDataType</code>.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -643,20 +675,6 @@ execution time measured and stored into <code>acc</code>
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.datastream.writer.DataStreamWriter#write" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="write(taskContext:org.apache.spark.TaskContext,data:Iterator[T]):Unit"></a>
-      <a id="write(TaskContext,Iterator[T]):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">write</span><span class="params">(<span name="taskContext">taskContext: <span class="extype" name="org.apache.spark.TaskContext">TaskContext</span></span>, <span name="data">data: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.DataStreamWriter.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">This function is executed once for each partition of <a href="InsertRDD.html" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a> and it will open a socket connection, process all data
-assigned to its corresponding partition (<code>taskContext.partitionId</code>) and then close the connection.</p>
     </li></ol>
             </div>
 
@@ -666,13 +684,7 @@ assigned to its corresponding partition (<code>taskContext.partitionId</code>) a
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="com.actian.spark_vector.Profiling">
-              <h3>Inherited from <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></h3>
-            </div><div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="org.apache.spark.Logging">
+        <div class="parent" name="org.apache.spark.Logging">
               <h3>Inherited from <span class="extype" name="org.apache.spark.Logging">Logging</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
@@ -694,6 +706,6 @@ assigned to its corresponding partition (<code>taskContext.partitionId</code>) a
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
     </body>
       </html>

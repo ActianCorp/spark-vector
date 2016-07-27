@@ -39,9 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Helper functions and constants for <code>BigInteger</code> conversions.
-</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Do not call this object's methods concurrently
-</p></span></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Helper functions and constants for <code>BigInteger</code> conversions.</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -165,19 +163,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.colbuffer.util.BigIntegerConversion#bigIntArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="bigIntArray:Array[Byte]"></a>
-      <a id="bigIntArray:Array[Byte]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">bigIntArray</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -256,15 +241,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.colbuffer.util.BigIntegerConversion#getLongLongByteArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="getLongLongByteArray(buffer:java.nio.ByteBuffer):java.math.BigInteger"></a>
-      <a id="getLongLongByteArray(ByteBuffer):BigInteger"></a>
+      <a id="getLongLongByteArray(buffer:java.nio.ByteBuffer,bigIntArray:Array[Byte]):java.math.BigInteger"></a>
+      <a id="getLongLongByteArray(ByteBuffer,Array[Byte]):BigInteger"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">final </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getLongLongByteArray</span><span class="params">(<span name="buffer">buffer: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>
+        <span class="name">getLongLongByteArray</span><span class="params">(<span name="buffer">buffer: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>, <span name="bigIntArray">bigIntArray: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>] = <span class="defval" name='<span class="name"><a href="../../../../package.html">Array.fill[Byte](LongLongSize)(0: Byte)</a></span>'>...</span></span>)</span><span class="result">: <span class="extype" name="java.math.BigInteger">BigInteger</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Gets a BigInteger from a ByteBuffer in big-endian order.</p>

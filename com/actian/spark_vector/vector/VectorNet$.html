@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>ColumnMetadata - com.actian.spark_vector.vector.ColumnMetadata</title>
-          <meta name="description" content="ColumnMetadata - com.actian.spark vector.vector.ColumnMetadata" />
-          <meta name="keywords" content="ColumnMetadata com.actian.spark vector.vector.ColumnMetadata" />
+          <title>VectorNet - com.actian.spark_vector.vector.VectorNet</title>
+          <meta name="description" content="VectorNet - com.actian.spark vector.vector.VectorNet" />
+          <meta name="keywords" content="VectorNet com.actian.spark vector.vector.VectorNet" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'com.actian.spark_vector.vector.ColumnMetadata';
+            var hash = 'com.actian.spark_vector.vector.VectorNet$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -22,27 +22,28 @@
    	  </script>
     
         </head>
-        <body class="type">
+        <body class="value">
       <div id="definition">
-        <img src="../../../../lib/class_big.png" />
+        <img src="../../../../lib/object_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.vector">vector</a></p>
-        <h1>ColumnMetadata</h1>
+        <h1>VectorNet</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueRanges">valueRanges: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <span class="name">VectorNet</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Helper functions for communicating with Vector.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>These functions follow the Vector network communication protocol.
+</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -60,7 +61,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.vector.ColumnMetadata"><span>ColumnMetadata</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.vector.VectorNet"><span>VectorNet</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -78,23 +79,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="com.actian.spark_vector.vector.ColumnMetadata#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String,typeName:String,nullable:Boolean,precision:Int,scale:Int,valueRanges:Option[com.actian.spark_vector.vector.PredicatePushdown.ValueRanges]):com.actian.spark_vector.vector.ColumnMetadata"></a>
-      <a id="&lt;init&gt;:ColumnMetadata"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ColumnMetadata</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueRanges">valueRanges: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>] = <span class="symbol">scala.None</span></span>)</span>
-      </span>
-      </h4>
-      
-    </li></ol>
-            </div>
+        
 
         
 
@@ -167,6 +152,58 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#ClientPacketType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClientPacketType:Int(8)"></a>
+      <a id="ClientPacketType:Int(8)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ClientPacketType</span><span class="result">: Int(8)</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.vector.VectorNet#CompatibleVectorVersion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CompatibleVectorVersion:Int(1)"></a>
+      <a id="CompatibleVectorVersion:Int(1)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CompatibleVectorVersion</span><span class="result">: Int(1)</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.vector.VectorNet#SuccessPacketType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SuccessPacketType:Int(0)"></a>
+      <a id="SuccessPacketType:Int(0)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">SuccessPacketType</span><span class="result">: Int(0)</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.vector.VectorNet#VersionPacketType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VersionPacketType:Int(7)"></a>
+      <a id="VersionPacketType:Int(7)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">VersionPacketType</span><span class="result">: Int(7)</span>
+      </span>
+      </h4>
+      
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -180,6 +217,35 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#checkPacketType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="checkPacketType(expectedPacketType:Int,in:java.nio.ByteBuffer):Unit"></a>
+      <a id="checkPacketType(Int,ByteBuffer):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">checkPacketType</span><span class="params">(<span name="expectedPacketType">expectedPacketType: <span class="extype" name="scala.Int">Int</span></span>, <span name="in">in: <span class="extype" name="java.nio.ByteBuffer">ByteBuffer</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Reads a packet type from <code>in</code> and verifies that it equals <code>expectedPacketType</code>, throwing an exception otherwise</p>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#clientCheckVersion" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clientCheckVersion(version:Int)(implicitsocket:java.nio.channels.SocketChannel):Unit"></a>
+      <a id="clientCheckVersion(Int)(SocketChannel):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clientCheckVersion</span><span class="params">(<span name="version">version: <span class="extype" name="scala.Int">Int</span> = <span class="symbol"><span class="name"><a href="#CompatibleVectorVersion:Int(1)">CompatibleVectorVersion</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Performs protocol version exchange with Vector, acting as a client.</p><div class="fullcomment"><div class="comment cmt"><p>Performs protocol version exchange with Vector, acting as a client.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the version received from the server is not compatible with what is expected(i.e. <code>version</code>), it will
+throw an exception
+</p></span></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -199,19 +265,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#dataType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dataType:org.apache.spark.sql.types.DataType"></a>
-      <a id="dataType:DataType"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dataType</span><span class="result">: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -225,6 +278,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -257,6 +323,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -270,32 +349,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#maxDataSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="maxDataSize:Int"></a>
-      <a id="maxDataSize:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">maxDataSize</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#name" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="name:String"></a>
-      <a id="name:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -335,61 +388,32 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#nullable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="nullable:Boolean"></a>
-      <a id="nullable:Boolean"></a>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#readClientType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readClientType(expectedClientType:Int)(implicitsocket:java.nio.channels.SocketChannel):Unit"></a>
+      <a id="readClientType(Int)(SocketChannel):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">nullable</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">readClientType</span><span class="params">(<span name="expectedClientType">expectedClientType: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#precision" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="precision:Int"></a>
-      <a id="precision:Int"></a>
+      <p class="shortcomment cmt">Reads a connection client type from the socket, throwing an exception if it does not match <code>expectedClientType</code></p>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#serverCheckVersion" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="serverCheckVersion(version:Int)(implicitsocket:java.nio.channels.SocketChannel):Unit"></a>
+      <a id="serverCheckVersion(Int)(SocketChannel):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">precision</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">serverCheckVersion</span><span class="params">(<span name="version">version: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4>
-      
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#scale" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="scale:Int"></a>
-      <a id="scale:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">scale</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#structField" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="structField:org.apache.spark.sql.types.StructField"></a>
-      <a id="structField:StructField"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">structField</span><span class="result">: <span class="extype" name="org.apache.spark.sql.types.StructField">StructField</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Convert the given column metadata into a <code>StructField</code> representing the column
-</p><div class="fullcomment"><div class="comment cmt"><p>Convert the given column metadata into a <code>StructField</code> representing the column
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a new <code>StructField</code> instance
-</p></dd></dl></div>
+      <p class="shortcomment cmt">Performs protocol version exchange with Vector, acting as a server.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -403,7 +427,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -412,36 +436,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.vector.ColumnMetadata">ColumnMetadata</a> → AnyRef → Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#typeName" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="typeName:String"></a>
-      <a id="typeName:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">typeName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="com.actian.spark_vector.vector.ColumnMetadata#valueRanges" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="valueRanges:Option[com.actian.spark_vector.vector.PredicatePushdown.ValueRanges]"></a>
-      <a id="valueRanges:Option[ValueRanges]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">valueRanges</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>]</span>
-      </span>
-      </h4>
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -499,6 +497,19 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.actian.spark_vector.vector.VectorNet#writeClientType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="writeClientType(clientType:Int)(implicitsocket:java.nio.channels.SocketChannel):Unit"></a>
+      <a id="writeClientType(Int)(SocketChannel):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeClientType</span><span class="params">(<span name="clientType">clientType: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="socket">socket: <span class="extype" name="java.nio.channels.SocketChannel">SocketChannel</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Write a connection client type message through <code>socket</code></p>
     </li></ol>
             </div>
 
@@ -508,15 +519,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

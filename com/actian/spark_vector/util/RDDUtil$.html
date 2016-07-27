@@ -208,21 +208,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.actian.spark_vector.util.RDDUtil#fillWithNulls" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="fillWithNulls(rdd:org.apache.spark.rdd.RDD[Seq[Any]],inputType:org.apache.spark.sql.types.StructType,targetType:org.apache.spark.sql.types.StructType,targetToInput:Map[String,String]):org.apache.spark.rdd.RDD[Seq[Any]]"></a>
-      <a id="fillWithNulls(RDD[Seq[Any]],StructType,StructType,Map[String,String]):RDD[Seq[Any]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">fillWithNulls</span><span class="params">(<span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]]</span>, <span name="inputType">inputType: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="targetType">targetType: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="targetToInput">targetToInput: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Convert the given <code>rdd</code> with schema specified by <code>inputType</code> to a new <code>RDD</code> with schema <code>targetType</code>, mapping columns from input
-to target using the <code>targetToInput</code> map and filling the missing columns with nulls
-</p>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -321,15 +306,15 @@ to target using the <code>targetToInput</code> map and filling the missing colum
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="com.actian.spark_vector.util.RDDUtil#selectFields" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="selectFields(rdd:org.apache.spark.rdd.RDD[Seq[Any]],schema:org.apache.spark.sql.types.StructType,fields:Seq[String]):(org.apache.spark.rdd.RDD[Seq[Any]],org.apache.spark.sql.types.StructType)"></a>
-      <a id="selectFields(RDD[Seq[Any]],StructType,Seq[String]):(RDD[Seq[Any]],StructType)"></a>
+      <a id="selectFields(rdd:org.apache.spark.rdd.RDD[org.apache.spark.sql.Row],schema:org.apache.spark.sql.types.StructType,fields:Seq[String]):(org.apache.spark.rdd.RDD[org.apache.spark.sql.Row],org.apache.spark.sql.types.StructType)"></a>
+      <a id="selectFields(RDD[Row],StructType,Seq[String]):(RDD[Row],StructType)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">selectFields</span><span class="params">(<span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]]</span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="fields">fields: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Any">Any</span>]], <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span>)</span>
+        <span class="name">selectFields</span><span class="params">(<span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>]</span>, <span name="schema">schema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="fields">fields: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>], <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Select the given subset of field names (<code>fields</code>) from <code>rdd</code> and return a subset of the <code>schema</code> with a new <code>RDD</code> with the values reordered by the <code>fields</code> name list.</p>
@@ -346,6 +331,23 @@ to target using the <code>targetToInput</code> map and filling the missing colum
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.actian.spark_vector.util.RDDUtil#targetToInput" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="targetToInput(inputType:org.apache.spark.sql.types.StructType,targetType:org.apache.spark.sql.types.StructType,targetToInput:Map[String,String]):Option[IndexedSeq[Option[Int]]]"></a>
+      <a id="targetToInput(StructType,StructType,Map[String,String]):Option[IndexedSeq[Option[Int]]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">targetToInput</span><span class="params">(<span name="inputType">inputType: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="targetType">targetType: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span></span>, <span name="targetToInput">targetToInput: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Map the input columns (as specified in <code>inputType</code>) to the target columns (as specified by <code>targetType</code>)
+</p><div class="fullcomment"><div class="comment cmt"><p>Map the input columns (as specified in <code>inputType</code>) to the target columns (as specified by <code>targetType</code>)
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Either None if the <code>targetType</code> has exactly the same columns as <code>inputType</code>
+ or An array of size equal to <code>targetType</code>.fields.size containing a mapping of <code>targetType</code> fields to <code>inputType</code> fields
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

@@ -94,6 +94,32 @@
       </span>
       </h4>
       
+    </li><li name="com.actian.spark_vector.sql.HiveTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HiveTableextendsSparkSqlTablewithProductwithSerializable"></a>
+      <a id="HiveTable:HiveTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="HiveTable.html"><span class="name">HiveTable</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="SparkSqlTable.html" class="extype" name="com.actian.spark_vector.sql.SparkSqlTable">SparkSqlTable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.sql.SparkSqlTable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SparkSqlTableextendsAnyRef"></a>
+      <a id="SparkSqlTable:SparkSqlTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SparkSqlTable.html"><span class="name">SparkSqlTable</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
     </li><li name="com.actian.spark_vector.sql.TableRef" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TableRefextendsProductwithSerializable"></a>
       <a id="TableRef:TableRef"></a>
@@ -107,6 +133,19 @@
       </span>
       </h4>
       <p class="comment cmt">A reference to a <code>Vector</code> table</p>
+    </li><li name="com.actian.spark_vector.sql.TempTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TempTableextendsSparkSqlTable"></a>
+      <a id="TempTable:TempTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="TempTable.html"><span class="name">TempTable</span></a><span class="result"> extends <a href="SparkSqlTable.html" class="extype" name="com.actian.spark_vector.sql.SparkSqlTable">SparkSqlTable</a></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -124,6 +163,45 @@
       </span>
       <span class="symbol">
         <a href="TableRef$.html"><span class="name">TableRef</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.sql.TempTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TempTable"></a>
+      <a id="TempTable:TempTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TempTable$.html"><span class="name">TempTable</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.sql.package#colsSelectStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="colsSelectStatement(cols:Option[Seq[String]]):String"></a>
+      <a id="colsSelectStatement(Option[Seq[String]]):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">colsSelectStatement</span><span class="params">(<span name="cols">cols: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.actian.spark_vector.sql.package#sparkQuote" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sparkQuote(name:String):String"></a>
+      <a id="sparkQuote(String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sparkQuote</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
       
