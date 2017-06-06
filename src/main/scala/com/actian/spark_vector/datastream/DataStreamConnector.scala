@@ -19,10 +19,9 @@ import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
 import java.nio.ByteBuffer
 
-import org.apache.spark.Logging
-
 import scala.reflect.ClassTag
 
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceOnFailure, closeResourceAfterUse }
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.vector.ColumnMetadata

@@ -17,7 +17,7 @@ package com.actian.spark_vector.datastream.reader
 
 import scala.language.reflectiveCalls
 
-import org.apache.spark.{ Logging, Partition, SparkContext, TaskContext }
+import org.apache.spark.{ Partition, SparkContext, TaskContext }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
@@ -26,7 +26,7 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[Row](sc, Nil) with Logging {
+class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[Row](sc, Nil) {
   /** Closed state for the datastream connection */
   private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */

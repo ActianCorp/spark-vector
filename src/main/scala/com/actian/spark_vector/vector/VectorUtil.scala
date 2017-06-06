@@ -18,9 +18,9 @@ package com.actian.spark_vector.vector
 import java.rmi.dgc.VMID
 import java.sql.SQLException
 
-import org.apache.spark.Logging
 import org.apache.spark.sql.types.StructType
 
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorJDBC.withJDBC
 

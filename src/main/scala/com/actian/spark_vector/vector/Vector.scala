@@ -19,7 +19,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.Row
@@ -30,6 +29,7 @@ import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
 import com.actian.spark_vector.datastream.DataStreamClient
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
+import com.actian.spark_vector.util.Logging
 
 /** Utility object that defines methods for loading data into Vector */
 private[vector] object Vector extends Logging {

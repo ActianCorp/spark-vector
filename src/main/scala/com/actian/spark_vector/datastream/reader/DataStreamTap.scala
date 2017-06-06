@@ -15,8 +15,7 @@
  */
 package com.actian.spark_vector.datastream.reader
 
-import org.apache.spark.Logging
-
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.colbuffer.ColumnBuffer
 

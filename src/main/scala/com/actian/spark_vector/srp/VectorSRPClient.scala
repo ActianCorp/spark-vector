@@ -16,11 +16,13 @@
 package com.actian.spark_vector.srp
 
 import java.nio.channels.SocketChannel
+
 import scala.BigInt
 import scala.annotation.tailrec
-import org.apache.spark.Logging
+
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.datastream.reader.DataStreamReader
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorException
 
@@ -70,7 +72,7 @@ class VectorSRPClient(username: String, password: String) extends ClientSRPParam
   |0846851DF9AB48195DED7EA1B1D510BD7EE74D73FAF36BC31ECFA268
   |359046F4EB879F924009438B481C6CD7889A002ED5EE382BC9190DA6
   |FC026E479558E4475677E9AA9E3050E2765694DFC81F56E880B96E71
-  |60C980DD98EDD3DFFFFFFFFFFFFFFFFF""".stripMargin.replaceAll("\n", ""), 16)
+  |60C980DD98EDD3DFFFFFFFFFFFFFFFFF""".stripMargin.replaceAll("[\u0000-\u001f]", ""), 16)
 
   /** Override to match the one on the `Vector` side */
   override def g: BigInt = BigInt("13", 16)

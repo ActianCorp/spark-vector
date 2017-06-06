@@ -16,8 +16,9 @@
 package com.actian.spark_vector.loader.command
 
 import org.apache.spark.sql.SQLContext
+
 import com.actian.spark_vector.loader.options.UserOptions
-import org.apache.spark.Logging
+import com.actian.spark_vector.util.Logging
 
 object OrcRead {
   /**

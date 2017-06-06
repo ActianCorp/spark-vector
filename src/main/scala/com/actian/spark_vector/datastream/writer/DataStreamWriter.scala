@@ -22,13 +22,13 @@ import java.nio.channels.SocketChannel
 import scala.annotation.tailrec
 import scala.concurrent.Future
 
-import org.apache.spark.{ Logging, TaskContext }
+import org.apache.spark.TaskContext
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.IntSize
 import com.actian.spark_vector.datastream.{ VectorEndpointConf, DataStreamConnectionHeader, DataStreamConnector }
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
-import com.actian.spark_vector.util.ResourceUtil
+import com.actian.spark_vector.util.{ Logging, ResourceUtil }
 
 /**
  * Entry point for loading with spark-vector connector.

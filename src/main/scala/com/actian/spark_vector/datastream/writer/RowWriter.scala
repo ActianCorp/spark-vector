@@ -18,14 +18,13 @@ package com.actian.spark_vector.datastream.writer
 import java.sql.{ Date, Timestamp }
 import java.math.BigDecimal
 
-import org.apache.spark.Logging
-
 import scala.reflect.{ classTag, ClassTag }
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ColumnBufferBuildParams, ColumnBuffer, WriteColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
+import com.actian.spark_vector.util.Logging
 
 /**
  * Writes `RDD` rows to `ByteBuffers` and flushes them to a `Vector` through a `VectorSink`

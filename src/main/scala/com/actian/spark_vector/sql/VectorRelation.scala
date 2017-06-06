@@ -15,7 +15,6 @@
  */
 package com.actian.spark_vector.sql
 
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ Row, DataFrame, SQLContext, sources }
 import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
@@ -23,7 +22,7 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.catalyst.InternalRow
 
-import com.actian.spark_vector.util.{ RDDUtil, ResourceUtil }
+import com.actian.spark_vector.util.{ Logging, RDDUtil, ResourceUtil }
 import com.actian.spark_vector.vector.{ VectorJDBC, VectorOps, ColumnMetadata }
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
