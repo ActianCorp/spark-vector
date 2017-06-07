@@ -19,11 +19,10 @@ import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
-import org.apache.spark.Logging
-
 import com.actian.spark_vector.colbuffer.IntSize
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.srp.VectorSRPClient
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.{ closeResourceAfterUse, closeResourceOnFailure }
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorNet }
 

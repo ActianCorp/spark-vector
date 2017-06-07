@@ -21,7 +21,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 
-import org.apache.spark.Logging
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, SaveMode }
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types.StructType
@@ -29,6 +28,7 @@ import org.apache.spark.sql.types.StructType
 import com.actian.spark_vector.datastream.reader.DataStreamReader
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.sql._
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.closeResourceAfterUse
 import com.actian.spark_vector.vector.VectorNet
 

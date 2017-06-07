@@ -16,7 +16,7 @@
 package com.actian.spark_vector.vector
 
 import org.apache.hadoop.fs.Path
-import org.apache.spark.{ Logging, SparkContext }
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.types.{ StringType, StructField, StructType }
 
 import org.scalatest.{ FunSuite, Matchers }
@@ -24,6 +24,7 @@ import org.scalatest.prop.PropertyChecks
 
 import com.actian.spark_vector.test.tags.IntegrationTest
 import com.actian.spark_vector.test.util.StructTypeUtil
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorUtil.Field2Column
 import com.actian.spark_vector.vector.VectorFixture.withTable
