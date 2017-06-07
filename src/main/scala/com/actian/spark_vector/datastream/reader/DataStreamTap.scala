@@ -15,9 +15,10 @@
  */
 package com.actian.spark_vector.datastream.reader
 
+import org.apache.spark.Logging
+
 import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.colbuffer.ColumnBuffer
-import com.actian.spark_vector.util.Logging
 
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel

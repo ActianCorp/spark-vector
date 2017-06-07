@@ -18,7 +18,7 @@ package com.actian.spark_vector.datastream.writer
 import scala.annotation.tailrec
 import scala.reflect.ClassTag
 
-import org.apache.spark.{ OneToOneDependency, NarrowDependency, Partition, TaskContext }
+import org.apache.spark.{ Logging, OneToOneDependency, NarrowDependency, Partition, TaskContext }
 import org.apache.spark.rdd.RDD
 
 import com.actian.spark_vector.datastream.{ DataStreamPartition, DataStreamPartitionAssignment, VectorEndpointConf }
@@ -29,7 +29,7 @@ import com.actian.spark_vector.datastream.{ DataStreamPartition, DataStreamParti
  * @param rdd `RDD` to be loaded
  * @param writeConf contains the write configuration needed to connect to `Vector DataStream`s
  */
-class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpointConf) extends RDD[R](rdd.context, Nil) {
+class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpointConf) extends RDD[R](rdd.context, Nil) with Logging {
   /** All hosts where `Vector` expects data to be loaded */
   private val vectorHosts = writeConf.vectorEndpoints.map(_.host).toSet
   /** Used for logging what partitions are assigned to which `DataStream` */

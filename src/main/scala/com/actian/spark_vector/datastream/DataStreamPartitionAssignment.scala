@@ -16,9 +16,8 @@
 package com.actian.spark_vector.datastream
 
 import scala.collection.mutable.{ ArrayBuffer, IndexedSeq => mutableISeq, Stack }
-
+import org.apache.spark.Logging
 import com.actian.spark_vector.Profiling
-import com.actian.spark_vector.util.Logging
 
 /**
  * Trait that performs a special kind of matching in a bipartite graph:

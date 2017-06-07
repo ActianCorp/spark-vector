@@ -21,13 +21,13 @@ import java.nio.channels.SocketChannel
 
 import scala.annotation.tailrec
 
-import org.apache.spark.TaskContext
+import org.apache.spark.{ Logging, TaskContext }
 import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.IntSize
 import com.actian.spark_vector.datastream.{ DataStreamConnector, VectorEndpointConf }
-import com.actian.spark_vector.util.{ Logging, ResourceUtil }
+import com.actian.spark_vector.util.ResourceUtil
 import com.actian.spark_vector.vector.ColumnMetadata
 
 /**

@@ -15,13 +15,12 @@
  */
 package com.actian.spark_vector.vector
 
-import org.apache.spark.SparkContext
+import org.apache.spark.{ Logging, SparkContext }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
-import com.actian.spark_vector.util.Logging
 
 /** Add vector operations to RecordRDD. */
 trait VectorOps {

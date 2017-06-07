@@ -15,13 +15,12 @@
  */
 package com.actian.spark_vector.vector
 
-import org.apache.spark.SparkContext
+import org.apache.spark.{ Logging, SparkContext }
 import org.apache.spark.sql.{ Column, DataFrame }
 import org.apache.spark.sql.functions.{ col, expr, lit }
 import org.apache.spark.sql.types.DataType
 
 import com.actian.spark_vector.sql.sparkQuote
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.VectorDataType._
 
 /**

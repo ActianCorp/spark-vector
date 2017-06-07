@@ -15,11 +15,11 @@
  */
 package com.actian.spark_vector.loader.command
 
+import org.apache.spark.Logging
 import org.apache.spark.sql.SQLContext
 
 import com.actian.spark_vector.loader.options.UserOptions
 import com.actian.spark_vector.sql.sparkQuote
-import com.actian.spark_vector.util.Logging
 
 object CSVRead extends Logging {
   private def parseOptions(options: UserOptions): String = {

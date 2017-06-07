@@ -18,10 +18,9 @@ package com.actian.spark_vector.srp
 import java.nio.channels.SocketChannel
 import scala.BigInt
 import scala.annotation.tailrec
-
+import org.apache.spark.Logging
 import com.actian.spark_vector.datastream.writer.DataStreamWriter
 import com.actian.spark_vector.datastream.reader.DataStreamReader
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorException
 

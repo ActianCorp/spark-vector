@@ -18,11 +18,11 @@ package com.actian.spark_vector.vector
 import java.sql.{ Connection, DriverManager, PreparedStatement, ResultSet, Statement }
 import java.util.Properties
 
+import org.apache.spark.Logging
 import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.sql.VectorRelation
 import com.actian.spark_vector.Profiling
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.RichExtractableManagedResource
 import com.actian.spark_vector.vector.ErrorCodes.{ InvalidDataType, NoSuchTable, SqlException, SqlExecutionError }
 

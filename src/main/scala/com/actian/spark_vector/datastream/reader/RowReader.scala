@@ -21,6 +21,7 @@ import java.nio.{ ByteOrder, ByteBuffer }
 
 import scala.reflect.{ classTag, ClassTag }
 
+import org.apache.spark.Logging
 import org.apache.spark.sql.types.Decimal
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
@@ -30,7 +31,6 @@ import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.vector.ColumnMetadata
 import com.actian.spark_vector.colbuffer.{ ByteSize, ColumnBufferBuildParams, ColumnBuffer, ReadColumnBuffer }
 import com.actian.spark_vector.datastream.{ padding, DataStreamConnectionHeader, DataStreamConnector }
-import com.actian.spark_vector.util.Logging
 
 class RowReader(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStreamConnectionHeader, tap: DataStreamTap)
     extends Iterator[InternalRow] with Logging with Serializable with Profiling {

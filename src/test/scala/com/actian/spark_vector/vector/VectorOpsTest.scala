@@ -17,7 +17,7 @@ package com.actian.spark_vector.vector
 
 import java.sql.{ Date, Timestamp }
 
-import org.apache.spark.SparkException
+import org.apache.spark.{ Logging, SparkException }
 import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
@@ -34,7 +34,7 @@ import com.actian.spark_vector.{ DataGens, Profiling, RDDFixtures, SparkContextF
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.test.tags.RandomizedTest
 import com.actian.spark_vector.test.util.StructTypeUtil
-import com.actian.spark_vector.util.{ Logging, RDDUtil }
+import com.actian.spark_vector.util.RDDUtil
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture.withTable
 import com.actian.spark_vector.vector.VectorOps._

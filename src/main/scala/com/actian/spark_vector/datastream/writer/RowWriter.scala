@@ -20,12 +20,12 @@ import java.sql.{ Date, Timestamp }
 
 import scala.reflect.classTag
 
+import org.apache.spark.Logging
 import org.apache.spark.sql.Row
 
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.colbuffer.{ ColumnBuffer, ColumnBufferBuildParams, WriteColumnBuffer }
 import com.actian.spark_vector.datastream.{ DataStreamConnectionHeader, DataStreamConnector, padding }
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.ColumnMetadata
 
 /**

@@ -21,13 +21,13 @@ import scala.concurrent.Future
 import java.nio.{ ByteOrder, ByteBuffer }
 import java.nio.channels.SocketChannel
 
-import org.apache.spark.TaskContext
+import org.apache.spark.{ Logging, TaskContext }
 
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, ColumnMetadata }
 import com.actian.spark_vector.datastream.{ VectorEndpointConf, DataStreamConnectionHeader, DataStreamConnector }
 import com.actian.spark_vector.colbuffer.IntSize
 import com.actian.spark_vector.Profiling
-import com.actian.spark_vector.util.{ Logging, ResourceUtil }
+import com.actian.spark_vector.util.ResourceUtil
 
 /**
  * Entry point for unloading with spark-vector connector.

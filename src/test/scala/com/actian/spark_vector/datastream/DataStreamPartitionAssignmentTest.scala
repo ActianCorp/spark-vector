@@ -22,8 +22,8 @@ import org.scalacheck.Prop.{ forAllNoShrink, propBoolean }
 import org.scalatest.{ Finders, FunSuite, Matchers }
 import org.scalatest.prop.Checkers.{ check, generatorDrivenConfig, minSuccessful }
 
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.test.tags.RandomizedTest
+import org.apache.spark.Logging
 
 /** Tests of DataStreamPartitionAssignment */
 class DataStreamPartitionAssignmentTest extends FunSuite with Matchers with Logging {

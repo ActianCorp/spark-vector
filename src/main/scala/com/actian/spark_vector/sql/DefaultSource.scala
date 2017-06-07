@@ -15,11 +15,11 @@
  */
 package com.actian.spark_vector.sql
 
+import org.apache.spark.Logging
 import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
 import org.apache.spark.sql.sources.{ BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider }
 import org.apache.spark.sql.types.StructType
 
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.VectorJDBC
 
 class DefaultSource extends RelationProvider with SchemaRelationProvider with CreatableRelationProvider with Logging {

@@ -12,7 +12,7 @@ This connector works with both Vector SMP and VectorH MPP.
 
 This library requires:
 * Vector(H) 5.0
-* Spark 1.5.x - 1.6.x
+* Spark 1.5.x
 
 ## Building (from source)
 

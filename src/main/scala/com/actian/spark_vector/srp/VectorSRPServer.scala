@@ -15,11 +15,10 @@
  */
 package com.actian.spark_vector.srp
 
+import org.apache.spark.Logging
 import java.nio.channels.SocketChannel
-
 import com.actian.spark_vector.datastream.reader.DataStreamReader._
 import com.actian.spark_vector.datastream.writer.DataStreamWriter._
-import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.{ ErrorCodes, VectorException }
 
 /**
