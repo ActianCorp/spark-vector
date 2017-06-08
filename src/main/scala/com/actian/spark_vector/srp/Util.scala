@@ -29,7 +29,8 @@ package com.actian.spark_vector.srp
 
 import java.security._
 import scala.language.implicitConversions
-import org.apache.spark.Logging
+
+import com.actian.spark_vector.util.Logging
 
 // scalastyle:off
 /**

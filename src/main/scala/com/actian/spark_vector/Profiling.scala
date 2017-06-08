@@ -18,7 +18,7 @@ package com.actian.spark_vector
 import scala.collection.mutable.Stack
 import scala.language.implicitConversions
 
-import org.apache.spark.Logging
+import com.actian.spark_vector.util.Logging
 
 /** An accumulator for profiling, Contains a label and the number of milliseconds (`acc`) */
 case class ProfAcc(val name: String, var acc: Long = 0) {
