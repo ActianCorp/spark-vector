@@ -60,7 +60,7 @@ object DataGens {
     bd.scale <= 12 && bd.precision <= 38 && Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
 
   private val dateValueGen: Gen[Long] =
-    choose((Calendar.getInstance().getTime().getTime() - 3600L * 1000 * 24 * 100000L), Calendar.getInstance().getTime().getTime())
+    choose(-3600L * 1000 * 24 * 100000L, 3600L * 1000 * 24 * 100000L)
 
   // @note normalize getTime so that we don't have diffs more than 1 day in between our {JDBC,Spark}results
   val dateGen: Gen[jsql.Date] = dateValueGen.map(d => new jsql.Date(d / MillisecondsInDay * MillisecondsInDay))

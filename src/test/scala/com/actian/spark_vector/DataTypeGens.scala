@@ -50,12 +50,9 @@ object DataTypeGens {
     nullable <- arbitrary[Boolean]
   } yield StructField(name, dataType, nullable)
 
-  // TODO ugly dance to avoid duplicate field names - find cleaner way
   val schemaGen: Gen[StructType] = for {
-    initialNumFields <- choose(1, DefaultMaxNumFields)
-    fieldNames <- listOfN(initialNumFields, identifier.map(_.take(MaxColumnNameLen)))
-    uniqueFieldNames = fieldNames.distinct
-    numFields = uniqueFieldNames.size
+    numFields <- choose(1, DefaultMaxNumFields)
+    uniqueFieldNames <- listOfN(numFields, identifier.map(_.take(MaxColumnNameLen))).retryUntil(f => f.size == f.distinct.size)
     fieldTypes <- listOfN(numFields, dataTypeGen)
     nullables <- listOfN(numFields, arbitrary[Boolean])
   } yield StructType(for (idx <- 0 until numFields) yield StructField(
