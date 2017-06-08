@@ -21,8 +21,7 @@ import java.sql.ResultSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import org.apache.spark.Logging
-
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.vector.VectorException

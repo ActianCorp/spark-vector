@@ -17,8 +17,7 @@ package com.actian.spark_vector.datastream
 
 import scala.util.Try
 
-import org.apache.spark.Logging
-
+import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.VectorJDBC
 
 /** Information to connect to a VectorEndpoint (DataStream) */
