@@ -17,12 +17,14 @@ package com.actian.spark_vector.provider
 
 import java.nio.channels.ServerSocketChannel
 
-import org.apache.spark.{ Logging, SparkConf, SparkContext }
+import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.SQLContext
 
 import resource.managed
 import java.net.InetAddress
+
+import com.actian.spark_vector.util.Logging
 
 object Main extends App with Logging {
   import ProviderAuth._
