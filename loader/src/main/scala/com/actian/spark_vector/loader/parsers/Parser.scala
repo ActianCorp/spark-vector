@@ -178,14 +178,14 @@ object Args {
 
   val inputFile = ArgOption[String, String](
     "sourceFile", "sf", "Source file", _.general.sourceFile, updateGeneral((o, v) => o.copy(sourceFile = v.replace('\\', '/'))), true)
-  val colsToLoad = ArgOption[String, Option[Seq[_]]](
+  val colsForLoad = ArgOption[String, Option[Seq[_]]](
     "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",")))), false)
 
-  val generalArgs = Seq(inputFile, colsToLoad)
+  val generalArgs = Seq(inputFile, colsForLoad)
 
   val hRow = ArgOption[Boolean, Option[Boolean]](
     "skipHeader", "sh", "Skip header row", _.csv.headerRow, updateCSV((o, v) => o.copy(headerRow = Option(v))), false)
-  val encoding = ArgOption[String, Option[String]](
+  val encode = ArgOption[String, Option[String]](
     "encoding", "en", "CSV text encoding", _.csv.encoding, updateCSV((o, v) => o.copy(encoding = Option(v))), false)
   val nullPattern = ArgOption[String, Option[String]](
     "nullPattern", "np", "CSV null pattern", _.csv.nullPattern, updateCSV((o, v) => o.copy(nullPattern = Option(v))), false)
@@ -200,7 +200,7 @@ object Args {
   val parserLib = ArgOption[String, Option[String]](
     "parserLib", "pl", "CSV parser library (for spark-csv): either default or univocity", _.csv.nullPattern, updateCSV((o, v) => o.copy(parserLib = Option(v))), false)
 
-  val csvArgs = Seq(hRow, encoding, nullPattern, separatorChar, quoteChar, escapeChar, header, parserLib)
+  val csvArgs = Seq(hRow, encode, nullPattern, separatorChar, quoteChar, escapeChar, header, parserLib)
   val parquetArgs = Seq.empty[ArgOption[_, _]]
   val orcArgs = Seq.empty[ArgOption[_, _]]
 

@@ -53,7 +53,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
 
   val optionalValues: ArgMap = Map(
     hRow -> true,
-    encoding -> "UTF-16",
+    encode -> "UTF-16",
     nullPattern -> "N/A",
     separatorChar -> '|',
     quoteChar -> '\'',
