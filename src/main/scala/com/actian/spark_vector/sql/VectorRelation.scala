@@ -25,6 +25,7 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
 import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
 import com.actian.spark_vector.vector.PredicatePushdown
+import com.actian.spark_vector.vector.Vector
 
 private[spark_vector] class VectorRelation(tableRef: TableRef,
     userSpecifiedSchema: Option[StructType],
@@ -66,14 +67,14 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
           }
           val numRows = rs.getLong(1)
           logDebug(s"Create empty RDD from the count(*) of ${numRows} row(s).")
-          sqlContext.sparkContext.range(0L, numRows).map(_ => InternalRow.empty).asInstanceOf[RDD[Row]]
+          sqlContext.sparkContext.emptyRDD[Row]
         }
       }
     } else {
       val (selectColumns, selectTableMetadata) = (requiredColumns.mkString(","), pruneColumns(requiredColumns, tableMetadata))
       logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
-      sqlContext.sparkContext.unloadVector(tableRef.toConnectionProps, tableRef.table, selectTableMetadata,
-        selectColumns, whereClause, whereParams)
+      Vector.unloadVector(sqlContext.sparkContext, tableRef.table, tableRef.toConnectionProps, 
+        selectTableMetadata, selectColumns, whereClause, whereParams).asInstanceOf[RDD[Row]]
     }
   }
 }
@@ -105,7 +106,7 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
 
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
     val requiredColumnsMetadata = pruneColumns(requiredColumns, columnMetadata)
-    sqlContext.sparkContext.unloadVector(requiredColumnsMetadata, conf)
+    Vector.unloadVector(sqlContext.sparkContext, requiredColumnsMetadata, conf).asInstanceOf[RDD[Row]]
   }
 }
 

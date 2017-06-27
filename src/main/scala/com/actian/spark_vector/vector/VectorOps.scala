@@ -18,6 +18,7 @@ package com.actian.spark_vector.vector
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
@@ -94,8 +95,8 @@ trait VectorOps {
       selectColumns: String = "*",
       whereClause: String = "",
       whereParams: Seq[Any] = Nil): RDD[Row] = {
-      Vector.unloadVector(sc, table, vectorProps, tableColumnMetadata,
-        selectColumns, whereClause, whereParams)
+      val rdd = Vector.unloadVector(sc, table, vectorProps, tableColumnMetadata, selectColumns, whereClause, whereParams)
+      externalizeRDD(rdd, StructType(tableColumnMetadata.map(_.structField)))
     }
 
     /**
@@ -108,7 +109,15 @@ trait VectorOps {
      *
      * @return an <code>RDD[Row]</code> for the unload operation
      */
-    def unloadVector(tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = Vector.unloadVector(sc, tableColumnMetadata, readConf)
+    def unloadVector(tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = {
+      val rdd = Vector.unloadVector(sc, tableColumnMetadata, readConf)
+      externalizeRDD(rdd, StructType(tableColumnMetadata.map(_.structField)))
+    }
+    
+    // Used to encode InternalRow to external Row objects
+    private def externalizeRDD(rdd: RDD[InternalRow], schema: StructType): RDD[Row] = {
+      rdd.map(r => Row.fromSeq(r.toSeq(schema)))
+    }
   }
 }
 
