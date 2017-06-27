@@ -22,6 +22,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.{ DataStreamClient, VectorEndpointConf }
@@ -31,7 +32,7 @@ import com.actian.spark_vector.util.{ Logging, RDDUtil, ResourceUtil }
 import com.actian.spark_vector.sql.VectorRelation
 
 /** Utility object that defines methods for loading data into Vector */
-private[vector] object Vector extends Logging {
+private[spark_vector] object Vector extends Logging {
   import VectorUtil._
   import RDDUtil._
   import ResourceUtil._
@@ -128,7 +129,7 @@ private[vector] object Vector extends Logging {
    *
    * @return an <code>RDD[Row]</code> for the unload operation
    */
-  def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = {
+  def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[InternalRow] = {
     val reader = new DataStreamReader(readConf, tableColumnMetadata)
     val scanRDD = new ScanRDD(sc, readConf, reader.read _)
     scanRDD
@@ -155,7 +156,7 @@ private[vector] object Vector extends Logging {
     tableColumnMetadata: Seq[ColumnMetadata],
     selectColumns: String = "*",
     whereClause: String = "",
-    whereParams: Seq[Any] = Nil): RDD[Row] = {
+    whereParams: Seq[Any] = Nil): RDD[InternalRow] = {
     val client = new DataStreamClient(vectorProps, table)
     closeResourceOnFailure(client) {
       client.prepareUnloadDataStreams

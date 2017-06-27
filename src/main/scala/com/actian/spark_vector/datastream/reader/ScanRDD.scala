@@ -20,13 +20,14 @@ import scala.language.reflectiveCalls
 import org.apache.spark.{ Partition, SparkContext, TaskContext }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[Row](sc, Nil) {
+class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[InternalRow](sc, Nil) {
   /** Closed state for the datastream connection */
   @volatile private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */
@@ -36,12 +37,12 @@ class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointC
 
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
 
-  override def compute(split: Partition, taskContext: TaskContext): Iterator[Row] = {
+  override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
     taskContext.addTaskCompletionListener { _ => closeAll }
     /** @todo Once we move to Spark 1.6 we can also addTaskFailureListener with closeAll */
     closed = false
     it = read(split.index)
-    it.asInstanceOf[Iterator[Row]]
+    it
   }
 
   private def closeAll(): Unit = if (!closed) {

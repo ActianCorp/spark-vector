@@ -124,7 +124,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
   private var rightPos = 0
 
   /** This stores the `classTag[T]` */
-  val valueType = col.valueTypeOut
+  def valueType = col.valueTypeOut
 
   private def isEmpty = leftPos >= rightPos
 

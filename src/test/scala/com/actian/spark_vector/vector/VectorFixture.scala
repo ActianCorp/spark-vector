@@ -78,6 +78,9 @@ trait VectorFixture {
   def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Row], StructType) =
     createAdmitRDD(sparkContext, admitDataWithNulls)
 
+  def admitDataStatements(): Seq[Any] = 
+    admitData.map(_.mkString("(", ",", ")"))
+
   private val admitData = Seq(
     Row(0, 0.toShort, 380.toShort, 3.61.toFloat, 3.toShort),
     Row(1, 1.toShort, 660.toShort, 3.67.toFloat, 3.toShort),
