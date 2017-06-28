@@ -41,7 +41,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     logDebug("insert(): data: " + data)
-    require(data.schema == this.schema, "data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+    require(data.schema == this.schema, s"data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
 
     if (overwrite) {
       VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${quote(tableRef.table)}") }

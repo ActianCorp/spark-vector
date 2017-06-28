@@ -23,7 +23,7 @@ import scala.reflect.{ classTag, ClassTag }
 
 import org.apache.spark.sql.types.Decimal
 import org.apache.spark.unsafe.types.UTF8String
-import org.apache.spark.sql.catalyst.expressions.SpecificMutableRow
+import org.apache.spark.sql.catalyst.expressions.SpecificInternalRow
 import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.Profiling
@@ -38,7 +38,7 @@ class RowReader(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
 
   implicit val accs = profileInit("reading from datastream", "columns buffering")
 
-  private val row = new SpecificMutableRow(tableColumnMetadata.map(_.dataType))
+  private val row = new SpecificInternalRow(tableColumnMetadata.map(_.dataType))
   private val numColumns = tableColumnMetadata.size
   private var numTuples = 0
 
@@ -80,7 +80,7 @@ class RowReader(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
    * A list of calls (one per column buffer) to set typed values in the corresponding row's column position, and performing the necessary type casts
    * while reading the needed value from its `ReadColumnBuffer[_]`.
    *
-   * @note Since read column buffers are exposed only through the `ReadColumnBuffer[_]` interface and we need to set the `SpecificMutableRow` with appropriate
+   * @note Since read column buffers are exposed only through the `ReadColumnBuffer[_]` interface and we need to set the `SpecificInternalRow` with appropriate
    * typed values, we make use of runtime reflection to determine the type of the generic parameter of the `ReadColumnBuffer[_]`
    */
   private def setValFromColumnBuffer(col: Int) = columnBufs(col).valueType match {

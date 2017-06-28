@@ -29,7 +29,7 @@ object OrcRead {
    */
   def registerTempTable(options: UserOptions, sqlContext: SQLContext): String = {
     val table = s"orc_${options.vector.targetTable}_${System.currentTimeMillis}"
-    sqlContext.read.format("orc").load(options.general.sourceFile).registerTempTable(table)
+    sqlContext.read.format("orc").load(options.general.sourceFile).createOrReplaceTempView(table)
     s"select ${colsSelectStatement(options.general.colsToLoad)} from ${sparkQuote(table)}"
   }
 }

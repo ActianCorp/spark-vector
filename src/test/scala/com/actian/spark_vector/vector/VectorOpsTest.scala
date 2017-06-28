@@ -328,6 +328,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
 
   test("generate table/filtered select on a subset of columns") { fixture =>
     val schema = StructTypeUtil.createSchema("i0" -> IntegerType, "i1" -> IntegerType, "i2" -> IntegerType)
+    val schemafiltered = StructTypeUtil.createSchema("i0" -> IntegerType, "i2" -> IntegerType)
     val data = Seq(Row(42, 43, 44), Row(43, 44, 45), Row(44, 45, 46))
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
@@ -335,7 +336,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val expectedData = Seq(Seq[Any](44, 46))
       val sqlContext = new SQLContext(fixture.sc)
       val tableRef = TableRef(connectionProps, tableName)
-      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
+      val vectorRel = new VectorRelation(tableRef, Some(schemafiltered), sqlContext, Map.empty) {
         override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
           Vector.unloadVector(sqlContext.sparkContext, tableName, connectionProps, Seq(ColumnMetadata("i0", "integer4", false, 10, 0),
             ColumnMetadata("i2", "integer4", false, 10, 0)), "i0, i2", "where i0 > ? and i1 > ?", Seq(43, 44)).asInstanceOf[RDD[Row]]
@@ -377,6 +378,80 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val rdd = fixture.sc.parallelize(Seq.empty[Row])
       a[VectorException] should be thrownBy {
         rdd.loadVector(schema, connectionProps, tableName, createTable = true)
+      }
+    }
+  }
+
+  test("dataframe reader") { fixture =>
+    val sqlContext = new SQLContext(fixture.sc)
+    val spark = sqlContext.sparkSession
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createLoadAdmitTable) { tableName =>
+      val df = spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val data = df.collect().sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val (expectedrdd, schema) = admitRDD(fixture.sc)
+      val expected = expectedrdd.collect.map(_.toSeq).toSeq
+      data.equals(expected) should be(true)
+    }
+  }
+
+  test("dataframe reader alternate") { fixture =>
+    val sqlContext = new SQLContext(fixture.sc)
+    val spark = sqlContext.sparkSession
+    val props = new java.util.Properties()
+    withTable(createLoadAdmitTable) { tableName =>
+      val df = spark.read.vector(connectionProps, tableName, props)
+      val data = df.collect().sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val (expectedrdd, schema) = admitRDD(fixture.sc)
+      val expected = expectedrdd.collect.map(_.toSeq).toSeq
+      data.equals(expected) should be(true)
+    }
+  }
+
+  test("dataframe writer") { fixture =>
+    val sqlContext = new SQLContext(fixture.sc)
+    val spark = sqlContext.sparkSession
+    val (rdd, schema) = admitRDD(fixture.sc)
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createAdmitTable) { tableName =>
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val actualschema = StructType(colmetadata.map(_.structField))
+      val df = spark.createDataFrame(rdd, actualschema)
+      df.write.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      
+      VectorJDBC.withJDBC(connectionProps) { cxn =>
+        cxn.querySingleResult(s"select count(*) from $tableName") should be(Some(6))
+        cxn.querySingleResult(s"select sum(a_admit) from $tableName") should be(Some(4))
+        cxn.querySingleResult(s"select sum(a_gre) from $tableName") should be(Some(3760))
+        cxn.querySingleResult(s"select sum(a_gpa) from $tableName") should be(Some(20.4f))
+        cxn.querySingleResult(s"select sum(a_rank) from $tableName") should be(Some(17))
+      }
+    }
+  }
+
+  test("dataframe writer alternate") { fixture =>
+    val sqlContext = new SQLContext(fixture.sc)
+    val spark = sqlContext.sparkSession
+    val (rdd, schema) = admitRDD(fixture.sc)
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createAdmitTable) { tableName =>
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val actualschema = StructType(colmetadata.map(_.structField))
+      val df = spark.createDataFrame(rdd, actualschema)
+      df.write.vector(connectionProps, tableName, props)
+      
+      VectorJDBC.withJDBC(connectionProps) { cxn =>
+        cxn.querySingleResult(s"select count(*) from $tableName") should be(Some(6))
+        cxn.querySingleResult(s"select sum(a_admit) from $tableName") should be(Some(4))
+        cxn.querySingleResult(s"select sum(a_gre) from $tableName") should be(Some(3760))
+        cxn.querySingleResult(s"select sum(a_gpa) from $tableName") should be(Some(20.4f))
+        cxn.querySingleResult(s"select sum(a_rank) from $tableName") should be(Some(17))
       }
     }
   }

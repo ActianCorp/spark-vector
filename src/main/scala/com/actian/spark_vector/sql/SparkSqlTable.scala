@@ -29,7 +29,7 @@ case class HiveTable(override val tableName: String) extends SparkSqlTable {
 }
 
 class TempTable private (override val tableName: String, df: DataFrame) extends SparkSqlTable {
-  private def register(): Unit = df.registerTempTable(tableName)
+  private def register(): Unit = df.createOrReplaceTempView(tableName)
   override def close(): Unit = df.sqlContext.dropTempTable(tableName);
 }
 

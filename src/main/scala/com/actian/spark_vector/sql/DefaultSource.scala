@@ -16,13 +16,15 @@
 package com.actian.spark_vector.sql
 
 import org.apache.spark.sql.{ DataFrame, SQLContext, SaveMode }
-import org.apache.spark.sql.sources.{ BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider }
+import org.apache.spark.sql.sources.{ BaseRelation, CreatableRelationProvider, DataSourceRegister, RelationProvider, SchemaRelationProvider }
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.VectorJDBC
 
-class DefaultSource extends RelationProvider with SchemaRelationProvider with CreatableRelationProvider with Logging {
+class DefaultSource extends DataSourceRegister with RelationProvider with SchemaRelationProvider with CreatableRelationProvider with Logging {
+  override def shortName(): String = "vector"
+
   override def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation =
     VectorRelation(TableRef(parameters), sqlContext, parameters)
 
