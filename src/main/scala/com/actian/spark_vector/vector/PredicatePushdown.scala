@@ -32,7 +32,7 @@ import com.actian.spark_vector.vector.VectorDataType._
 object PredicatePushdown extends Logging {
 
   /** Says whether or not Predicate Pushdown is supported on columns of the given `vectorDataType`. */
-  def typeIsSafeForPredPD(vectorDataType: EnumVal): Boolean = vectorDataType match {
+  def typeIsSafeForPredPD(vectorDataType: VectorTypeEnum): Boolean = vectorDataType match {
     /* Due to current Vector limitations, ValueRanges can't be produced for time[stamp]s with time zone,
      * so we couldn't properly test this. As such, we're temporarily disabling this optimization, just to be safe. */
     case TimeTZType | TimestampTZType => false
@@ -44,7 +44,7 @@ object PredicatePushdown extends Logging {
   def typeIsSafeForPredPD(vectorTypeName: String): Boolean = typeIsSafeForPredPD(VectorDataType(vectorTypeName))
 
   /** Converts the given `vectorLiteral` to the corresponding Spark literal, according to the specified `VectorDataType`. */
-  def vectorLiteralToSparkLiteral(vectorLiteral: String, vectorDataType: EnumVal, sparkContext: SparkContext): String =
+  def vectorLiteralToSparkLiteral(vectorLiteral: String, vectorDataType: VectorTypeEnum, sparkContext: SparkContext): String =
     vectorDataType match {
       case MoneyType => {
         val vectorMoneyLiteralPrefix = "$ "

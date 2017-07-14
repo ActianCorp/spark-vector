@@ -15,33 +15,63 @@
  */
 package com.actian.spark_vector.vector
 
-object VectorDataType {
-  sealed trait EnumVal
-  case object BooleanType extends EnumVal
-  case object ByteType extends EnumVal
-  case object ShortType extends EnumVal
-  case object IntegerType extends EnumVal
-  case object BigIntType extends EnumVal
-  case object FloatType extends EnumVal
-  case object DoubleType extends EnumVal
-  case object MoneyType extends EnumVal
-  case object DecimalType extends EnumVal
-  case object CharType extends EnumVal
-  case object NcharType extends EnumVal
-  case object VarcharType extends EnumVal
-  case object NvarcharType extends EnumVal
-  case object DateType extends EnumVal
-  case object TimeType extends EnumVal
-  case object TimeLTZType extends EnumVal
-  case object TimeTZType extends EnumVal
-  case object TimestampType extends EnumVal
-  case object TimestampLTZType extends EnumVal
-  case object TimestampTZType extends EnumVal
-  case object IntervalYearToMonthType extends EnumVal
-  case object IntervalDayToSecondType extends EnumVal
-  case object NotSupported extends EnumVal
+import org.apache.spark.sql.{ types => sqltype }
 
-  def apply(name: String): EnumVal = name match {
+object VectorDataType {
+  sealed trait VectorTypeEnum {
+    val vectorSQLtype: String
+  }
+  
+  case object BooleanType extends VectorTypeEnum { val vectorSQLtype = "boolean" }
+  case object ByteType extends VectorTypeEnum { val vectorSQLtype = "integer1" }
+  case object ShortType extends VectorTypeEnum { val vectorSQLtype = "smallint" }
+  case object IntegerType extends VectorTypeEnum { val vectorSQLtype = "integer" }
+  case object BigIntType extends VectorTypeEnum { val vectorSQLtype = "bigint" }
+  case object FloatType extends VectorTypeEnum { val vectorSQLtype = "float4" }
+  case object DoubleType extends VectorTypeEnum { val vectorSQLtype = "float" }
+  case object MoneyType extends VectorTypeEnum { val vectorSQLtype = "money" }
+  case object DecimalType extends VectorTypeEnum { val vectorSQLtype = "decimal" }
+  case object CharType extends VectorTypeEnum { val vectorSQLtype = "char" }
+  case object NcharType extends VectorTypeEnum { val vectorSQLtype = "nchar" }
+  case object VarcharType extends VectorTypeEnum { val vectorSQLtype = "varchar" }
+  case object NvarcharType extends VectorTypeEnum { val vectorSQLtype = "nvarchar" }
+  case object DateType extends VectorTypeEnum { val vectorSQLtype = "ansidate" }
+  case object TimeType extends VectorTypeEnum { val vectorSQLtype = "time without time zone" }
+  case object TimeLTZType extends VectorTypeEnum { val vectorSQLtype = "time with local time zone" }
+  case object TimeTZType extends VectorTypeEnum { val vectorSQLtype = "time with time zone" }
+  case object TimestampType extends VectorTypeEnum { val vectorSQLtype = "timestamp without time zone" }
+  case object TimestampLTZType extends VectorTypeEnum { val vectorSQLtype = "timestamp with local time zone" }
+  case object TimestampTZType extends VectorTypeEnum { val vectorSQLtype = "timestamp with time zone" }
+  case object IntervalYearToMonthType extends VectorTypeEnum { val vectorSQLtype = "interval year to month" }
+  case object IntervalDayToSecondType extends VectorTypeEnum { val vectorSQLtype = "interval day to second" }
+  case object NotSupported extends VectorTypeEnum { val vectorSQLtype = "" }
+  
+  def vectorDataTypes: List[VectorTypeEnum] = List(
+      BooleanType,
+      ByteType,
+      ShortType,
+      IntegerType,
+      BigIntType,
+      FloatType,
+      DoubleType,
+      MoneyType,
+      DecimalType,
+      CharType,
+      NcharType,
+      VarcharType,
+      NvarcharType,
+      DateType,
+      TimeType,
+      TimeLTZType,
+      TimeTZType,
+      TimestampType,
+      TimestampLTZType,
+      TimestampTZType,
+      IntervalYearToMonthType,
+      IntervalDayToSecondType
+      )
+
+  def apply(name: String): VectorTypeEnum = name match {
     case "tinyint" | "integer1" | "schr" | "uchr" => ByteType
     case "smallint" | "integer2" | "ssht" | "usht" => ShortType
     case "integer" | "integer4" | "int" | "sint" | "uint" => IntegerType
@@ -66,4 +96,19 @@ object VectorDataType {
     case "interval day to second" | "intervalds" => IntervalDayToSecondType
     case _ => NotSupported
   }
+  
+  def apply(sqlType: sqltype.DataType): VectorTypeEnum = sqlType match {
+    case sqltype.BooleanType => BooleanType
+    case sqltype.ByteType => ByteType
+    case sqltype.ShortType => ShortType
+    case sqltype.IntegerType => IntegerType
+    case sqltype.LongType => BigIntType
+    case sqltype.FloatType => FloatType
+    case sqltype.DoubleType => DoubleType
+    case sqltype.DecimalType() => DecimalType
+    case sqltype.DateType => DateType
+    case sqltype.TimestampType => TimestampTZType
+    case _ => VarcharType
+  }
+  
 }

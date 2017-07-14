@@ -169,7 +169,7 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
 private[colbuffer] trait ColumnBufferBuilder {
   protected def isInBounds(value: Int, bounds: (Int, Int)): Boolean = (bounds._1 <= value && value <= bounds._2)
 
-  protected def ofDataType(t: VectorDataType.EnumVal): PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
+  protected def ofDataType(t: VectorDataType.VectorTypeEnum): PartialFunction[ColumnBufferBuildParams, ColumnBufferBuildParams] = {
     case p if VectorDataType(p.tpe) == t => p
   }
 

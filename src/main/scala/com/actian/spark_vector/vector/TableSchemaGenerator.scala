@@ -18,19 +18,15 @@ package com.actian.spark_vector.vector
 import org.apache.spark.sql.types._
 
 object TableSchemaGenerator {
-  /** TODO: Ensure consistency with ColumnMetadata mappings */
-  private def sqlTypeName(dataType: DataType): String = dataType match {
-    case BooleanType => "boolean"
-    case ByteType => "integer1"
-    case ShortType => "smallint"
-    case IntegerType => "integer"
-    case LongType => "bigint"
-    case FloatType => "float4"
-    case DoubleType => "float"
-    case dec: DecimalType => s"decimal(${dec.precision}, ${dec.scale})"
-    case DateType => "ansidate"
-    case TimestampType => "timestamp with time zone"
-    case _ => "varchar(4096)"
+  // Get the sql type name based on the associated vector data type
+  private def sqlTypeName(dataType: DataType): String = {
+    val sqlType = VectorDataType(dataType).vectorSQLtype
+    dataType match {
+      // Add precision and scale if decimal
+      case dec: DecimalType => sqlType + s"(${dec.precision}, ${dec.scale})"
+      // Add default length of 4096 for varchar
+      case _ => if( sqlType == "varchar" ) sqlType + "(4096)" else sqlType
+    }
   }
 
   private def columnSpec(field: StructField): String =
