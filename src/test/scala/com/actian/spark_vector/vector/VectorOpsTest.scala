@@ -382,6 +382,25 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     }
   }
 
+  test("dataframe reader hang") { fixture =>
+    val sqlContext = new SQLContext(fixture.sc)
+    val spark = sqlContext.sparkSession
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createLoadAdmitTable) { tableName =>
+      val df = spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      
+      // spark only connects to 1 of the vector endpoints/partitions in this case. 
+      // until other datastream connections are opened and closed the jdbc 'insert into external table...' 
+      // statement won't return preventing closing of JDBC connection object which hangs the process.
+      // Touching each datastream when onJobEnd triggers if the jdbc has not closed prevents the issue, 
+      // however this is a naive solution that could be more efficiently implemented if safer 
+      // methods to cancel the statement were available.
+      df.head(1) // == df.show(1)
+    }
+  }
+
   test("dataframe reader") { fixture =>
     val sqlContext = new SQLContext(fixture.sc)
     val spark = sqlContext.sparkSession

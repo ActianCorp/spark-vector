@@ -47,6 +47,8 @@ class DataStreamReader(readConf: VectorEndpointConf, tableColumnMetadata: Seq[Co
     val headerInfo = connector.readConnectionHeader()
     RowReader(tableColumnMetadata, headerInfo, DataStreamTap())
   }
+  
+  def touch(partitionId: Int) = connector.withConnection(partitionId)({ _ => })
 }
 
 /** Contains helpers to read binary data, conforming to `Vector`'s binary protocol */
