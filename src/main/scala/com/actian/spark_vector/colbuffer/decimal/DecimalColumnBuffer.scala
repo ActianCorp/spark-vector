@@ -24,7 +24,7 @@ import com.actian.spark_vector.vector.VectorDataType
 
 private[colbuffer] abstract class DecimalColumnBuffer(p: ColumnBufferBuildParams, valueWidth: Int)
     extends ColumnBuffer[BigDecimal, BigDecimal](p.name, p.maxValueCount, valueWidth, valueWidth, p.nullable) {
-  override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.unscaledValue, buffer)
+  override def put(source: BigDecimal, buffer: ByteBuffer): Unit = put(source.setScale(p.scale).unscaledValue, buffer)
 
   protected def put(unscaled: BigInteger, buffer: ByteBuffer): Unit
 

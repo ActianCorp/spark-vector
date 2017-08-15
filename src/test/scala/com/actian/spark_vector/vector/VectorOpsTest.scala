@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.SparkException
-import org.apache.spark.sql.types.{ BooleanType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
+import org.apache.spark.sql.types.{ BooleanType, DecimalType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{ fromString => toUTF8 }
@@ -381,6 +381,13 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       }
     }
   }
+  
+  test("generate table/decimal constancy") { fixture =>
+    val schema = StructTypeUtil.createSchema("i" -> DecimalType(38, 12), "d" -> DecimalType(38, 12))
+    val data = Seq(Row(new java.math.BigDecimal("123456789876543210"), 
+                       new java.math.BigDecimal("123456.78")))
+    assertTableGeneration(fixture, schema, data, Map("i" -> "i", "d" -> "d"))
+  }
 
   test("dataframe reader hang") { fixture =>
     val sqlContext = new SQLContext(fixture.sc)
@@ -534,6 +541,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                     case (act: Date, exp: Date) => Math.abs(act.getTime - exp.getTime) / MillisecondsInDay == 0
                     case (act: Double, exp: Double) => Math.abs(act - exp) < 1E20
                     case (act: Float, exp: Float) => Math.abs(act - exp) < 1E20.toFloat
+                    case (act: java.math.BigDecimal, exp: java.math.BigDecimal) => act.compareTo(exp) == 0
                     case (act, exp) => act == exp
                   })
               }.isEmpty
