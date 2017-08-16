@@ -56,8 +56,9 @@ object DataGens {
     digits <- listOfN(12, choose(0, 9))
   } yield s"${if (neg) "-" else ""}1.${digits.mkString("")}".toDouble
 
-  val decimalGen: Gen[BigDecimal] = arbitrary[scala.BigDecimal].filter(bd =>
-    bd.scale <= 12 && bd.precision <= 38 && Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
+  val decimalGen: Gen[BigDecimal] = arbitrary[scala.BigDecimal].retryUntil(bd =>
+    bd.scale <= 12 && bd.scale >= 0 && bd.precision <= 26 && 
+    Try { new BigDecimal(bd.toString) }.isSuccess).map(bd => new BigDecimal(bd.toString))
 
   private val dateValueGen: Gen[Long] =
     choose(-3600L * 1000 * 24 * 100000L, 3600L * 1000 * 24 * 100000L)
