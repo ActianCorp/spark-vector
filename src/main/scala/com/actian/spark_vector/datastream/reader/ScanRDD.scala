@@ -50,9 +50,9 @@ class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointC
     for ( p <- 0 to readConf.vectorEndpoints.size - 1) {
       try {
         logDebug(s"Touching partition $p datastream")
-        reader.touch(p) //Need to ensure all the streams have been 
+        reader.touch(p) //Need to ensure all the unused streams have been closed
       } catch {
-        case e: Exception => logDebug(e.toString())
+        case e: Exception => logDebug("Exception while closing unused vector transfer stream"+e.toString())
       }
     }
   }

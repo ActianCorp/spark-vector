@@ -43,10 +43,20 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
     ret
   }
 
-  private def prepareLoadSql(table: String) = s"prepare for x100 stream into $table"
+  private def prepareLoadSql(table: String, partitions: Int) = {
+    var streams = ""
+    if(partitions > 0) streams = s" with streams=$partitions"
+    s"prepare for x100 stream into $table$streams"
+  }
+
   private def startLoadSql(table: String) = s"copy table $table from external"
 
-  private def prepareUnloadSql(table: String) = s"prepare for x100 stream from $table"
+  private def prepareUnloadSql(table: String, partitions: Int) = {
+    var streams = ""
+    if(partitions > 0) streams = s" with streams=$partitions"
+    s"prepare for x100 stream from $table$streams"
+  }
+
   private def startUnloadSql(selectQuery: String) = s"insert into external table $selectQuery"
 
   /** Execute a sql (statement) within a future task */
@@ -81,8 +91,8 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   })
 
   /** Prepare loading/unloading data to Vector. These steps may not be necessary anymore in the future */
-  def prepareLoadDataStreams: Unit = jdbc.executeStatement(prepareLoadSql(table))
-  def prepareUnloadDataStreams: Unit = jdbc.executeStatement(prepareUnloadSql(table))
+  def prepareLoadDataStreams(partitions: Int = 0): Unit = jdbc.executeStatement(prepareLoadSql(table, partitions))
+  def prepareUnloadDataStreams(partitions: Int = 0): Unit = jdbc.executeStatement(prepareUnloadSql(table, partitions))
 
   /**
    * Obtain the information about how many `DataStream`s Vector expects together with

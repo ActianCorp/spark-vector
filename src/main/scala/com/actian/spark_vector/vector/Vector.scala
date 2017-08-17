@@ -17,6 +17,7 @@ package com.actian.spark_vector.vector
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.duration.SECONDS
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
@@ -81,7 +82,8 @@ private[spark_vector] object Vector extends Logging {
     preSQL: Option[Seq[String]],
     postSQL: Option[Seq[String]],
     fieldMap: Option[Map[String, String]],
-    createTable: Boolean = false): Long = {
+    createTable: Boolean = false,
+    partitions: Int = 0): Long = {
     val client = new DataStreamClient(vectorProps, table)
     closeResourceAfterUse(client) {
       val optCreateTableSQL = Some(createTable).filter(identity).map(_ => TableSchemaGenerator.generateTableSQL(table, rddSchema))
@@ -92,7 +94,7 @@ private[spark_vector] object Vector extends Logging {
 
       preSQL.foreach(_.foreach(client.getJdbc.executeStatement))
 
-      client.prepareLoadDataStreams
+      client.prepareLoadDataStreams(partitions)
       val writeConf = client.getVectorEndpointConf
       val result = client.startLoad
       load(inputRDD, tableColumnMetadata, writeConf)
@@ -156,10 +158,11 @@ private[spark_vector] object Vector extends Logging {
     tableColumnMetadata: Seq[ColumnMetadata],
     selectColumns: String = "*",
     whereClause: String = "",
-    whereParams: Seq[Any] = Nil): RDD[InternalRow] = {
+    whereParams: Seq[Any] = Nil,
+    partitions: Int = 0): RDD[InternalRow] = {
     val client = new DataStreamClient(vectorProps, table)
     closeResourceOnFailure(client) {
-      client.prepareUnloadDataStreams
+      client.prepareUnloadDataStreams(partitions)
       val readConf = client.getVectorEndpointConf
       val scanRDD = unloadVector(sc, tableColumnMetadata, readConf)
       assert(whereClause.isEmpty == whereParams.isEmpty)
@@ -168,11 +171,15 @@ private[spark_vector] object Vector extends Logging {
       sc.addSparkListener(new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
-          if (!unloadStmtFuture.isCompleted) 
-            scanRDD.asInstanceOf[ScanRDD].touchDatastreams()
-          client.close
-          ended = true
-          logDebug(s"Unload job ended @ ${job.time}.")
+          try {
+            Await.result(unloadStmtFuture, Duration(10, SECONDS))
+          } catch {
+            case e: Exception => scanRDD.asInstanceOf[ScanRDD].touchDatastreams()
+          } finally {
+            client.close
+            ended = true
+            logDebug(s"Unload job ended @ ${job.time}.")
+          }
         }
       })
       scanRDD
