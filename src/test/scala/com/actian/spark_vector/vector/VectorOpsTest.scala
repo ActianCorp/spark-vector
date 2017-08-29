@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.SparkException
-import org.apache.spark.sql.types.{ BooleanType, DecimalType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
+import org.apache.spark.sql.types.{ BooleanType, DateType, DecimalType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{ fromString => toUTF8 }
@@ -388,6 +388,13 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                        new java.math.BigDecimal("123456.78")))
     assertTableGeneration(fixture, schema, data, Map("i" -> "i", "d" -> "d"))
   }
+  
+  test("generate table/date constancy") { fixture =>
+    val schema = StructTypeUtil.createSchema("t" -> DateType)
+    var data = for (i <- -1800 to 200 by 10; j <- 0 to 11; k <- 1 to 28 by 9) yield Row(new Date(i, j, k))
+    data = data ++ Seq(Row(new Date(-1899, 0, 1)), Row(new Date(8099, 11, 31)))
+    assertTableGeneration(fixture, schema, data, Map("t" -> "t"))
+  }
 
   test("dataframe reader hang") { fixture =>
     val sqlContext = new SQLContext(fixture.sc)
@@ -560,7 +567,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     val rdd = fixture.sc.parallelize(expectedData)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(dataType, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
-
       var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName")).map(Row.fromSeq)
       compareResults(resultsJDBC, expectedData, mappedIndices)
 
