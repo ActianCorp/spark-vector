@@ -25,17 +25,37 @@ import com.actian.spark_vector.vector.VectorDataType
 
 private class DateColumnBuffer(p: ColumnBufferBuildParams) extends ColumnBuffer[Date, Int](p.name, p.maxValueCount, DateSize, DateSize, p.nullable) {
   private final val DaysBeforeEpoch = 719528
-  private val cal = Calendar.getInstance
-  private val calIsNotUTC = cal.getTimeZone != TimeZone.getTimeZone("UTC")
+  private final val JulianBoundary = 578101
+  private final val CenturyDays = 36524
 
   override def put(source: Date, buffer: ByteBuffer): Unit = {
-    if (calIsNotUTC) {
-      TimeConversion.convertLocalDateToUTC(source, cal)
-    }
-    buffer.putInt((source.getTime() / MillisecondsInDay + DaysBeforeEpoch).toInt)
+    val cal = Calendar.getInstance
+    cal.set(source.getYear, source.getMonth, source.getDate())
+    val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
+    val year = source.getYear + 1900
+    // Need to convert to proleptic gregorian calendar date
+    var days = (year * 365) + ((year - 1) / 4) - (year / 100) + (year / 400) + dayOfYear
+    // Need to adjust for error in Jan-Feb of certain century years
+    if (year % 100 == 0 && year % 400 != 0 && dayOfYear < 61) days += 1
+    buffer.putInt(days)
   }
 
-  override def get(buffer: ByteBuffer): Int = buffer.getInt() - DaysBeforeEpoch
+  override def get(buffer: ByteBuffer): Int = {
+    val days = buffer.getInt()
+    var offset = 0
+    // Need to convert from proleptic gregorian to julian if date before 1582/10/14
+    if (days < JulianBoundary) {
+      val n = (days - 366) / CenturyDays
+      offset = n  - (n / 4 + 2)
+      // Need to adjust for error in Jan-Feb of certain century years
+      val cdays = days % CenturyDays
+      val qdays = days % (CenturyDays * 4)
+      if (qdays > 365 && cdays < 366 && cdays > (59 + n / 4)) {
+        offset += 1
+      }
+    }
+    days - DaysBeforeEpoch + offset
+  }
 }
 
 /** Builds a `ColumnBuffer` object for `ansidate` types. */
