@@ -280,6 +280,13 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     })
   }
 
+  test("generate table/all types", RandomizedTest) { fixture =>    
+    forAll(DataGens.allDataGen, minSuccessful(20))(typedData => {
+      val (dataType, data) = (typedData.dataType, typedData.data)
+      assertTableGeneration(fixture, dataType, data, Map.empty)
+    })
+  }
+
   test("generate table/constant column") { fixture =>
     // FIXME: this is a hackish test to verify unload with a ct column (although this case is not often
     // for simple/basic queries, but more complex ones in ExternalScans) using two different user

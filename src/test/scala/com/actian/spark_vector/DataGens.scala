@@ -35,7 +35,7 @@ object DataGens {
   import org.scalacheck.Gen._
   import scala.collection.JavaConverters._
 
-  val DefaultMaxRows = 2049
+  val DefaultMaxRows = 500
 
   val booleanGen: Gen[Boolean] = arbitrary[Boolean]
 
@@ -69,9 +69,9 @@ object DataGens {
   val timestampGen: Gen[jsql.Timestamp] = for (ms <- dateValueGen) yield new jsql.Timestamp(ms)
 
   // FIXME allow empty strings (and filter externally for vector tests)
-  // @note we donnot allow invalid UTF8 chars to be generated (from D800 to DFFF incl)
+  // @note we do not allow invalid UTF8 chars to be generated (from D800 to DFFF incl)
   val stringGen: Gen[String] =
-    arbitrary[String].map(s => if (s != null) s.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF')) else s).filter(s => s == null || !s.isEmpty)
+    listOfN(choose(1, 512).sample.getOrElse(1), arbitrary[Char]).map(_.mkString).map( s => s.filter(c => Character.isDefined(c) && c != '\u0000' && (c < '\uD800' || c > '\uDFFF')) )
 
   def valueGen(dataType: DataType): Gen[Any] = dataType match {
     case BooleanType => booleanGen
@@ -107,4 +107,10 @@ object DataGens {
     schema <- schemaGen
     data <- dataGenFor(schema, DefaultMaxRows)
   } yield TypedData(schema, data)
+  
+  val allDataGen: Gen[TypedData] = for {
+    schema <- allTypesSchemaGen
+    data <- dataGenFor(schema, DefaultMaxRows)
+  } yield TypedData(schema, data)
+  
 }

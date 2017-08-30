@@ -31,18 +31,21 @@ object DataTypeGens {
     scale <- choose(0, precision - 1)
   } yield DecimalType(precision, scale)
 
-  val dataTypeGen: Gen[DataType] = oneOf(
-    const(BooleanType),
-    const(ByteType),
-    const(ShortType),
-    const(IntegerType),
-    const(LongType),
-    const(FloatType),
-    const(DoubleType),
-    const(DateType),
-    const(TimestampType),
-    const(StringType),
-    const(DecimalType(38, 12)))
+  val dataTypeList: List[DataType] = List(
+      BooleanType,
+      ByteType,
+      ShortType,
+      IntegerType,
+      LongType,
+      FloatType,
+      DoubleType,
+      DateType,
+      TimestampType,
+      StringType,
+      DecimalType(38, 12)
+      )
+      
+  val dataTypeGen: Gen[DataType] = oneOf(dataTypeList)
 
   val fieldGen: Gen[StructField] = for {
     name <- identifier
@@ -57,4 +60,11 @@ object DataTypeGens {
     nullables <- listOfN(numFields, arbitrary[Boolean])
   } yield StructType(for (idx <- 0 until numFields) yield StructField(
     uniqueFieldNames(idx), fieldTypes(idx), nullables(idx)))
+  
+  val allTypesSchemaGen: Gen[StructType] = for {
+    numfields <- dataTypeList.size
+    uniqueFieldNames <- listOfN(numfields, identifier.map(_.take(MaxColumnNameLen))).retryUntil(f => f.size == f.distinct.size)
+    fieldTypes <- pick(numfields, dataTypeList)
+  } yield StructType(for (idx <- 0 until numfields) yield StructField(
+    uniqueFieldNames(idx), fieldTypes(idx), false))
 }
