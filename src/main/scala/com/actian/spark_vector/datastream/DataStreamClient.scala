@@ -54,7 +54,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
     val f = Future { if (params.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, params) }
     f onFailure {
       case t =>
-        logError(s"Query ${sql} has failed.", t)
+        logDebug(s"Query ${sql} has failed.", t)
         // FIXME: use rollback() instead when Vector will actually close the DataStreams after unrolling
         close()
     }

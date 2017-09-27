@@ -394,6 +394,19 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     data = data ++ Seq(Row(new Date(-1899, 0, 1)), Row(new Date(8099, 11, 31)))
     assertTableGeneration(fixture, schema, data, Map("t" -> "t"))
   }
+  
+  test("dataframe reader hang") { fixture =>
+    withTable(createLoadAdmitTable) { tableName =>
+      val schema = StructType(VectorUtil.getTableSchema(connectionProps, tableName).map(_.structField))
+      val sqlContext = new SQLContext(fixture.sc)
+      val tableRef = TableRef(connectionProps, tableName)
+      val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty[String, String])
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      
+      // Test should not hang
+      dataframe.head(1) // == dataframe.show(1)
+    }
+  }
 
   test("many runs do not slow down") { fixture =>
     withTable(createAdmitTable) { tableName =>

@@ -27,7 +27,7 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, read: Int => RowReader) extends RDD[InternalRow](sc, Nil) {
+class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointConf, reader: DataStreamReader) extends RDD[InternalRow](sc, Nil) {
   /** Closed state for the datastream connection */
   @volatile private var closed = false
   /** Custom row iterator for reading `DataStream`s in row format */
@@ -41,8 +41,19 @@ class ScanRDD(@transient private val sc: SparkContext, readConf: VectorEndpointC
     taskContext.addTaskCompletionListener { _ => closeAll }
     /** @todo Once we move to Spark 1.6 we can also addTaskFailureListener with closeAll */
     closed = false
-    it = read(split.index)
+    it = reader.read(split.index)
     it
+  }
+  
+  def touchDatastreams() {
+    for ( p <- 0 to readConf.vectorEndpoints.size - 1 ) {
+      try {
+        logDebug(s"Touching partition $p datastream")
+        reader.touch(p) //Need to ensure all the streams have been closed
+      } catch {
+        case e: Exception => logDebug(e.toString())
+      }
+    }
   }
 
   private def closeAll(): Unit = if (!closed) {

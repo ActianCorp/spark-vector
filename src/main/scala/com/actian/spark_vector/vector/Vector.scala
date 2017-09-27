@@ -131,7 +131,7 @@ private[spark_vector] object Vector extends Logging {
    */
   def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[InternalRow] = {
     val reader = new DataStreamReader(readConf, tableColumnMetadata)
-    val scanRDD = new ScanRDD(sc, readConf, reader.read _)
+    val scanRDD = new ScanRDD(sc, readConf, reader)
     scanRDD
   }
 
@@ -164,10 +164,12 @@ private[spark_vector] object Vector extends Logging {
       val scanRDD = unloadVector(sc, tableColumnMetadata, readConf)
       assert(whereClause.isEmpty == whereParams.isEmpty)
       var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
-      client.startUnload(selectQuery, whereParams)
-      sc.addSparkListener(new SparkListener() {
+      val unloadStmtFuture = client.startUnload(selectQuery, whereParams)
+      sc.addSparkListener( new SparkListener() {
         private var ended = false
         override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
+          if (!unloadStmtFuture.isCompleted)
+            scanRDD.asInstanceOf[ScanRDD].touchDatastreams()
           client.close
           ended = true
           logDebug(s"Unload job ended @ ${job.time}.")
