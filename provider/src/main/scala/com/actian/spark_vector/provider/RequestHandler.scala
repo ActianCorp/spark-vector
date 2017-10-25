@@ -19,6 +19,7 @@ import java.nio.channels.SocketChannel
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.compat.Platform.EOL
 import scala.util.{ Failure, Success }
 
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, SaveMode }
@@ -64,7 +65,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   } flatMap { job =>
     logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")
     /** An accumulator to ensure parts are run sequentially */
-    var jobPartAccum = Future()
+    var jobPartAccum: Future[Unit] = null
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
         part.operator_type match {
@@ -103,12 +104,12 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
         val message = getMessage(e)
         logInfo(s"Job tr_id:${job.transaction_id}, query_id:${job.query_id} failed for part ${part.part_id}. Reason: $message")
         logDebug(s"tr_id:${job.transaction_id}, query_id:${job.query_id}", cause)
-        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = message, stacktrace = Some(cause.getStackTraceString)))))
+        JobResult(job.transaction_id, job.query_id, error = Some(Seq(JobMsg(Some(part.part_id), msg = message, stacktrace = Some(cause.getStackTrace().mkString("", EOL, EOL))))))
       }
       case _ => {
         val message = getMessage(cause)
         logError("Job failed while receiving/parsing json", cause)
-        JobResult(-1, -1, error = Some(Seq(JobMsg(msg = message, stacktrace = Some(cause.getStackTraceString)))))
+        JobResult(-1, -1, error = Some(Seq(JobMsg(msg = message, stacktrace = Some(cause.getStackTrace().mkString("", EOL, EOL))))))
       }
     }
     writeJobResult(result)
@@ -158,7 +159,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       case _ => {
         val df = format match {
           case "parquet" => sqlContext.read.options(options).parquet(part.external_reference)
-          case "csv" => sqlContext.read.options(options).format("com.databricks.spark.csv").load(part.external_reference)
+          case "csv" => sqlContext.read.options(options).csv(part.external_reference)
           case "orc" => sqlContext.read.options(options).orc(part.external_reference)
           case _ => sqlContext.read.options(options).format(format).load(part.external_reference)
         }
@@ -201,7 +202,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     val mode = SaveMode.Append
     format match {
       case "parquet" => df.write.mode(mode).options(options).parquet(part.external_reference)
-      case "csv" => df.write.mode(mode).options(options).format("com.databricks.spark.csv").save(part.external_reference)
+      case "csv" => df.write.mode(mode).options(options).csv(part.external_reference)
       case "orc" => df.write.mode(mode).options(options).orc(part.external_reference)
       case "hive" => df.write.mode(mode).saveAsTable(part.external_reference)
       case _ => df.write.mode(mode).options(options).format(format).save(part.external_reference)

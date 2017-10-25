@@ -44,7 +44,7 @@ object CSVRead extends Logging {
     val table = s"csv_${options.vector.targetTable}_${System.currentTimeMillis}"
     val quotedTable = sparkQuote(table)
     val baseQuery = s"""CREATE TEMPORARY TABLE $quotedTable${options.csv.header.map(_.mkString("(", ",", ")")).getOrElse("")}
-      USING com.databricks.spark.csv
+      USING csv
       OPTIONS (path "${options.general.sourceFile}"${parseOptions(options)})"""
     logDebug(s"CSV query to be executed for registering temporary table:\n$baseQuery")
     val df = sqlContext.sql(baseQuery)
