@@ -298,7 +298,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
       val schemaWithCtColumn = StructTypeUtil.createSchema("i0" -> IntegerType, "si0" -> ShortType)
       val dataWithCtColumn = Seq(Seq[Any](42, 1), Seq[Any](43, 1)) // Should get back c0:42,43 (inserted) and c1:1,1 (constant expr)
-      val sqlContext = new SQLContext(fixture.sc)
+      val sqlContext = fixture.spark.sqlContext
       val tableRef = TableRef(connectionProps, tableName)
       // Create the buildScan with other schema and column metadata
       val vectorRel = new VectorRelation(tableRef, Some(schemaWithCtColumn), sqlContext, Map.empty) {
@@ -319,7 +319,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
       val expectedData = Seq(Seq[Any]("def", "ghi", "jkl"))
-      val sqlContext = new SQLContext(fixture.sc)
+      val sqlContext = fixture.spark.sqlContext
       val tableRef = TableRef(connectionProps, tableName)
       val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
         override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
@@ -341,7 +341,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
       val expectedData = Seq(Seq[Any](44, 46))
-      val sqlContext = new SQLContext(fixture.sc)
+      val sqlContext = fixture.spark.sqlContext
       val tableRef = TableRef(connectionProps, tableName)
       val vectorRel = new VectorRelation(tableRef, Some(schemafiltered), sqlContext, Map.empty) {
         override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
@@ -360,7 +360,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     val rdd = fixture.sc.parallelize(data)
     withTable(func => Unit) { tableName =>
       rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map.empty), createTable = true)
-      val sqlContext = new SQLContext(fixture.sc)
+      val sqlContext = fixture.spark.sqlContext
       val tableRef = TableRef(connectionProps, tableName)
       val vectorRel = new VectorRelation(tableRef, Some(schema), sqlContext, Map.empty) {
         override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] =
@@ -404,13 +404,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("dataframe reader hang") { fixture =>
-    val sqlContext = new SQLContext(fixture.sc)
-    val spark = sqlContext.sparkSession
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
-      val df = spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
       
       // spark only connects to 1 of the vector endpoints/partitions in this case. 
       // until other datastream connections are opened and closed the jdbc 'insert into external table...' 
@@ -423,13 +421,11 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("dataframe reader") { fixture =>
-    val sqlContext = new SQLContext(fixture.sc)
-    val spark = sqlContext.sparkSession
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
-      val df = spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
       val data = df.collect().sortBy(r => r(0).toString()).map(_.toSeq).toSeq
       val (expectedrdd, schema) = admitRDD(fixture.sc)
       val expected = expectedrdd.collect.map(_.toSeq).toSeq
@@ -438,11 +434,9 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("dataframe reader alternate") { fixture =>
-    val sqlContext = new SQLContext(fixture.sc)
-    val spark = sqlContext.sparkSession
     val props = new java.util.Properties()
     withTable(createLoadAdmitTable) { tableName =>
-      val df = spark.read.vector(connectionProps, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps, tableName, props)
       val data = df.collect().sortBy(r => r(0).toString()).map(_.toSeq).toSeq
       val (expectedrdd, schema) = admitRDD(fixture.sc)
       val expected = expectedrdd.collect.map(_.toSeq).toSeq
@@ -451,8 +445,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("dataframe writer") { fixture =>
-    val sqlContext = new SQLContext(fixture.sc)
-    val spark = sqlContext.sparkSession
     val (rdd, schema) = admitRDD(fixture.sc)
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
@@ -460,7 +452,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
       val actualschema = StructType(colmetadata.map(_.structField))
-      val df = spark.createDataFrame(rdd, actualschema)
+      val df = fixture.spark.createDataFrame(rdd, actualschema)
       df.write.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
       
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -474,8 +466,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("dataframe writer alternate") { fixture =>
-    val sqlContext = new SQLContext(fixture.sc)
-    val spark = sqlContext.sparkSession
     val (rdd, schema) = admitRDD(fixture.sc)
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
@@ -483,7 +473,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     withTable(createAdmitTable) { tableName =>
       val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
       val actualschema = StructType(colmetadata.map(_.structField))
-      val df = spark.createDataFrame(rdd, actualschema)
+      val df = fixture.spark.createDataFrame(rdd, actualschema)
       df.write.vector(connectionProps, tableName, props)
       
       VectorJDBC.withJDBC(connectionProps) { cxn =>
@@ -577,7 +567,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       var resultsJDBC = VectorJDBC.withJDBC(connectionProps)(_.query(s"select * from $tableName")).map(Row.fromSeq)
       compareResults(resultsJDBC, expectedData, mappedIndices)
 
-      val sqlContext = new SQLContext(fixture.sc)
+      val sqlContext = fixture.spark.sqlContext
       val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(dataType), sqlContext, Map.empty[String, String])
       val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
       val resultsSpark = dataframe.collect()

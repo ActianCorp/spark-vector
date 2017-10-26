@@ -16,6 +16,7 @@
 package com.actian.spark_vector
 
 import org.apache.spark.{ SparkConf, SparkContext }
+import org.apache.spark.sql.SparkSession
 import org.scalatest.{ fixture, Outcome }
 
 /**
@@ -24,7 +25,9 @@ import org.scalatest.{ fixture, Outcome }
  * to create a unique event log also as needed for later analysis.
  */
 trait SparkContextFixture { this: fixture.Suite =>
-  case class FixtureParam(sc: SparkContext)
+  case class FixtureParam(spark: SparkSession) {
+    val sc = spark.sparkContext
+  }
 
   // Give test suite opportunity to set up config
   def setupSparkConf(testName: String, sparkConf: SparkConf) {}
@@ -39,29 +42,37 @@ trait SparkContextFixture { this: fixture.Suite =>
     setupSparkConf(test.name, config)
 
     // Create context and fixture
-    val sc: SparkContext = new SparkContext(getMaster(test.name), test.name, config)
-    val contextFixture = FixtureParam(sc)
+    val spark = SparkSession.builder
+                            .appName(test.name)
+                            .master(getMaster(test.name))
+                            .config(config)
+                            .getOrCreate()
+    val contextFixture = FixtureParam(spark)
 
     try {
       // Run the test
       withFixture(test.toNoArgTest(contextFixture))
-    } finally sc.stop() // shut down spark context
+    } finally spark.stop() // shut down spark session
   }
 
 }
 
 object SparkContextFixture {
   // Useful for test suites where a subset of tests require Spark
-  def withSpark(appName: String = "test", master: String = "local[*]")(op: SparkContext => Unit): Unit = {
+  def withSpark(appName: String = "test", master: String = "local[*]")(op: SparkSession => Unit): Unit = {
     val config = new SparkConf(false)
 
-    val sc = new SparkContext(master, appName, config)
+    val spark = SparkSession.builder
+                            .appName(appName)
+                            .master(master)
+                            .config(config)
+                            .getOrCreate()
 
     try {
-      op(sc)
+      op(spark)
     } finally {
       // Shut down Spark context after every test
-      sc.stop()
+      spark.stop()
     }
   }
 }
