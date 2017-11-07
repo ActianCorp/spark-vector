@@ -91,6 +91,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     val props = new Properties()
     cxnProps.user.foreach(props.setProperty("user", _))
     cxnProps.password.foreach(props.setProperty("password", _))
+    Class.forName("com.ingres.jdbc.IngresDriver")
     DriverManager.getConnection(cxnProps.toJdbcUrl, props)
   }
 
