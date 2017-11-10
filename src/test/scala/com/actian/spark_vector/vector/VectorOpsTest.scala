@@ -402,6 +402,51 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     data = data ++ Seq(Row(new Date(-1899, 0, 1)), Row(new Date(8099, 11, 31)))
     assertTableGeneration(fixture, schema, data, Map("t" -> "t"))
   }
+  
+  test("generate table/string filters") { fixture =>
+    val schema = StructTypeUtil.createSchema("i" -> IntegerType, "s" -> StringType)
+    val data = Seq(Row(1, "abc"),
+                   Row(2, "def  "),
+                   Row(3, "  ghi"))
+    val fieldMapping = Map("i" -> "i", "s" -> "s")
+    val rdd = fixture.sc.parallelize(data)
+    
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
+      
+      val sqlContext = fixture.spark.sqlContext
+      val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(schema), sqlContext, Map.empty[String, String])
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      
+      var row1 = dataframe.filter("s = 'abc'").first()
+      row1(0) == 1 should be(true)
+      
+      row1 = dataframe.where("s = 'abc'").first()
+      row1(0) == 1 should be(true)
+      
+      row1 = dataframe.filter(dataframe.col("s") === "abc").first()
+      row1(0) == 1 should be(true)
+      
+      row1 = dataframe.filter(dataframe.col("s").like("abc")).first()
+      row1(0) == 1 should be(true)
+      
+      row1 = dataframe.filter(dataframe.col("s").rlike("abc")).first()
+      row1(0) == 1 should be(true)
+      
+      var row2 = dataframe.filter(dataframe.col("s").like("def%")).first()
+      row2(0) == 2 should be(true)
+      
+      row2 = dataframe.filter(dataframe.col("s").contains("def")).first()
+      row2(0) == 2 should be(true)
+      
+      var row3 = dataframe.filter(dataframe.col("s").like("%ghi")).first()
+      row3(0) == 3 should be(true)
+      
+      row3 = dataframe.filter(dataframe.col("s").rlike("ghi")).first()
+      row3(0) == 3 should be(true)
+      
+    }
+  }
 
   test("dataframe reader hang") { fixture =>
     val props = new java.util.Properties()

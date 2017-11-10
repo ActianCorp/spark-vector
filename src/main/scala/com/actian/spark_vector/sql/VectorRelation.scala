@@ -150,9 +150,13 @@ private[spark_vector] object VectorRelation {
     case sources.LessThanOrEqual(attribute, value) => (s"${quote(attribute)} <= ?", Seq(value))
     case sources.GreaterThan(attribute, value) => (s"${quote(attribute)} > ?", Seq(value))
     case sources.GreaterThanOrEqual(attribute, value) => (s"${quote(attribute)} >= ?", Seq(value))
+    case sources.IsNotNull(attribute) => (s"${quote(attribute)} IS NOT NULL", Seq())
+    case sources.IsNull(attribute) => (s"${quote(attribute)} IS NULL", Seq())
     case sources.In(attribute, values) => (quote(attribute) + " IN " + values.map(_ => "?").mkString("(", ", ", ")"), values.toSeq)
-    case _ => throw new UnsupportedOperationException(
-      s"It's not a valid filter $filter to be pushed down, only >, <, >=, <= and In are allowed.")
+    case sources.StringContains(attribute, value) => (s"${quote(attribute)} LIKE ?", Seq("%" + value + "%"))
+    case sources.StringStartsWith(attribute, value) => (s"${quote(attribute)} LIKE ?", Seq(value + "%"))
+    case sources.StringEndsWith(attribute, value) => (s"${quote(attribute)} LIKE ?", Seq("%" + value))
+    case _ => throw new UnsupportedOperationException(s"$filter is not a valid filter to be pushed down.")
   }
 
   /**
