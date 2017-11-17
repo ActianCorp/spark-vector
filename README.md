@@ -21,16 +21,16 @@ Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build,
     sbt assembly
 
 ## Using with Spark shell/submit
-This module can be added to Spark using the `--jars` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
+This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --jars $SPARK_VECTOR/target/spark_vector-assembly-2.0-SNAPSHOT.jar
+    spark-shell --driver-class-path $SPARK_VECTOR/target/spark_vector-assembly-2.0-SNAPSHOT.jar
 
 Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `databasename`
 
 ### SparkSQL
 
 ```
-sqlContext.sql("""CREATE TEMPORARY TABLE vector_table
+spark.sqlContext.sql("""CREATE TEMPORARY VIEW vector_table
 USING com.actian.spark_vector.sql.DefaultSource
 OPTIONS (
     host "vectorhost",
@@ -42,11 +42,11 @@ OPTIONS (
 
 and then to load data into Vector:
 
-    sqlContext.sql("insert into vector_table select * from spark_table")
+    spark.sqlContext.sql("insert into vector_table select * from spark_table")
 
 ... or to read Vector data in:
 
-    sqlContext.sql("select * from vector_table")
+    spark.sqlContext.sql("select * from vector_table")
 
 #### Options
 The `OPTIONS` clause of the SparkSQL statement can contain:
