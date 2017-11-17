@@ -47,8 +47,8 @@ sealed case class ArgOption[T: Read, O](
  * Object where all command line arguments are defined:
  *
  * {{{
- * Spark Vector load tool 1.1.0
- * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-1.1-SNAPSHOT.jar> [load] [options]
+ * Spark Vector load tool 2.0.0
+ * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0-SNAPSHOT.jar> [load] [options]
  *
  * Spark Vector load
  *   --help
@@ -211,10 +211,10 @@ object Args {
   val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetOptions, orcLoad.longName -> orcOptions)
 }
 
-object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-1.1-SNAPSHOT.jar>") {
+object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0-SNAPSHOT.jar>") {
   import Args._
 
-  head("Spark Vector load tool", "1.1.0")
+  head("Spark Vector load tool", "2.0.0")
   note("Spark Vector load")
   help("help").text("This tool can be used to load CSV/Parquet/ORC files through Spark to Vector")
   cmd(load.longName)

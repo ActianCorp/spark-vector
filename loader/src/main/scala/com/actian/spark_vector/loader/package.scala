@@ -47,7 +47,7 @@ package com.actian.spark_vector
  * is equivalent to
  * {{{
  * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
- *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load csv -sf "hdfs://namenode:8020/data/csv_file*"
+ *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load csv -sf "hdfs://namenode:8020/data/csv_file*"
  *  -sc "|" -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
  *
@@ -60,7 +60,7 @@ package com.actian.spark_vector
  * is equivalent to
  * {{{
  * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
- *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-1.1-SNAPSHOT.jar load parquet -sf "hdfs://namenode:8020/data/parquet_file.parquet"
+ *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load parquet -sf "hdfs://namenode:8020/data/parquet_file.parquet"
  *  -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
  *
