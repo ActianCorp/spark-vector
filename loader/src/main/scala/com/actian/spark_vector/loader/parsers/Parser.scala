@@ -48,7 +48,7 @@ sealed case class ArgOption[T: Read, O](
  *
  * {{{
  * Spark Vector load tool 2.0.0
- * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0-SNAPSHOT.jar> [load] [options]
+ * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0.jar> [load] [options]
  *
  * Spark Vector load
  *   --help
@@ -211,7 +211,7 @@ object Args {
   val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetOptions, orcLoad.longName -> orcOptions)
 }
 
-object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0-SNAPSHOT.jar>") {
+object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0.jar>") {
   import Args._
 
   head("Spark Vector load tool", "2.0.0")

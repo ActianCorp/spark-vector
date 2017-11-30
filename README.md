@@ -23,7 +23,7 @@ Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build,
 ## Using with Spark shell/submit
 This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --driver-class-path $SPARK_VECTOR/target/spark_vector-assembly-2.0-SNAPSHOT.jar
+    spark-shell --driver-class-path $SPARK_VECTOR/target/spark_vector-assembly-2.0.jar
 
 Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `databasename`
 
@@ -126,7 +126,7 @@ The Spark-Vector loader is a command line client utility that provides the abili
 Loading CSV files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load csv -sf hdfs://namenode:port/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0.jar load csv -sf hdfs://namenode:port/tmp/file.csv
 -vh vectorhost -vi VI -vd databasename -tt vector_table -sc " "
 ```
 
@@ -135,7 +135,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading Parquet files:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
