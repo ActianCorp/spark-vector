@@ -40,7 +40,7 @@ object TableSchemaGenerator {
     val columnSpecs = schema.fields.map(columnSpec)
     s"""|CREATE TABLE ${name} (
         |${columnSpecs.mkString("\t", ",\n\t", "")}
-        |)
+        |) WITH NOPARTITION
      """.stripMargin
   }
 }

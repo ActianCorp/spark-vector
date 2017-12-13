@@ -44,8 +44,15 @@ trait VectorFixture {
     val colDefs = columnMD.map(columnMD => {
       Seq[String](columnMD.name, columnMD.typeName, if (!columnMD.nullable) "not null" else "").mkString(" ")
     }).mkString("(", ", ", ")")
+    
+    val partitions = if (connectionProps.instance.toUpperCase().contains("H")) {
+      // TODO: Need to determine best way to dynamically specify partitions for tests
+      " WITH NOPARTITION"
+    } else {
+      " WITH NOPARTITION"
+    }
 
-    s"create table $tableName $colDefs"
+    s"create table $tableName $colDefs $partitions"
   }
 
   // Column metadata for all the Vector supported types

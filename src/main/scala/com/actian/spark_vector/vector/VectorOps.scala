@@ -96,27 +96,17 @@ trait VectorOps {
      */
     def unloadVector(vectorProps: VectorConnectionProperties,
       table: String,
-      tableColumnMetadata: Seq[ColumnMetadata],
+      tableColumnMetadata: Seq[ColumnMetadata] = Nil,
       selectColumns: String = "*",
       whereClause: String = "",
       whereParams: Seq[Any] = Nil): RDD[Row] = {
-      val rdd = Vector.unloadVector(sc, table, vectorProps, tableColumnMetadata, selectColumns, whereClause, whereParams)
-      externalizeRDD(rdd, StructType(tableColumnMetadata.map(_.structField)))
-    }
-
-    /**
-     * Unload a target Vector table using this SparkContext.
-     *
-     * This method should be used when the VectorEndpointConf is known ahead of time (e.g. was communicated through a separate channel)
-     *
-     * @param tableColumnMetadata sequence of `ColumnMetadata`
-     * @param readConf Read configuration for `Vector` end points
-     *
-     * @return an <code>RDD[Row]</code> for the unload operation
-     */
-    def unloadVector(tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[Row] = {
-      val rdd = Vector.unloadVector(sc, tableColumnMetadata, readConf)
-      externalizeRDD(rdd, StructType(tableColumnMetadata.map(_.structField)))
+      var metadata = if (tableColumnMetadata.isEmpty) {
+        VectorUtil.getTableSchema(vectorProps, table)
+      } else {
+        tableColumnMetadata
+      }
+      val rdd = Vector.unloadVector(sc, table, vectorProps, metadata, selectColumns, whereClause, whereParams)
+      externalizeRDD(rdd, StructType(metadata.map(_.structField)))
     }
     
     // Used to encode InternalRow to external Row objects
