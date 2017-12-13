@@ -39,7 +39,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
       cxn.dropTable(typeTable)
       cxn.executeStatement(createTableStatement(typeTable, allTypesColumnMD))
       cxn.dropTable(testTable)
-      cxn.executeStatement(s"create table $testTable (col1 integer not null)")
+      cxn.executeStatement(s"create table $testTable (col1 integer not null) with nopartition")
     }
   }
 

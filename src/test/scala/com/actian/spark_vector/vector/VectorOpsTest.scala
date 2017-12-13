@@ -57,7 +57,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     |  a_gre smallint,
     |  a_gpa float4,
     |  a_rank smallint
-    |)""".stripMargin)
+    |) WITH NOPARTITION""".stripMargin)
     }
   }
   
@@ -71,7 +71,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     |  a_gre smallint,
     |  a_gpa float4,
     |  a_rank smallint
-    |)""".stripMargin)
+    |) WITH NOPARTITION""".stripMargin)
     admitDataStatements().foreach(row => cxn.executeStatement(s"""insert into ${tableName} values ${row}"""))
     }
   }
@@ -462,6 +462,19 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       // however this is a naive solution that could be more efficiently implemented if safer 
       // methods to cancel the statement were available.
       df.head(1) // == df.show(1)
+    }
+  }
+  
+  test("RDD reader reuse") { fixture =>
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createLoadAdmitTable) { tableName =>
+      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+
+      val run1 = df.rdd.collect().sortBy(r => r(0).toString()).toSeq
+      val run2 = df.rdd.collect().sortBy(r => r(0).toString()).toSeq
+      run1.equals(run2) should be(true)
     }
   }
 

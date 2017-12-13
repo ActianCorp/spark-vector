@@ -18,7 +18,9 @@ package com.actian.spark_vector.datastream
 import com.actian.spark_vector.vector.VectorJDBC
 
 /** Configuration for read/write end points - one entry for each Vector end point expecting data */
-case class VectorEndpointConf(vectorEndpoints: IndexedSeq[VectorEndpoint]) extends Serializable
+case class VectorEndpointConf(vectorEndpoints: IndexedSeq[VectorEndpoint]) extends Serializable {
+  def size = vectorEndpoints.size
+}
 
 object VectorEndpointConf {
   def apply(jdbc: VectorJDBC): VectorEndpointConf = VectorEndpointConf(VectorEndpoint.fromDataStreamsTable(jdbc))

@@ -17,7 +17,7 @@ package com.actian.spark_vector.sql
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext, sources }
-import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan, PrunedScan }
+import org.apache.spark.sql.sources.{ BaseRelation, Filter, InsertableRelation, PrunedFilteredScan }
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.catalyst.InternalRow
 
@@ -86,7 +86,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
  * @param conf Datastream configuration for reading/writing
  */
 private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Seq[ColumnMetadata], conf: VectorEndpointConf, override val sqlContext: SQLContext)
-    extends BaseRelation with InsertableRelation with PrunedScan with Logging {
+    extends BaseRelation with InsertableRelation with Logging {
   import VectorOps._
   import VectorRelation._
 
@@ -103,11 +103,7 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
     val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
     filteredData.rdd.loadVector(data.schema, columnMetadata, conf)
   }
-
-  override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
-    val requiredColumnsMetadata = pruneColumns(requiredColumns, columnMetadata)
-    Vector.unloadVector(sqlContext.sparkContext, requiredColumnsMetadata, conf).asInstanceOf[RDD[Row]]
-  }
+  
 }
 
 private[spark_vector] object VectorRelation {

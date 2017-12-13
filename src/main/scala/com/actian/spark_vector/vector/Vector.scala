@@ -17,17 +17,15 @@ package com.actian.spark_vector.vector
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.concurrent.duration.SECONDS
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.{ DataStreamClient, VectorEndpointConf }
-import com.actian.spark_vector.datastream.reader.{ DataStreamReader, ScanRDD }
+import com.actian.spark_vector.datastream.reader.ScanRDD
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.util.{ Logging, RDDUtil, ResourceUtil }
 import com.actian.spark_vector.sql.VectorRelation
@@ -37,7 +35,7 @@ private[spark_vector] object Vector extends Logging {
   import VectorUtil._
   import RDDUtil._
   import ResourceUtil._
-
+  
   private def prepareRDD(rdd: RDD[Row],
     rddSchema: StructType,
     targetSchema: StructType,
@@ -70,10 +68,15 @@ private[spark_vector] object Vector extends Logging {
    * Given an `rdd` with data types specified by `rddSchema`, try to load it to the Vector table `table`
    * using the connection information stored in `vectorProps`.
    *
+   * @param rdd the data to load
+   * @param rddSchema the Catalyst schema of the database table
+   * @param table name of the table to load
+   * @param vectorProps connection properties to the Vector instance
    * @param preSQL specify some queries to be executed before loading, in the same transaction
    * @param postSQL specify some queries to be executed after loading, in the same transaction
    * @param fieldMap specify how the input `RDD` columns should be mapped to `table` columns
    * @param createTable specify if the table should be created if it does not exist
+   * @param partitions the number of streams that will be used when loading
    */
   def loadVector(rdd: RDD[Row],
     rddSchema: StructType,
@@ -111,7 +114,9 @@ private[spark_vector] object Vector extends Logging {
   /**
    * Given an `rdd` with data types specified by `rddSchema`, try to load it directly (without any SQL connection) to the Vector table `table`
    *
-   * @param tableColumnMetadata the expected table column data type information
+   * @param rdd the data to load
+   * @param rddSchema the Catalyst schema of the data
+   * @param tableColumnMetadata the expected Vector table column data type information
    * @param writeConf datastream configuration for writing
    */
   def loadVector(rdd: RDD[Row], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
@@ -121,34 +126,17 @@ private[spark_vector] object Vector extends Logging {
   }
 
   /**
-   * Given a `Spark Context` try to unload a Vector table (name is omitted since it isn't needed).
-   *
-   * @note We need a `SQL Context` first with a `DataFrame` generated for the select query
-   *
-   * @param sc spark context
-   * @param tableColumnMetadata column type information for the unloaded table
-   * @param readConf datastream configuration for reading
-   *
-   * @return an <code>RDD[Row]</code> for the unload operation
-   */
-  def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[InternalRow] = {
-    val reader = new DataStreamReader(readConf, tableColumnMetadata)
-    val scanRDD = new ScanRDD(sc, readConf, reader)
-    scanRDD
-  }
-
-  /**
    * Given a `Spark Context` try to unload the Vector table `table` using the connection
    * information stored in `vectorProps`.
-   * @note We need a `SQL Context` first with a `DataFrame` generated for the select query
    *
    * @param sc spark context
    * @param table name of the table to unload
-   * @param vectorPros connection properties to the Vector instance
+   * @param vectorProps connection properties to the Vector instance
    * @param tableColumnMetadata sequence of `ColumnMetadata` obtained for `table`
    * @param selectColumns string of select columns separated by comma
    * @param whereClause prepared string of a where clause
    * @param whereParams sequence of values for the prepared where clause
+   * @param partitions the number of streams that will be used when unloading
    *
    * @return an <code>RDD[Row]</code> for the unload operation
    */
@@ -160,29 +148,7 @@ private[spark_vector] object Vector extends Logging {
     whereClause: String = "",
     whereParams: Seq[Any] = Nil,
     partitions: Int = 0): RDD[InternalRow] = {
-    val client = new DataStreamClient(vectorProps, table)
-    closeResourceOnFailure(client) {
-      client.prepareUnloadDataStreams(partitions)
-      val readConf = client.getVectorEndpointConf
-      val scanRDD = unloadVector(sc, tableColumnMetadata, readConf)
-      assert(whereClause.isEmpty == whereParams.isEmpty)
-      var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
-      val unloadStmtFuture = client.startUnload(selectQuery, whereParams)
-      sc.addSparkListener(new SparkListener() {
-        private var ended = false
-        override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
-          try {
-            Await.result(unloadStmtFuture, Duration(10, SECONDS))
-          } catch {
-            case e: Exception => scanRDD.asInstanceOf[ScanRDD].touchDatastreams()
-          } finally {
-            client.close
-            ended = true
-            logDebug(s"Unload job ended @ ${job.time}.")
-          }
-        }
-      })
-      scanRDD
-    }
+    var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
+    new ScanRDD(sc, vectorProps, table, tableColumnMetadata, selectQuery, whereParams, partitions)
   }
 }

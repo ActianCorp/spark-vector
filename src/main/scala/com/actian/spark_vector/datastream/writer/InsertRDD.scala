@@ -68,7 +68,7 @@ class InsertRDD[R: ClassTag](@transient val rdd: RDD[R], writeConf: VectorEndpoi
     ret.map(_.map(rdd.partitions(_).index))
   }
 
-  override protected def getPartitions = (0 until writeConf.vectorEndpoints.length).map(idx =>
+  override protected def getPartitions = (0 until writeConf.size).map(idx =>
     DataStreamPartition(idx, rdd, endPointsToParentPartitionsMap(idx))).toArray
 
   override protected def getPreferredLocations(split: Partition) = {
