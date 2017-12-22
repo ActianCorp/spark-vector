@@ -16,11 +16,20 @@
 package com.actian.spark_vector.loader.options
 
 case class CSVOptions(
+  header: Option[Seq[String]] = None,
   headerRow: Option[Boolean] = None,
+  inferSchema: Option[Boolean] = None,
   encoding: Option[String] = None,
-  nullPattern: Option[String] = None,
   separatorChar: Option[Char] = None,
   quoteChar: Option[Char] = None,
   escapeChar: Option[Char] = None,
-  header: Option[Seq[String]] = None,
-  parserLib: Option[String] = None)
+  commentChar: Option[Char] = None,
+  ignoreLeading: Option[Boolean] = None,
+  ignoreTrailing: Option[Boolean] = None,
+  nullValue: Option[String] = None,
+  nanValue: Option[String] = None,
+  positiveInf: Option[String] = None,
+  negativeInf: Option[String] = None,
+  dateFormat: Option[String] = None,
+  timestampFormat: Option[String] = None,
+  parseMode: Option[String] = None)
