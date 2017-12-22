@@ -53,11 +53,21 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
 
   val optionalValues: ArgMap = Map(
     hRow -> true,
+    inferSchema -> false,
     encode -> "UTF-16",
-    nullPattern -> "N/A",
     separatorChar -> '|',
     quoteChar -> '\'',
     escapeChar -> '~',
+    commentChar -> '\\',
+    ignoreLeading -> true,
+    ignoreTrailing -> true,
+    nullValue -> "N/A",
+    nanValue  -> "nan",
+    positiveInf -> "+I",
+    negativeInf -> "-I",
+    dateFormat -> "dd/MM/yyyy",
+    timestampFormat -> "dd/MM/yyyy/HH:mm:ss",
+    parseMode -> "failfast",
     vectorUser -> "johndoe",
     vectorPassword -> "p@55")
 

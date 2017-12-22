@@ -24,12 +24,27 @@ import com.actian.spark_vector.util.Logging
 object CSVRead extends Logging {
   private def parseOptions(options: UserOptions): String = {
     Seq(
-      options.csv.parserLib.map(lib => s"""parserLib "${lib}""""),
-      Some("comment '\u0000'"),
-      options.csv.headerRow.filter(identity).map(_ => """header "true" """),
-      Some(s"""delimiter "${options.csv.separatorChar.getOrElse("|")}""""),
+      Some(s"""sep "${options.csv.separatorChar.getOrElse(",")}""""),
+      options.csv.headerRow.filter(identity).map(_ => """header "true""""),
+      options.csv.inferSchema.filter(identity).map(_ => s"""inferSchema "true""""),
+      options.csv.encoding.map(v => s"""encoding "${v}""""),
       options.csv.quoteChar.map(c => if (c != '\'') s"quote '$c'" else s"""quote "$c""""),
-      options.csv.escapeChar.map(c => if (c != '\'') s"""escape '$c'""" else s"""escape "$c"""")).flatten.mkString(",", ",", "")
+      options.csv.escapeChar.map(c => if (c != '\'') s"""escape '$c'""" else s"""escape "$c""""),
+      options.csv.commentChar.map(c => if (c != '\'') s"comment '$c'" else s"""comment "$c""""),
+      options.csv.ignoreLeading.filter(identity).map(_ => """ignoreLeadingWhiteSpace "true""""),
+      options.csv.ignoreTrailing.filter(identity).map(_ => """ignoreTrailingWhiteSpace "true""""),
+      options.csv.nullValue.map(v => s"""nullValue "${v}""""),
+      options.csv.nanValue.map(v => s"""nanValue "${v}""""),
+      options.csv.positiveInf.map(v => s"""positiveInf "${v}""""),
+      options.csv.negativeInf.map(v => s"""negativeInf "${v}""""),
+      options.csv.dateFormat.map(v => s"""dateFormat "${v}""""),
+      options.csv.timestampFormat.map(v => s"""timestampFormat "${v}""""),
+      options.csv.parseMode.map(_.toUpperCase()).collect {
+        case "PERMISSIVE" => """mode "PERMISSIVE" """
+        case "DROPMALFORMED" => """mode "DROPMALFORMED""""
+        case "FAILFAST" => """mode "FAILFAST""""
+      }
+      ).flatten.mkString(",", ",", "")
   }
 
   /**
@@ -48,8 +63,7 @@ object CSVRead extends Logging {
       OPTIONS (path "${options.general.sourceFile}"${parseOptions(options)})"""
     logDebug(s"CSV query to be executed for registering temporary table:\n$baseQuery")
     val df = sqlContext.sql(baseQuery)
-    val np = options.csv.nullPattern.getOrElse("")
     val cols = options.general.colsToLoad.getOrElse(sqlContext.sql(s"select * from $quotedTable where 1=0").columns.toSeq)
-    s"select ${cols.map(c => s"""if(`${c.trim}` = "$np", null, `${c.trim}`) as `${c.trim}`""").mkString(",")} from $quotedTable"
+    s"select ${cols.map(c => s"""`${c.trim}`""").mkString(",")} from $quotedTable"
   }
 }
