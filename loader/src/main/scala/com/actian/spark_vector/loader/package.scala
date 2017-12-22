@@ -17,14 +17,14 @@ package com.actian.spark_vector
 
 /**
  * `Spark-Vector` loader
- *
- * The `Spark-Vector` loader is a utility that facilitates loading files of different formats (for now `CSV` and `Parquet` only) into
+ * 
+ * The `Spark-Vector` loader is a utility that facilitates loading files of different formats (for now `CSV`,`Parquet`, and `Orc` only) into
  * `Vector`, through `Spark` and using the `Spark-Vector` connector.
- *
- * For CSV parsing, the Spark-Vector loader uses the [[https://github.com/databricks/spark-csv spark-csv]] library.
- *
+ * 
+ * For CSV parsing, the Spark-Vector loader uses the [[https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame]] library.
+ * 
  * Example:
- *
+ * 
  * This scala code snippet (executed in spark-shell):
  * {{{
  * sqlContext.sql("""CREATE TEMPORARY TABLE large_table
@@ -35,38 +35,51 @@ package com.actian.spark_vector
  *  database "dbName",
  *  table "large_table"
  * )""")
- *
+ * 
  * sqlContext.sql("""CREATE TEMPORARY TABLE csv_files
- * USING com.databricks.spark.csv
- * OPTIONS (path "hdfs://namenode:8020/data/csv_file*", header "false", delimiter "|", parserLib "univocity")
+ * USING csv
+ * OPTIONS (path "hdfs://namenode:8020/data/csv_file*", header "false", sep "|")
  * """)
- *
+ * 
  * val results = sqlContext.sql("""insert into table large_table select * from csv_files""")
  * }}}
- *
+ * 
  * is equivalent to
  * {{{
  * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
  *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0.jar load csv -sf "hdfs://namenode:8020/data/csv_file*"
  *  -sc "|" -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
- *
+ * 
  * and
  * {{{
  * sqlContext.read.parquet("hdfs://namenode:8020/data/parquet_file.parquet").registerTempTable("parquet_file")
  * sqlContext.sql("""insert into table large_table select * from parquet_file""")
  * }}}
- *
+ * 
  * is equivalent to
  * {{{
  * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
  *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0.jar load parquet -sf "hdfs://namenode:8020/data/parquet_file.parquet"
  *  -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
- *
+ * 
+ * and
+ * {{{
+ * sqlContext.read.orc("hdfs://namenode:8020/data/orc_file.orc").registerTempTable("orc_file")
+ * sqlContext.sql("""insert into table large_table select * from orc_file""")
+ * }}}
+ * 
+ * is equivalent to
+ * {{{
+ * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
+ *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load orc -sf "hdfs://namenode:8020/data/orc_file.orc"
+ *  -vh vectorhost -vi VI -vd dbName -tt large_table
+ * }}}
+ * 
  * Of course, by using the `Spark-Vector` connector directly, one can load arbitrarily complex relations (not only files) into Vector and
  * files of any format that `Spark` is able to read.
- *
+ * 
  * For a complete list of options available, see [[loader.parsers.Args Args]].
  * @see [[loader.parsers.Args Args]].
  */
