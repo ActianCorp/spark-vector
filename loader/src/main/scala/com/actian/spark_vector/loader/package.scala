@@ -73,7 +73,7 @@ package com.actian.spark_vector
  * is equivalent to
  * {{{
  * spark-submit --master spark://spark_master:7077 --class com.actian.spark_vector.loader.Main
- *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load orc -sf "hdfs://namenode:8020/data/orc_file.orc"
+ *  \$SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0.jar load orc -sf "hdfs://namenode:8020/data/orc_file.orc"
  *  -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
  * 
