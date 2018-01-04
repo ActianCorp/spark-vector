@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>datastream - com.actian.spark_vector.datastream</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
-        <h1>datastream</h1>
+        <h1>datastream</h1><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -62,7 +70,7 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -75,9 +83,8 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -91,7 +98,7 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.datastream.DataStreamClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.datastream.DataStreamClient" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DataStreamClientextendsSerializablewithLoggingwithProduct"></a>
       <a id="DataStreamClient:DataStreamClient"></a>
       <h4 class="signature">
@@ -100,12 +107,18 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DataStreamClient.html"><span class="name">DataStreamClient</span></a><span class="params">(<span name="vectorProps">vectorProps: <a href="../vector/VectorConnectionProperties.html" class="extype" name="com.actian.spark_vector.vector.VectorConnectionProperties">VectorConnectionProperties</a></span>, <span name="table">table: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <a href="DataStreamClient.html"><span class="name">DataStreamClient</span></a><span class="params">(<span name="vectorProps">vectorProps: <a href="../vector/VectorConnectionProperties.html" class="extype" name="com.actian.spark_vector.vector.VectorConnectionProperties">VectorConnectionProperties</a></span>, <span name="table">table: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">A client to prepare loading and issue the load <code>SQL</code> query to Vector
-</p>
-    </li><li name="com.actian.spark_vector.datastream.DataStreamPartition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@DataStreamClientextendsSerializablewithLoggingwithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A client to prepare loading and issue the load <code>SQL</code> query to Vector
+</p><div class="fullcomment"><div class="comment cmt"><p>A client to prepare loading and issue the load <code>SQL</code> query to Vector
+</p></div><dl class="paramcmts block"><dt class="param">vectorProps</dt><dd class="cmt"><p>connection information</p></dd><dt class="param">table</dt><dd class="cmt"><p>to which table this client will load data</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This client opens a JDBC connection when instantiated. To prevent leaks,
+the <a href="DataStreamClient.html#close():Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamClient#close">close</a> method must be called</p></span></dd></dl></div>
+    </li><li name="com.actian.spark_vector.datastream.DataStreamPartition" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DataStreamPartitionextendsPartitionwithProductwithSerializable"></a>
       <a id="DataStreamPartition:DataStreamPartition"></a>
       <h4 class="signature">
@@ -116,10 +129,16 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="DataStreamPartition.html"><span class="name">DataStreamPartition</span></a><span class="params">(<span name="index">index: <span class="extype" name="scala.Int">Int</span></span>, <span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[_]</span>, <span name="parentIndices">parentIndices: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result"> extends <span class="extype" name="org.apache.spark.Partition">Partition</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">A partition corresponding to one <code>DataStream</code>
-</p>
-    </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@DataStreamPartitionextendsPartitionwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A partition corresponding to one <code>DataStream</code>
+</p><div class="fullcomment"><div class="comment cmt"><p>A partition corresponding to one <code>DataStream</code>
+</p></div><dl class="paramcmts block"><dt class="param">parentIndices</dt><dd class="cmt"><p>a list of indices of the parent partitions that will be assigned to this <code>DataStream</code> and will
+subsequently be serialized and sent through a single connection</p></dd></dl></div>
+    </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DataStreamPartitionAssignmentextendsBipartiteAssignment"></a>
       <a id="DataStreamPartitionAssignment:DataStreamPartitionAssignment"></a>
       <h4 class="signature">
@@ -130,8 +149,15 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="DataStreamPartitionAssignment.html"><span class="name">DataStreamPartitionAssignment</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.datastream.BipartiteAssignment">BipartiteAssignment</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Class that contains the matching algorithm used to assign <code>RDD</code> partitions to Vector hosts, based on <code>affinities</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@DataStreamPartitionAssignmentextendsBipartiteAssignment" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Class that contains the matching algorithm used to assign <code>RDD</code> partitions to Vector hosts, based on <code>affinities</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Class that contains the matching algorithm used to assign <code>RDD</code> partitions to Vector hosts, based on <code>affinities</code>.</p><p>The algorithm used here tries to assign partitions to hosts for which they have affinity. For this reason only partitions
+that have affinity to at least one host are matched here, the others are assigned to a random node. Also, this algorithm
+aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
+</p></div></div>
     </li><li name="com.actian.spark_vector.datastream.VectorEndpoint" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorEndpointextendsSerializablewithProduct"></a>
       <a id="VectorEndpoint:VectorEndpoint"></a>
@@ -143,8 +169,12 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="VectorEndpoint.html"><span class="name">VectorEndpoint</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="username">username: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="password">password: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Information to connect to a VectorEndpoint (DataStream)</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@VectorEndpointextendsSerializablewithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Information to connect to a VectorEndpoint (DataStream)</p>
     </li><li name="com.actian.spark_vector.datastream.VectorEndpointConf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorEndpointConfextendsSerializablewithProduct"></a>
       <a id="VectorEndpointConf:VectorEndpointConf"></a>
@@ -156,8 +186,12 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="VectorEndpointConf.html"><span class="name">VectorEndpointConf</span></a><span class="params">(<span name="vectorEndpoints">vectorEndpoints: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<a href="VectorEndpoint.html" class="extype" name="com.actian.spark_vector.datastream.VectorEndpoint">VectorEndpoint</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Configuration for read/write end points - one entry for each Vector end point expecting data</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@VectorEndpointConfextendsSerializablewithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Configuration for read/write end points - one entry for each Vector end point expecting data</p>
     </li></ol>
             </div>
 
@@ -176,9 +210,13 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="DataStreamPartitionAssignment$.html"><span class="name">DataStreamPartitionAssignment</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@DataStreamPartitionAssignment" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.datastream.VectorEndpoint" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.datastream.VectorEndpoint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="VectorEndpoint"></a>
       <a id="VectorEndpoint:VectorEndpoint"></a>
       <h4 class="signature">
@@ -187,10 +225,15 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="VectorEndpoint$.html"><span class="name">VectorEndpoint</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="VectorEndpoint$.html"><span class="name">VectorEndpoint</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Contains helpers to obtain VectorEndpoint information from <code>Vector</code>'s SQL interface.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@VectorEndpoint" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Contains helpers to obtain VectorEndpoint information from <code>Vector</code>'s SQL interface.</p><div class="fullcomment"><div class="comment cmt"><p>Contains helpers to obtain VectorEndpoint information from <code>Vector</code>'s SQL interface.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The way this information is obtained, by issuing a select from a system table, will very likely be modified in the future</p></span></dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.VectorEndpointConf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorEndpointConf"></a>
       <a id="VectorEndpointConf:VectorEndpointConf"></a>
@@ -202,9 +245,13 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="VectorEndpointConf$.html"><span class="name">VectorEndpointConf</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@VectorEndpointConf" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.datastream.package#padding" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.datastream#padding" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="padding(pos:Int,typeSize:Int):Int"></a>
       <a id="padding(Int,Int):Int"></a>
       <h4 class="signature">
@@ -215,7 +262,11 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <span class="name">padding</span><span class="params">(<span name="pos">pos: <span class="extype" name="scala.Int">Int</span></span>, <span name="typeSize">typeSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@padding(pos:Int,typeSize:Int):Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Helper to determine how much padding (# of trash bytes) needs to be written to properly align a type with size <code>typeSize</code>, given that we are currently at <code>pos</code></p>
     </li><li name="com.actian.spark_vector.datastream.reader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="reader"></a>
@@ -228,7 +279,11 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="reader/package.html"><span class="name">reader</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@reader" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.datastream.writer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="writer"></a>
@@ -241,7 +296,11 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <span class="symbol">
         <a href="writer/package.html"><span class="name">writer</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.package@writer" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -272,6 +331,7 @@ The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select q
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

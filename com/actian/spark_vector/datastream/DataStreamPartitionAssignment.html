@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>DataStreamPartitionAssignment - com.actian.spark_vector.datastream.DataStreamPartitionAssignment</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,17 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="DataStreamPartitionAssignment$.html" title="Go to companion"><img src="../../../../lib/class_to_object_big.png" /></a>
+        <a href="DataStreamPartitionAssignment$.html" title="See companion object"><img alt="Class/Object" src="../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.datastream">datastream</a></p>
-        <h1><a href="DataStreamPartitionAssignment$.html" title="Go to companion">DataStreamPartitionAssignment</a></h1>
+        <h1><a href="DataStreamPartitionAssignment$.html" title="See companion object">DataStreamPartitionAssignment</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="DataStreamPartitionAssignment$.html" title="See companion object">object DataStreamPartitionAssignment</a>
+            | <a href="package.html" class="extype" name="com.actian.spark_vector.datastream">package datastream</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -44,7 +56,7 @@ that have affinity to at least one host are matched here, the others are assigne
 aims to minimize the maximum number of partitions that a host will have assigned, i.e. the most data a host will process
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="com.actian.spark_vector.datastream.BipartiteAssignment">BipartiteAssignment</span>, <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a>, <span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="com.actian.spark_vector.datastream.BipartiteAssignment">BipartiteAssignment</span>, <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a>, <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -55,22 +67,21 @@ aims to minimize the maximum number of partitions that a host will have assigned
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment"><span>DataStreamPartitionAssignment</span></li><li class="in" name="com.actian.spark_vector.datastream.BipartiteAssignment"><span>BipartiteAssignment</span></li><li class="in" name="com.actian.spark_vector.Profiling"><span>Profiling</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment"><span>DataStreamPartitionAssignment</span></li><li class="in" name="com.actian.spark_vector.datastream.BipartiteAssignment"><span>BipartiteAssignment</span></li><li class="in" name="com.actian.spark_vector.Profiling"><span>Profiling</span></li><li class="in" name="com.actian.spark_vector.util.Logging"><span>Logging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -93,9 +104,12 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">DataStreamPartitionAssignment</span><span class="params">(<span name="affinities">affinities: <span class="extype" name="scala.Array">Array</span>[_ &lt;: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="endpoints">endpoints: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<a href="VectorEndpoint.html" class="extype" name="com.actian.spark_vector.datastream.VectorEndpoint">VectorEndpoint</a>]</span>)</span>
       </span>
-      </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">affinities</dt><dd class="cmt"><p>Affinities of each partition to host names represented as an <code>Array</code> of <code>Seq[String]</code></p></dd><dt class="param">endpoints</dt><dd class="cmt"><p>Vector end points
-</p></dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@&lt;init&gt;(affinities:Array[_&lt;:Seq[String]],endpoints:IndexedSeq[com.actian.spark_vector.datastream.VectorEndpoint]):com.actian.spark_vector.datastream.DataStreamPartitionAssignment" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">affinities</dt><dd class="cmt"><p>Affinities of each partition to host names represented as an <code>Array</code> of <code>Seq[String]</code></p></dd><dt class="param">endpoints</dt><dd class="cmt"><p>Vector end points</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -106,19 +120,6 @@ aims to minimize the maximum number of partitions that a host will have assigned
         <div id="values" class="values members">
               <h3>Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -129,8 +130,12 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -142,22 +147,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -168,8 +164,12 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#accs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="accs:com.actian.spark_vector.ProfAccMap"></a>
       <a id="accs:ProfAccMap"></a>
@@ -181,7 +181,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">accs</span><span class="result">: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@accs:com.actian.spark_vector.ProfAccMap" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
@@ -194,7 +198,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#assignment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="assignment:IndexedSeq[scala.collection.mutable.ArrayBuffer[Int]]"></a>
@@ -207,7 +215,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">assignment</span><span class="result">: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.collection.mutable.ArrayBuffer">ArrayBuffer</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@assignment:IndexedSeq[scala.collection.mutable.ArrayBuffer[Int]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">For each end point in <code>endpoints</code>, a sequence of partition indices that are assigned to that end point</p>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -220,7 +232,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -239,7 +255,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">edges</span><span class="result">: <span class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.collection.immutable.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@edges:scala.collection.immutable.IndexedSeq[scala.collection.immutable.IndexedSeq[Int]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -252,7 +272,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -265,7 +289,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -278,7 +306,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -297,7 +329,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -310,8 +346,29 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.actian.spark_vector.util.Logging#initializeLogIfNecessary" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="initializeLogIfNecessary(isInterpreter:Boolean):Unit"></a>
+      <a id="initializeLogIfNecessary(Boolean):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">initializeLogIfNecessary</span><span class="params">(<span name="isInterpreter">isInterpreter: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@initializeLogIfNecessary(isInterpreter:Boolean):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -323,9 +380,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#isTraceEnabled" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#isTraceEnabled" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isTraceEnabled():Boolean"></a>
       <a id="isTraceEnabled():Boolean"></a>
       <h4 class="signature">
@@ -336,9 +397,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">isTraceEnabled</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@isTraceEnabled():Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#log" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#log" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="log:org.slf4j.Logger"></a>
       <a id="log:Logger"></a>
       <h4 class="signature">
@@ -349,9 +414,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">log</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@log:org.slf4j.Logger" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logDebug(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logDebug(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -362,9 +431,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logDebug</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logDebug(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logDebug(msg:=&gt;String):Unit"></a>
       <a id="logDebug(⇒String):Unit"></a>
       <h4 class="signature">
@@ -375,9 +448,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logDebug</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logDebug(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logError(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logError(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -388,9 +465,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logError</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logError(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logError(msg:=&gt;String):Unit"></a>
       <a id="logError(⇒String):Unit"></a>
       <h4 class="signature">
@@ -401,9 +482,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logError</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logError(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logInfo(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logInfo(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -414,9 +499,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logInfo</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logInfo(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logInfo(msg:=&gt;String):Unit"></a>
       <a id="logInfo(⇒String):Unit"></a>
       <h4 class="signature">
@@ -427,9 +516,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logInfo</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logInfo(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logName" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logName" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logName:String"></a>
       <a id="logName:String"></a>
       <h4 class="signature">
@@ -440,9 +533,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logName</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logName:String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logTrace(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logTrace(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -453,9 +550,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logTrace</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logTrace(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logTrace(msg:=&gt;String):Unit"></a>
       <a id="logTrace(⇒String):Unit"></a>
       <h4 class="signature">
@@ -466,9 +567,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logTrace</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logTrace(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logWarning(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logWarning(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -479,9 +584,13 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logWarning</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logWarning(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.util.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logWarning(msg:=&gt;String):Unit"></a>
       <a id="logWarning(⇒String):Unit"></a>
       <h4 class="signature">
@@ -492,7 +601,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">logWarning</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@logWarning(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.BipartiteAssignment#matching" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="matching:IndexedSeq[IndexedSeq[Int]]"></a>
@@ -505,11 +618,14 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">matching</span><span class="result">: <span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.IndexedSeq">IndexedSeq</span>[<span class="extype" name="scala.Int">Int</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@matching:IndexedSeq[IndexedSeq[Int]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Get an assignment of partitions to hosts satisfying the properties described in the header
 </p><div class="fullcomment"><div class="comment cmt"><p>Get an assignment of partitions to hosts satisfying the properties described in the header
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>One sequence of partition indexes assigned to each host
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>BipartiteAssignment</dd></dl></div>
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>One sequence of partition indexes assigned to each host</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>BipartiteAssignment</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#nA" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nA:Int"></a>
       <a id="nA:Int"></a>
@@ -521,7 +637,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">nA</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@nA:Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#nB" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nB:Int"></a>
@@ -534,7 +654,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">nB</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@nB:Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
     </li><li name="com.actian.spark_vector.Profiling#nameToAcc" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nameToAcc(name:String)(implicitpmap:com.actian.spark_vector.ProfAccMap):com.actian.spark_vector.ProfAcc"></a>
@@ -547,7 +671,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">nameToAcc</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <a href="../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@nameToAcc(name:String)(implicitpmap:com.actian.spark_vector.ProfAccMap):com.actian.spark_vector.ProfAcc" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -560,7 +688,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -573,7 +705,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -586,7 +722,11 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="com.actian.spark_vector.Profiling#profile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
@@ -599,12 +739,15 @@ aims to minimize the maximum number of partitions that a host will have assigned
       <span class="symbol">
         <span class="name">profile</span><span class="params">(<span name="acc">acc: <a href="../ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Start measuring time and record it in <code>acc</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Start measuring time and record it in <code>acc</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd><dt>Note</dt><dd><span class="cmt"><p>This function should always be used in combination with <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#profileEnd">profileEnd</a> in a similar way with opening and closing
-a sequence of brackets, where the code between a <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#profile">profile</a> call and its corresponding <a href="#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#profileEnd">profileEnd</a> will have its
-execution time measured and stored into <code>acc</code>
-</p></span></dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd><dt>Note</dt><dd><span class="cmt"><p>This function should always be used in combination with <a href="../Profiling.html#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profileEnd">profileEnd</a> in a similar way with opening and closing
+a sequence of brackets, where the code between a <a href="../Profiling.html#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profile">profile</a> call and its corresponding <a href="../Profiling.html#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profileEnd">profileEnd</a> will have its
+execution time measured and stored into <code>acc</code></p></span></dd></dl></div>
     </li><li name="com.actian.spark_vector.Profiling#profileEnd" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
       <a id="profileEnd(ProfAccMap):Unit"></a>
@@ -616,8 +759,12 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">profileEnd</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
-      <p class="shortcomment cmt">Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#profile">profile</a> call</p><div class="fullcomment"><div class="comment cmt"><p>Finish profiling the current section of code, as determined by the most recent <a href="#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#profile">profile</a> call</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finish profiling the current section of code, as determined by the most recent <a href="../Profiling.html#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profile">profile</a> call</p><div class="fullcomment"><div class="comment cmt"><p>Finish profiling the current section of code, as determined by the most recent <a href="../Profiling.html#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profile">profile</a> call</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="com.actian.spark_vector.Profiling#profileInit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="profileInit(names:String*):com.actian.spark_vector.ProfAccMap"></a>
       <a id="profileInit(String*):ProfAccMap"></a>
@@ -629,7 +776,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">profileInit</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@profileInit(names:String*):com.actian.spark_vector.ProfAccMap" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Initialize profiling</p><div class="fullcomment"><div class="comment cmt"><p>Initialize profiling</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="com.actian.spark_vector.Profiling#profilePrint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="profilePrint(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit"></a>
@@ -642,7 +793,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">profilePrint</span><span class="params">(<span class="implicit">implicit </span><span name="pmap">pmap: <a href="../ProfAccMap.html" class="extype" name="com.actian.spark_vector.ProfAccMap">ProfAccMap</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@profilePrint(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Print profile information using <code>log</code></p><div class="fullcomment"><div class="comment cmt"><p>Print profile information using <code>log</code></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
@@ -655,7 +810,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment#target" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="target:Seq[Int]"></a>
@@ -668,7 +827,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">target</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@target:Seq[Int]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.DataStreamPartitionAssignment">DataStreamPartitionAssignment</a> → BipartiteAssignment</dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -681,7 +844,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@toString():String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -694,7 +861,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -713,7 +884,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -732,7 +907,11 @@ execution time measured and stored into <code>acc</code>
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.datastream.DataStreamPartitionAssignment@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -753,8 +932,8 @@ execution time measured and stored into <code>acc</code>
               <h3>Inherited from <span class="extype" name="com.actian.spark_vector.datastream.BipartiteAssignment">BipartiteAssignment</span></h3>
             </div><div class="parent" name="com.actian.spark_vector.Profiling">
               <h3>Inherited from <a href="../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></h3>
-            </div><div class="parent" name="org.apache.spark.Logging">
-              <h3>Inherited from <span class="extype" name="org.apache.spark.Logging">Logging</span></h3>
+            </div><div class="parent" name="com.actian.spark_vector.util.Logging">
+              <h3>Inherited from <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
@@ -775,6 +954,7 @@ execution time measured and stored into <code>acc</code>
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

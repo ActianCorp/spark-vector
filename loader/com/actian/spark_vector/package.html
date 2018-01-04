@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>spark_vector - com.actian.spark_vector</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../lib/package_big.png" />
+        <img alt="Package" src="../../../lib/package_big.png" />
         <p id="owner"><a href="../../package.html" class="extype" name="com">com</a>.<a href="../package.html" class="extype" name="com.actian">actian</a></p>
-        <h1>spark_vector</h1>
+        <h1>spark_vector</h1><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -52,7 +60,7 @@
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -65,9 +73,8 @@
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -85,7 +92,7 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector.loader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.loader" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="loader"></a>
       <a id="loader:loader"></a>
       <h4 class="signature">
@@ -96,8 +103,36 @@
       <span class="symbol">
         <a href="loader/package.html"><span class="name">loader</span></a>
       </span>
-      </h4>
-      <p class="comment cmt"><code>Spark-Vector</code> loader</p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@loader" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"><code>Spark-Vector</code> loader</p><div class="fullcomment"><div class="comment cmt"><p><code>Spark-Vector</code> loader</p><p>The <code>Spark-Vector</code> loader is a utility that facilitates loading files of different formats (for now <code>CSV</code>,<code>Parquet</code>, and <code>Orc</code> only) into
+<code>Vector</code>, through <code>Spark</code> and using the <code>Spark-Vector</code> connector.</p><p>For CSV parsing, the Spark-Vector loader uses the csv method of the <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame" target="_blank">org.apache.spark.sql.DataFrame</a> class.</p><p>Example:</p><p>This scala code snippet to read a csv file (executed in spark-shell):</p><pre>sqlContext.sql(<span class="lit">""</span><span class="lit">"CREATE TEMPORARY TABLE large_table
+USING com.actian.spark_vector.sql.DefaultSource
+OPTIONS (
+ host "</span>vectorhost<span class="lit">",
+ instance "</span>VI<span class="lit">",
+ database "</span>dbName<span class="lit">",
+ table "</span>large_table<span class="lit">"
+)"</span><span class="lit">""</span>)
+
+sqlContext.sql(<span class="lit">""</span><span class="lit">"CREATE TEMPORARY TABLE csv_files
+USING csv
+OPTIONS (path "</span>hdfs:<span class="cmt">//namenode:8020/data/csv_file*", header "false", sep "|")</span>
+<span class="lit">""</span><span class="lit">")
+
+val results = sqlContext.sql("</span><span class="lit">""</span>insert into table large_table select * from csv_files<span class="lit">""</span><span class="lit">")</span></pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
+ $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">2.0</span>-SNAPSHOT.jar load csv -sf <span class="lit">"hdfs://namenode:8020/data/csv_file*"</span>
+ -sc <span class="lit">"|"</span> -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>To read a parquet file this</p><pre>sqlContext.read.parquet(<span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>).registerTempTable(<span class="lit">"parquet_file"</span>)
+sqlContext.sql(<span class="lit">""</span><span class="lit">"insert into table large_table select * from parquet_file"</span><span class="lit">""</span>)</pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
+ $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">2.0</span>-SNAPSHOT.jar load parquet -sf <span class="lit">"hdfs://namenode:8020/data/parquet_file.parquet"</span>
+ -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>To read a orc file this</p><pre>sqlContext.read.orc(<span class="lit">"hdfs://namenode:8020/data/orc_file.orc"</span>).registerTempTable(<span class="lit">"orc_file"</span>)
+sqlContext.sql(<span class="lit">""</span><span class="lit">"insert into table large_table select * from orc_file"</span><span class="lit">""</span>)</pre><p>is equivalent to</p><pre>spark-submit --master spark:<span class="cmt">//spark_master:7077 --class com.actian.spark_vector.loader.Main</span>
+ $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-<span class="num">2.0</span>-SNAPSHOT.jar load orc -sf <span class="lit">"hdfs://namenode:8020/data/orc_file.orc"</span>
+ -vh vectorhost -vi VI -vd dbName -tt large_table</pre><p>Of course, by using the <code>Spark-Vector</code> connector directly, one can load arbitrarily complex relations (not only files) into Vector and
+files of any format that <code>Spark</code> is able to read.</p><p>For a complete list of options available, see <a href="loader/parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="loader/parsers/Args$.html" class="extype" name="com.actian.spark_vector.loader.parsers.Args">Args</a>.</p></span></dd></dl></div>
     </li></ol>
             </div>
 
@@ -127,6 +162,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../lib/template.js"></script>
+
+
     </body>
       </html>

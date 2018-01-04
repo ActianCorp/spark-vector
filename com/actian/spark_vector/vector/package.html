@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>vector - com.actian.spark_vector.vector</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
-        <h1>vector</h1>
+        <h1>vector</h1><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -55,7 +63,7 @@ loading to <code>Vector</code> tables.
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -68,9 +76,8 @@ loading to <code>Vector</code> tables.
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -93,10 +100,14 @@ loading to <code>Vector</code> tables.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueRanges">valueRanges: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <a href="ColumnMetadata.html"><span class="name">ColumnMetadata</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="typeName">typeName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="valueRanges">valueRanges: <span class="extype" name="scala.Option">Option</span>[<a href="PredicatePushdown$.html#ValueRanges=Seq[com.actian.spark_vector.vector.PredicatePushdown.ValueRange]" class="extmbr" name="com.actian.spark_vector.vector.PredicatePushdown.ValueRanges">ValueRanges</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@ColumnMetadataextendsSerializablewithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Wrap column metadata returned by JDBC and provide functions to support converting into a StructField.</p>
     </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ResultSetIterator[T]extendsIterator[T]"></a>
       <a id="ResultSetIterator[T]:ResultSetIterator[T]"></a>
@@ -108,8 +119,12 @@ loading to <code>Vector</code> tables.
       <span class="symbol">
         <a href="ResultSetIterator.html"><span class="name">ResultSetIterator</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.vector.ResultSetIterator.T">T</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Iterator over an ResultSet</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@ResultSetIterator[T]extendsIterator[T]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Iterator over an ResultSet</p>
     </li><li name="com.actian.spark_vector.vector.VectorConnectionProperties" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorConnectionPropertiesextendsSerializablewithProduct"></a>
       <a id="VectorConnectionProperties:VectorConnectionProperties"></a>
@@ -119,10 +134,14 @@ loading to <code>Vector</code> tables.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="VectorConnectionProperties.html"><span class="name">VectorConnectionProperties</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="instance">instance: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="database">database: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="user">user: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <a href="VectorConnectionProperties.html"><span class="name">VectorConnectionProperties</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="instance">instance: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="database">database: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="user">user: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Container for Vector connection properties.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorConnectionPropertiesextendsSerializablewithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Container for Vector connection properties.</p>
     </li><li name="com.actian.spark_vector.vector.VectorException" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorExceptionextendsRuntimeExceptionwithProductwithSerializable"></a>
       <a id="VectorException:VectorException"></a>
@@ -134,8 +153,12 @@ loading to <code>Vector</code> tables.
       <span class="symbol">
         <a href="VectorException.html"><span class="name">VectorException</span></a><span class="params">(<span name="errorCode">errorCode: <span class="extype" name="scala.Int">Int</span></span>, <span name="message">message: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cause">cause: <span class="extype" name="scala.Throwable">Throwable</span> = <span class="symbol">null</span></span>)</span><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Exception interacting with Vector.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorExceptionextendsRuntimeExceptionwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Exception interacting with Vector.</p>
     </li><li name="com.actian.spark_vector.vector.VectorJDBC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorJDBCextendsLogging"></a>
       <a id="VectorJDBC:VectorJDBC"></a>
@@ -145,10 +168,14 @@ loading to <code>Vector</code> tables.
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="VectorJDBC.html"><span class="name">VectorJDBC</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="VectorJDBC.html"><span class="name">VectorJDBC</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Encapsulate functions for accessing Vector using JDBC
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorJDBCextendsLogging" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Encapsulate functions for accessing Vector using JDBC
 </p>
     </li><li name="com.actian.spark_vector.vector.VectorOps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="VectorOpsextendsAnyRef"></a>
@@ -161,8 +188,12 @@ loading to <code>Vector</code> tables.
       <span class="symbol">
         <a href="VectorOps.html"><span class="name">VectorOps</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Add vector operations to RecordRDD.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorOpsextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Add vector operations to RecordRDD.</p>
     </li></ol>
             </div>
 
@@ -181,8 +212,12 @@ loading to <code>Vector</code> tables.
       <span class="symbol">
         <a href="ErrorCodes$.html"><span class="name">ErrorCodes</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Error codes to return in exceptions from Vector ops
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@ErrorCodes" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Error codes to return in exceptions from Vector ops
 </p>
     </li><li name="com.actian.spark_vector.vector.PredicatePushdown" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PredicatePushdown"></a>
@@ -193,10 +228,14 @@ loading to <code>Vector</code> tables.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="PredicatePushdown$.html"><span class="name">PredicatePushdown</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="PredicatePushdown$.html"><span class="name">PredicatePushdown</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Object that brings together a set of functions that are used for implementing &quot;Predicate Pushdown&quot;:
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@PredicatePushdown" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Object that brings together a set of functions that are used for implementing &quot;Predicate Pushdown&quot;:
 A Vector query such as &quot;SELECT * from external_table where col = 10&quot; should not result in the provider
 sending the whole table to Vector, but only those tuples that pass the &quot;col = 10&quot; predicate.</p>
     </li><li name="com.actian.spark_vector.vector.ResultSetIterator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
@@ -210,7 +249,11 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <span class="symbol">
         <a href="ResultSetIterator$.html"><span class="name">ResultSetIterator</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@ResultSetIterator" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.vector.TableSchemaGenerator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TableSchemaGenerator"></a>
@@ -223,7 +266,11 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <span class="symbol">
         <a href="TableSchemaGenerator$.html"><span class="name">TableSchemaGenerator</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@TableSchemaGenerator" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.vector.VectorDataType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorDataType"></a>
@@ -236,7 +283,11 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <span class="symbol">
         <a href="VectorDataType$.html"><span class="name">VectorDataType</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorDataType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.vector.VectorJDBC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorJDBC"></a>
@@ -247,11 +298,15 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="VectorJDBC$.html"><span class="name">VectorJDBC</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="VectorJDBC$.html"><span class="name">VectorJDBC</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorJDBC" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.vector.VectorNet" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.vector.VectorNet" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="VectorNet"></a>
       <a id="VectorNet:VectorNet"></a>
       <h4 class="signature">
@@ -262,8 +317,13 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <span class="symbol">
         <a href="VectorNet$.html"><span class="name">VectorNet</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Helper functions for communicating with Vector.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorNet" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Helper functions for communicating with Vector.</p><div class="fullcomment"><div class="comment cmt"><p>Helper functions for communicating with Vector.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>These functions follow the Vector network communication protocol.</p></span></dd></dl></div>
     </li><li name="com.actian.spark_vector.vector.VectorOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorOps"></a>
       <a id="VectorOps:VectorOps"></a>
@@ -275,7 +335,11 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <span class="symbol">
         <a href="VectorOps$.html"><span class="name">VectorOps</span></a><span class="result"> extends <a href="VectorOps.html" class="extype" name="com.actian.spark_vector.vector.VectorOps">VectorOps</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.vector.package@VectorOps" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -306,6 +370,7 @@ sending the whole table to Vector, but only those tuples that pass the &quot;col
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

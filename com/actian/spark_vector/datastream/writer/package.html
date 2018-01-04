@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>writer - com.actian.spark_vector.datastream.writer</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.datastream">datastream</a></p>
-        <h1>writer</h1>
+        <h1>writer</h1><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,12 +75,16 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="DataStreamWriter.html"><span class="name">DataStreamWriter</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
+        <a href="DataStreamWriter.html"><span class="name">DataStreamWriter</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Entry point for loading with spark-vector connector.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package@DataStreamWriter[T]extendsLoggingwithSerializablewithProfiling" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Entry point for loading with spark-vector connector.</p>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="InsertRDD[R]extendsRDD[R]withLogging"></a>
+      <a id="InsertRDD[R]extendsRDD[R]"></a>
       <a id="InsertRDD[R]:InsertRDD[R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -80,10 +92,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="InsertRDD.html"><span class="name">InsertRDD</span></a><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="InsertRDD.html"><span class="name">InsertRDD</span></a><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt"><code>Vector</code> RDD to load data into <code>Vector</code> through its <code>DataStream API</code>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package@InsertRDD[R]extendsRDD[R]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"><code>Vector</code> RDD to load data into <code>Vector</code> through its <code>DataStream API</code>
 </p>
     </li><li name="com.actian.spark_vector.datastream.writer.RowWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RowWriterextendsLoggingwithSerializablewithProfiling"></a>
@@ -94,10 +110,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="RowWriter.html"><span class="name">RowWriter</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
+        <a href="RowWriter.html"><span class="name">RowWriter</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../../Profiling.html" class="extype" name="com.actian.spark_vector.Profiling">Profiling</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Writes <code>RDD</code> rows to <code>ByteBuffers</code> and flushes them to a <code>Vector</code> through a <code>VectorSink</code>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package@RowWriterextendsLoggingwithSerializablewithProfiling" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Writes <code>RDD</code> rows to <code>ByteBuffers</code> and flushes them to a <code>Vector</code> through a <code>VectorSink</code>
 </p>
     </li></ol>
             </div>
@@ -115,10 +135,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DataStreamWriter$.html"><span class="name">DataStreamWriter</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DataStreamWriter$.html"><span class="name">DataStreamWriter</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Contains helpers to write binary data, conforming to <code>Vector</code>'s binary protocol</p>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package@DataStreamWriter" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Contains helpers to write binary data, conforming to <code>Vector</code>'s binary protocol</p>
     </li><li name="com.actian.spark_vector.datastream.writer.RowWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RowWriter"></a>
       <a id="RowWriter:RowWriter"></a>
@@ -130,7 +154,11 @@
       <span class="symbol">
         <a href="RowWriter$.html"><span class="name">RowWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.package@RowWriter" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -157,6 +185,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

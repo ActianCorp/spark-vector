@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>spark_vector - com.actian.spark_vector</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../lib/package_big.png" />
+        <img alt="Package" src="../../../lib/package_big.png" />
         <p id="owner"><a href="../../package.html" class="extype" name="com">com</a>.<a href="../package.html" class="extype" name="com.actian">actian</a></p>
-        <h1>spark_vector</h1>
+        <h1>spark_vector</h1><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -59,7 +67,7 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -72,9 +80,8 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -88,7 +95,7 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.ComposePartial" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.ComposePartial" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ComposePartial[A,B]extendsAnyRef"></a>
       <a id="ComposePartial[A,B]:ComposePartial[A,B]"></a>
       <h4 class="signature">
@@ -99,9 +106,14 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="package$$ComposePartial.html"><span class="name">ComposePartial</span></a><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Having two <code>PartialFunctions</code> <code>f</code> and <code>g</code> with no side effects, we compose them into another partial function <code>h</code> such that
-<code>h.isDefinedAt(x)</code> if <code>f.isDefinedAt(x)</code> and <code>g.isDefinedAt(f(x))</code></p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@ComposePartial[A,B]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Having two <code>PartialFunctions</code> <code>f</code> and <code>g</code> with no side effects, we compose them into another partial function <code>h</code> such that
+<code>h.isDefinedAt(x)</code> if <code>f.isDefinedAt(x)</code> and <code>g.isDefinedAt(f(x))</code></p><div class="fullcomment"><div class="comment cmt"><p>Having two <code>PartialFunctions</code> <code>f</code> and <code>g</code> with no side effects, we compose them into another partial function <code>h</code> such that
+<code>h.isDefinedAt(x)</code> if <code>f.isDefinedAt(x)</code> and <code>g.isDefinedAt(f(x))</code></p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a <code>PartialFunction</code> composed from <code>f</code> and <code>g</code></p></dd></dl></div>
     </li><li name="com.actian.spark_vector.ProfAcc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ProfAccextendsProductwithSerializable"></a>
       <a id="ProfAcc:ProfAcc"></a>
@@ -113,8 +125,12 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="ProfAcc.html"><span class="name">ProfAcc</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="acc">acc: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">An accumulator for profiling, Contains a label and the number of milliseconds (<code>acc</code>)</p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@ProfAccextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An accumulator for profiling, Contains a label and the number of milliseconds (<code>acc</code>)</p>
     </li><li name="com.actian.spark_vector.ProfAccMap" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ProfAccMapextendsProductwithSerializable"></a>
       <a id="ProfAccMap:ProfAccMap"></a>
@@ -124,11 +140,15 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ProfAccMap.html"><span class="name">ProfAccMap</span></a><span class="params">(<span name="accs">accs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>]</span>, <span name="started">started: <span class="extype" name="scala.collection.mutable.Stack">Stack</span>[<a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>] = <span class="defval" name="scala.collection.mutable.Stack.empty[com.actian.spark_vector.ProfAcc]">...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ProfAccMap.html"><span class="name">ProfAccMap</span></a><span class="params">(<span name="accs">accs: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>]</span>, <span name="started">started: <span class="extype" name="scala.collection.mutable.Stack">Stack</span>[<a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>] = <span class="symbol">Stack.empty[ProfAcc]</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Contains all <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>s defined and which of those are currently accumulating/measuring time (as a stack)</p>
-    </li><li name="com.actian.spark_vector.Profiling" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@ProfAccMapextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Contains all <a href="ProfAcc.html" class="extype" name="com.actian.spark_vector.ProfAcc">ProfAcc</a>s defined and which of those are currently accumulating/measuring time (as a stack)</p>
+    </li><li name="com.actian.spark_vector.Profiling" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="ProfilingextendsAnyRef"></a>
       <a id="Profiling:Profiling"></a>
       <h4 class="signature">
@@ -139,8 +159,17 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="Profiling.html"><span class="name">Profiling</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Trait to be used when profiling is needed.</p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@ProfilingextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Trait to be used when profiling is needed.</p><div class="fullcomment"><div class="comment cmt"><p>Trait to be used when profiling is needed. To profile a section of the code, the following steps should be followed:
+- Call <a href="Profiling.html#profileInit(names:String*):com.actian.spark_vector.ProfAccMap" class="extmbr" name="com.actian.spark_vector.Profiling#profileInit">profileInit</a>(&lt;label_for_first_section&gt;, &lt;label_for_second_section&gt;, ...) and store it into an implicit value
+- Use <a href="Profiling.html#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profile">profile</a>(&lt;section_name&gt;) and <a href="Profiling.html#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profileEnd">profileEnd</a> in a bracket opening/closing fashion, where the code between a
+<a href="Profiling.html#profile(acc:com.actian.spark_vector.ProfAcc)(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profile">profile</a> call and its corresponding <a href="Profiling.html#profileEnd(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profileEnd">profileEnd</a> will have its execution time measured and stored into its accumulator
+- Call <a href="Profiling.html#profilePrint(implicitpmap:com.actian.spark_vector.ProfAccMap):Unit" class="extmbr" name="com.actian.spark_vector.Profiling#profilePrint">profilePrint</a> at the end to log the profiling information gathered
+</p></div></div>
     </li></ol>
             </div>
 
@@ -159,9 +188,13 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="colbuffer/package.html"><span class="name">colbuffer</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Implements buffering (and value serialization) for <code>Vector</code> columns</p>
-    </li><li name="com.actian.spark_vector.datastream" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@colbuffer" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Implements buffering (and value serialization) for <code>Vector</code> columns</p>
+    </li><li name="com.actian.spark_vector.datastream" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="datastream"></a>
       <a id="datastream:datastream"></a>
       <h4 class="signature">
@@ -172,8 +205,22 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="datastream/package.html"><span class="name">datastream</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Spark -&gt; Vector loading part</p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@datastream" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Spark -&gt; Vector loading part</p><div class="fullcomment"><div class="comment cmt"><p>Spark -&gt; Vector loading part</p><p>Loading from <code>Spark</code> to <code>Vector</code> will be initiated through the <code>SparkSQL</code>/<code>DataFrames</code> APIs.
+The sequence of operations is:</p><ul><li>Given an input <code>RDD</code> with its corresponding data type information, its fields will either be matched to existing table's columns or they will help generate a
+ <code>create table</code> SQL statement that will be first submitted to <code>Vector</code>.</li><li>Helpers <a href="datastream/writer/RowWriter.html" class="extype" name="com.actian.spark_vector.datastream.writer.RowWriter">com.actian.spark_vector.datastream.writer.RowWriter</a> and <a href="datastream/writer/DataStreamWriter.html" class="extype" name="com.actian.spark_vector.datastream.writer.DataStreamWriter">com.actian.spark_vector.datastream.writer.DataStreamWriter</a> objects are created and they contain all the needed information
+ for a <code>Spark</code> worker to be able to process, serialize and write binary data to <code>Vector</code> end points.</li><li>An <a href="datastream/writer/InsertRDD.html" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">com.actian.spark_vector.datastream.writer.InsertRDD</a> is created, containing as many partitions as there are <code>DataStreams</code> and that will create a <code>NarrowDependency</code> to the input <code>RDD</code></li><li>Driver initiates the load, issuing a SQL query to <code>Vector</code> leader node</li><li>Driver initiates Spark job =&gt; <code>RowWriter</code> and <code>DataStreamWriter</code> objects, part of the closure, are serialized and sent to worker processes</li><li>Each worker process reads its corresponding write configuration and starts processing input data (as assigned by the driver when <code>InsertRDD</code> was created), serializes it into
+ <code>ByteBuffers</code> and then flushes them through the socket towards one (and only one) predetermined <code>Vector</code> end point</li><li>During this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a <code>commit</code> or <code>abort</code> depending on whether any of the
+ workers failed. Note, we currently do not retry <code>Spark</code> workers since partial loading is not supported in <code>Vector</code> yet.</li></ul><p>Unloading from <code>Vector</code> to <code>Spark</code> will be initiated through the <code>SparkSQL</code>/<code>DataFrames</code> APIs.
+The sequence of operations is:</p><ul><li>Given a <code>SparkSQL</code> select query, a <a href="datastream/reader/ScanRDD.html" class="extype" name="com.actian.spark_vector.datastream.reader.ScanRDD">com.actian.spark_vector.datastream.reader.ScanRDD</a> is created containing as many partitions as there are <code>DataStreams</code></li><li>Helpers <a href="datastream/reader/RowReader.html" class="extype" name="com.actian.spark_vector.datastream.reader.RowReader">com.actian.spark_vector.datastream.reader.RowReader</a> and <a href="datastream/reader/DataStreamReader.html" class="extype" name="com.actian.spark_vector.datastream.reader.DataStreamReader">com.actian.spark_vector.datastream.reader.DataStreamReader</a> objects are created and they contain all the needed information
+ for a <code>Spark</code> worker to be able to read binary data from <code>Vector</code> end points, deserialize and process it</li><li>Driver initiates the unload, issuing a SQL query to <code>Vector</code> leader node</li><li>Driver initiates Spark job =&gt; <code>RowReader</code> and <code>DataStreamReader</code> objects, part of the closure, are serialized and sent to worker processes</li><li>Each worker process reads its corresponding read configuration and starts processing output data (as assigned by the driver when <code>ScanRDD</code> was created), deserializes it into
+ <code>ByteBuffers</code> and then through an <code>Iterator[Row]</code> we can collect the data row by row</li><li>During this time, the driver remains blocked waiting for the SQL query to finish. Once all workers are done, the driver then issues a <code>commit</code> or <code>abort</code> depending on whether any of the
+ workers failed. Note, we currently do not retry <code>Spark</code> workers since partial loading is not supported in <code>Vector</code> yet.
+</li></ul></div></div>
     </li><li name="com.actian.spark_vector.sql" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="sql"></a>
       <a id="sql:sql"></a>
@@ -185,8 +232,12 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="sql/package.html"><span class="name">sql</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Implements <code>SparkSQL</code> API, including a <code>BaseRelation</code> and a <code>RelationProvider</code></p>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@sql" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Implements <code>SparkSQL</code> API, including a <code>BaseRelation</code> and a <code>RelationProvider</code></p>
     </li><li name="com.actian.spark_vector.srp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="srp"></a>
       <a id="srp:srp"></a>
@@ -198,7 +249,11 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="srp/package.html"><span class="name">srp</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@srp" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="util"></a>
@@ -211,7 +266,11 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="util/package.html"><span class="name">util</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@util" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.vector" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vector"></a>
@@ -224,8 +283,12 @@ a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On t
       <span class="symbol">
         <a href="vector/package.html"><span class="name">vector</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">This package contains a series of helpers to create and manage JDBC connections to <code>Vector</code>, to define the equivalence of <code>SparkSQL</code> and <code>Vector</code> data types,
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.actian.spark_vector.package@vector" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This package contains a series of helpers to create and manage JDBC connections to <code>Vector</code>, to define the equivalence of <code>SparkSQL</code> and <code>Vector</code> data types,
 to create tables when they do not exist (respecting input <code>DataFrame</code>'s schema), to obtain column metadata for <code>Vector</code> tables, and high level methods to initiate
 loading to <code>Vector</code> tables.</p>
     </li></ol>
@@ -257,6 +320,7 @@ loading to <code>Vector</code> tables.</p>
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../lib/template.js"></script>
+
+
     </body>
       </html>

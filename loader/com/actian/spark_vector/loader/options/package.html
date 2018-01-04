@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>options - com.actian.spark_vector.loader.options</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.loader">loader</a></p>
-        <h1>options</h1>
+        <h1>options</h1><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,9 +75,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="CSVOptions.html"><span class="name">CSVOptions</span></a><span class="params">(<span name="headerRow">headerRow: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">scala.None</span></span>, <span name="encoding">encoding: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="nullPattern">nullPattern: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="separatorChar">separatorChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">scala.None</span></span>, <span name="quoteChar">quoteChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">scala.None</span></span>, <span name="escapeChar">escapeChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">scala.None</span></span>, <span name="header">header: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">scala.None</span></span>, <span name="parserLib">parserLib: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="CSVOptions.html"><span class="name">CSVOptions</span></a><span class="params">(<span name="header">header: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">None</span></span>, <span name="headerRow">headerRow: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="inferSchema">inferSchema: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="encoding">encoding: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="separatorChar">separatorChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">None</span></span>, <span name="quoteChar">quoteChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">None</span></span>, <span name="escapeChar">escapeChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">None</span></span>, <span name="commentChar">commentChar: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] = <span class="symbol">None</span></span>, <span name="ignoreLeading">ignoreLeading: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="ignoreTrailing">ignoreTrailing: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">None</span></span>, <span name="nullValue">nullValue: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="nanValue">nanValue: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="positiveInf">positiveInf: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="negativeInf">negativeInf: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="dateFormat">dateFormat: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="timestampFormat">timestampFormat: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="parseMode">parseMode: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package@CSVOptionsextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.options.GeneralOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GeneralOptionsextendsProductwithSerializable"></a>
@@ -80,9 +92,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="GeneralOptions.html"><span class="name">GeneralOptions</span></a><span class="params">(<span name="sourceFile">sourceFile: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="colsToLoad">colsToLoad: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="GeneralOptions.html"><span class="name">GeneralOptions</span></a><span class="params">(<span name="sourceFile">sourceFile: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="colsToLoad">colsToLoad: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package@GeneralOptionsextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.options.UserOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="UserOptionsextendsProductwithSerializable"></a>
@@ -93,9 +109,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="UserOptions.html"><span class="name">UserOptions</span></a><span class="params">(<span name="mode">mode: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="general">general: <a href="GeneralOptions.html" class="extype" name="com.actian.spark_vector.loader.options.GeneralOptions">GeneralOptions</a> = <span class="defval" name="GeneralOptions.apply(GeneralOptions.apply$default$1, GeneralOptions.apply$default$2)">...</span></span>, <span name="csv">csv: <a href="CSVOptions.html" class="extype" name="com.actian.spark_vector.loader.options.CSVOptions">CSVOptions</a> = <span class="defval" name="CSVOptions.apply(CSVOptions.apply$default$1, CSVOptions.apply$default$2, CSVOptions.apply$default$3, CSVOptions.apply$default$4, CSVOptions.apply$default$5, CSVOptions.apply$default$6, CSVOptions.apply$default$7, CSVOptions.apply$default$8)">...</span></span>, <span name="vector">vector: <a href="VectorOptions.html" class="extype" name="com.actian.spark_vector.loader.options.VectorOptions">VectorOptions</a> = <span class="defval" name="VectorOptions.apply(VectorOptions.apply$default$1, VectorOptions.apply$default$2, VectorOptions.apply$default$3, VectorOptions.apply$default$4, VectorOptions.apply$default$5, VectorOptions.apply$default$6, VectorOptions.apply$default$7, VectorOptions.apply$default$8)">...</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="UserOptions.html"><span class="name">UserOptions</span></a><span class="params">(<span name="mode">mode: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="general">general: <a href="GeneralOptions.html" class="extype" name="com.actian.spark_vector.loader.options.GeneralOptions">GeneralOptions</a> = <span class="symbol">GeneralOptions()</span></span>, <span name="csv">csv: <a href="CSVOptions.html" class="extype" name="com.actian.spark_vector.loader.options.CSVOptions">CSVOptions</a> = <span class="symbol">CSVOptions()</span></span>, <span name="vector">vector: <a href="VectorOptions.html" class="extype" name="com.actian.spark_vector.loader.options.VectorOptions">VectorOptions</a> = <span class="symbol">VectorOptions()</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package@UserOptionsextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.options.VectorOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorOptionsextendsProductwithSerializable"></a>
@@ -106,9 +126,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="VectorOptions.html"><span class="name">VectorOptions</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="instance">instance: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="database">database: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="user">user: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="targetTable">targetTable: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="preSQL">preSQL: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">scala.None</span></span>, <span name="postSQL">postSQL: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="VectorOptions.html"><span class="name">VectorOptions</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="instance">instance: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="database">database: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="user">user: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="targetTable">targetTable: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="preSQL">preSQL: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">None</span></span>, <span name="postSQL">postSQL: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="symbol">None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package@VectorOptionsextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -128,7 +152,11 @@
       <span class="symbol">
         <a href="UserOptions$.html"><span class="name">UserOptions</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.options.package@UserOptions" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -155,6 +183,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

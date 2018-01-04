@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>Args - com.actian.spark_vector.loader.parsers.Args</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../index.html';
@@ -24,9 +28,15 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../../lib/object_big.png" />
+        <img alt="Object" src="../../../../../lib/object_big.png" />
         <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.loader">loader</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.loader.parsers">parsers</a></p>
-        <h1>Args</h1>
+        <h1>Args</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="com.actian.spark_vector.loader.parsers">package parsers</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -39,14 +49,16 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Object where all command line arguments are defined:</p><pre>Spark Vector load tool <span class="num">1.1</span>.<span class="num">0</span>
-Usage: spark-submit --<span class="kw">class</span> com.actian.spark_vector.loader.Main &lt;spark_vector_loader-assembly-<span class="num">1.1</span>-SNAPSHOT.jar&gt; [load] [options]
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Object where all command line arguments are defined:</p><pre>Spark Vector load tool <span class="num">2.0</span>.<span class="num">0</span>
+Usage: spark-submit --<span class="kw">class</span> com.actian.spark_vector.loader.Main &lt;spark_vector_loader-assembly-<span class="num">2.0</span>-SNAPSHOT.jar&gt; [load] [options]
 
 Spark Vector load
   --help
         This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
+
 Command: load [csv|parquet|orc]
 Read a file and load into Vector
+
 Command: load csv [options]
 Load a csv file
   -sf &lt;value&gt; | --sourceFile &lt;value&gt;
@@ -69,22 +81,45 @@ Load a csv file
         Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
   -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
         Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
-  -sh &lt;value&gt; | --skipHeader &lt;value&gt;
-        Skip header row
-  -en &lt;value&gt; | --encoding &lt;value&gt;
-        CSV text encoding
-  -np &lt;value&gt; | --nullPattern &lt;value&gt;
-        CSV <span class="kw">null</span> pattern
-  -sc &lt;value&gt; | --separatorChar &lt;value&gt;
-        CSV field separator character
-  -qc &lt;value&gt; | --quoteChar &lt;value&gt;
-        CSV quote character
-  -ec &lt;value&gt; | --escapeChar &lt;value&gt;
-        CSV escape character
+
   -h &lt;value&gt; | --header &lt;value&gt;
         Comma separated string <span class="kw">with</span> CSV column names and datatypes, e.g. <span class="lit">"col1 int, col2 string,"</span>
-  -pl &lt;value&gt; | --parserLib &lt;value&gt;
-        CSV parser library (<span class="kw">for</span> spark-csv): either default or univocity
+  -sh &lt;value&gt; | --skipHeader &lt;value&gt;
+        Skip header row so it is not included as data (default <span class="kw">false</span>)
+  -is &lt;value&gt; | --inferSchema &lt;value&gt;
+        Infer CSV input schema automatically (default <span class="kw">false</span>)
+  -en &lt;value&gt; | --encoding &lt;value&gt;
+        CSV text encoding <span class="kw">type</span> (default UTF-<span class="num">8</span>)
+  -sc &lt;value&gt; | --separatorChar &lt;value&gt;
+        CSV field separator character (default ,)
+  -qc &lt;value&gt; | --quoteChar &lt;value&gt;
+        CSV quote character (default <span class="lit">""</span>)
+  -ec &lt;value&gt; | --escapeChar &lt;value&gt;
+        CSV escape character (default \)
+  -cc &lt;value&gt; | --commentChar &lt;value&gt;
+        CSV comment character, disabled by default
+  -il &lt;value&gt; | --ignoreLeadingWS &lt;value&gt;
+        Whether leading whitespaces on values should be skipped (default <span class="kw">false</span>)
+  -it &lt;value&gt; | --ignoreTrailingWS &lt;value&gt;
+        Whether trailing whitespaces on values should be skipped (default <span class="kw">false</span>)
+  -nv &lt;value&gt; | --nullValue &lt;value&gt;
+        <span class="std">String</span> representation of a <span class="kw">null</span> value (default empty string)
+  -nnv &lt;value&gt; | --nanValue &lt;value&gt;
+        <span class="std">String</span> representation of a non-number value (default NaN)
+  -pi &lt;value&gt; | --positiveInf &lt;value&gt;
+        <span class="std">String</span> representation of a positive infinity value (default Inf)
+  -ni &lt;value&gt; | --negativeInf &lt;value&gt;
+        <span class="std">String</span> representation of a negativ infinity value (default -Inf)
+  -df &lt;value&gt; | --dateFormat &lt;value&gt;
+        CSV date format string, custom date formats follow the formats at java.text.SimpleDateFormat (default yyyy-MM-dd)
+  -tf &lt;value&gt; | --timestampFormat &lt;value&gt;
+        CSV timestamp format string, custom timestamp formats follow the formats at java.text.SimpleDateFormat (default yyyy-MM-dd<span class="lit">'T'</span>HH:mm:ss.SSSZZ)
+  -pm &lt;value&gt; | --parseMode &lt;value&gt;
+        <span class="std">Set</span> parse mode <span class="kw">for</span> dealing <span class="kw">with</span> corrupt records during parsing (default PERMISSIVE)
+        PERMISSIVE - sets other fields to <span class="kw">null</span> in corrupted records
+        DROPMALFORMED - ignore corrupted records
+        FAILFAST - throws an exception on corrupted record
+
 Command: load parquet [options]
 Load a parquet file
   -sf &lt;value&gt; | --sourceFile &lt;value&gt;
@@ -107,6 +142,7 @@ Load a parquet file
         Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
   -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
         Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
+
 Command: load orc [options]
 Load an orc file
   -sf &lt;value&gt; | --sourceFile &lt;value&gt;
@@ -141,7 +177,7 @@ Load an orc file
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -154,9 +190,8 @@ Load an orc file
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -175,19 +210,6 @@ Load an orc file
         <div id="values" class="values members">
               <h3>Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -198,8 +220,12 @@ Load an orc file
       <span class="symbol">
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -211,22 +237,13 @@ Load an orc file
       <span class="symbol">
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -237,8 +254,12 @@ Load an orc file
       <span class="symbol">
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -250,7 +271,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -263,7 +288,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -271,31 +300,56 @@ Load an orc file
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.actian.spark_vector.loader.parsers.Args#colsToLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="colsToLoad:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[Seq[_]]]"></a>
-      <a id="colsToLoad:ArgOption[String,Option[Seq[_]]]"></a>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#colsForLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="colsForLoad:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[Seq[_]]]"></a>
+      <a id="colsForLoad:ArgOption[String,Option[Seq[_]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">colsToLoad</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]]]</span>
+        <span class="name">colsForLoad</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@colsForLoad:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[Seq[_]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#commentChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="commentChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]"></a>
+      <a id="commentChar:ArgOption[Char,Option[Char]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">commentChar</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Char">Char</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@commentChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#csvArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="csvArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:StringwithCharwithBoolean,_&gt;:Option[Seq[_]]withOption[Char]withOption[String]withOption[Boolean]&lt;:Option[Any]]]"></a>
-      <a id="csvArgs:Seq[ArgOption[_&gt;:StringwithCharwithBoolean,_&gt;:Option[Seq[_]]withOption[Char]withOption[String]withOption[Boolean]&lt;:Option[Any]]]"></a>
+      <a id="csvArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:CharwithStringwithBoolean,_&gt;:Option[Char]withOption[String]withOption[Boolean]withOption[Seq[_]]&lt;:Option[Any]]]"></a>
+      <a id="csvArgs:Seq[ArgOption[_&gt;:CharwithStringwithBoolean,_&gt;:Option[Char]withOption[String]withOption[Boolean]withOption[Seq[_]]&lt;:Option[Any]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">csvArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_ &gt;: <span class="extype" name="java.lang.String">String</span> with <span class="extype" name="scala.Char">Char</span> with <span class="extype" name="scala.Boolean">Boolean</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] &lt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Any">Any</span>]]]</span>
+        <span class="name">csvArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_ &gt;: <span class="extype" name="scala.Char">Char</span> with <span class="extype" name="java.lang.String">String</span> with <span class="extype" name="scala.Boolean">Boolean</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]] &lt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Any">Any</span>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@csvArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:CharwithStringwithBoolean,_&gt;:Option[Char]withOption[String]withOption[Boolean]withOption[Seq[_]]&lt;:Option[Any]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#csvLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="csvLoad:com.actian.spark_vector.loader.parsers.ArgDescription"></a>
@@ -308,7 +362,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">csvLoad</span><span class="result">: <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@csvLoad:com.actian.spark_vector.loader.parsers.ArgDescription" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#csvOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="csvOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
@@ -321,20 +379,45 @@ Load an orc file
       <span class="symbol">
         <span class="name">csvOptions</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@csvOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.loader.parsers.Args#encoding" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="encoding:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
-      <a id="encoding:ArgOption[String,Option[String]]"></a>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#dateFormat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dateFormat:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="dateFormat:ArgOption[String,Option[String]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">encoding</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">dateFormat</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@dateFormat:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#encode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="encode:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="encode:ArgOption[String,Option[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encode</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@encode:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -347,7 +430,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -360,7 +447,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#escapeChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="escapeChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]"></a>
@@ -373,7 +464,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">escapeChar</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Char">Char</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@escapeChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -386,7 +481,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -405,7 +504,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">generalArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="java.lang.String">String</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="java.io.Serializable">Serializable</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@generalArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[String,_&gt;:Option[Seq[_]]withString&lt;:java.io.Serializable]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -418,7 +521,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#hRow" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="hRow:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]"></a>
@@ -431,7 +538,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">hRow</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Boolean">Boolean</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@hRow:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -444,7 +555,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#header" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="header:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[Seq[_]]]"></a>
@@ -457,7 +572,62 @@ Load an orc file
       <span class="symbol">
         <span class="name">header</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[_]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@header:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[Seq[_]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#ignoreLeading" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ignoreLeading:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]"></a>
+      <a id="ignoreLeading:ArgOption[Boolean,Option[Boolean]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ignoreLeading</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Boolean">Boolean</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@ignoreLeading:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#ignoreTrailing" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ignoreTrailing:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]"></a>
+      <a id="ignoreTrailing:ArgOption[Boolean,Option[Boolean]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ignoreTrailing</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Boolean">Boolean</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@ignoreTrailing:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#inferSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="inferSchema:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]"></a>
+      <a id="inferSchema:ArgOption[Boolean,Option[Boolean]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">inferSchema</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Boolean">Boolean</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@inferSchema:com.actian.spark_vector.loader.parsers.ArgOption[Boolean,Option[Boolean]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#inputFile" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="inputFile:com.actian.spark_vector.loader.parsers.ArgOption[String,String]"></a>
@@ -470,7 +640,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">inputFile</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@inputFile:com.actian.spark_vector.loader.parsers.ArgOption[String,String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -483,7 +657,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#load" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="load:com.actian.spark_vector.loader.parsers.ArgDescription"></a>
@@ -496,7 +674,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">load</span><span class="result">: <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@load:com.actian.spark_vector.loader.parsers.ArgDescription" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#modeToOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="modeToOptions:scala.collection.immutable.Map[String,Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]]"></a>
@@ -509,7 +691,28 @@ Load an orc file
       <span class="symbol">
         <span class="name">modeToOptions</span><span class="result">: <span class="extype" name="scala.collection.immutable.Map">Map</span>[<span class="extype" name="java.lang.String">String</span>, <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@modeToOptions:scala.collection.immutable.Map[String,Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#nanValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nanValue:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="nanValue:ArgOption[String,Option[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nanValue</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@nanValue:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -522,8 +725,29 @@ Load an orc file
       <span class="symbol">
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#negativeInf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="negativeInf:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="negativeInf:ArgOption[String,Option[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">negativeInf</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@negativeInf:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -535,7 +759,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -548,20 +776,28 @@ Load an orc file
       <span class="symbol">
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.actian.spark_vector.loader.parsers.Args#nullPattern" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="nullPattern:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
-      <a id="nullPattern:ArgOption[String,Option[String]]"></a>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#nullValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nullValue:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="nullValue:ArgOption[String,Option[String]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">nullPattern</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">nullValue</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@nullValue:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#orcArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="orcArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
@@ -574,7 +810,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">orcArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@orcArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#orcLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="orcLoad:com.actian.spark_vector.loader.parsers.ArgDescription"></a>
@@ -587,7 +827,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">orcLoad</span><span class="result">: <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@orcLoad:com.actian.spark_vector.loader.parsers.ArgDescription" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#orcOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="orcOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
@@ -600,7 +844,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">orcOptions</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@orcOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#parquetArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="parquetArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
@@ -613,7 +861,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">parquetArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@parquetArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#parquetLoad" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="parquetLoad:com.actian.spark_vector.loader.parsers.ArgDescription"></a>
@@ -626,7 +878,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">parquetLoad</span><span class="result">: <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@parquetLoad:com.actian.spark_vector.loader.parsers.ArgDescription" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#parquetOptions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="parquetOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]"></a>
@@ -639,20 +895,45 @@ Load an orc file
       <span class="symbol">
         <span class="name">parquetOptions</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_, _]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@parquetOptions:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_,_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.loader.parsers.Args#parserLib" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="parserLib:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
-      <a id="parserLib:ArgOption[String,Option[String]]"></a>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#parseMode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="parseMode:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="parseMode:ArgOption[String,Option[String]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">parserLib</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">parseMode</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@parseMode:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#positiveInf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="positiveInf:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="positiveInf:ArgOption[String,Option[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">positiveInf</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@positiveInf:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#postSQL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="postSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]"></a>
@@ -665,7 +946,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">postSQL</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@postSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#preSQL" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="preSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]"></a>
@@ -678,7 +963,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">preSQL</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@preSQL:com.actian.spark_vector.loader.parsers.ArgOption[Seq[String],Option[Seq[String]]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#quoteChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="quoteChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]"></a>
@@ -691,7 +980,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">quoteChar</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Char">Char</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@quoteChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#separatorChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="separatorChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]"></a>
@@ -704,7 +997,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">separatorChar</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Char">Char</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Char">Char</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@separatorChar:com.actian.spark_vector.loader.parsers.ArgOption[Char,Option[Char]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
@@ -717,8 +1014,29 @@ Load an orc file
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.actian.spark_vector.loader.parsers.Args#timestampFormat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="timestampFormat:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
+      <a id="timestampFormat:ArgOption[String,Option[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">timestampFormat</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@timestampFormat:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -730,7 +1048,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:Seq[String]withString&lt;:Object,_&gt;:Option[Seq[String]]withOption[String]withString&lt;:java.io.Serializable]]"></a>
@@ -743,7 +1065,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorArgs</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[_ &gt;: <span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="scala.AnyRef">AnyRef</span>, _ &gt;: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="java.lang.String">String</span>]] with <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.lang.String">String</span>] with <span class="extype" name="java.lang.String">String</span> &lt;: <span class="extype" name="java.io.Serializable">Serializable</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorArgs:Seq[com.actian.spark_vector.loader.parsers.ArgOption[_&gt;:Seq[String]withString&lt;:Object,_&gt;:Option[Seq[String]]withOption[String]withString&lt;:java.io.Serializable]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorDatabase" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorDatabase:com.actian.spark_vector.loader.parsers.ArgOption[String,String]"></a>
@@ -756,7 +1082,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorDatabase</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorDatabase:com.actian.spark_vector.loader.parsers.ArgOption[String,String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorHost" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorHost:com.actian.spark_vector.loader.parsers.ArgOption[String,String]"></a>
@@ -769,7 +1099,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorHost</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorHost:com.actian.spark_vector.loader.parsers.ArgOption[String,String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorInstance" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorInstance:com.actian.spark_vector.loader.parsers.ArgOption[String,String]"></a>
@@ -782,7 +1116,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorInstance</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorInstance:com.actian.spark_vector.loader.parsers.ArgOption[String,String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorPassword" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorPassword:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
@@ -795,7 +1133,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorPassword</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorPassword:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorTargetTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorTargetTable:com.actian.spark_vector.loader.parsers.ArgOption[String,String]"></a>
@@ -808,7 +1150,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorTargetTable</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorTargetTable:com.actian.spark_vector.loader.parsers.ArgOption[String,String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.loader.parsers.Args#vectorUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="vectorUser:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]"></a>
@@ -821,7 +1167,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">vectorUser</span><span class="result">: <a href="ArgOption.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption">ArgOption</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@vectorUser:com.actian.spark_vector.loader.parsers.ArgOption[String,Option[String]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -834,7 +1184,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -853,7 +1207,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -872,7 +1230,11 @@ Load an orc file
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.Args$@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -909,6 +1271,7 @@ Load an orc file
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

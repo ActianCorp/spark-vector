@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>parsers - com.actian.spark_vector.loader.parsers</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.loader">loader</a></p>
-        <h1>parsers</h1>
+        <h1>parsers</h1><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.package" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -69,9 +77,13 @@
       <span class="symbol">
         <a href="ArgDescription.html"><span class="name">ArgDescription</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.package@ArgDescriptionextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.loader.parsers.ArgOption" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.loader.parsers.ArgOption" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ArgOption[T,O]extendsArgDescriptionwithProductwithSerializable"></a>
       <a id="ArgOption[T,O]:ArgOption[T,O]"></a>
       <h4 class="signature">
@@ -82,8 +94,13 @@
       <span class="symbol">
         <a href="ArgOption.html"><span class="name">ArgOption</span></a><span class="tparams">[<span name="T">T</span>, <span name="O">O</span>]</span><span class="params">(<span name="lName">lName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sName">sName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="desc">desc: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="extractor">extractor: (<a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>) ⇒ <span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.O">O</span></span>, <span name="injector">injector: (<span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.T">T</span>, <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>) ⇒ <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a></span>, <span name="mandatory">mandatory: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="evidence$1">evidence$1: <span class="extype" name="scopt.Read">Read</span>[<span class="extype" name="com.actian.spark_vector.loader.parsers.ArgOption.T">T</span>]</span>)</span><span class="result"> extends <a href="ArgDescription.html" class="extype" name="com.actian.spark_vector.loader.parsers.ArgDescription">ArgDescription</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Option describing a command line argument.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.package@ArgOption[T,O]extendsArgDescriptionwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Option describing a command line argument.</p><div class="fullcomment"><div class="comment cmt"><p>Option describing a command line argument.
+</p></div><dl class="paramcmts block"><dt class="param">lName</dt><dd class="cmt"><p>Name for argument</p></dd><dt class="param">sName</dt><dd class="cmt"><p>Short name for argument (two letters)</p></dd><dt class="param">desc</dt><dd class="cmt"><p>Description of argument</p></dd><dt class="param">extractor</dt><dd class="cmt"><p>Extracts the value of the argument from the global <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a></p></dd><dt class="param">injector</dt><dd class="cmt"><p>Updates a <a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a> instance, with an updated value for this argument</p></dd><dt class="param">mandatory</dt><dd class="cmt"><p>Flag to describe if the argument is required or not</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -91,7 +108,7 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector.loader.parsers.Args" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.loader.parsers.Args" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Args"></a>
       <a id="Args:Args"></a>
       <h4 class="signature">
@@ -102,8 +119,127 @@
       <span class="symbol">
         <a href="Args$.html"><span class="name">Args</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Object where all command line arguments are defined:</p>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.package@Args" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Object where all command line arguments are defined:</p><div class="fullcomment"><div class="comment cmt"><p>Object where all command line arguments are defined:</p><pre>Spark Vector load tool <span class="num">2.0</span>.<span class="num">0</span>
+Usage: spark-submit --<span class="kw">class</span> com.actian.spark_vector.loader.Main &lt;spark_vector_loader-assembly-<span class="num">2.0</span>-SNAPSHOT.jar&gt; [load] [options]
+
+Spark Vector load
+  --help
+        This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
+
+Command: load [csv|parquet|orc]
+Read a file and load into Vector
+
+Command: load csv [options]
+Load a csv file
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
+
+  -h &lt;value&gt; | --header &lt;value&gt;
+        Comma separated string <span class="kw">with</span> CSV column names and datatypes, e.g. <span class="lit">"col1 int, col2 string,"</span>
+  -sh &lt;value&gt; | --skipHeader &lt;value&gt;
+        Skip header row so it is not included as data (default <span class="kw">false</span>)
+  -is &lt;value&gt; | --inferSchema &lt;value&gt;
+        Infer CSV input schema automatically (default <span class="kw">false</span>)
+  -en &lt;value&gt; | --encoding &lt;value&gt;
+        CSV text encoding <span class="kw">type</span> (default UTF-<span class="num">8</span>)
+  -sc &lt;value&gt; | --separatorChar &lt;value&gt;
+        CSV field separator character (default ,)
+  -qc &lt;value&gt; | --quoteChar &lt;value&gt;
+        CSV quote character (default <span class="lit">""</span>)
+  -ec &lt;value&gt; | --escapeChar &lt;value&gt;
+        CSV escape character (default \)
+  -cc &lt;value&gt; | --commentChar &lt;value&gt;
+        CSV comment character, disabled by default
+  -il &lt;value&gt; | --ignoreLeadingWS &lt;value&gt;
+        Whether leading whitespaces on values should be skipped (default <span class="kw">false</span>)
+  -it &lt;value&gt; | --ignoreTrailingWS &lt;value&gt;
+        Whether trailing whitespaces on values should be skipped (default <span class="kw">false</span>)
+  -nv &lt;value&gt; | --nullValue &lt;value&gt;
+        <span class="std">String</span> representation of a <span class="kw">null</span> value (default empty string)
+  -nnv &lt;value&gt; | --nanValue &lt;value&gt;
+        <span class="std">String</span> representation of a non-number value (default NaN)
+  -pi &lt;value&gt; | --positiveInf &lt;value&gt;
+        <span class="std">String</span> representation of a positive infinity value (default Inf)
+  -ni &lt;value&gt; | --negativeInf &lt;value&gt;
+        <span class="std">String</span> representation of a negativ infinity value (default -Inf)
+  -df &lt;value&gt; | --dateFormat &lt;value&gt;
+        CSV date format string, custom date formats follow the formats at java.text.SimpleDateFormat (default yyyy-MM-dd)
+  -tf &lt;value&gt; | --timestampFormat &lt;value&gt;
+        CSV timestamp format string, custom timestamp formats follow the formats at java.text.SimpleDateFormat (default yyyy-MM-dd<span class="lit">'T'</span>HH:mm:ss.SSSZZ)
+  -pm &lt;value&gt; | --parseMode &lt;value&gt;
+        <span class="std">Set</span> parse mode <span class="kw">for</span> dealing <span class="kw">with</span> corrupt records during parsing (default PERMISSIVE)
+        PERMISSIVE - sets other fields to <span class="kw">null</span> in corrupted records
+        DROPMALFORMED - ignore corrupted records
+        FAILFAST - throws an exception on corrupted record
+
+Command: load parquet [options]
+Load a parquet file
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span>
+
+Command: load orc [options]
+Load an orc file
+  -sf &lt;value&gt; | --sourceFile &lt;value&gt;
+        Source file
+  -cols &lt;value&gt; | --cols &lt;value&gt;
+        Comma separated string containing only column names to load
+  -vh &lt;value&gt; | --vectorHost &lt;value&gt;
+        Vector host name
+  -vi &lt;value&gt; | --vectorInstance &lt;value&gt;
+        Vector instance
+  -vd &lt;value&gt; | --vectorDatabase &lt;value&gt;
+        Vector database
+  -vu &lt;value&gt; | --vectorUser &lt;value&gt;
+        Vector user
+  -vp &lt;value&gt; | --vectorPass &lt;value&gt;
+        Vector password
+  -tt &lt;value&gt; | --vectorTargetTable &lt;value&gt;
+        Vector target table
+  -preSQL &lt;value&gt; | --preSQL &lt;value&gt;
+        Queries to execute in Vector before loading, separated by <span class="lit">';'</span>
+  -postSQL &lt;value&gt; | --postSQL &lt;value&gt;
+        Queries to execute in Vector after loading, separated by <span class="lit">';'</span></pre></div></div>
     </li><li name="com.actian.spark_vector.loader.parsers.Parser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Parser"></a>
       <a id="Parser:Parser"></a>
@@ -115,7 +251,11 @@
       <span class="symbol">
         <a href="Parser$.html"><span class="name">Parser</span></a><span class="result"> extends <span class="extype" name="scopt.OptionParser">OptionParser</span>[<a href="../options/UserOptions.html" class="extype" name="com.actian.spark_vector.loader.options.UserOptions">UserOptions</a>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.loader.parsers.package@Parser" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -142,6 +282,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>InsertRDD - com.actian.spark_vector.datastream.writer.InsertRDD</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../index.html';
@@ -24,9 +28,15 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../lib/class_big.png" />
+        <img alt="Class" src="../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.actian">actian</a>.<a href="../../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector.datastream">datastream</a>.<a href="package.html" class="extype" name="com.actian.spark_vector.datastream.writer">writer</a></p>
-        <h1>InsertRDD</h1>
+        <h1>InsertRDD</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="com.actian.spark_vector.datastream.writer">package writer</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,14 +45,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">InsertRDD</span><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>] with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <span class="name">InsertRDD</span><span class="tparams">[<span name="R">R</span>]</span><span class="result"> extends <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p><code>Vector</code> RDD to load data into <code>Vector</code> through its <code>DataStream API</code>
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="org.apache.spark.Logging">Logging</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="org.apache.spark.internal.Logging">Logging</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -53,22 +63,21 @@
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.actian.spark_vector.datastream.writer.InsertRDD"><span>InsertRDD</span></li><li class="in" name="org.apache.spark.rdd.RDD"><span>RDD</span></li><li class="in" name="org.apache.spark.Logging"><span>Logging</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.actian.spark_vector.datastream.writer.InsertRDD"><span>InsertRDD</span></li><li class="in" name="org.apache.spark.rdd.RDD"><span>RDD</span></li><li class="in" name="org.apache.spark.internal.Logging"><span>Logging</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -91,9 +100,12 @@
       <span class="symbol">
         <span class="name">InsertRDD</span><span class="params">(<span name="rdd">rdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>, <span name="writeConf">writeConf: <a href="../VectorEndpointConf.html" class="extype" name="com.actian.spark_vector.datastream.VectorEndpointConf">VectorEndpointConf</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span>
       </span>
-      </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">rdd</dt><dd class="cmt"><p><code>RDD</code> to be loaded</p></dd><dt class="param">writeConf</dt><dd class="cmt"><p>contains the write configuration needed to connect to <code>Vector DataStream</code>s
-</p></dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@&lt;init&gt;(rdd:org.apache.spark.rdd.RDD[R],writeConf:com.actian.spark_vector.datastream.VectorEndpointConf)(implicitevidence$1:scala.reflect.ClassTag[R]):com.actian.spark_vector.datastream.writer.InsertRDD[R]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">rdd</dt><dd class="cmt"><p><code>RDD</code> to be loaded</p></dd><dt class="param">writeConf</dt><dd class="cmt"><p>contains the write configuration needed to connect to <code>Vector DataStream</code>s</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -104,19 +116,6 @@
         <div id="values" class="values members">
               <h3>Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -127,8 +126,12 @@
       <span class="symbol">
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -140,7 +143,11 @@
       <span class="symbol">
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#++" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="++(other:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -153,22 +160,13 @@
       <span class="symbol">
         <span title="gt4s: $plus$plus" class="name">++</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@++(other:org.apache.spark.rdd.RDD[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -179,10 +177,14 @@
       <span class="symbol">
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#aggregate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="aggregate[U&lt;:&lt;?&gt;](zeroValue:&lt;?&gt;)(seqOp:&lt;?&gt;,combOp:&lt;?&gt;)(implicitevidence$32:&lt;?&gt;):U"></a>
+      <a id="aggregate[U&lt;:&lt;?&gt;](zeroValue:&lt;?&gt;)(seqOp:&lt;?&gt;,combOp:&lt;?&gt;)(implicitevidence$30:&lt;?&gt;):U"></a>
       <a id="aggregate[U](U)((U,R)⇒U,(U,U)⇒U)(ClassTag[U]):U"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -192,7 +194,11 @@
       <span class="symbol">
         <span class="name">aggregate</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="zeroValue">zeroValue: <span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span></span>)</span><span class="params">(<span name="seqOp">seqOp: (<span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span></span>, <span name="combOp">combOp: (<span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span>, <span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD.aggregate.U">U</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@aggregate[U](zeroValue:U)(seqOp:(U,T)=&gt;U,combOp:(U,U)=&gt;U)(implicitevidence$30:scala.reflect.ClassTag[U]):U" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
@@ -205,7 +211,11 @@
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#cache" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cache():RDD.this.type"></a>
@@ -218,7 +228,11 @@
       <span class="symbol">
         <span class="name">cache</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@cache():RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#cartesian" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cartesian[U&lt;:&lt;?&gt;](other:&lt;?&gt;)(implicitevidence$5:&lt;?&gt;):org.apache.spark.rdd.RDD[(T,U)]"></a>
@@ -231,7 +245,11 @@
       <span class="symbol">
         <span class="name">cartesian</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.cartesian.U">U</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.cartesian.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.cartesian.U">U</span>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@cartesian[U](other:org.apache.spark.rdd.RDD[U])(implicitevidence$5:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[(T,U)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#checkpoint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="checkpoint():Unit"></a>
@@ -244,7 +262,11 @@
       <span class="symbol">
         <span class="name">checkpoint</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@checkpoint():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#clearDependencies" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clearDependencies():Unit"></a>
@@ -257,7 +279,11 @@
       <span class="symbol">
         <span class="name">clearDependencies</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@clearDependencies():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -270,7 +296,11 @@
       <span class="symbol">
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -279,20 +309,24 @@
               
         </dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#coalesce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="coalesce(numPartitions:&lt;?&gt;,shuffle:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
-      <a id="coalesce(Int,Boolean)(Ordering[R]):RDD[R]"></a>
+      <a id="coalesce(numPartitions:&lt;?&gt;,shuffle:&lt;?&gt;,partitionCoalescer:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
+      <a id="coalesce(Int,Boolean,Option[PartitionCoalescer])(Ordering[R]):RDD[R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">coalesce</span><span class="params">(<span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>, <span name="shuffle">shuffle: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
+        <span class="name">coalesce</span><span class="params">(<span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>, <span name="shuffle">shuffle: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="partitionCoalescer">partitionCoalescer: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.rdd.PartitionCoalescer">PartitionCoalescer</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@coalesce(numPartitions:Int,shuffle:Boolean,partitionCoalescer:Option[org.apache.spark.rdd.PartitionCoalescer])(implicitord:Ordering[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#collect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="collect[U&lt;:&lt;?&gt;](f:&lt;?&gt;)(implicitevidence$31:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
+      <a id="collect[U&lt;:&lt;?&gt;](f:&lt;?&gt;)(implicitevidence$29:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
       <a id="collect[U](PartialFunction[R,U])(ClassTag[U]):RDD[U]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -302,7 +336,11 @@
       <span class="symbol">
         <span class="name">collect</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.collect.U">U</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.collect.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.collect.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@collect[U](f:PartialFunction[T,U])(implicitevidence$29:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#collect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="collect():Array[T]"></a>
@@ -315,7 +353,11 @@
       <span class="symbol">
         <span class="name">collect</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@collect():Array[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD#compute" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="compute(split:org.apache.spark.Partition,taskContext:org.apache.spark.TaskContext):Iterator[R]"></a>
@@ -328,7 +370,11 @@
       <span class="symbol">
         <span class="name">compute</span><span class="params">(<span name="split">split: <span class="extype" name="org.apache.spark.Partition">Partition</span></span>, <span name="taskContext">taskContext: <span class="extype" name="org.apache.spark.TaskContext">TaskContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@compute(split:org.apache.spark.Partition,taskContext:org.apache.spark.TaskContext):Iterator[R]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a> → RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#context" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="context:org.apache.spark.SparkContext"></a>
@@ -341,7 +387,11 @@
       <span class="symbol">
         <span class="name">context</span><span class="result">: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@context:org.apache.spark.SparkContext" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#count" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="count():Long"></a>
@@ -354,7 +404,11 @@
       <span class="symbol">
         <span class="name">count</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@count():Long" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#countApprox" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="countApprox(timeout:&lt;?&gt;,confidence:&lt;?&gt;):org.apache.spark.partial.PartialResult[org.apache.spark.partial.BoundedDouble]"></a>
@@ -367,11 +421,12 @@
       <span class="symbol">
         <span class="name">countApprox</span><span class="params">(<span name="timeout">timeout: <span class="extype" name="scala.Long">Long</span></span>, <span name="confidence">confidence: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.partial.PartialResult">PartialResult</span>[<span class="extype" name="org.apache.spark.partial.BoundedDouble">BoundedDouble</span>]</span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@Experimental</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@countApprox(timeout:Long,confidence:Double):org.apache.spark.partial.PartialResult[org.apache.spark.partial.BoundedDouble]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#countApproxDistinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="countApproxDistinct(relativeSD:&lt;?&gt;):Long"></a>
       <a id="countApproxDistinct(Double):Long"></a>
@@ -383,7 +438,11 @@
       <span class="symbol">
         <span class="name">countApproxDistinct</span><span class="params">(<span name="relativeSD">relativeSD: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@countApproxDistinct(relativeSD:Double):Long" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#countApproxDistinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="countApproxDistinct(p:&lt;?&gt;,sp:&lt;?&gt;):Long"></a>
@@ -396,11 +455,12 @@
       <span class="symbol">
         <span class="name">countApproxDistinct</span><span class="params">(<span name="p">p: <span class="extype" name="scala.Int">Int</span></span>, <span name="sp">sp: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@Experimental</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@countApproxDistinct(p:Int,sp:Int):Long" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#countByValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="countByValue()(implicitord:&lt;?&gt;):scala.collection.Map[T,Long]"></a>
       <a id="countByValue()(Ordering[R]):Map[R,Long]"></a>
@@ -412,7 +472,11 @@
       <span class="symbol">
         <span class="name">countByValue</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="scala.collection.Map">Map</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="scala.Long">Long</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@countByValue()(implicitord:Ordering[T]):scala.collection.Map[T,Long]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#countByValueApprox" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="countByValueApprox(timeout:&lt;?&gt;,confidence:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.partial.PartialResult[scala.collection.Map[T,org.apache.spark.partial.BoundedDouble]]"></a>
@@ -425,11 +489,12 @@
       <span class="symbol">
         <span class="name">countByValueApprox</span><span class="params">(<span name="timeout">timeout: <span class="extype" name="scala.Long">Long</span></span>, <span name="confidence">confidence: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.partial.PartialResult">PartialResult</span>[<span class="extype" name="scala.collection.Map">Map</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.partial.BoundedDouble">BoundedDouble</span>]]</span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@Experimental</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@countByValueApprox(timeout:Long,confidence:Double)(implicitord:Ordering[T]):org.apache.spark.partial.PartialResult[scala.collection.Map[T,org.apache.spark.partial.BoundedDouble]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#dependencies" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dependencies:Seq[org.apache.spark.Dependency[_]]"></a>
       <a id="dependencies:Seq[Dependency[_]]"></a>
@@ -441,7 +506,11 @@
       <span class="symbol">
         <span class="name">dependencies</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.Dependency">Dependency</span>[_]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@dependencies:Seq[org.apache.spark.Dependency[_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#distinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="distinct():org.apache.spark.rdd.RDD[T]"></a>
@@ -454,7 +523,11 @@
       <span class="symbol">
         <span class="name">distinct</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@distinct():org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#distinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="distinct(numPartitions:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -467,7 +540,11 @@
       <span class="symbol">
         <span class="name">distinct</span><span class="params">(<span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@distinct(numPartitions:Int)(implicitord:Ordering[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -480,7 +557,11 @@
       <span class="symbol">
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -493,7 +574,11 @@
       <span class="symbol">
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#filter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="filter(f:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -506,7 +591,11 @@
       <span class="symbol">
         <span class="name">filter</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@filter(f:T=&gt;Boolean):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -519,7 +608,11 @@
       <span class="symbol">
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -538,10 +631,14 @@
       <span class="symbol">
         <span class="name">first</span><span class="params">()</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@first():T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#firstParent" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="firstParent[U](implicitevidence$34:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]"></a>
+      <a id="firstParent[U](implicitevidence$32:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]"></a>
       <a id="firstParent[U](ClassTag[U]):RDD[U]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -551,7 +648,11 @@
       <span class="symbol">
         <span class="name">firstParent</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.firstParent.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.firstParent.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@firstParent[U](implicitevidence$32:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../org$apache$spark.html" class="extype" name="org.apache.spark">org.apache.spark</a>] </dd><dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#flatMap" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="flatMap[U&lt;:&lt;?&gt;](f:&lt;?&gt;)(implicitevidence$4:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
@@ -564,7 +665,11 @@
       <span class="symbol">
         <span class="name">flatMap</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMap.U">U</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMap.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMap.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@flatMap[U](f:T=&gt;TraversableOnce[U])(implicitevidence$4:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#fold" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fold(zeroValue:&lt;?&gt;)(op:&lt;?&gt;):T"></a>
@@ -577,7 +682,11 @@
       <span class="symbol">
         <span class="name">fold</span><span class="params">(<span name="zeroValue">zeroValue: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>)</span><span class="params">(<span name="op">op: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@fold(zeroValue:T)(op:(T,T)=&gt;T):T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#foreach" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="foreach(f:&lt;?&gt;):Unit"></a>
@@ -590,7 +699,11 @@
       <span class="symbol">
         <span class="name">foreach</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@foreach(f:T=&gt;Unit):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#foreachPartition" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="foreachPartition(f:&lt;?&gt;):Unit"></a>
@@ -603,7 +716,11 @@
       <span class="symbol">
         <span class="name">foreachPartition</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@foreachPartition(f:Iterator[T]=&gt;Unit):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#getCheckpointFile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getCheckpointFile:Option[String]"></a>
@@ -616,7 +733,11 @@
       <span class="symbol">
         <span class="name">getCheckpointFile</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getCheckpointFile:Option[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -629,7 +750,11 @@
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD#getDependencies" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getDependencies:Seq[org.apache.spark.NarrowDependency[_]]"></a>
@@ -642,8 +767,35 @@
       <span class="symbol">
         <span class="name">getDependencies</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.NarrowDependency">NarrowDependency</span>[_]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getDependencies:Seq[org.apache.spark.NarrowDependency[_]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a> → RDD</dd></dl></div>
+    </li><li name="org.apache.spark.rdd.RDD#getNumPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getNumPartitions:Int"></a>
+      <a id="getNumPartitions:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getNumPartitions</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getNumPartitions:Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
+                <span class="name">@Since</span><span class="args">(<span>
+      
+      <span class="symbol">&quot;1.6.0&quot;</span>
+    </span>)</span>
+              
+        </dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD#getPartitions" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getPartitions:Array[org.apache.spark.Partition]"></a>
       <a id="getPartitions:Array[Partition]"></a>
@@ -655,7 +807,11 @@
       <span class="symbol">
         <span class="name">getPartitions</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="org.apache.spark.Partition">Partition</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getPartitions:Array[org.apache.spark.Partition]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a> → RDD</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD#getPreferredLocations" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getPreferredLocations(split:org.apache.spark.Partition):Seq[String]"></a>
@@ -668,7 +824,11 @@
       <span class="symbol">
         <span class="name">getPreferredLocations</span><span class="params">(<span name="split">split: <span class="extype" name="org.apache.spark.Partition">Partition</span></span>)</span><span class="result">: <span class="extype" name="scala.collection.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getPreferredLocations(split:org.apache.spark.Partition):Seq[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a> → RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#getStorageLevel" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getStorageLevel:org.apache.spark.storage.StorageLevel"></a>
@@ -681,7 +841,11 @@
       <span class="symbol">
         <span class="name">getStorageLevel</span><span class="result">: <span class="extype" name="org.apache.spark.storage.StorageLevel">StorageLevel</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@getStorageLevel:org.apache.spark.storage.StorageLevel" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#glom" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="glom():org.apache.spark.rdd.RDD[Array[T]]"></a>
@@ -694,7 +858,11 @@
       <span class="symbol">
         <span class="name">glom</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@glom():org.apache.spark.rdd.RDD[Array[T]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#groupBy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="groupBy[K&lt;:&lt;?&gt;](f:&lt;?&gt;,p:&lt;?&gt;)(implicitkt:&lt;?&gt;,implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[(K,Iterable[T])]"></a>
@@ -707,7 +875,11 @@
       <span class="symbol">
         <span class="name">groupBy</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span></span>, <span name="p">p: <span class="extype" name="org.apache.spark.Partitioner">Partitioner</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="kt">kt: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>]</span>, <span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>, <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>])]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@groupBy[K](f:T=&gt;K,p:org.apache.spark.Partitioner)(implicitkt:scala.reflect.ClassTag[K],implicitord:Ordering[K]):org.apache.spark.rdd.RDD[(K,Iterable[T])]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#groupBy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="groupBy[K&lt;:&lt;?&gt;](f:&lt;?&gt;,numPartitions:&lt;?&gt;)(implicitkt:&lt;?&gt;):org.apache.spark.rdd.RDD[(K,Iterable[T])]"></a>
@@ -720,7 +892,11 @@
       <span class="symbol">
         <span class="name">groupBy</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span></span>, <span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="kt">kt: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>, <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>])]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@groupBy[K](f:T=&gt;K,numPartitions:Int)(implicitkt:scala.reflect.ClassTag[K]):org.apache.spark.rdd.RDD[(K,Iterable[T])]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#groupBy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="groupBy[K&lt;:&lt;?&gt;](f:&lt;?&gt;)(implicitkt:&lt;?&gt;):org.apache.spark.rdd.RDD[(K,Iterable[T])]"></a>
@@ -733,7 +909,11 @@
       <span class="symbol">
         <span class="name">groupBy</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="kt">kt: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="org.apache.spark.rdd.RDD.groupBy.K">K</span>, <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>])]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@groupBy[K](f:T=&gt;K)(implicitkt:scala.reflect.ClassTag[K]):org.apache.spark.rdd.RDD[(K,Iterable[T])]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -746,7 +926,11 @@
       <span class="symbol">
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#id" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="id:Int"></a>
@@ -759,8 +943,29 @@
       <span class="symbol">
         <span class="name">id</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@id:Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
+    </li><li name="org.apache.spark.internal.Logging#initializeLogIfNecessary" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="initializeLogIfNecessary(isInterpreter:&lt;?&gt;):Unit"></a>
+      <a id="initializeLogIfNecessary(Boolean):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">initializeLogIfNecessary</span><span class="params">(<span name="isInterpreter">isInterpreter: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@initializeLogIfNecessary(isInterpreter:Boolean):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#intersection" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="intersection(other:&lt;?&gt;,numPartitions:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
       <a id="intersection(RDD[R],Int):RDD[R]"></a>
@@ -772,7 +977,11 @@
       <span class="symbol">
         <span class="name">intersection</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>, <span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@intersection(other:org.apache.spark.rdd.RDD[T],numPartitions:Int):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#intersection" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="intersection(other:&lt;?&gt;,partitioner:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -785,7 +994,11 @@
       <span class="symbol">
         <span class="name">intersection</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>, <span name="partitioner">partitioner: <span class="extype" name="org.apache.spark.Partitioner">Partitioner</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@intersection(other:org.apache.spark.rdd.RDD[T],partitioner:org.apache.spark.Partitioner)(implicitord:Ordering[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#intersection" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="intersection(other:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -798,7 +1011,11 @@
       <span class="symbol">
         <span class="name">intersection</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@intersection(other:org.apache.spark.rdd.RDD[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#isCheckpointed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isCheckpointed:Boolean"></a>
@@ -811,7 +1028,11 @@
       <span class="symbol">
         <span class="name">isCheckpointed</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@isCheckpointed:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#isEmpty" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isEmpty():Boolean"></a>
@@ -824,7 +1045,11 @@
       <span class="symbol">
         <span class="name">isEmpty</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@isEmpty():Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -837,9 +1062,13 @@
       <span class="symbol">
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#isTraceEnabled" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#isTraceEnabled" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isTraceEnabled():Boolean"></a>
       <a id="isTraceEnabled():Boolean"></a>
       <h4 class="signature">
@@ -850,7 +1079,11 @@
       <span class="symbol">
         <span class="name">isTraceEnabled</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@isTraceEnabled():Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#iterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="iterator(split:org.apache.spark.Partition,context:org.apache.spark.TaskContext):Iterator[T]"></a>
@@ -863,7 +1096,11 @@
       <span class="symbol">
         <span class="name">iterator</span><span class="params">(<span name="split">split: <span class="extype" name="org.apache.spark.Partition">Partition</span></span>, <span name="context">context: <span class="extype" name="org.apache.spark.TaskContext">TaskContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@iterator(split:org.apache.spark.Partition,context:org.apache.spark.TaskContext):Iterator[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#keyBy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="keyBy[K&lt;:&lt;?&gt;](f:&lt;?&gt;):org.apache.spark.rdd.RDD[(K,T)]"></a>
@@ -876,7 +1113,11 @@
       <span class="symbol">
         <span class="name">keyBy</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.keyBy.K">K</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="org.apache.spark.rdd.RDD.keyBy.K">K</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@keyBy[K](f:T=&gt;K):org.apache.spark.rdd.RDD[(K,T)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#localCheckpoint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="localCheckpoint():RDD.this.type"></a>
@@ -889,9 +1130,13 @@
       <span class="symbol">
         <span class="name">localCheckpoint</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@localCheckpoint():RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#log" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#log" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="log:org.slf4j.Logger"></a>
       <a id="log:Logger"></a>
       <h4 class="signature">
@@ -902,9 +1147,13 @@
       <span class="symbol">
         <span class="name">log</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@log:org.slf4j.Logger" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logDebug(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logDebug(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -915,9 +1164,13 @@
       <span class="symbol">
         <span class="name">logDebug</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logDebug(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logDebug(msg:=&gt;String):Unit"></a>
       <a id="logDebug(⇒String):Unit"></a>
       <h4 class="signature">
@@ -928,9 +1181,13 @@
       <span class="symbol">
         <span class="name">logDebug</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logDebug(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logError(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logError(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -941,9 +1198,13 @@
       <span class="symbol">
         <span class="name">logError</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logError(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logError(msg:=&gt;String):Unit"></a>
       <a id="logError(⇒String):Unit"></a>
       <h4 class="signature">
@@ -954,10 +1215,14 @@
       <span class="symbol">
         <span class="name">logError</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logError(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="logInfo(msg:=&gt;String,throwable:Throwable):Unit"></a>
+    </li><li name="org.apache.spark.internal.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logInfo(msg:&lt;?&gt;,throwable:&lt;?&gt;):Unit"></a>
       <a id="logInfo(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -967,10 +1232,14 @@
       <span class="symbol">
         <span class="name">logInfo</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logInfo(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="logInfo(msg:=&gt;String):Unit"></a>
+    </li><li name="org.apache.spark.internal.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logInfo(msg:&lt;?&gt;):Unit"></a>
       <a id="logInfo(⇒String):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -980,9 +1249,13 @@
       <span class="symbol">
         <span class="name">logInfo</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logInfo(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logName" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logName" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logName:String"></a>
       <a id="logName:String"></a>
       <h4 class="signature">
@@ -993,10 +1266,14 @@
       <span class="symbol">
         <span class="name">logName</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logName:String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="logTrace(msg:=&gt;String,throwable:Throwable):Unit"></a>
+    </li><li name="org.apache.spark.internal.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logTrace(msg:&lt;?&gt;,throwable:&lt;?&gt;):Unit"></a>
       <a id="logTrace(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1006,10 +1283,14 @@
       <span class="symbol">
         <span class="name">logTrace</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logTrace(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="logTrace(msg:=&gt;String):Unit"></a>
+    </li><li name="org.apache.spark.internal.Logging#logTrace" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logTrace(msg:&lt;?&gt;):Unit"></a>
       <a id="logTrace(⇒String):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1019,9 +1300,13 @@
       <span class="symbol">
         <span class="name">logTrace</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logTrace(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logWarning(msg:=&gt;String,throwable:Throwable):Unit"></a>
       <a id="logWarning(⇒String,Throwable):Unit"></a>
       <h4 class="signature">
@@ -1032,9 +1317,13 @@
       <span class="symbol">
         <span class="name">logWarning</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>, <span name="throwable">throwable: <span class="extype" name="scala.Throwable">Throwable</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logWarning(msg:=&gt;String,throwable:Throwable):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
-    </li><li name="org.apache.spark.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.internal.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="logWarning(msg:=&gt;String):Unit"></a>
       <a id="logWarning(⇒String):Unit"></a>
       <h4 class="signature">
@@ -1045,7 +1334,11 @@
       <span class="symbol">
         <span class="name">logWarning</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@logWarning(msg:=&gt;String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Logging</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#map" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="map[U](f:T=&gt;U)(implicitevidence$3:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]"></a>
@@ -1058,7 +1351,11 @@
       <span class="symbol">
         <span class="name">map</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.map.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.map.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.map.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@map[U](f:T=&gt;U)(implicitevidence$3:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#mapPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="mapPartitions[U&lt;:&lt;?&gt;](f:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(implicitevidence$6:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
@@ -1071,10 +1368,14 @@
       <span class="symbol">
         <span class="name">mapPartitions</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitions.U">U</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitions.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitions.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@mapPartitions[U](f:Iterator[T]=&gt;Iterator[U],preservesPartitioning:Boolean)(implicitevidence$6:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#mapPartitionsWithIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapPartitionsWithIndex[U&lt;:&lt;?&gt;](f:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(implicitevidence$7:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
+      <a id="mapPartitionsWithIndex[U&lt;:&lt;?&gt;](f:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(implicitevidence$9:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
       <a id="mapPartitionsWithIndex[U]((Int,Iterator[R])⇒Iterator[U],Boolean)(ClassTag[U]):RDD[U]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1084,7 +1385,11 @@
       <span class="symbol">
         <span class="name">mapPartitionsWithIndex</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithIndex.U">U</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithIndex.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithIndex.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@mapPartitionsWithIndex[U](f:(Int,Iterator[T])=&gt;Iterator[U],preservesPartitioning:Boolean)(implicitevidence$9:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#max" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="max()(implicitord:&lt;?&gt;):T"></a>
@@ -1097,7 +1402,11 @@
       <span class="symbol">
         <span class="name">max</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@max()(implicitord:Ordering[T]):T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#min" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="min()(implicitord:&lt;?&gt;):T"></a>
@@ -1110,7 +1419,11 @@
       <span class="symbol">
         <span class="name">min</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@min()(implicitord:Ordering[T]):T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="name:String"></a>
@@ -1123,7 +1436,11 @@
       <span class="symbol">
         <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@name:String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -1136,7 +1453,11 @@
       <span class="symbol">
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -1149,7 +1470,11 @@
       <span class="symbol">
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -1162,10 +1487,14 @@
       <span class="symbol">
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#parent" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="parent[U&lt;:&lt;?&gt;](j:&lt;?&gt;)(implicitevidence$35:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
+      <a id="parent[U&lt;:&lt;?&gt;](j:&lt;?&gt;)(implicitevidence$33:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
       <a id="parent[U](Int)(ClassTag[U]):RDD[U]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1175,7 +1504,11 @@
       <span class="symbol">
         <span class="name">parent</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="j">j: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.parent.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.parent.U">U</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@parent[U](j:Int)(implicitevidence$33:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[U]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../org$apache$spark.html" class="extype" name="org.apache.spark">org.apache.spark</a>] </dd><dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#partitioner" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="partitioner:Option[org.apache.spark.Partitioner]"></a>
@@ -1188,7 +1521,11 @@
       <span class="symbol">
         <span class="name">partitioner</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.Partitioner">Partitioner</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@partitioner:Option[org.apache.spark.Partitioner]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#partitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="partitions:Array[org.apache.spark.Partition]"></a>
@@ -1201,7 +1538,11 @@
       <span class="symbol">
         <span class="name">partitions</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="org.apache.spark.Partition">Partition</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@partitions:Array[org.apache.spark.Partition]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#persist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="persist():RDD.this.type"></a>
@@ -1214,7 +1555,11 @@
       <span class="symbol">
         <span class="name">persist</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@persist():RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#persist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="persist(newLevel:&lt;?&gt;):RDD.this.type"></a>
@@ -1227,20 +1572,28 @@
       <span class="symbol">
         <span class="name">persist</span><span class="params">(<span name="newLevel">newLevel: <span class="extype" name="org.apache.spark.storage.StorageLevel">StorageLevel</span></span>)</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@persist(newLevel:org.apache.spark.storage.StorageLevel):RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#pipe" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="pipe(command:&lt;?&gt;,env:&lt;?&gt;,printPipeContext:&lt;?&gt;,printRDDElement:&lt;?&gt;,separateWorkingDir:&lt;?&gt;):org.apache.spark.rdd.RDD[String]"></a>
-      <a id="pipe(Seq[String],Map[String,String],((String)⇒Unit)⇒Unit,(R,(String)⇒Unit)⇒Unit,Boolean):RDD[String]"></a>
+      <a id="pipe(command:&lt;?&gt;,env:&lt;?&gt;,printPipeContext:&lt;?&gt;,printRDDElement:&lt;?&gt;,separateWorkingDir:&lt;?&gt;,bufferSize:&lt;?&gt;,encoding:&lt;?&gt;):org.apache.spark.rdd.RDD[String]"></a>
+      <a id="pipe(Seq[String],Map[String,String],((String)⇒Unit)⇒Unit,(R,(String)⇒Unit)⇒Unit,Boolean,Int,String):RDD[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">pipe</span><span class="params">(<span name="command">command: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="env">env: <span class="extype" name="scala.collection.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="printPipeContext">printPipeContext: ((<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="printRDDElement">printRDDElement: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="separateWorkingDir">separateWorkingDir: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">pipe</span><span class="params">(<span name="command">command: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="env">env: <span class="extype" name="scala.collection.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="printPipeContext">printPipeContext: ((<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="printRDDElement">printRDDElement: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="separateWorkingDir">separateWorkingDir: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="bufferSize">bufferSize: <span class="extype" name="scala.Int">Int</span></span>, <span name="encoding">encoding: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@pipe(command:Seq[String],env:scala.collection.Map[String,String],printPipeContext:(String=&gt;Unit)=&gt;Unit,printRDDElement:(T,String=&gt;Unit)=&gt;Unit,separateWorkingDir:Boolean,bufferSize:Int,encoding:String):org.apache.spark.rdd.RDD[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#pipe" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pipe(command:&lt;?&gt;,env:&lt;?&gt;):org.apache.spark.rdd.RDD[String]"></a>
@@ -1253,7 +1606,11 @@
       <span class="symbol">
         <span class="name">pipe</span><span class="params">(<span name="command">command: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="env">env: <span class="extype" name="scala.collection.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@pipe(command:String,env:scala.collection.Map[String,String]):org.apache.spark.rdd.RDD[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#pipe" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pipe(command:&lt;?&gt;):org.apache.spark.rdd.RDD[String]"></a>
@@ -1266,7 +1623,11 @@
       <span class="symbol">
         <span class="name">pipe</span><span class="params">(<span name="command">command: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@pipe(command:String):org.apache.spark.rdd.RDD[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#preferredLocations" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="preferredLocations(split:org.apache.spark.Partition):Seq[String]"></a>
@@ -1279,7 +1640,11 @@
       <span class="symbol">
         <span class="name">preferredLocations</span><span class="params">(<span name="split">split: <span class="extype" name="org.apache.spark.Partition">Partition</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@preferredLocations(split:org.apache.spark.Partition):Seq[String]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#randomSplit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="randomSplit(weights:&lt;?&gt;,seed:&lt;?&gt;):Array[org.apache.spark.rdd.RDD[T]]"></a>
@@ -1292,7 +1657,11 @@
       <span class="symbol">
         <span class="name">randomSplit</span><span class="params">(<span name="weights">weights: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@randomSplit(weights:Array[Double],seed:Long):Array[org.apache.spark.rdd.RDD[T]]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="com.actian.spark_vector.datastream.writer.InsertRDD#rdd" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="rdd:org.apache.spark.rdd.RDD[R]"></a>
@@ -1305,7 +1674,11 @@
       <span class="symbol">
         <span class="name">rdd</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@rdd:org.apache.spark.rdd.RDD[R]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt"><code>RDD</code> to be loaded</p>
     </li><li name="org.apache.spark.rdd.RDD#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduce(f:&lt;?&gt;):T"></a>
@@ -1318,7 +1691,11 @@
       <span class="symbol">
         <span class="name">reduce</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@reduce(f:(T,T)=&gt;T):T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#repartition" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="repartition(numPartitions:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1331,7 +1708,11 @@
       <span class="symbol">
         <span class="name">repartition</span><span class="params">(<span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@repartition(numPartitions:Int)(implicitord:Ordering[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#sample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sample(withReplacement:&lt;?&gt;,fraction:&lt;?&gt;,seed:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1344,7 +1725,11 @@
       <span class="symbol">
         <span class="name">sample</span><span class="params">(<span name="withReplacement">withReplacement: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="fraction">fraction: <span class="extype" name="scala.Double">Double</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@sample(withReplacement:Boolean,fraction:Double,seed:Long):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#saveAsObjectFile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="saveAsObjectFile(path:&lt;?&gt;):Unit"></a>
@@ -1357,7 +1742,11 @@
       <span class="symbol">
         <span class="name">saveAsObjectFile</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@saveAsObjectFile(path:String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#saveAsTextFile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="saveAsTextFile(path:&lt;?&gt;,codec:&lt;?&gt;):Unit"></a>
@@ -1370,7 +1759,11 @@
       <span class="symbol">
         <span class="name">saveAsTextFile</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="codec">codec: <span class="extype" name="scala.Predef.Class">Class</span>[_ &lt;: <span class="extype" name="org.apache.hadoop.io.compress.CompressionCodec">CompressionCodec</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@saveAsTextFile(path:String,codec:Class[_&lt;:org.apache.hadoop.io.compress.CompressionCodec]):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#saveAsTextFile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="saveAsTextFile(path:&lt;?&gt;):Unit"></a>
@@ -1383,7 +1776,11 @@
       <span class="symbol">
         <span class="name">saveAsTextFile</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@saveAsTextFile(path:String):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#setName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="setName(_name:&lt;?&gt;):RDD.this.type"></a>
@@ -1396,7 +1793,11 @@
       <span class="symbol">
         <span class="name">setName</span><span class="params">(<span name="_name">_name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@setName(_name:String):RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#sortBy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sortBy[K&lt;:&lt;?&gt;](f:&lt;?&gt;,ascending:&lt;?&gt;,numPartitions:&lt;?&gt;)(implicitord:&lt;?&gt;,implicitctag:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1409,7 +1810,11 @@
       <span class="symbol">
         <span class="name">sortBy</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.sortBy.K">K</span></span>, <span name="ascending">ascending: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="org.apache.spark.rdd.RDD.sortBy.K">K</span>]</span>, <span name="ctag">ctag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.sortBy.K">K</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@sortBy[K](f:T=&gt;K,ascending:Boolean,numPartitions:Int)(implicitord:Ordering[K],implicitctag:scala.reflect.ClassTag[K]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#sparkContext" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sparkContext:org.apache.spark.SparkContext"></a>
@@ -1422,7 +1827,11 @@
       <span class="symbol">
         <span class="name">sparkContext</span><span class="result">: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@sparkContext:org.apache.spark.SparkContext" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#subtract" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="subtract(other:&lt;?&gt;,p:&lt;?&gt;)(implicitord:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1435,7 +1844,11 @@
       <span class="symbol">
         <span class="name">subtract</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>, <span name="p">p: <span class="extype" name="org.apache.spark.Partitioner">Partitioner</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@subtract(other:org.apache.spark.rdd.RDD[T],p:org.apache.spark.Partitioner)(implicitord:Ordering[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#subtract" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="subtract(other:&lt;?&gt;,numPartitions:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1448,7 +1861,11 @@
       <span class="symbol">
         <span class="name">subtract</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>, <span name="numPartitions">numPartitions: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@subtract(other:org.apache.spark.rdd.RDD[T],numPartitions:Int):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#subtract" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="subtract(other:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1461,7 +1878,11 @@
       <span class="symbol">
         <span class="name">subtract</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@subtract(other:org.apache.spark.rdd.RDD[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
@@ -1474,7 +1895,11 @@
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#take" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="take(num:&lt;?&gt;):Array[T]"></a>
@@ -1487,7 +1912,11 @@
       <span class="symbol">
         <span class="name">take</span><span class="params">(<span name="num">num: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@take(num:Int):Array[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#takeOrdered" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="takeOrdered(num:&lt;?&gt;)(implicitord:&lt;?&gt;):Array[T]"></a>
@@ -1500,7 +1929,11 @@
       <span class="symbol">
         <span class="name">takeOrdered</span><span class="params">(<span name="num">num: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@takeOrdered(num:Int)(implicitord:Ordering[T]):Array[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#takeSample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="takeSample(withReplacement:&lt;?&gt;,num:&lt;?&gt;,seed:&lt;?&gt;):Array[T]"></a>
@@ -1513,7 +1946,11 @@
       <span class="symbol">
         <span class="name">takeSample</span><span class="params">(<span name="withReplacement">withReplacement: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="num">num: <span class="extype" name="scala.Int">Int</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@takeSample(withReplacement:Boolean,num:Int,seed:Long):Array[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#toDebugString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toDebugString:String"></a>
@@ -1526,7 +1963,11 @@
       <span class="symbol">
         <span class="name">toDebugString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@toDebugString:String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#toJavaRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toJavaRDD():org.apache.spark.api.java.JavaRDD[T]"></a>
@@ -1539,7 +1980,11 @@
       <span class="symbol">
         <span class="name">toJavaRDD</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.api.java.JavaRDD">JavaRDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@toJavaRDD():org.apache.spark.api.java.JavaRDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#toLocalIterator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toLocalIterator:Iterator[T]"></a>
@@ -1552,7 +1997,11 @@
       <span class="symbol">
         <span class="name">toLocalIterator</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@toLocalIterator:Iterator[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -1565,7 +2014,11 @@
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD → AnyRef → Any</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#top" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="top(num:&lt;?&gt;)(implicitord:&lt;?&gt;):Array[T]"></a>
@@ -1578,10 +2031,14 @@
       <span class="symbol">
         <span class="name">top</span><span class="params">(<span name="num">num: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ord">ord: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@top(num:Int)(implicitord:Ordering[T]):Array[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#treeAggregate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="treeAggregate[U&lt;:&lt;?&gt;](zeroValue:&lt;?&gt;)(seqOp:&lt;?&gt;,combOp:&lt;?&gt;,depth:&lt;?&gt;)(implicitevidence$33:&lt;?&gt;):U"></a>
+      <a id="treeAggregate[U&lt;:&lt;?&gt;](zeroValue:&lt;?&gt;)(seqOp:&lt;?&gt;,combOp:&lt;?&gt;,depth:&lt;?&gt;)(implicitevidence$31:&lt;?&gt;):U"></a>
       <a id="treeAggregate[U](U)((U,R)⇒U,(U,U)⇒U,Int)(ClassTag[U]):U"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1591,7 +2048,11 @@
       <span class="symbol">
         <span class="name">treeAggregate</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="zeroValue">zeroValue: <span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span></span>)</span><span class="params">(<span name="seqOp">seqOp: (<span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span></span>, <span name="combOp">combOp: (<span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span>, <span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span></span>, <span name="depth">depth: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD.treeAggregate.U">U</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@treeAggregate[U](zeroValue:U)(seqOp:(U,T)=&gt;U,combOp:(U,U)=&gt;U,depth:Int)(implicitevidence$31:scala.reflect.ClassTag[U]):U" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#treeReduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="treeReduce(f:&lt;?&gt;,depth:&lt;?&gt;):T"></a>
@@ -1604,7 +2065,11 @@
       <span class="symbol">
         <span class="name">treeReduce</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>) ⇒ <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>, <span name="depth">depth: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@treeReduce(f:(T,T)=&gt;T,depth:Int):T" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#union" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="union(other:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
@@ -1617,7 +2082,11 @@
       <span class="symbol">
         <span class="name">union</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@union(other:org.apache.spark.rdd.RDD[T]):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#unpersist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="unpersist(blocking:&lt;?&gt;):RDD.this.type"></a>
@@ -1630,7 +2099,11 @@
       <span class="symbol">
         <span class="name">unpersist</span><span class="params">(<span name="blocking">blocking: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="" class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD">InsertRDD</a>.this.type</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@unpersist(blocking:Boolean):RDD.this.type" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -1643,7 +2116,11 @@
       <span class="symbol">
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -1662,7 +2139,11 @@
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -1681,7 +2162,11 @@
       <span class="symbol">
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -1690,7 +2175,7 @@
               
         </dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zip" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zip[U&lt;:&lt;?&gt;](other:&lt;?&gt;)(implicitevidence$12:&lt;?&gt;):org.apache.spark.rdd.RDD[(T,U)]"></a>
+      <a id="zip[U&lt;:&lt;?&gt;](other:&lt;?&gt;)(implicitevidence$10:&lt;?&gt;):org.apache.spark.rdd.RDD[(T,U)]"></a>
       <a id="zip[U](RDD[U])(ClassTag[U]):RDD[(R,U)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1700,10 +2185,14 @@
       <span class="symbol">
         <span class="name">zip</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="other">other: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zip.U">U</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zip.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.zip.U">U</span>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zip[U](other:org.apache.spark.rdd.RDD[U])(implicitevidence$10:scala.reflect.ClassTag[U]):org.apache.spark.rdd.RDD[(T,U)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,D&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,rdd4:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$27:&lt;?&gt;,implicitevidence$28:&lt;?&gt;,implicitevidence$29:&lt;?&gt;,implicitevidence$30:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,D&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,rdd4:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$25:&lt;?&gt;,implicitevidence$26:&lt;?&gt;,implicitevidence$27:&lt;?&gt;,implicitevidence$28:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,C,D,V](RDD[B],RDD[C],RDD[D])((Iterator[R],Iterator[B],Iterator[C],Iterator[D])⇒Iterator[V])(ClassTag[B],ClassTag[C],ClassTag[D],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1713,10 +2202,14 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="C">C</span>, <span name="D">D</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="rdd3">rdd3: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="rdd4">rdd4: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="arg2">arg2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]</span>, <span name="arg3">arg3: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,C,D,V](rdd2:org.apache.spark.rdd.RDD[B],rdd3:org.apache.spark.rdd.RDD[C],rdd4:org.apache.spark.rdd.RDD[D])(f:(Iterator[T],Iterator[B],Iterator[C],Iterator[D])=&gt;Iterator[V])(implicitevidence$25:scala.reflect.ClassTag[B],implicitevidence$26:scala.reflect.ClassTag[C],implicitevidence$27:scala.reflect.ClassTag[D],implicitevidence$28:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,D&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,rdd4:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$23:&lt;?&gt;,implicitevidence$24:&lt;?&gt;,implicitevidence$25:&lt;?&gt;,implicitevidence$26:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,D&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,rdd4:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$21:&lt;?&gt;,implicitevidence$22:&lt;?&gt;,implicitevidence$23:&lt;?&gt;,implicitevidence$24:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,C,D,V](RDD[B],RDD[C],RDD[D],Boolean)((Iterator[R],Iterator[B],Iterator[C],Iterator[D])⇒Iterator[V])(ClassTag[B],ClassTag[C],ClassTag[D],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1726,10 +2219,14 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="C">C</span>, <span name="D">D</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="rdd3">rdd3: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="rdd4">rdd4: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="arg2">arg2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.D">D</span>]</span>, <span name="arg3">arg3: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,C,D,V](rdd2:org.apache.spark.rdd.RDD[B],rdd3:org.apache.spark.rdd.RDD[C],rdd4:org.apache.spark.rdd.RDD[D],preservesPartitioning:Boolean)(f:(Iterator[T],Iterator[B],Iterator[C],Iterator[D])=&gt;Iterator[V])(implicitevidence$21:scala.reflect.ClassTag[B],implicitevidence$22:scala.reflect.ClassTag[C],implicitevidence$23:scala.reflect.ClassTag[D],implicitevidence$24:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$20:&lt;?&gt;,implicitevidence$21:&lt;?&gt;,implicitevidence$22:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$18:&lt;?&gt;,implicitevidence$19:&lt;?&gt;,implicitevidence$20:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,C,V](RDD[B],RDD[C])((Iterator[R],Iterator[B],Iterator[C])⇒Iterator[V])(ClassTag[B],ClassTag[C],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1739,10 +2236,14 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="C">C</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="rdd3">rdd3: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="arg2">arg2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,C,V](rdd2:org.apache.spark.rdd.RDD[B],rdd3:org.apache.spark.rdd.RDD[C])(f:(Iterator[T],Iterator[B],Iterator[C])=&gt;Iterator[V])(implicitevidence$18:scala.reflect.ClassTag[B],implicitevidence$19:scala.reflect.ClassTag[C],implicitevidence$20:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$17:&lt;?&gt;,implicitevidence$18:&lt;?&gt;,implicitevidence$19:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,C&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,rdd3:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$15:&lt;?&gt;,implicitevidence$16:&lt;?&gt;,implicitevidence$17:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,C,V](RDD[B],RDD[C],Boolean)((Iterator[R],Iterator[B],Iterator[C])⇒Iterator[V])(ClassTag[B],ClassTag[C],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1752,10 +2253,14 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="C">C</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="rdd3">rdd3: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.C">C</span>]</span>, <span name="arg2">arg2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,C,V](rdd2:org.apache.spark.rdd.RDD[B],rdd3:org.apache.spark.rdd.RDD[C],preservesPartitioning:Boolean)(f:(Iterator[T],Iterator[B],Iterator[C])=&gt;Iterator[V])(implicitevidence$15:scala.reflect.ClassTag[B],implicitevidence$16:scala.reflect.ClassTag[C],implicitevidence$17:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$15:&lt;?&gt;,implicitevidence$16:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$13:&lt;?&gt;,implicitevidence$14:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,V](RDD[B])((Iterator[R],Iterator[B])⇒Iterator[V])(ClassTag[B],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1765,10 +2270,14 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,V](rdd2:org.apache.spark.rdd.RDD[B])(f:(Iterator[T],Iterator[B])=&gt;Iterator[V])(implicitevidence$13:scala.reflect.ClassTag[B],implicitevidence$14:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipPartitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="zipPartitions[B&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$13:&lt;?&gt;,implicitevidence$14:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
+      <a id="zipPartitions[B&lt;:&lt;?&gt;,V&lt;:&lt;?&gt;](rdd2:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$11:&lt;?&gt;,implicitevidence$12:&lt;?&gt;):org.apache.spark.rdd.RDD[V]"></a>
       <a id="zipPartitions[B,V](RDD[B],Boolean)((Iterator[R],Iterator[B])⇒Iterator[V])(ClassTag[B],ClassTag[V]):RDD[V]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1778,7 +2287,11 @@
       <span class="symbol">
         <span class="name">zipPartitions</span><span class="tparams">[<span name="B">B</span>, <span name="V">V</span>]</span><span class="params">(<span name="rdd2">rdd2: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>], <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.B">B</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.zipPartitions.V">V</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipPartitions[B,V](rdd2:org.apache.spark.rdd.RDD[B],preservesPartitioning:Boolean)(f:(Iterator[T],Iterator[B])=&gt;Iterator[V])(implicitevidence$11:scala.reflect.ClassTag[B],implicitevidence$12:scala.reflect.ClassTag[V]):org.apache.spark.rdd.RDD[V]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipWithIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="zipWithIndex():org.apache.spark.rdd.RDD[(T,Long)]"></a>
@@ -1791,7 +2304,11 @@
       <span class="symbol">
         <span class="name">zipWithIndex</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipWithIndex():org.apache.spark.rdd.RDD[(T,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li><li name="org.apache.spark.rdd.RDD#zipWithUniqueId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="zipWithUniqueId():org.apache.spark.rdd.RDD[(T,Long)]"></a>
@@ -1804,138 +2321,25 @@
       <span class="symbol">
         <span class="name">zipWithUniqueId</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#com.actian.spark_vector.datastream.writer.InsertRDD@zipWithUniqueId():org.apache.spark.rdd.RDD[(T,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd></dl></div>
     </li></ol>
             </div>
 
         
 
-        <div id="values" class="values members">
-              <h3>Deprecated Value Members</h3>
-              <ol><li name="org.apache.spark.rdd.RDD#filterWith" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="filterWith[A&lt;:&lt;?&gt;](constructA:&lt;?&gt;)(p:&lt;?&gt;):org.apache.spark.rdd.RDD[T]"></a>
-      <a id="filterWith[A]((Int)⇒A)((R,A)⇒Boolean):RDD[R]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use mapPartitionsWithIndex and filter">filterWith</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="constructA">constructA: (<span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.filterWith.A">A</span></span>)</span><span class="params">(<span name="p">p: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.filterWith.A">A</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use mapPartitionsWithIndex and filter</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#flatMapWith" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="flatMapWith[A&lt;:&lt;?&gt;,U&lt;:&lt;?&gt;](constructA:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$11:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
-      <a id="flatMapWith[A,U]((Int)⇒A,Boolean)((R,A)⇒Seq[U])(ClassTag[U]):RDD[U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use mapPartitionsWithIndex and flatMap">flatMapWith</span><span class="tparams">[<span name="A">A</span>, <span name="U">U</span>]</span><span class="params">(<span name="constructA">constructA: (<span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.flatMapWith.A">A</span></span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.flatMapWith.A">A</span>) ⇒ <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMapWith.U">U</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMapWith.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.flatMapWith.U">U</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use mapPartitionsWithIndex and flatMap</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#foreachWith" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="foreachWith[A&lt;:&lt;?&gt;](constructA:&lt;?&gt;)(f:&lt;?&gt;):Unit"></a>
-      <a id="foreachWith[A]((Int)⇒A)((R,A)⇒Unit):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use mapPartitionsWithIndex and foreach">foreachWith</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="constructA">constructA: (<span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.foreachWith.A">A</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.foreachWith.A">A</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use mapPartitionsWithIndex and foreach</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#mapPartitionsWithContext" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapPartitionsWithContext[U&lt;:&lt;?&gt;](f:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(implicitevidence$8:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
-      <a id="mapPartitionsWithContext[U]((TaskContext,Iterator[R])⇒Iterator[U],Boolean)(ClassTag[U]):RDD[U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.2.0) use TaskContext.get">mapPartitionsWithContext</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="org.apache.spark.TaskContext">TaskContext</span>, <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithContext.U">U</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithContext.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithContext.U">U</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@DeveloperApi</span><span class="args">()</span>
-              
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.2.0)</i> use TaskContext.get</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#mapPartitionsWithSplit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapPartitionsWithSplit[U&lt;:&lt;?&gt;](f:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(implicitevidence$9:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
-      <a id="mapPartitionsWithSplit[U]((Int,Iterator[R])⇒Iterator[U],Boolean)(ClassTag[U]):RDD[U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 0.7.0) use mapPartitionsWithIndex">mapPartitionsWithSplit</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]) ⇒ <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithSplit.U">U</span>]</span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithSplit.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapPartitionsWithSplit.U">U</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 0.7.0)</i> use mapPartitionsWithIndex</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#mapWith" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapWith[A&lt;:&lt;?&gt;,U&lt;:&lt;?&gt;](constructA:&lt;?&gt;,preservesPartitioning:&lt;?&gt;)(f:&lt;?&gt;)(implicitevidence$10:&lt;?&gt;):org.apache.spark.rdd.RDD[U]"></a>
-      <a id="mapWith[A,U]((Int)⇒A,Boolean)((R,A)⇒U)(ClassTag[U]):RDD[U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use mapPartitionsWithIndex">mapWith</span><span class="tparams">[<span name="A">A</span>, <span name="U">U</span>]</span><span class="params">(<span name="constructA">constructA: (<span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.mapWith.A">A</span></span>, <span name="preservesPartitioning">preservesPartitioning: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>, <span class="extype" name="org.apache.spark.rdd.RDD.mapWith.A">A</span>) ⇒ <span class="extype" name="org.apache.spark.rdd.RDD.mapWith.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapWith.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.rdd.RDD.mapWith.U">U</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use mapPartitionsWithIndex</p></dd></dl></div>
-    </li><li name="org.apache.spark.rdd.RDD#toArray" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toArray():Array[T]"></a>
-      <a id="toArray():Array[R]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use collect">toArray</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>RDD</dd><dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use collect</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
         </div>
 
         <div id="inheritedMembers">
         <div class="parent" name="org.apache.spark.rdd.RDD">
               <h3>Inherited from <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.actian.spark_vector.datastream.writer.InsertRDD.R">R</span>]</h3>
-            </div><div class="parent" name="org.apache.spark.Logging">
-              <h3>Inherited from <span class="extype" name="org.apache.spark.Logging">Logging</span></h3>
+            </div><div class="parent" name="org.apache.spark.internal.Logging">
+              <h3>Inherited from <span class="extype" name="org.apache.spark.internal.Logging">Logging</span></h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
@@ -1960,6 +2364,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

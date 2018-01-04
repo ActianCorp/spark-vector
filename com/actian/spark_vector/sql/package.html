@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>sql - com.actian.spark_vector.sql</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
-        <h1>sql</h1>
+        <h1>sql</h1><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -52,7 +60,7 @@
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -65,9 +73,8 @@
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -82,7 +89,7 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="com.actian.spark_vector.sql.DefaultSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DefaultSourceextendsRelationProviderwithSchemaRelationProviderwithCreatableRelationProviderwithLogging"></a>
+      <a id="DefaultSourceextendsDataSourceRegisterwithRelationProviderwithSchemaRelationProviderwithCreatableRelationProviderwithLogging"></a>
       <a id="DefaultSource:DefaultSource"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -90,9 +97,13 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="DefaultSource.html"><span class="name">DefaultSource</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.sources.RelationProvider">RelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.SchemaRelationProvider">SchemaRelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.CreatableRelationProvider">CreatableRelationProvider</span> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="DefaultSource.html"><span class="name">DefaultSource</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.sources.DataSourceRegister">DataSourceRegister</span> with <span class="extype" name="org.apache.spark.sql.sources.RelationProvider">RelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.SchemaRelationProvider">SchemaRelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.CreatableRelationProvider">CreatableRelationProvider</span> with <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@DefaultSourceextendsDataSourceRegisterwithRelationProviderwithSchemaRelationProviderwithCreatableRelationProviderwithLogging" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.sql.HiveTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="HiveTableextendsSparkSqlTablewithProductwithSerializable"></a>
@@ -105,7 +116,11 @@
       <span class="symbol">
         <a href="HiveTable.html"><span class="name">HiveTable</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="SparkSqlTable.html" class="extype" name="com.actian.spark_vector.sql.SparkSqlTable">SparkSqlTable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@HiveTableextendsSparkSqlTablewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.sql.SparkSqlTable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="SparkSqlTableextendsAnyRef"></a>
@@ -118,7 +133,11 @@
       <span class="symbol">
         <a href="SparkSqlTable.html"><span class="name">SparkSqlTable</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@SparkSqlTableextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.sql.TableRef" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TableRefextendsProductwithSerializable"></a>
@@ -131,8 +150,12 @@
       <span class="symbol">
         <a href="TableRef.html"><span class="name">TableRef</span></a><span class="params">(<span name="host">host: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="instance">instance: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="database">database: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="user">user: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="password">password: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="table">table: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cols">cols: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">A reference to a <code>Vector</code> table</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@TableRefextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A reference to a <code>Vector</code> table</p>
     </li><li name="com.actian.spark_vector.sql.TempTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TempTableextendsSparkSqlTable"></a>
       <a id="TempTable:TempTable"></a>
@@ -144,7 +167,11 @@
       <span class="symbol">
         <a href="TempTable.html"><span class="name">TempTable</span></a><span class="result"> extends <a href="SparkSqlTable.html" class="extype" name="com.actian.spark_vector.sql.SparkSqlTable">SparkSqlTable</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@TempTableextendsSparkSqlTable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -164,7 +191,11 @@
       <span class="symbol">
         <a href="TableRef$.html"><span class="name">TableRef</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@TableRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.sql.TempTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TempTable"></a>
@@ -177,9 +208,13 @@
       <span class="symbol">
         <a href="TempTable$.html"><span class="name">TempTable</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@TempTable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.sql.package#colsSelectStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.sql#colsSelectStatement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="colsSelectStatement(cols:Option[Seq[String]]):String"></a>
       <a id="colsSelectStatement(Option[Seq[String]]):String"></a>
       <h4 class="signature">
@@ -190,9 +225,13 @@
       <span class="symbol">
         <span class="name">colsSelectStatement</span><span class="params">(<span name="cols">cols: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@colsSelectStatement(cols:Option[Seq[String]]):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.sql.package#sparkQuote" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.sql#sparkQuote" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="sparkQuote(name:String):String"></a>
       <a id="sparkQuote(String):String"></a>
       <h4 class="signature">
@@ -203,7 +242,11 @@
       <span class="symbol">
         <span class="name">sparkQuote</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.sql.package@sparkQuote(name:String):String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -234,6 +277,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

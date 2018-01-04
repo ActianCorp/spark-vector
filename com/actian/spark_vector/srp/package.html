@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>srp - com.actian.spark_vector.srp</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
-        <h1>srp</h1>
+        <h1>srp</h1><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -69,8 +77,12 @@
       <span class="symbol">
         <a href="ClientSRPParameter.html"><span class="name">ClientSRPParameter</span></a><span class="result"> extends <a href="SRPParameter.html" class="extype" name="com.actian.spark_vector.srp.SRPParameter">SRPParameter</a></span>
       </span>
-      </h4>
-      <p class="comment cmt"> The trait that defines the calculations required on the
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@ClientSRPParameterextendsSRPParameter" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"> The trait that defines the calculations required on the
  client side- S, a, x and A
 </p>
     </li><li name="com.actian.spark_vector.srp.SRPParameter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
@@ -82,10 +94,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="SRPParameter.html"><span class="name">SRPParameter</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="SRPParameter.html"><span class="name">SRPParameter</span></a><span class="result"> extends <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">The base trait that defines N, g, k, u SRP parameters and provides
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@SRPParameterextendsLogging" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The base trait that defines N, g, k, u SRP parameters and provides
 functionality to generate random bytes, and g ^ x (mod N). The SRP parameters
 are calculated using SRp version 6a.
 </p>
@@ -100,8 +116,12 @@ are calculated using SRp version 6a.
       <span class="symbol">
         <a href="SRPServer.html"><span class="name">SRPServer</span></a><span class="result"> extends <a href="ServerSRPParameter.html" class="extype" name="com.actian.spark_vector.srp.ServerSRPParameter">ServerSRPParameter</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">The trait that needs to be extended to get SRP server side
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@SRPServerextendsServerSRPParameter" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The trait that needs to be extended to get SRP server side
 computations.</p>
     </li><li name="com.actian.spark_vector.srp.ServerSRPParameter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ServerSRPParameterextendsSRPParameter"></a>
@@ -114,11 +134,15 @@ computations.</p>
       <span class="symbol">
         <a href="ServerSRPParameter.html"><span class="name">ServerSRPParameter</span></a><span class="result"> extends <a href="SRPParameter.html" class="extype" name="com.actian.spark_vector.srp.SRPParameter">SRPParameter</a></span>
       </span>
-      </h4>
-      <p class="comment cmt"> The trait that defines the calculations required on the
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@ServerSRPParameterextendsSRPParameter" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"> The trait that defines the calculations required on the
  server side- S, x, v and B
 </p>
-    </li><li name="com.actian.spark_vector.srp.VectorSRPServer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.srp.VectorSRPServer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="VectorSRPServerextendsSRPServerwithLogging"></a>
       <a id="VectorSRPServer:VectorSRPServer"></a>
       <h4 class="signature">
@@ -127,10 +151,15 @@ computations.</p>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="VectorSRPServer.html"><span class="name">VectorSRPServer</span></a><span class="result"> extends <a href="SRPServer.html" class="extype" name="com.actian.spark_vector.srp.SRPServer">SRPServer</a> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="VectorSRPServer.html"><span class="name">VectorSRPServer</span></a><span class="result"> extends <a href="SRPServer.html" class="extype" name="com.actian.spark_vector.srp.SRPServer">SRPServer</a> with <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Server for SRP authentication as implemented in Vector.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@VectorSRPServerextendsSRPServerwithLogging" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Server for SRP authentication as implemented in Vector.</p><div class="fullcomment"><div class="comment cmt"><p>Server for SRP authentication as implemented in Vector.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Before use, user credentials need to be saved by the server, i.e. calling the <code>saveUserCredentials</code> method</p></span></dd></dl></div>
     </li></ol>
             </div>
 
@@ -138,7 +167,7 @@ computations.</p>
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector.srp.Util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.srp.Util" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Util"></a>
       <a id="Util:Util"></a>
       <h4 class="signature">
@@ -149,8 +178,40 @@ computations.</p>
       <span class="symbol">
         <a href="Util$.html"><span class="name">Util</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">The SRP 6a version as defined at http://srp.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@Util" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The SRP 6a version as defined at http://srp.stanford.edu/.</p><div class="fullcomment"><div class="comment cmt"><p>The SRP 6a version as defined at http://srp.stanford.edu/.
+Design: http://srp.stanford.edu/design.html</p><p>The following is a description of SRP-6 and 6a, the latest versions of SRP:
+N    A large safe prime (N = 2q+1, where q is prime)
+All arithmetic is done modulo N.
+g    A generator modulo N
+k    Multiplier parameter (k = H(N, g) in SRP-6a, k = 3 for legacy SRP-6)
+s    User's salt
+I    Username
+p    Cleartext Password
+H()  One-way hash function
+<sup>    (Modular) Exponentiation
+u    Random scrambling parameter
+a,b  Secret ephemeral values
+A,B  Public ephemeral values
+x    Private key (derived from p and s)
+v    Password verifier
+The host stores passwords using the following formula:
+x = H(s, p)               (s is chosen randomly)
+v = g</sup>x                   (computes password verifier)
+The host then keeps {I, s, v} in its password database. The authentication protocol itself goes as follows:
+User -&gt; Host:  I, A = g<sup>a                  (identifies self, a = random number)
+Host -&gt; User:  s, B = kv + g</sup>b             (sends salt, b = random number)
+Both:  u = H(A, B)
+User:  x = H(s, p)                 (user enters password)
+User:  S = (B - kg<sup>x) </sup> (a + ux)   (computes session key)
+User:  K = H(S)
+Host:  S = (Av<sup>u) </sup> b              (computes session key)
+Host:  K = H(S)
+</p></div></div>
     </li><li name="com.actian.spark_vector.srp.VectorSRP" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorSRP"></a>
       <a id="VectorSRP:VectorSRP"></a>
@@ -162,8 +223,12 @@ computations.</p>
       <span class="symbol">
         <a href="VectorSRP$.html"><span class="name">VectorSRP</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Contains some <code>Vector</code> constants to be used while authenticating and what algorithm to use</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@VectorSRP" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Contains some <code>Vector</code> constants to be used while authenticating and what algorithm to use</p>
     </li><li name="com.actian.spark_vector.srp.VectorSRPClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="VectorSRPClient"></a>
       <a id="VectorSRPClient:VectorSRPClient"></a>
@@ -173,10 +238,14 @@ computations.</p>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="VectorSRPClient$.html"><span class="name">VectorSRPClient</span></a><span class="result"> extends <a href="ClientSRPParameter.html" class="extype" name="com.actian.spark_vector.srp.ClientSRPParameter">ClientSRPParameter</a> with <span class="extype" name="org.apache.spark.Logging">Logging</span></span>
+        <a href="VectorSRPClient$.html"><span class="name">VectorSRPClient</span></a><span class="result"> extends <a href="ClientSRPParameter.html" class="extype" name="com.actian.spark_vector.srp.ClientSRPParameter">ClientSRPParameter</a> with <span class="extype" name="com.actian.spark_vector.util.Logging">Logging</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Performs authentication to <code>Vector</code> with SRP (Secure Remote Password) protocol</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.srp.package@VectorSRPClient" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Performs authentication to <code>Vector</code> with SRP (Secure Remote Password) protocol</p>
     </li></ol>
             </div>
 
@@ -202,6 +271,7 @@ computations.</p>
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

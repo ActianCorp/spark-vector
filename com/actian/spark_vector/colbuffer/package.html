@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>colbuffer - com.actian.spark_vector.colbuffer</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/package_big.png" />
+        <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.actian">actian</a>.<a href="../package.html" class="extype" name="com.actian.spark_vector">spark_vector</a></p>
-        <h1>colbuffer</h1>
+        <h1>colbuffer</h1><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -52,7 +60,7 @@
               <ol>
                 
                 <li class="alpha in"><span>Alphabetic</span></li>
-                <li class="inherit out"><span>By inheritance</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
               </ol>
             </div>
         <div id="ancestors">
@@ -65,9 +73,8 @@
             <span class="filtertype"></span>
             <ol>
               <li class="hideall out"><span>Hide All</span></li>
-              <li class="showall in"><span>Show all</span></li>
+              <li class="showall in"><span>Show All</span></li>
             </ol>
-            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
           </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
@@ -81,7 +88,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.colbuffer.ColumnBufferBuildParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ColumnBufferBuildParamsextendsSerializablewithProduct"></a>
       <a id="ColumnBufferBuildParams:ColumnBufferBuildParams"></a>
       <h4 class="signature">
@@ -92,9 +99,15 @@
       <span class="symbol">
         <a href="ColumnBufferBuildParams.html"><span class="name">ColumnBufferBuildParams</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tpe">tpe: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="precision">precision: <span class="extype" name="scala.Int">Int</span></span>, <span name="scale">scale: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxValueCount">maxValueCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="nullable">nullable: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Case class to be used when trying to create a typed W/R column buffer object
-through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@ColumnBufferBuildParamsextendsSerializablewithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Case class to be used when trying to create a typed W/R column buffer object
+through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</p><div class="fullcomment"><div class="comment cmt"><p>Case class to be used when trying to create a typed W/R column buffer object
+through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>the column's name</p></dd><dt class="param">tpe</dt><dd class="cmt"><p>the data type's name (required in lower cases)</p></dd><dt class="param">precision</dt><dd class="cmt"><p>the data type's precision</p></dd><dt class="param">scale</dt><dd class="cmt"><p>the data type's scale size</p></dd><dt class="param">maxValueCount</dt><dd class="cmt"><p>the size of this column buffer (in tuple/value counts)</p></dd><dt class="param">nullable</dt><dd class="cmt"><p>whether this column accepts null values or not</p></dd></dl></div>
     </li><li name="com.actian.spark_vector.colbuffer.ReadColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ReadColumnBuffer[T]extendsRWColumnBuffer"></a>
       <a id="ReadColumnBuffer[T]:ReadColumnBuffer[T]"></a>
@@ -106,7 +119,11 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <a href="ReadColumnBuffer.html"><span class="name">ReadColumnBuffer</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.colbuffer.RWColumnBuffer">RWColumnBuffer</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@ReadColumnBuffer[T]extendsRWColumnBuffer" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.colbuffer.WriteColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="WriteColumnBuffer[T]extendsRWColumnBuffer"></a>
@@ -119,7 +136,11 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <a href="WriteColumnBuffer.html"><span class="name">WriteColumnBuffer</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="com.actian.spark_vector.colbuffer.RWColumnBuffer">RWColumnBuffer</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@WriteColumnBuffer[T]extendsRWColumnBuffer" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -128,7 +149,7 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector.colbuffer.package#BooleanSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector.colbuffer#BooleanSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="BooleanSize:Int(1)"></a>
       <a id="BooleanSize:Int(1)"></a>
       <h4 class="signature">
@@ -139,9 +160,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">BooleanSize</span><span class="result">: Int(1)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@BooleanSize:Int(1)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#ByteSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#ByteSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ByteSize:Int(1)"></a>
       <a id="ByteSize:Int(1)"></a>
       <h4 class="signature">
@@ -152,7 +177,11 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">ByteSize</span><span class="result">: Int(1)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@ByteSize:Int(1)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Common constants (for data sizes)</p>
     </li><li name="com.actian.spark_vector.colbuffer.ColumnBuffer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ColumnBuffer"></a>
@@ -165,9 +194,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <a href="ColumnBuffer$.html"><span class="name">ColumnBuffer</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">This is a <code>Factory</code> implementation of <code>ColumnBuffers</code>.</p>
-    </li><li name="com.actian.spark_vector.colbuffer.package#DateSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@ColumnBuffer" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">This is a <code>Factory</code> implementation of <code>ColumnBuffers</code>.</p>
+    </li><li name="com.actian.spark_vector.colbuffer#DateSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DateSize:Int(4)"></a>
       <a id="DateSize:Int(4)"></a>
       <h4 class="signature">
@@ -178,9 +211,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">DateSize</span><span class="result">: Int(4)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@DateSize:Int(4)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#DoubleSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#DoubleSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DoubleSize:Int(8)"></a>
       <a id="DoubleSize:Int(8)"></a>
       <h4 class="signature">
@@ -191,9 +228,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">DoubleSize</span><span class="result">: Int(8)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@DoubleSize:Int(8)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#FloatSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#FloatSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FloatSize:Int(4)"></a>
       <a id="FloatSize:Int(4)"></a>
       <h4 class="signature">
@@ -204,9 +245,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">FloatSize</span><span class="result">: Int(4)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@FloatSize:Int(4)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#IntSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#IntSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="IntSize:Int(4)"></a>
       <a id="IntSize:Int(4)"></a>
       <h4 class="signature">
@@ -217,9 +262,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">IntSize</span><span class="result">: Int(4)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@IntSize:Int(4)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#LongLongSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#LongLongSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LongLongSize:Int(16)"></a>
       <a id="LongLongSize:Int(16)"></a>
       <h4 class="signature">
@@ -230,9 +279,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">LongLongSize</span><span class="result">: Int(16)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@LongLongSize:Int(16)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#LongSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#LongSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LongSize:Int(8)"></a>
       <a id="LongSize:Int(8)"></a>
       <h4 class="signature">
@@ -243,9 +296,13 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">LongSize</span><span class="result">: Int(8)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@LongSize:Int(8)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
-    </li><li name="com.actian.spark_vector.colbuffer.package#ShortSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.actian.spark_vector.colbuffer#ShortSize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ShortSize:Int(2)"></a>
       <a id="ShortSize:Int(2)"></a>
       <h4 class="signature">
@@ -256,7 +313,11 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <span class="name">ShortSize</span><span class="result">: Int(2)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@ShortSize:Int(2)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       
     </li><li name="com.actian.spark_vector.colbuffer.util" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="util"></a>
@@ -269,8 +330,12 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <span class="symbol">
         <a href="util/package.html"><span class="name">util</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Util functions for various type conversions</p>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.actian.spark_vector.colbuffer.package@util" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Util functions for various type conversions</p>
     </li></ol>
             </div>
 
@@ -300,6 +365,7 @@ through the <code>newWriteBuffer</code> or <code>newReadBuffer</code> methods.</
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+
+
     </body>
       </html>

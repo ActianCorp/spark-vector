@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>actian - com.actian</title>
@@ -9,6 +8,11 @@
           
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../lib/template.js"></script>
+      <script type="text/javascript" src="../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../index.html';
@@ -24,9 +28,13 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../lib/package_big.png" />
+        <img alt="Package" src="../../lib/package_big.png" />
         <p id="owner"><a href="../package.html" class="extype" name="com">com</a></p>
-        <h1>actian</h1>
+        <h1>actian</h1><span class="permalink">
+      <a href="../../index.html#com.actian.package" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -62,7 +70,7 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.actian.spark_vector" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.actian.spark_vector" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="spark_vector"></a>
       <a id="spark_vector:spark_vector"></a>
       <h4 class="signature">
@@ -73,8 +81,19 @@
       <span class="symbol">
         <a href="spark_vector/package.html"><span class="name">spark_vector</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Spark-Vector connector.</p>
+      </h4><span class="permalink">
+      <a href="../../index.html#com.actian.package@spark_vector" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Spark-Vector connector.</p><div class="fullcomment"><div class="comment cmt"><p>Spark-Vector connector.</p><p>With this connector, data can be loaded from <code>Spark</code> sources into <code>Vector</code> and results of <code>Vector</code> computations can be consumed in <code>Spark</code> and transformed into
+a <code>DataFrame</code>. Both operations are performed in parallel: the data coming from every input <code>RDD</code> partition is serialized using <code>Vector's</code> binary protocol and passed
+through socket connections to <code>Vector</code> end points. Although there is a chance that network communication is incurred at this point, most of the time this connector
+will try to assign only local <code>RDD</code> partitions to each <code>Vector</code> end point. Respectively, <code>Vector</code> data is unloaded through socket connections and consumed in <code>Spark</code>
+into an <code>RDD</code>.</p><p>Throughout the documentation we will use <code>DataStream</code> and <code>Vector</code> end point interchangeably. A <code>Vector DataStream</code> is the logical stream of consuming binary data in
+<code>Vector</code>. Typically, these <code>DataStream</code>s will be executed in parallel (i.e. there will be as many threads as <code>DataStreams</code> allocated), but there will be cases when
+a <code>Vector</code> thread will handle multiple <code>DataStreams</code>. On the other hand, each connection to a <code>Vector</code> end point maps to exactly one <code>DataStream</code>.
+</p></div></div>
     </li></ol>
             </div>
 
@@ -100,6 +119,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../lib/template.js"></script>
+
+
     </body>
       </html>
