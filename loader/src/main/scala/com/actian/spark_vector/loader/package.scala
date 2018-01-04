@@ -21,11 +21,11 @@ package com.actian.spark_vector
  * The `Spark-Vector` loader is a utility that facilitates loading files of different formats (for now `CSV`,`Parquet`, and `Orc` only) into
  * `Vector`, through `Spark` and using the `Spark-Vector` connector.
  * 
- * For CSV parsing, the Spark-Vector loader uses the [[https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame]] library.
+ * For CSV parsing, the Spark-Vector loader uses the csv method of the [[https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame org.apache.spark.sql.DataFrame]] class.
  * 
  * Example:
  * 
- * This scala code snippet (executed in spark-shell):
+ * This scala code snippet to read a csv file (executed in spark-shell):
  * {{{
  * sqlContext.sql("""CREATE TEMPORARY TABLE large_table
  * USING com.actian.spark_vector.sql.DefaultSource
@@ -51,7 +51,7 @@ package com.actian.spark_vector
  *  -sc "|" -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
  * 
- * and
+ * To read a parquet file this 
  * {{{
  * sqlContext.read.parquet("hdfs://namenode:8020/data/parquet_file.parquet").registerTempTable("parquet_file")
  * sqlContext.sql("""insert into table large_table select * from parquet_file""")
@@ -64,7 +64,7 @@ package com.actian.spark_vector
  *  -vh vectorhost -vi VI -vd dbName -tt large_table
  * }}}
  * 
- * and
+ * To read a orc file this
  * {{{
  * sqlContext.read.orc("hdfs://namenode:8020/data/orc_file.orc").registerTempTable("orc_file")
  * sqlContext.sql("""insert into table large_table select * from orc_file""")

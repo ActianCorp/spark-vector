@@ -91,7 +91,7 @@ sealed case class ArgOption[T: Read, O](
  *   -sc <value> | --separatorChar <value>
  *         CSV field separator character (default ,)
  *   -qc <value> | --quoteChar <value>
- *         CSV quote character (default ")
+ *         CSV quote character (default "")
  *   -ec <value> | --escapeChar <value>
  *         CSV escape character (default \)
  *   -cc <value> | --commentChar <value>
