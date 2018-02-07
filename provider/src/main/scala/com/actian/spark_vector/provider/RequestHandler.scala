@@ -65,7 +65,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   } flatMap { job =>
     logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")
     /** An accumulator to ensure parts are run sequentially */
-    var jobPartAccum: Future[Unit] = null
+    var jobPartAccum: Future[Unit] = Future[Unit] {}
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
         part.operator_type match {
