@@ -22,8 +22,7 @@ import scala.concurrent.Future
 import scala.compat.Platform.EOL
 import scala.util.{ Failure, Success }
 
-import org.apache.spark.sql.{ DataFrame, Row, SQLContext, SaveMode }
-import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.{ DataFrame, Row, SaveMode, SparkSession }
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
@@ -42,7 +41,7 @@ import resource.managed
  * @param sqlContext context to use
  * @param auth authentication information to be verified on each request
  */
-class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Logging {
+class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Logging {
   import Job._
 
   private final val RequestPktType = 6 /* X100CPT_PROVIDER_REQUEST */
@@ -117,8 +116,8 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
 
   /** Given a job part, create the dataframe to subsequently be used to read/insert data into Vector */
   private def getVectorDF(part: JobPart): DataFrame = {
-    val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.conf, sqlContext)
-    sqlContext.baseRelationToDataFrame(rel)
+    val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.conf, spark.sqlContext)
+    spark.baseRelationToDataFrame(rel)
   }
 
   /** Given a job part, retrieve its options, if any, or else an empty Map */
@@ -145,7 +144,7 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
   }
 
   private def checkFormat(format: String): Unit = format match {
-    case "hive" | "orc" if !sqlContext.isInstanceOf[HiveContext] =>
+    case "hive" | "orc" if !spark.conf.get("spark.sql.catalogImplementation").equals("hive") =>
       throw new IllegalStateException(s"Reading ${format} sources requires Hive support. To enable this, set spark.vector.provider.hive to true in the spark_provider.conf file")
     case _ =>
   }
@@ -158,10 +157,10 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
       case "hive" => HiveTable(part.external_reference)
       case _ => {
         val df = format match {
-          case "parquet" => sqlContext.read.options(options).parquet(part.external_reference)
-          case "csv" => sqlContext.read.options(options).csv(part.external_reference)
-          case "orc" => sqlContext.read.options(options).orc(part.external_reference)
-          case _ => sqlContext.read.options(options).format(format).load(part.external_reference)
+          case "parquet" => spark.read.options(options).parquet(part.external_reference)
+          case "csv" => spark.read.options(options).csv(part.external_reference)
+          case "orc" => spark.read.options(options).orc(part.external_reference)
+          case _ => spark.read.options(options).format(format).load(part.external_reference)
         }
         TempTable("src", df)
       }
@@ -177,17 +176,17 @@ class RequestHandler(sqlContext: SQLContext, val auth: ProviderAuth) extends Log
     } {
       if (part.column_infos.isEmpty) {
         val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName}"
-        val numTuples = sqlContext.sql(selectCountStarStatement).first().getLong(0)
+        val numTuples = spark.sql(selectCountStarStatement).first().getLong(0)
         val numEndpoints = part.datastream.streams_per_node.map(_.nr).sum
-        val rddNoCols = sqlContext.sparkContext.range(0L, numTuples, numSlices = numEndpoints).map(_ => Row.empty)
-        val dfNoCols = sqlContext.createDataFrame(rddNoCols, StructType(Seq.empty))
+        val rddNoCols = spark.sparkContext.range(0L, numTuples, numSlices = numEndpoints).map(_ => Row.empty)
+        val dfNoCols = spark.createDataFrame(rddNoCols, StructType(Seq.empty))
         dfNoCols.write.mode(SaveMode.Append).insertInto(vectorTable.tableName)
       } else {
         val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
         val selectStatement = s"select $cols from ${externalTable.quotedName}"
         val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
         logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
-        sqlContext.sql(wholeStatement)
+        spark.sql(wholeStatement)
       }
     }
   }

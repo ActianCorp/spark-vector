@@ -15,10 +15,8 @@
  */
 package com.actian.spark_vector.loader.command
 
-import org.apache.spark.{ SparkConf, SparkContext }
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.types.StructType
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
 
 import com.actian.spark_vector.loader.options.UserOptions
 import com.actian.spark_vector.loader.parsers.Args
@@ -34,21 +32,21 @@ object ConstructVector {
     val conf = new SparkConf()
       .setAppName(s"Spark-Vector ${config.mode} load into ${config.vector.targetTable}")
       .set("spark.task.maxFailures", "1")
-    val sparkContext = new SparkContext(conf)
-    val sqlContext = config.mode match {
-      case Args.orcLoad.longName => new HiveContext(sparkContext)
-      case _ => new SQLContext(sparkContext)
+    val builder = SparkSession.builder.config(conf)
+    val session = config.mode match {
+      case Args.orcLoad.longName => builder.enableHiveSupport().getOrCreate()
+      case _ => builder.getOrCreate()
     }
 
     val select = config.mode match {
-      case Args.csvLoad.longName => CSVRead.registerTempTable(config, sqlContext)
-      case Args.parquetLoad.longName => ParquetRead.registerTempTable(config, sqlContext)
-      case Args.orcLoad.longName => OrcRead.registerTempTable(config, sqlContext)
+      case Args.csvLoad.longName => CSVRead.registerTempTable(config, session.sqlContext)
+      case Args.parquetLoad.longName => ParquetRead.registerTempTable(config, session.sqlContext)
+      case Args.orcLoad.longName => OrcRead.registerTempTable(config, session.sqlContext)
       case m => throw new IllegalArgumentException(s"Invalid configuration mode: ${m}")
     }
 
-    for (targetTempTable <- managed(VectorTempTable.register(config, sqlContext))) {
-      sqlContext.sql(s"insert into table ${targetTempTable.quotedName} ${select}")
+    for (targetTempTable <- managed(VectorTempTable.register(config, session.sqlContext))) {
+      session.sql(s"insert into table ${targetTempTable.quotedName} ${select}")
     }
   }
 }
