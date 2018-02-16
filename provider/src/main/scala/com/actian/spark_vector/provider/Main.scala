@@ -17,9 +17,8 @@ package com.actian.spark_vector.provider
 
 import java.nio.channels.ServerSocketChannel
 
-import org.apache.spark.{ SparkConf, SparkContext }
-import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
 
 import resource.managed
 import java.net.InetAddress
@@ -34,16 +33,16 @@ object Main extends App with Logging {
     .set("spark.task.maxFailures", "1")
     .set("spark.sql.caseSensitive", "false")
   logInfo(s"Starting Spark-Vector provider with config options: ${conf.getAll.toMap}")
-  private val sc = new SparkContext(conf)
-  private val sqlContext = if (sc.getConf.getBoolean("spark.vector.provider.hive", true)) {
-    new HiveContext(sc)
-  } else {
-    new SQLContext(sc)
-  }
 
-  private lazy val handler = new RequestHandler(sqlContext, ProviderAuth(generateUsername, generatePassword))
+  private var builder = SparkSession.builder.config(conf)
+  if (conf.getBoolean("spark.vector.provider.hive", true)) {
+    builder = builder.enableHiveSupport()
+  }
+  private val session = builder.getOrCreate()
+  private lazy val handler = new RequestHandler(session, ProviderAuth(generateUsername, generatePassword))
 
   sys.addShutdownHook {
+    session.close()
     logInfo("Shutting down Spark-Vector provider...")
   }
   for { server <- managed(ServerSocketChannel.open.bind(null)) } {
