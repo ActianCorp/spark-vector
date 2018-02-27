@@ -381,6 +381,20 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     }
   }
   
+  test("generate table/invalid string") { fixture =>
+    val badstrings = Array[String]("a\u0000string",
+                                   "astring\uD800",
+                                   "a\uD999string",
+                                   "a\uDFFFstring")
+    for (s: String <- badstrings) {
+      val schema = StructTypeUtil.createSchema("s" -> StringType)
+      val data = Seq(Row(s))
+      a[Exception] should be thrownBy {
+        assertTableGeneration(fixture, schema, data, Map("s" -> "s"))
+      }
+    }
+  }
+  
   test("generate table/decimal constancy") { fixture => 
     val schema = StructTypeUtil.createSchema("i" -> DecimalType(38, 12), "d" -> DecimalType(38, 12))
     val data = Seq(Row(new java.math.BigDecimal("123456789876543210"),

@@ -26,6 +26,8 @@ import java.nio.ByteBuffer
 private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams)
     extends ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
   override def put(source: String, buffer: ByteBuffer): Unit = {
+    if (source.exists(c => (c >= '\uD800') && (c <= '\uDFFF') || (c == '\u0000')))
+      throw new Exception(s"Illegal character in column '${p.name}' in string '$source'")
     buffer.put(encode(source))
     buffer.put(0.toByte)
   }
