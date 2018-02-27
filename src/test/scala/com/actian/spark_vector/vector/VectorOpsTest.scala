@@ -57,7 +57,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     |  a_gre smallint,
     |  a_gpa float4,
     |  a_rank smallint
-    |) WITH NOPARTITION""".stripMargin)
+    |) WITH PARTITION = (HASH ON a_rank 4 PARTITIONS)""".stripMargin)
     }
   }
   
@@ -71,7 +71,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     |  a_gre smallint,
     |  a_gpa float4,
     |  a_rank smallint
-    |) WITH NOPARTITION""".stripMargin)
+    |) WITH PARTITION = (HASH ON a_rank 4 PARTITIONS)""".stripMargin)
     admitDataStatements().foreach(row => cxn.executeStatement(s"""insert into ${tableName} values ${row}"""))
     }
   }
@@ -385,6 +385,20 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val rdd = fixture.sc.parallelize(Seq.empty[Row])
       a[VectorException] should be thrownBy {
         rdd.loadVector(schema, connectionProps, tableName, createTable = true)
+      }
+    }
+  }
+  
+  test("generate table/invalid string") { fixture =>
+    val badstrings = Array[String]("a\u0000string",
+                                   "astring\uD800",
+                                   "a\uD999string",
+                                   "a\uDFFFstring")
+    for (s: String <- badstrings) {
+      val schema = StructTypeUtil.createSchema("s" -> StringType)
+      val data = Seq(Row(s))
+      a[Exception] should be thrownBy {
+        assertTableGeneration(fixture, schema, data, Map("s" -> "s"))
       }
     }
   }
