@@ -22,7 +22,6 @@ import com.actian.spark_vector.vector.VectorDataType
 import org.apache.spark.unsafe.types.UTF8String
 
 import java.nio.ByteBuffer
-import java.nio.charset.UnmappableCharacterException
 
 private[colbuffer] abstract class ByteEncodedStringColumnBuffer(p: ColumnBufferBuildParams)
     extends ColumnBuffer[String, UTF8String](p.name, p.maxValueCount, p.precision + 1, ByteSize, p.nullable) {
