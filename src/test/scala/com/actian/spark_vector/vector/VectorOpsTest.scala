@@ -461,6 +461,156 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       
     }
   }
+  
+  test("intervalytm type") { fixture =>
+    val schema = StructTypeUtil.createSchema("interval" -> StringType)
+    val data = Seq(Row("-9999-11"), Row("1-1"), Row("10-11"), Row("9999-11"))
+    val rdd = fixture.sc.parallelize(data)
+    def intervalTable(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+        s"""|create table ${tableName} (
+    |  iytm INTERVAL YEAR TO MONTH
+    |) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(intervalTable) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("interval" -> "iytm")), createTable = false)
+      load should be(4)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("-9999-11"),Seq[Any]("1-1"),Seq[Any]("10-11"),Seq[Any]("9999-11"))
+      
+      actual.equals(expected) should be(true)
+    }
+  }
+  
+  test("intervaldts type") { fixture =>
+    val schema = StructTypeUtil.createSchema("interval" -> StringType)
+    val data =  Seq(Row("-3652047 23:59:59.100"), Row("-1 01:01:01.010"), Row("1 12:12:12.002"), Row("3652047 23:59:59"))
+    val rdd = fixture.sc.parallelize(data)
+    def intervalTable(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+       s"""|create table ${tableName} (
+           |  idts INTERVAL DAY TO SECOND(3)
+           |) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(intervalTable) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("interval" -> "idts")), createTable = false)
+      load should be(4)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("-1 01:01:01.010"), Seq[Any]("-3652047 23:59:59.100"),  Seq[Any]("1 12:12:12.002"), Seq[Any]("3652047 23:59:59"))
+      
+      actual.equals(expected) should be (true)
+    }
+  }
+  
+  test("intervaldts long type") { fixture =>
+    val schema = StructTypeUtil.createSchema("interval" -> StringType)
+    val data =  Seq(Row("-3652047 23:59:59.102030405"), Row("-1 01:01:01.010203456"), Row("1 12:12:12.003456700"), Row("3652047 23:59:59"))
+    val rdd = fixture.sc.parallelize(data)
+    def intervalTable(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+       s"""|create table ${tableName} (
+           |  idts INTERVAL DAY TO SECOND(9)
+           |) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(intervalTable) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("interval" -> "idts")), createTable = false)
+      load should be(4)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("-1 01:01:01.010203456"), Seq[Any]("-3652047 23:59:59.102030405"),  Seq[Any]("1 12:12:12.003456700"), Seq[Any]("3652047 23:59:59"))
+      
+      actual.equals(expected) should be (true)
+    }
+  }
+  
+  test("IPv4 type") { fixture =>
+    val schema = StructTypeUtil.createSchema("iptype4" -> StringType)
+    val data = Seq(Row("0.0.0.0"), Row("01.02.03.04"), Row("192.168.0.1"), Row("255.255.255.255"))
+    val rdd = fixture.sc.parallelize(data)
+    def ipv4table(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+          s"""|create table ${tableName} (
+              | iptype4 IPV4
+              | ) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(ipv4table) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("iptype4" -> "iptype4")), createTable = false)
+      load should be(4)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("0.0.0.0"), Seq[Any]("1.2.3.4"), Seq[Any]("192.168.0.1"), Seq[Any]("255.255.255.255"))
+      
+      actual.equals(expected) should be (true)
+    }
+  }
+  
+  test("IPv6 type") { fixture =>
+    val schema = StructTypeUtil.createSchema("iptype6" -> StringType)
+    val data = Seq(Row("::"), Row("::c0a8:1"), Row("2001:db8:0:1234:0:567:8:1"), Row("2001:db8::"), Row("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+    val rdd = fixture.sc.parallelize(data)
+    def ipv6table(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+          s"""|create table ${tableName} (
+              | iptype6 IPV6
+              | ) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(ipv6table) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("iptype6" -> "iptype6")), createTable = false)
+      load should be(5)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("2001:db8:0:1234:0:567:8:1"), Seq[Any]("2001:db8::"), Seq[Any]("::"), Seq[Any]("::c0a8:1"), Seq[Any]("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+      
+      actual.equals(expected) should be (true)
+    }
+  }
+  
+  test("UUID type") { fixture =>
+    val schema = StructTypeUtil.createSchema("idtype" -> StringType)
+    val data = Seq(Row("2465efc5-50d9-45d5-9af7-31d07a497d84"), Row("a2bdea4a-2b7d-11e8-b467-0ed5f89f718b"), Row("cfd958c3-c1ac-470e-8bb1-62e4fdca4bb1"))
+    val rdd = fixture.sc.parallelize(data)
+    def uuidTable(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+       s"""|create table ${tableName} (
+           | idtype UUID
+           | ) WITH NOPARTITION""".stripMargin)
+    }}
+    
+    withTable(uuidTable) { tableName =>
+      val load = rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(Map("idtype" -> "idtype")), createTable = false)
+      load should be(3)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any]("2465efc5-50d9-45d5-9af7-31d07a497d84"), Seq[Any]("a2bdea4a-2b7d-11e8-b467-0ed5f89f718b"), Seq[Any]("cfd958c3-c1ac-470e-8bb1-62e4fdca4bb1")) 
+      
+      actual.equals(expected) should be (true)
+    }
+  }
 
   test("dataframe reader hang") { fixture =>
     val props = new java.util.Properties()

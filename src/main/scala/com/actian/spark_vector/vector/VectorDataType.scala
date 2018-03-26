@@ -44,6 +44,9 @@ object VectorDataType {
   case object TimestampTZType extends VectorTypeEnum { val vectorSQLtype = "timestamp with time zone" }
   case object IntervalYearToMonthType extends VectorTypeEnum { val vectorSQLtype = "interval year to month" }
   case object IntervalDayToSecondType extends VectorTypeEnum { val vectorSQLtype = "interval day to second" }
+  case object IPV4Type extends VectorTypeEnum { val vectorSQLtype = "ipv4" }
+  case object IPV6Type extends VectorTypeEnum { val vectorSQLtype = "ipv6" }
+  case object UUIDType extends VectorTypeEnum { val vectorSQLtype = "uuid" }
   case object NotSupported extends VectorTypeEnum { val vectorSQLtype = "" }
   
   def vectorDataTypes: List[VectorTypeEnum] = List(
@@ -68,7 +71,10 @@ object VectorDataType {
       TimestampLTZType,
       TimestampTZType,
       IntervalYearToMonthType,
-      IntervalDayToSecondType
+      IntervalDayToSecondType,
+      IPV4Type,
+      IPV6Type,
+      UUIDType
       )
 
   def apply(name: String): VectorTypeEnum = name match {
@@ -94,6 +100,9 @@ object VectorDataType {
     case "timestamp with local time zone" | "timestampltz" => TimestampLTZType
     case "interval year to month" | "intervalym" => IntervalYearToMonthType
     case "interval day to second" | "intervalds" => IntervalDayToSecondType
+    case "ipv4" => IPV4Type
+    case "ipv6" => IPV6Type
+    case "uuid" | "byte" => UUIDType
     case _ => NotSupported
   }
   

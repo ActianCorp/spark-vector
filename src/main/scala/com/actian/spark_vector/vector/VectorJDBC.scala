@@ -155,14 +155,23 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     val colStr = if (cols.isEmpty) "*" else cols.mkString(",")
     val sql = s"SELECT $colStr FROM ${quote(tableName)}  WHERE 1=?"
     logTrace(s"The generated sql statement for retrieving table metadata is $sql")
+
     withPreparedStatement(sql, statement => {
       val metaData = statement.getMetaData
       for (columnIndex <- 1 to metaData.getColumnCount) yield {
-        new ColumnMetadata(metaData.getColumnName(columnIndex),
-          metaData.getColumnTypeName(columnIndex),
+        val columnName = metaData.getColumnName(columnIndex)
+        val typeName = metaData.getColumnTypeName(columnIndex)
+        val scale = if (typeName.contains("interval")) {
+          val column = dbCxn.getMetaData().getColumns(null, null, tableName, columnName)
+          column.next()
+          column.getString("DECIMAL_DIGITS").toInt
+        } else metaData.getScale(columnIndex)
+        
+        new ColumnMetadata(columnName,
+          typeName,
           metaData.isNullable(columnIndex) == 1,
           metaData.getPrecision(columnIndex),
-          metaData.getScale(columnIndex))
+          scale)
       }
     })
   } catch {

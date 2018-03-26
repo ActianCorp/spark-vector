@@ -77,7 +77,9 @@ trait VectorFixture {
     ColumnMetadata("ts_ntz_type", "timestamp without time zone", true, 29, 6),
     ColumnMetadata("ts_ltz_type", "timestamp with local time zone", true, 29, 6),
     ColumnMetadata("iy2m_type", "interval year to month", true, 8, 0),
-    ColumnMetadata("id2s_type", "interval day to second", true, 24, 0))
+    ColumnMetadata("id2s_type", "interval day to second", true, 24, 0),
+    ColumnMetadata("ipv4_type", "ipv4", true, 4, 0),
+    ColumnMetadata("ipv6_type", "ipv6", true, 16, 0))
 
   def admitRDD(sparkContext: SparkContext): (RDD[Row], StructType) =
     createAdmitRDD(sparkContext, admitData)

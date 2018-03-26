@@ -81,7 +81,7 @@ class RowWriter(tableColumnMetadata: Seq[ColumnMetadata], headerInfo: DataStream
   /** Write a single `row` */
   private def writeToColumnBuffer(row: Row): Unit = {
     var i = 0
-    while (i < row.length) { // writing all columns of this row to appropiate colbufs
+    while (i < row.length) { // writing all columns of this row to appropriate colbufs
       writeToColumnBuffer(row(i), columnBufs(i), writeValFcns(i))
       i += 1
     }
