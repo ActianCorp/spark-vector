@@ -24,14 +24,17 @@ package object util {
   final val SecondsBeforeEpoch = 62167219200L
   final val TimeMaskSize = 11
   final val SecondsInMinute = 60
+  final val MinutesInHour = 60
+  final val HoursInDay = 24
+  final val SecondsInDay = SecondsInMinute * MinutesInHour * HoursInDay
   final val MillisecondsScale = 3
   final val MillisecondsInMinute = SecondsInMinute * PowersOfTen(MillisecondsScale)
-  final val MillisecondsInHour = 60 * MillisecondsInMinute
-  final val MillisecondsInDay = 24 * MillisecondsInHour
+  final val MillisecondsInHour = MinutesInHour * MillisecondsInMinute
+  final val MillisecondsInDay = HoursInDay * MillisecondsInHour
   final val NanosecondsScale = 9
   final val NanosecondsInMinute = (MillisecondsInMinute.toLong * PowersOfTen(NanosecondsScale - MillisecondsScale))
-  final val NanosecondsInHour = 60L * NanosecondsInMinute
-  final val NanosecondsInDay = 24L * NanosecondsInHour
+  final val NanosecondsInHour = MinutesInHour * NanosecondsInMinute
+  final val NanosecondsInDay = HoursInDay * NanosecondsInHour
   // scalastyle:on magic.number
 
   def floorDiv(x: Long, y: Long): Long = {

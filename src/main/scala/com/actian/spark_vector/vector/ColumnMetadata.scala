@@ -48,8 +48,9 @@ case class ColumnMetadata(val name: String,
     case VectorDataType.DecimalType => (DecimalType(precision, scale), LongLongSize)
     case VectorDataType.DateType => (DateType, IntSize)
     case VectorDataType.CharType | VectorDataType.NcharType => (StringType, if (precision == 1) IntSize else precision + 1)
-    case VectorDataType.VarcharType | VectorDataType.NvarcharType |
-      VectorDataType.IntervalYearToMonthType | VectorDataType.IntervalDayToSecondType => (StringType, precision + 1)
+    case VectorDataType.VarcharType | VectorDataType.NvarcharType => (StringType, precision + 1)
+    case VectorDataType.IntervalYearToMonthType | VectorDataType.IPV4Type => (StringType, IntSize)
+    case VectorDataType.IntervalDayToSecondType | VectorDataType.IPV6Type | VectorDataType.UUIDType => (StringType, LongLongSize)
     case VectorDataType.TimeType | VectorDataType.TimeLTZType | VectorDataType.TimeTZType => (TimestampType, LongSize)
     case VectorDataType.TimestampType | VectorDataType.TimestampLTZType | VectorDataType.TimestampTZType => (TimestampType, LongLongSize)
     case VectorDataType.NotSupported =>

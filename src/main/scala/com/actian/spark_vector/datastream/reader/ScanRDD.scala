@@ -78,7 +78,7 @@ class ScanRDD(@transient private val sc: SparkContext,
     override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = if (jobrefs.contains(jobEnd.jobId)) {
       val (unloadOperation, client, scan) = jobrefs.remove(jobEnd.jobId).get
       try {
-        Await.result(unloadOperation, Duration.create(100, "ms"))
+        Await.result(unloadOperation, Duration.create(200, "ms"))
       } catch {
         case e: Exception => {
           logDebug("Client disconnected while waiting for Vector unload to complete " + e.toString())

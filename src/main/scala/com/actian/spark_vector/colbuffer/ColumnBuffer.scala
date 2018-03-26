@@ -15,9 +15,10 @@
  */
 package com.actian.spark_vector.colbuffer
 
+import com.actian.spark_vector.colbuffer.abstracts._
+import com.actian.spark_vector.colbuffer.decimal._
 import com.actian.spark_vector.colbuffer.integer._
 import com.actian.spark_vector.colbuffer.real._
-import com.actian.spark_vector.colbuffer.decimal._
 import com.actian.spark_vector.colbuffer.singles._
 import com.actian.spark_vector.colbuffer.string._
 import com.actian.spark_vector.colbuffer.time._
@@ -208,7 +209,8 @@ object ColumnBuffer {
     ByteEncodedStringColumnBuffer,
     IntegerEncodedStringColumnBuffer,
     TimeColumnBuffer,
-    TimestampColumnBuffer)
+    TimestampColumnBuffer, 
+    AbstractStringColumnBuffer)
 
   private val build = colBufBuilders.map(_.build).reduce(_ orElse _)
 
