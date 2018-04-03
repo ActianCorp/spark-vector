@@ -41,11 +41,8 @@ class ScanRDD(@transient private val sc: SparkContext,
               private var vpartitions: Int = 0) 
               extends RDD[InternalRow](sc, Nil) {
   
-  /** Closed states for the datastream connection */
-  @volatile private var closed = true
-  
-  /** Custom row iterator for reading `DataStream`s in row format */
-  @volatile private var it: RowReader = _
+  /** Custom scanner that contains specific connection info **/ 
+  @volatile private var scanner: Scanner = _
   
   /** Custom spark listener to control setup  */
   @transient private val vectorJobqueue = new SparkListener() {
@@ -53,7 +50,7 @@ class ScanRDD(@transient private val sc: SparkContext,
     import scala.collection.mutable.HashMap
     
     private val jobqueue = Queue.empty[Int]
-    private val jobrefs = new HashMap[Int, (Future[Int], DataStreamClient, DataStreamReader)]
+    private val jobrefs = new HashMap[Int, (Future[Int], DataStreamClient, Scanner)]
     
     override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
       if (jobStart.stageInfos.exists(_.rddInfos.exists(_.id == ScanRDD.this.id))) {
@@ -72,29 +69,20 @@ class ScanRDD(@transient private val sc: SparkContext,
       closeResourceOnFailure(client) {
         readConf = initializeReadconf(client)
         val unloadOp = client.startUnload(selectQuery, whereParams)
-        val streamReader = new DataStreamReader(readConf, tableColumnMetadata)
-        jobrefs.put(jobId, (unloadOp, client, streamReader))
-        reader = streamReader
-        closed = false
+        scanner = new Scanner(sc, readConf, new DataStreamReader(readConf, tableColumnMetadata))
+        jobrefs.put(jobId, (unloadOp, client, scanner))
         logDebug("Started Vector unload")
       }
     })
     
     override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = if (jobrefs.contains(jobEnd.jobId)) {
-      val (unloadOperation, client, streamReader) = jobrefs.remove(jobEnd.jobId).get
+      val (unloadOperation, client, scan) = jobrefs.remove(jobEnd.jobId).get
       try {
         Await.result(unloadOperation, Duration.create(200, "ms"))
       } catch {
         case e: Exception => {
           logDebug("Client disconnected while waiting for Vector unload to complete " + e.toString())
-          for ( p <- 0 until readConf.size) {
-            try {
-              logDebug(s"Finalizing partition $p Vector transfer datastream")
-              streamReader.touch(p) //Need to ensure all the unused streams have been closed
-            } catch {
-              case f: Exception => logDebug("Exception while finalizing Vector transfer datastream " + f.toString())
-            }
-          }
+          scan.touchDatastreams()
         }
       } finally {
         client.close
@@ -108,9 +96,12 @@ class ScanRDD(@transient private val sc: SparkContext,
   protected def readConf = _readConf
   protected def readConf_= (value: VectorEndpointConf):Unit = _readConf = value
   
-  private var _reader: DataStreamReader = _
-  protected def reader = _reader
-  protected def reader_= (value: DataStreamReader):Unit = _reader = value
+  private def initializeReadconf(client: DataStreamClient): VectorEndpointConf = {
+    client.prepareUnloadDataStreams(vpartitions)
+    val conf =  client.getVectorEndpointConf
+    logDebug(s"Configured ${conf.size} Vector endpoints for unloading")
+    conf
+  }
 
   override protected def getPartitions: Array[Partition] = {
     if (vpartitions == 0) {
@@ -132,28 +123,6 @@ class ScanRDD(@transient private val sc: SparkContext,
   }
   
   override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
-    taskContext.addTaskCompletionListener { _ => closeAll() }
-    taskContext.addTaskFailureListener { (_, e) => closeAll(Option(e)) }
-    it = reader.read(split.index)
-    it
-  }
-  
-  private def initializeReadconf(client: DataStreamClient): VectorEndpointConf = {
-    client.prepareUnloadDataStreams(vpartitions)
-    val conf =  client.getVectorEndpointConf
-    logDebug(s"Configured ${conf.size} Vector endpoints for unloading")
-    conf
-  }
-
-  private def closeAll(failure: Option[Throwable] = None): Unit = if (!closed) {
-    failure.foreach(logError("Failure during task completion, closing RowReader", _))
-    close(it, "RowReader")
-    closed = true
-  } else {
-    failure.foreach(logError("Failure during task completion", _))
-  }
-
-  private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {
-    try { c.close } catch { case e: Exception => logWarning(s"Exception closing $resourceName", e) }
+    scanner.compute(split, taskContext)
   }
 }

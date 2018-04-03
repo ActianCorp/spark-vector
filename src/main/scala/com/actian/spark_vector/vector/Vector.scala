@@ -20,12 +20,13 @@ import scala.concurrent.duration.Duration
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.{ DataStreamClient, VectorEndpointConf }
-import com.actian.spark_vector.datastream.reader.ScanRDD
+import com.actian.spark_vector.datastream.reader.{ DataStreamReader, Scanner, ScanRDD }
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.util.{ Logging, RDDUtil, ResourceUtil }
 import com.actian.spark_vector.sql.VectorRelation
@@ -123,6 +124,34 @@ private[spark_vector] object Vector extends Logging {
     val tableSchema = VectorRelation.structType(tableColumnMetadata)
     val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
     load(inputRDD, tableColumnMetadata, writeConf)
+  }
+  
+  /**
+   * Given a `Spark Context` try to unload a Vector table (name is omitted since it isn't needed).
+   * This should only be used in specific circumstances since the RDD it creates cannot be reused.
+   *
+   * @note We need a `SQL Context` first with a `DataFrame` generated for the select query
+   *
+   * @param sc spark context
+   * @param tableColumnMetadata column type information for the unloaded table
+   * @param readConf datastream configuration for reading
+   *
+   * @return an <code>RDD[Row]</code> for the unload operation
+   */
+  def unloadVector(sc: SparkContext, tableColumnMetadata: Seq[ColumnMetadata], readConf: VectorEndpointConf): RDD[InternalRow] = {
+    val reader = new DataStreamReader(readConf, tableColumnMetadata)
+    val scanner = new Scanner(sc, readConf, reader)
+    sc.addSparkListener( new SparkListener() {
+      private var ended = false
+      override def onJobEnd(job: SparkListenerJobEnd) = if (!ended && !scanner.isClosed) {
+        scanner.touchDatastreams()
+        ended = true
+        logDebug(s"Unload vector job ended @ ${job.time}.")
+      } else {
+        ended = true
+      }
+    })
+    scanner
   }
 
   /**
