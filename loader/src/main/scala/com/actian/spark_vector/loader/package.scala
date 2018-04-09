@@ -27,7 +27,7 @@ package com.actian.spark_vector
  * 
  * This scala code snippet to read a csv file (executed in spark-shell):
  * {{{
- * sqlContext.sql("""CREATE TEMPORARY TABLE large_table
+ * sqlContext.sql("""CREATE TEMPORARY VIEW large_table
  * USING com.actian.spark_vector.sql.DefaultSource
  * OPTIONS (
  *  host "vectorhost",
@@ -36,7 +36,7 @@ package com.actian.spark_vector
  *  table "large_table"
  * )""")
  * 
- * sqlContext.sql("""CREATE TEMPORARY TABLE csv_files
+ * sqlContext.sql("""CREATE TEMPORARY VIEW csv_files
  * USING csv
  * OPTIONS (path "hdfs://namenode:8020/data/csv_file*", header "false", sep "|")
  * """)
