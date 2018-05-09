@@ -18,7 +18,7 @@ package com.actian.spark_vector.vector
 import java.sql.{ Date, Timestamp }
 
 import org.apache.spark.SparkException
-import org.apache.spark.sql.types.{ BooleanType, DateType, DecimalType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
+import org.apache.spark.sql.types.{ BooleanType, DateType, DecimalType, DoubleType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.unsafe.types.UTF8String
 import org.apache.spark.unsafe.types.UTF8String.{ fromString => toUTF8 }
@@ -459,6 +459,54 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       row3 = dataframe.filter(dataframe.col("s").rlike("ghi")).first()
       row3(0) == 3 should be(true)
       
+    }
+  }
+  
+  test("null default replacement") { fixture =>
+    val schema = StructTypeUtil.createSchema("col1" -> IntegerType, 
+        "col2" -> DoubleType,  
+        "col3" -> BooleanType, 
+        "col4" -> StringType)
+    val data = Seq(Row(1, 0.1, false, "something"), 
+        Row(2, 1.2, true, "else"), 
+        Row(null, null, null, null))
+    val rdd = fixture.sc.parallelize(data)
+    val df = fixture.spark.sqlContext.createDataFrame(rdd, schema)
+    var defaults = Map[String, Any]()
+    def nulldefTable(tableName: String): Unit = { VectorJDBC.withJDBC(connectionProps) { cxn =>
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+          s"""|create table ${tableName} (
+              |  col1 int not null with default -1,
+              |  col2 float not null with default 1.1,
+              |  col3 boolean not null with default true,
+              |  col4 varchar(20) not null with default 'empty'
+              |) WITH NOPARTITION""".stripMargin)
+              
+      defaults = cxn.columnDefaults(tableName)
+    }}
+    
+    withTable(nulldefTable) { tableName =>
+      fixture.spark.sql(s"""CREATE TEMPORARY TABLE csv_sl_bool01_d2_v
+                           USING com.actian.spark_vector.sql.DefaultSource
+                           OPTIONS (
+                             host "qa25-cent6-hdp01",
+                             instance "GH",
+                             database "testdb",
+                             table "${tableName}",
+                             user "actian",
+                             password "actian"
+                           )""")
+
+      val load1 = df.na.fill(defaults)
+      val load = load1.rdd.loadVector(schema, connectionProps, tableName)
+      load should be(3)
+      
+      val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
+      val results = fixture.sc.unloadVector(connectionProps, tableName, colmetadata)
+      val actual = results.collect.sortBy(r => r(0).toString()).map(_.toSeq).toSeq
+      val expected = Seq(Seq[Any](-1, 1.1, true, "empty"), Seq[Any](1, 0.1, false, "something"), Seq[Any](2, 1.2, true, "else"))
+      actual.equals(expected) should be(true)
     }
   }
   

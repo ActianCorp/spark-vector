@@ -17,10 +17,15 @@ package com.actian.spark_vector.loader.command
 
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.StructType
 
+import com.actian.spark_vector.vector.VectorOps._
+import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.loader.options.UserOptions
 import com.actian.spark_vector.loader.parsers.Args
 import resource.managed
+import com.actian.spark_vector.vector.VectorConnectionProperties
 
 object ConstructVector {
   /**
@@ -44,9 +49,42 @@ object ConstructVector {
       case Args.orcLoad.longName => OrcRead.registerTempTable(config, session.sqlContext)
       case m => throw new IllegalArgumentException(s"Invalid configuration mode: ${m}")
     }
-
-    for (targetTempTable <- managed(VectorTempTable.register(config, session.sqlContext))) {
-      session.sql(s"insert into table ${targetTempTable.quotedName} ${select}")
+    
+    val source = session.sql(select)
+    val conn = getConnectionProps(config)
+    val mapping = getFieldMapping(source.schema, config.general.colsToLoad.getOrElse(Seq[String]()), conn, config.vector.targetTable)
+    val df = checkSchemaDefaults(source, mapping, conn, config.vector.targetTable)
+    df.rdd.loadVector(df.schema, conn, config.vector.targetTable, config.vector.preSQL, config.vector.postSQL, Option(mapping))
+  }
+  
+  private def getConnectionProps(config: UserOptions): VectorConnectionProperties = {
+    VectorConnectionProperties(config.vector.host, 
+                               config.vector.instance, 
+                               config.vector.database, 
+                               config.vector.user, 
+                               config.vector.password)
+  }
+  
+  private def checkSchemaDefaults(source: DataFrame, fieldMapping: Map[String, String], conn: VectorConnectionProperties, table: String): DataFrame = {
+    val jdbc = new VectorJDBC(conn)
+    val defaults = jdbc.columnDefaults(table)
+    val sourceDefaults = defaults.map(f => (fieldMapping.find(_._2 == f._1).get._1 -> f._2))
+    source.na.fill(sourceDefaults)
+  }
+  
+  private def getFieldMapping(sourceSchema: StructType, colsToLoad: Seq[String], conn: VectorConnectionProperties, table: String): Map[String, String] = {
+    val jdbc = new VectorJDBC(conn)
+    val tableSchema = jdbc.columnMetadata(table)
+    
+    require(colsToLoad.size == tableSchema.size || sourceSchema.size == tableSchema.size, "Number of source columns do not match number of target columns in table")
+    val fieldMapping = if (!colsToLoad.isEmpty) {
+      require(colsToLoad.size == tableSchema.size, "Number of columns to load does not match number of target columns in table")
+      (for (i <- 0 until colsToLoad.size) yield (colsToLoad(i) -> tableSchema(i).name)).toMap
+    } else {
+      require(sourceSchema.size == tableSchema.size, "Number of source columns do not match number of target columns in table")
+      (for (i <- 0 until sourceSchema.size) yield (sourceSchema(i).name -> tableSchema(i).name)).toMap
     }
+    
+    fieldMapping
   }
 }

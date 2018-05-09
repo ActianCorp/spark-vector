@@ -16,7 +16,6 @@
 package com.actian.spark_vector.loader.parsers
 
 import com.actian.spark_vector.loader.options._
-import com.actian.spark_vector.vector.VectorConnectionProperties
 
 import scopt.{ OptionDef, Read }
 
@@ -207,7 +206,7 @@ object Args {
   val inputFile = ArgOption[String, String](
     "sourceFile", "sf", "Source file", _.general.sourceFile, updateGeneral((o, v) => o.copy(sourceFile = v.replace('\\', '/'))), true)
   val colsForLoad = ArgOption[String, Option[Seq[_]]](
-    "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",")))), false)
+    "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",").map(_.trim())))), false)
 
   val generalArgs = Seq(inputFile, colsForLoad)
 
