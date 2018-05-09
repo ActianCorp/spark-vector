@@ -138,6 +138,16 @@ private[spark_vector] object VectorRelation {
 
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
+  
+  /** Quote the column name with single quotes so that it can be used in VectorSQL where statements */
+  def singleQuote(name: String): String = name.split("\\.").map("'" + _ + "'").mkString(".")
+  
+  /** Unquote a vector string literal **/
+  def unquoteLiteral(s: String): String = {
+    if (s.head == '\'' && s.head == s.last) {
+      s.slice(1, s.length() - 1).replaceAll("''", "'")
+    } else s
+  }
 
   /**
    * Converts a Filter structure into an equivalent prepared Vector SQL statement that can be

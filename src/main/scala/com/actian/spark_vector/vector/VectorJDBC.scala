@@ -62,7 +62,7 @@ object ResultSetIterator {
 class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   import resource._
   import VectorJDBC._
-  import VectorRelation.quote
+  import VectorRelation.{ quote, singleQuote, unquoteLiteral }
 
   private implicit class SparkPreparedStatement(statement: PreparedStatement) {
     def setParams(params: Seq[Any]): PreparedStatement = {
@@ -177,6 +177,32 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   } catch {
     case exc: Exception =>
       logError(s"Unable to retrieve metadata for table '${tableName}'", exc)
+      throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}")
+  }
+  
+  /**
+   * Retrieve the default values for table `tableName` as a mapping of column names to defaults.
+   */
+  def columnDefaults(tableName: String): Map[String, Any] = try {
+    logTrace(s"Trying to get table column defaults for table $tableName")
+    val sql = s"SELECT column_name, column_default_val, column_datatype FROM iicolumns WHERE table_name=${singleQuote(tableName)} and column_default_val is not null"
+    logTrace(s"The generated sql statement for retrieving table defaults is $sql")
+    withPreparedStatement(sql, statement => {
+      val rs = statement.executeQuery()
+      val cc = rs.getMetaData.getColumnCount
+      
+      val iter = ResultSetIterator(rs)(toRow)
+      (for (row <- iter) yield {
+        if (row(2).toString.trim == "BOOLEAN")
+          //Spark 2.1 cannot cast strings to booleans during null replacement.
+          (row(0).toString.trim -> row(1).toString.trim.toLowerCase.toBoolean)
+        else 
+          (row(0).toString.trim -> unquoteLiteral(row(1).toString))
+      }).toMap
+    })
+  } catch {
+    case exc: Exception =>
+      logError(s"Unable to retrieve defaults for table '${tableName}'", exc)
       throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}")
   }
 
