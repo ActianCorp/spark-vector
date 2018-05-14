@@ -15,6 +15,8 @@
  */
 package com.actian.spark_vector.loader.options
 
+import com.actian.spark_vector.vector.VectorConnectionProperties
+
 case class VectorOptions(
   host: String = "",
   instance: String = "",
@@ -24,3 +26,9 @@ case class VectorOptions(
   targetTable: String = "",
   preSQL: Option[Seq[String]] = None,
   postSQL: Option[Seq[String]] = None)
+  
+object VectorOptions {
+  def getConnectionProps(vo: VectorOptions): VectorConnectionProperties =
+    VectorConnectionProperties(vo.host,  vo.instance, vo.database, vo.user, vo.password)
+
+}
