@@ -21,8 +21,8 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.vector.VectorOps._
-import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
-import com.actian.spark_vector.loader.options.UserOptions
+import com.actian.spark_vector.vector.VectorJDBC
+import com.actian.spark_vector.loader.options.{ UserOptions, VectorOptions }
 import com.actian.spark_vector.loader.parsers.Args
 import resource.managed
 import com.actian.spark_vector.vector.VectorConnectionProperties
@@ -51,32 +51,25 @@ object ConstructVector {
     }
     
     val source = session.sql(select)
-    val conn = getConnectionProps(config)
+    val conn = VectorOptions.getConnectionProps(config.vector)
     val mapping = getFieldMapping(source.schema, config.general.colsToLoad.getOrElse(Seq[String]()), conn, config.vector.targetTable)
     val df = checkSchemaDefaults(source, mapping, conn, config.vector.targetTable)
     df.rdd.loadVector(df.schema, conn, config.vector.targetTable, config.vector.preSQL, config.vector.postSQL, Option(mapping))
   }
   
-  private def getConnectionProps(config: UserOptions): VectorConnectionProperties = {
-    VectorConnectionProperties(config.vector.host, 
-                               config.vector.instance, 
-                               config.vector.database, 
-                               config.vector.user, 
-                               config.vector.password)
-  }
-  
   private def checkSchemaDefaults(source: DataFrame, fieldMapping: Map[String, String], conn: VectorConnectionProperties, table: String): DataFrame = {
     val jdbc = new VectorJDBC(conn)
-    val defaults = jdbc.columnDefaults(table)
+    val defaults = collection.mutable.Map(jdbc.columnDefaults(table).toSeq: _*)
+    jdbc.columnMetadata(table).foreach(c => if(c.nullable) defaults.remove(c.name))
     val sourceDefaults = defaults.map(f => (fieldMapping.find(_._2 == f._1).get._1 -> f._2))
-    source.na.fill(sourceDefaults)
+    source.na.fill(sourceDefaults.toMap)
   }
   
   private def getFieldMapping(sourceSchema: StructType, colsToLoad: Seq[String], conn: VectorConnectionProperties, table: String): Map[String, String] = {
     val jdbc = new VectorJDBC(conn)
     val tableSchema = jdbc.columnMetadata(table)
     
-    require(colsToLoad.size == tableSchema.size || sourceSchema.size == tableSchema.size, "Number of source columns do not match number of target columns in table")
+    require(colsToLoad.size == tableSchema.size || sourceSchema.size == tableSchema.size, "Number of source columns to load does not match number of target columns in table")
     val fieldMapping = if (!colsToLoad.isEmpty) {
       require(colsToLoad.size == tableSchema.size, "Number of columns to load does not match number of target columns in table")
       (for (i <- 0 until colsToLoad.size) yield (colsToLoad(i) -> tableSchema(i).name)).toMap
