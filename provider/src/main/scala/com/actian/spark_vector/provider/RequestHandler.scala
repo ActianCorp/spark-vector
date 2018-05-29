@@ -121,7 +121,28 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   }
 
   /** Given a job part, retrieve its options, if any, or else an empty Map */
-  private def getOptions(part: JobPart): Map[String, String] = part.options.getOrElse(Map.empty[String, String])
+  private def getOptions(part: JobPart): Map[String, String] =
+    part.options.getOrElse(Map.empty[String, String]).filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
+
+  /** Given a job part, retrieve its extra options, if any, or else an empty Map */
+  private def getExtraOptions(part: JobPart): Map[String, String] =
+    part.options.getOrElse(Map.empty[String, String]).filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
+  
+  /** Parse a Spark ddl schema and create a schema object */
+  private def parseSchema(schemaString: String): Option[StructType] = {
+    try {
+      if (!schemaString.isEmpty()) {
+        var schema = new StructType()
+        schemaString.split(',').map(_.trim.split("\\s+")).foreach(t => schema = schema.add(t(0), t(1)))
+        logDebug(s"Parsed custom schema for external source: $schema.simpleString")
+        return Option(schema)
+      }
+    } catch {
+      case exc: Exception =>
+         logWarning(s"Unable to parse schema for external source: $schemaString. Attempting read with default options.", exc)
+    }
+    None
+  }
 
   /**
    * Given a job part, return the format of the external table, according to the following logic:
@@ -143,6 +164,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     ret
   }
 
+  /** Ensure the format is supported by the environment */
   private def checkFormat(format: String): Unit = format match {
     case "hive" | "orc" if !spark.conf.get("spark.sql.catalogImplementation").equals("hive") =>
       throw new IllegalStateException(s"Reading ${format} sources requires Hive support. To enable this, set spark.vector.provider.hive to true in the spark_provider.conf file")
@@ -152,15 +174,29 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
     val options = getOptions(part)
+    val extraOptions = getExtraOptions(part)
     val format = getFormat(part)
     format match {
       case "hive" => HiveTable(part.external_reference)
       case _ => {
+        val schemaOpt = parseSchema(extraOptions.getOrElse("schema", ""))
         val df = format match {
-          case "parquet" => spark.read.options(options).parquet(part.external_reference)
-          case "csv" => spark.read.options(options).csv(part.external_reference)
-          case "orc" => spark.read.options(options).orc(part.external_reference)
-          case _ => spark.read.options(options).format(format).load(part.external_reference)
+          case "parquet" => schemaOpt match {
+              case Some(schema) => spark.read.options(options).schema(schema).parquet(part.external_reference)
+              case None => spark.read.options(options).parquet(part.external_reference)
+          }
+          case "csv" => schemaOpt match {
+              case Some(schema) => spark.read.options(options).schema(schema).csv(part.external_reference)
+              case None => spark.read.options(options).csv(part.external_reference)
+          }
+          case "orc" => schemaOpt match {
+            case Some(schema) => spark.read.options(options).schema(schema).orc(part.external_reference)
+            case None => spark.read.options(options).orc(part.external_reference)
+          }
+          case _ => schemaOpt match {
+            case Some(schema) => spark.read.options(options).schema(schema).format(format).load(part.external_reference)
+            case None => spark.read.options(options).format(format).load(part.external_reference)
+          }
         }
         TempTable("src", df)
       }
