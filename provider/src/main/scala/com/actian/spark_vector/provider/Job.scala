@@ -76,6 +76,8 @@ private[provider] case class JobPart(part_id: String,
     } yield VectorEndpoint(spn.host, spn.port, datastream.rolename, datastream.password)
     VectorEndpointConf(endpoints.toIndexedSeq)
   }
+  
+  def extraOptions = Set("schema")
 }
 
 private[provider] object JobPart {
