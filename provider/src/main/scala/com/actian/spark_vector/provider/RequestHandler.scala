@@ -180,23 +180,15 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
       case "hive" => HiveTable(part.external_reference)
       case _ => {
         val schemaOpt = parseSchema(extraOptions.getOrElse("schema", ""))
+        val reader = schemaOpt match {
+          case Some(schema) => spark.read.options(options).schema(schema)
+          case None => spark.read.options(options)
+        }
         val df = format match {
-          case "parquet" => schemaOpt match {
-              case Some(schema) => spark.read.options(options).schema(schema).parquet(part.external_reference)
-              case None => spark.read.options(options).parquet(part.external_reference)
-          }
-          case "csv" => schemaOpt match {
-              case Some(schema) => spark.read.options(options).schema(schema).csv(part.external_reference)
-              case None => spark.read.options(options).csv(part.external_reference)
-          }
-          case "orc" => schemaOpt match {
-            case Some(schema) => spark.read.options(options).schema(schema).orc(part.external_reference)
-            case None => spark.read.options(options).orc(part.external_reference)
-          }
-          case _ => schemaOpt match {
-            case Some(schema) => spark.read.options(options).schema(schema).format(format).load(part.external_reference)
-            case None => spark.read.options(options).format(format).load(part.external_reference)
-          }
+          case "parquet" => reader.parquet(part.external_reference)
+          case "csv" => reader.csv(part.external_reference)
+          case "orc" => reader.orc(part.external_reference)
+          case _ => reader.format(format).load(part.external_reference)
         }
         TempTable("src", df)
       }
