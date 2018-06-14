@@ -22,7 +22,8 @@ import scala.concurrent.Future
 import scala.compat.Platform.EOL
 import scala.util.{ Failure, Success }
 
-import org.apache.spark.sql.{ DataFrame, Row, SaveMode, SparkSession }
+import org.apache.spark.sql.{ Column, DataFrame, Row, SaveMode, SparkSession }
+import org.apache.spark.sql.functions.expr
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.reader.DataStreamReader
@@ -34,6 +35,7 @@ import com.actian.spark_vector.vector.VectorNet
 
 import play.api.libs.json.{ JsError, Json }
 import resource.managed
+import com.actian.spark_vector.vector.PredicatePushdown
 
 /**
  * Handler for requests from Vector
@@ -170,12 +172,32 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
       throw new IllegalStateException(s"Reading ${format} sources requires Hive support. To enable this, set spark.vector.provider.hive to true in the spark_provider.conf file")
     case _ =>
   }
+  
+  /** Get a list of the filters that should be applied to the columns */
+  private def getAllFilters(part: JobPart): Seq[Column] = {
+    val extraOptions = getExtraOptions(part)
+    val baseFilter = extraOptions.getOrElse("filter", "")
+    if (!baseFilter.isEmpty())
+      expr(baseFilter) +: PredicatePushdown.getFilters(part.column_infos.map(_.toColumnMetadata), spark.sparkContext)
+    else 
+      PredicatePushdown.getFilters(part.column_infos.map(_.toColumnMetadata), spark.sparkContext)
+  }
+  
+  /** Gets all filters as a spark sql string */
+  private def getWhereString(part: JobPart): String = {
+    val filters = getAllFilters(part)
+    if (filters.nonEmpty)
+      "where " + filters.reduceLeft(_ and _).expr.sql
+    else 
+      ""
+  }
 
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
     val options = getOptions(part)
     val extraOptions = getExtraOptions(part)
     val format = getFormat(part)
+    
     format match {
       case "hive" => HiveTable(part.external_reference)
       case _ => {
@@ -184,12 +206,15 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
           case Some(schema) => spark.read.options(options).schema(schema)
           case None => spark.read.options(options)
         }
-        val df = format match {
+        var df = format match {
           case "parquet" => reader.parquet(part.external_reference)
           case "csv" => reader.csv(part.external_reference)
           case "orc" => reader.orc(part.external_reference)
           case _ => reader.format(format).load(part.external_reference)
         }
+        val filters = getAllFilters(part)
+        if (filters.nonEmpty)
+          df = df.filter(filters.reduceLeft(_ and _))
         TempTable("src", df)
       }
     }
@@ -202,8 +227,10 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
       externalTable <- managed(getExternalTable(part))
       vectorTable <- managed(TempTable(part.external_table_name, getVectorDF(part)))
     } {
+      //Need to apply any filters for hive tables here
+      val whereClause = if (getFormat(part).equals("hive")) getWhereString(part) else ""
       if (part.column_infos.isEmpty) {
-        val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName}"
+        val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName} ${whereClause}"
         val numTuples = spark.sql(selectCountStarStatement).first().getLong(0)
         val numEndpoints = part.datastream.streams_per_node.map(_.nr).sum
         val rddNoCols = spark.sparkContext.range(0L, numTuples, numSlices = numEndpoints).map(_ => Row.empty)
@@ -211,7 +238,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
         dfNoCols.write.mode(SaveMode.Append).insertInto(vectorTable.tableName)
       } else {
         val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
-        val selectStatement = s"select $cols from ${externalTable.quotedName}"
+        val selectStatement = s"select $cols from ${externalTable.quotedName} ${whereClause}"
         val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
         logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
         spark.sql(wholeStatement)

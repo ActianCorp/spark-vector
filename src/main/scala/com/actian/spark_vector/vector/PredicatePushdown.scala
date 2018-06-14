@@ -141,17 +141,21 @@ object PredicatePushdown extends Logging {
     }
     case _ => None /* There were no value ranges specified */
   }
-
-  /** Filters the given `df` according to any [[ValueRanges]] that its `columns` might have. */
-  def applyFilters(df: DataFrame, columns: Seq[ColumnMetadata], sparkContext: SparkContext): DataFrame = {
-    val filters = for {
+  
+  /** Generate the list of column filters based on the metadata **/
+  def getFilters(columns: Seq[ColumnMetadata], sparkContext: SparkContext): Seq[Column] = {
+    for {
       column <- columns
       filter <- filterForColumn(column, sparkContext)
     } yield {
       logDebug(s"Applying filter for ${column.name}: ${filter}")
       filter
     }
+  }
 
+  /** Filters the given `df` according to any [[ValueRanges]] that its `columns` might have. */
+  def applyFilters(df: DataFrame, columns: Seq[ColumnMetadata], sparkContext: SparkContext): DataFrame = {
+    val filters = getFilters(columns, sparkContext)
     if (filters.nonEmpty) {
       /* Compute a final predicate as a conjunction of all per-column predicates
        * and then apply that to the given df as a single filter. */
