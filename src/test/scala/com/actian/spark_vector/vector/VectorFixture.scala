@@ -33,8 +33,9 @@ trait VectorFixture {
     val database = System.getProperty("vector.database", "")
     val user = System.getProperty("vector.user", "")
     val password = System.getProperty("vector.password", "")
+    val port = System.getProperty("vector.port", "")
 
-    VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty))
+    VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty), port)
   }
 
   def nameNodeAddr = System.getProperty("vector.namenode.address", "hdfs://hornet:8020/")

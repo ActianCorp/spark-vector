@@ -490,12 +490,13 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       fixture.spark.sql(s"""CREATE TEMPORARY TABLE csv_sl_bool01_d2_v
                            USING com.actian.spark_vector.sql.DefaultSource
                            OPTIONS (
-                             host "qa25-cent6-hdp01",
-                             instance "GH",
-                             database "testdb",
+                             host "${connectionProps.host}",
+                             instance "${connectionProps.instance}",
+                             database "${connectionProps.database}",
                              table "${tableName}",
-                             user "actian",
-                             password "actian"
+                             user "${connectionProps.user.get}",
+                             password "${connectionProps.password.get}",
+                             port "${connectionProps.port}"
                            )""")
 
       val load1 = df.na.fill(defaults)
