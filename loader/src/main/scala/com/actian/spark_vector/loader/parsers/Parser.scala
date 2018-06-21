@@ -68,6 +68,8 @@ sealed case class ArgOption[T: Read, O](
  *         Vector instance
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
+ *   -vo <value> | --vectorPort <value>
+ *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -129,6 +131,8 @@ sealed case class ArgOption[T: Read, O](
  *         Vector instance
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
+ *   -vo <value> | --vectorPort <value>
+ *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -152,6 +156,8 @@ sealed case class ArgOption[T: Read, O](
  *         Vector instance
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
+ *   -vo <value> | --vectorPort <value>
+ *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -189,6 +195,8 @@ object Args {
     "vectorInstance", "vi", "Vector instance", _.vector.instance, updateVector((o, v) => o.copy(instance = v)), true)
   val vectorDatabase = ArgOption[String, String](
     "vectorDatabase", "vd", "Vector database", _.vector.database, updateVector((o, v) => o.copy(database = v)), true)
+  val vectorPort = ArgOption[String, String](
+    "vectorPort", "vo", "Vector port", _.vector.port, updateVector((o, v) => o.copy(port = v)), false)
   val vectorUser = ArgOption[String, Option[String]](
     "vectorUser", "vu", "Vector user", _.vector.user, updateVector((o, v) => o.copy(user = Some(v))), false)
   val vectorPassword = ArgOption[String, Option[String]](
@@ -200,7 +208,7 @@ object Args {
   val postSQL = ArgOption[Seq[String], Option[Seq[String]]](
     "postSQL", "postSQL", "Queries to execute in Vector after loading, separated by ';'", _.vector.postSQL, updateVector((o, v) => o.copy(postSQL = Some(v))), false)
 
-  val vectorArgs = Seq(vectorHost, vectorInstance, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
+  val vectorArgs = Seq(vectorHost, vectorInstance, vectorDatabase, vectorPort, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
 
   // Generic arguments
   val inputFile = ArgOption[String, String](

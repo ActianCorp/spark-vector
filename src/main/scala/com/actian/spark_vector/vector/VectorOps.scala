@@ -152,7 +152,7 @@ trait VectorOps {
     def vector(vectorProps: VectorConnectionProperties, table: String, properties: Properties) = {
       var options: Map[String, String] = properties.asScala.toMap
       options += ("host" -> vectorProps.host, "instance" -> vectorProps.instance, 
-                  "database" -> vectorProps.database, "table" -> table)
+                  "database" -> vectorProps.database, "port" -> vectorProps.port, "table" -> table)
       if (vectorProps.user.isDefined) options += ("user" -> vectorProps.user.get)
       if (vectorProps.user.isDefined) options += ("password" -> vectorProps.password.get)
       reader.format("vector").options(options).load()
@@ -201,7 +201,7 @@ trait VectorOps {
     def vector(vectorProps: VectorConnectionProperties, table: String, properties: Properties) = {
       var options: Map[String, String] = properties.asScala.toMap
       options += ("host" -> vectorProps.host, "instance" -> vectorProps.instance, 
-                  "database" -> vectorProps.database, "table" -> table)
+                  "database" -> vectorProps.database, "port" -> vectorProps.port, "table" -> table)
       if (vectorProps.user.isDefined) options += ("user" -> vectorProps.user.get)
       if (vectorProps.user.isDefined) options += ("password" -> vectorProps.password.get)
       writer.format("vector").options(options).save()

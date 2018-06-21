@@ -29,6 +29,7 @@ object VectorTempTable {
     val base = Seq("host" -> config.vector.host,
       "instance" -> config.vector.instance,
       "database" -> config.vector.database,
+      "port" -> config.vector.port,
       "table" -> config.vector.targetTable)
     val optional = Seq(config.vector.user.map("user" -> _),
       config.vector.password.map("password" -> _)).flatten ++

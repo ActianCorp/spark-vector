@@ -23,12 +23,13 @@ case class VectorOptions(
   database: String = "",
   user: Option[String] = None,
   password: Option[String] = None,
+  port: String = "7",
   targetTable: String = "",
   preSQL: Option[Seq[String]] = None,
   postSQL: Option[Seq[String]] = None)
   
 object VectorOptions {
   def getConnectionProps(vo: VectorOptions): VectorConnectionProperties =
-    VectorConnectionProperties(vo.host,  vo.instance, vo.database, vo.user, vo.password)
+    VectorConnectionProperties(vo.host,  vo.instance, vo.database, vo.user, vo.password, vo.port)
 
 }
