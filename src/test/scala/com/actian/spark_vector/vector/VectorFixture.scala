@@ -33,7 +33,7 @@ trait VectorFixture {
     val database = System.getProperty("vector.database", "")
     val user = System.getProperty("vector.user", "")
     val password = System.getProperty("vector.password", "")
-    val port = System.getProperty("vector.port", "")
+    val port = System.getProperty("vector.port", "7")
 
     VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty), port)
   }

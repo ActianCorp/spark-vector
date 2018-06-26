@@ -41,7 +41,7 @@ lazy val providerDeps = Seq(
 lazy val root = (project in file("."))
     .settings(commonSettings:_*)
     .settings(
-        name := "spark_vector",
+        name := "spark-vector",
         libraryDependencies ++= connectorDeps
     )
 

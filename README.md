@@ -1,31 +1,37 @@
 
-# Spark Vector Connector
+# Vector Data Source for Apache Spark
 
-A library to integrate Vector with Spark, allowing you to load Spark DataFrames/RDDs into Vector in parallel and to consume results of Vector based computations in Spark(SQL).
+A library to integrate Vector with [Spark](https://spark.apache.org/), allowing you to load data from Spark into Vector in parallel and to consume the results of Vector based computations in Spark(SQL).
 This connector works with both Vector SMP and VectorH MPP.
 
 ## API documentation
 
-[Spark-Vector Connector](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) Scaladocs.
+[Vector Data Source for Apache Spark](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) Scaladocs.
 
 ## Requirements
 
-This library requires:
-* Vector(H) 5.0 or higher
-* Spark 2.1 or higher
+This library has different versions for Spark 1.5+ and 2.1+
+
+| Spark Version | Compatible version of Vector Data Source for Spark |
+| ------------- | -------------------------------------------------- |
+| `1.5 - 1.6.3` | [`1.0`](https://github.com/ActianCorp/spark-vector/tree/1.0.x) |
+| `2.1 - 2.3`   | [`2.0`](https://github.com/ActianCorp/spark-vector/tree/2.0.x) |
+| `2.1+`        | `2.1`  (this version)                              |
+
+This version also requires Vector(H) 5.0 or higher
 
 ## Building (from source)
 
-Spark-Vector connector is built with [sbt](http://www.scala-sbt.org/). To build, run:
+The Vector data source for Apache Spark is built with [sbt](http://www.scala-sbt.org/). To build, run:
 
     sbt assembly
 
 ## Using with Spark shell/submit
 This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --driver-class-path $SPARK_VECTOR/target/spark_vector-assembly-2.0-SNAPSHOT.jar
+    spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-2.0-SNAPSHOT.jar
 
-Assuming that there is a Vector Installation on node `vectorhost`, instance `VI` and database `databasename`
+Assuming that there is a Vector installation on node `vectorhost`, instance `VI` and database `databasename`
 
 ### SparkSQL
 
@@ -44,7 +50,7 @@ and then to load data into Vector:
 
     spark.sqlContext.sql("insert into vector_table select * from spark_table")
 
-... or to read Vector data in:
+... or to read Vector data into Spark:
 
     spark.sqlContext.sql("select * from vector_table")
 
@@ -123,7 +129,7 @@ The Spark-Vector loader is a command line client utility that provides the abili
 
 #### Usage: CSV
 
-Loading CSV files:
+Loading CSV files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load csv -sf hdfs://namenode:port/tmp/file.csv
@@ -132,7 +138,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 
 #### Usage: Parquet
 
-Loading Parquet files:
+Loading Parquet files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
@@ -141,7 +147,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 
 #### Usage: ORC
 
-Loading ORC files:
+Loading ORC files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.0-SNAPSHOT.jar load orc -sf hdfs://namenode:port/tmp/file.orc
