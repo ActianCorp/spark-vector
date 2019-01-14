@@ -75,6 +75,17 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     admitDataStatements().foreach(row => cxn.executeStatement(s"""insert into ${tableName} values ${row}"""))
     }
   }
+  
+  def createTestTable(tableName: String): Unit = {
+    VectorJDBC.withJDBC(connectionProps) { cxn => 
+      cxn.dropTable(tableName)
+      cxn.executeStatement(
+          s"""|create table ${tableName}
+              |as select a.table_name, a.table_owner 
+              |from iitables a, iitables b 
+              |with structure=x100""".stripMargin)
+    }
+  }
 
   test("unload admission data") { sparkFixture =>
     withTable(createLoadAdmitTable) { tableName =>
@@ -388,7 +399,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       }
     }
   }
-  
+
   test("generate table/invalid string") { fixture =>
     val badstrings = Array[String]("a\u0000string",
                                    "astring\uD800",
@@ -402,7 +413,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       }
     }
   }
-  
+
   test("generate table/decimal constancy") { fixture =>
     val schema = StructTypeUtil.createSchema("i" -> DecimalType(38, 12), "d" -> DecimalType(38, 12))
     val data = Seq(Row(new java.math.BigDecimal("123456789876543210"), 
@@ -677,7 +688,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       df.head(1) // == df.show(1)
     }
   }
-  
+
   test("RDD reader reuse") { fixture =>
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
@@ -782,6 +793,26 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
         }
         profileEnd
         (accs.accs("load").acc - lastTiming) should be < reasonableTimePerRun
+      }
+    }
+  }
+
+  // II-3509
+  test("generic SQL error") { fixture => 
+    withTable(createTestTable) { tableName =>
+      for (i <- 0 until 10) {
+        fixture.spark.sqlContext.sql(s"""CREATE TEMPORARY VIEW vector_table
+                          USING com.actian.spark_vector.sql.DefaultSource
+                          OPTIONS (
+                          host "${connectionProps.host}",
+                          instance "${connectionProps.instance}",
+                          database "${connectionProps.database}",
+                          user="${connectionProps.user.get}", password="${connectionProps.password.get}",
+                          table "${tableName}"
+                          )""")
+        val res = fixture.spark.sqlContext.sql("""select * from vector_table""")
+        res.head(10)
+        fixture.spark.sqlContext.sql("""DROP table vector_table""")
       }
     }
   }

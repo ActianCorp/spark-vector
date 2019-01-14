@@ -61,12 +61,13 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
 
   /** Execute a sql (statement) within a future task */
   private def executeSql(sql: String, params: Seq[Any] = Nil): Future[Int] = {
+    logDebug(s"Executing SQL: ${sql}  with parameters: ${params}")
     val f = Future { if (params.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, params) }
     f onFailure {
       case t =>
-        logWarning(s"Query ${sql} has failed.", t)
+        logWarning(s"Query has failed: ${sql}", t)
         // FIXME: use rollback() instead when Vector will actually close the DataStreams after unrolling
-        close()
+        abort()
     }
     f
   }
@@ -84,9 +85,15 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   })
 
   /** Abort sending data to Vector rolling back the open transaction and closing the `JDBC` connection */
-  def close(): Unit = synchronized(if (!jdbc.isClosed) {
+  def abort(): Unit = synchronized(if (!jdbc.isClosed) {
     logDebug("Rollback current transaction and close DataStreamClient")
     jdbc.rollback
+    jdbc.close
+  })
+  
+  /** Close the `JDBC` connection*/
+  def close(): Unit = synchronized(if (!jdbc.isClosed) {
+    logDebug("Close DataStreamClient")
     jdbc.close
   })
 

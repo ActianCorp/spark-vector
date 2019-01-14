@@ -17,9 +17,9 @@ lazy val commonSettings = Seq(
 ) ++ gitStampSettings ++ extraBuildSettings
 
 lazy val commonDeps = Seq(
-    "org.apache.spark" %% "spark-core" % "2.1.0" % "provided",
-    "org.apache.spark" %% "spark-sql" % "2.1.0"  % "provided",
-    "org.apache.spark" %% "spark-hive" % "2.1.0" % "provided",
+    "org.apache.spark" %% "spark-core" % "2.2.0" % "provided",
+    "org.apache.spark" %% "spark-sql" % "2.2.0"  % "provided",
+    "org.apache.spark" %% "spark-hive" % "2.2.0" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.3" % "test",
     "org.scalacheck" %% "scalacheck" % "1.12.2" % "test",
     "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "test"

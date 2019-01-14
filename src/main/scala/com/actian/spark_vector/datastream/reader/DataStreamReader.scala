@@ -16,7 +16,6 @@
 package com.actian.spark_vector.datastream.reader
 
 import scala.annotation.tailrec
-import scala.concurrent.Future
 
 import java.nio.{ ByteOrder, ByteBuffer }
 import java.nio.channels.SocketChannel
@@ -48,7 +47,7 @@ class DataStreamReader(readConf: VectorEndpointConf, tableColumnMetadata: Seq[Co
     RowReader(tableColumnMetadata, headerInfo, DataStreamTap())
   }
   
-  def touch(partitionId: Int) = connector.withConnection(partitionId)({ _ => })
+  def touch(partitionId: Int): Unit = connector.withConnection(partitionId) { implicit socket => socket.close }
 }
 
 /** Contains helpers to read binary data, conforming to `Vector`'s binary protocol */

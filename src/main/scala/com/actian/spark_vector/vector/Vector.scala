@@ -143,12 +143,11 @@ private[spark_vector] object Vector extends Logging {
     val scanner = new Scanner(sc, readConf, reader)
     sc.addSparkListener( new SparkListener() {
       private var ended = false
-      override def onJobEnd(job: SparkListenerJobEnd) = if (!ended && !scanner.isClosed) {
+      override def onJobEnd(job: SparkListenerJobEnd) = if (!ended) {
         scanner.touchDatastreams()
         ended = true
         logDebug(s"Unload vector job ended @ ${job.time}.")
-      } else {
-        ended = true
+        sc.removeSparkListener(this)
       }
     })
     scanner
@@ -177,6 +176,7 @@ private[spark_vector] object Vector extends Logging {
     whereClause: String = "",
     whereParams: Seq[Any] = Nil,
     partitions: Int = 0): RDD[InternalRow] = {
+    
     var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
     new ScanRDD(sc, vectorProps, table, tableColumnMetadata, selectQuery, whereParams, partitions)
   }

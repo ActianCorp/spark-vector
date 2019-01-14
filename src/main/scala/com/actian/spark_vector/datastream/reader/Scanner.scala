@@ -31,9 +31,6 @@ class Scanner(@transient private val sc: SparkContext,
               val reader: DataStreamReader) 
               extends RDD[InternalRow](sc, Nil) {
   
-  /** Closed state for the datastream connection */
-  @volatile private var closed = false
-  
   /** Custom row iterator for reading `DataStream`s in row format */
   @volatile private var it: RowReader = _
   
@@ -44,33 +41,31 @@ class Scanner(@transient private val sc: SparkContext,
   override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
     taskContext.addTaskCompletionListener { _ => closeAll() }
     taskContext.addTaskFailureListener { (_, e) => closeAll(Option(e)) }
-    closed = false
+    logDebug("Computing partition " + split.index)
     it = reader.read(split.index)
     it
   }
   
-  def isClosed = closed
-  
-  def touchDatastreams() {
-    for ( p <- 0 to readConf.vectorEndpoints.size - 1 ) {
+  def touchDatastreams(parts: List[Int] = List[Int]()) {
+    val untouched = List.range(0, readConf.size).diff(parts)
+    untouched.foreach ( p =>
       try {
-        logDebug(s"Finalizing partition $p Vector transfer datastream")
-        reader.touch(p) //Need to ensure all the streams have been closed
+        reader.touch(p) //Need to ensure all the streams have been closed except the one used by this instance
+        logDebug(s"Closed partition $p Vector transfer datastream")
       } catch {
-        case e: Exception => logDebug("Exception while finalizing Vector transfer datastream " + e.toString())
+        case e: Exception => logDebug("Exception while closing Vector transfer datastream " + e.toString())
       }
-    }
+    )
   }
   
-  private def closeAll(failure: Option[Throwable] = None): Unit = if (!closed) {
+  def closeAll(failure: Option[Throwable] = None): Unit = {
     failure.foreach(logError("Failure during task completion, closing RowReader", _))
+    it.drop(it.size)
     close(it, "RowReader")
-    closed = true
-  } else {
-    failure.foreach(logError("Failure during task completion", _))
+    it = null
   }
   
-  private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (!closed && c != null) {
+  private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (c != null) {
     try { c.close } catch { case e: Exception => logWarning(s"Exception closing $resourceName", e) }
   }
   
