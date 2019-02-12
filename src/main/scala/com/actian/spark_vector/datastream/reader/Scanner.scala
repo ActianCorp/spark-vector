@@ -42,27 +42,34 @@ class Scanner(@transient private val sc: SparkContext,
     taskContext.addTaskCompletionListener { _ => closeAll() }
     taskContext.addTaskFailureListener { (_, e) => closeAll(Option(e)) }
     logDebug("Computing partition " + split.index)
-    it = reader.read(split.index)
-    it
+    try {
+      it = reader.read(split.index)
+      it
+    } catch { case e: Exception => 
+      logDebug("Exception occurred when attempting to read from stream. If termination was abnormal an additional exception will be thrown.", e)
+      Iterator.empty
+    }
   }
   
   def touchDatastreams(parts: List[Int] = List[Int]()) {
     val untouched = List.range(0, readConf.size).diff(parts)
     untouched.foreach ( p =>
       try {
-        reader.touch(p) //Need to ensure all the streams have been closed except the one used by this instance
+        reader.read(p).close() //Need to ensure all the streams have been closed except the one used by this instance
         logDebug(s"Closed partition $p Vector transfer datastream")
       } catch {
-        case e: Exception => logDebug("Exception while closing Vector transfer datastream " + e.toString())
+        case e: Exception => logDebug("Exception while closing unused Vector transfer datastream " + e.toString())
       }
     )
   }
   
   def closeAll(failure: Option[Throwable] = None): Unit = {
     failure.foreach(logError("Failure during task completion, closing RowReader", _))
-    it.drop(it.size)
-    close(it, "RowReader")
-    it = null
+    if (it != null) {
+      it.drop(it.size)
+      close(it, "RowReader")
+      it = null;
+    }
   }
   
   private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (c != null) {

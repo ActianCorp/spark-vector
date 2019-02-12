@@ -21,8 +21,9 @@ import scala.concurrent.duration.Duration
 import scala.language.reflectiveCalls
 
 import org.apache.spark.{ Partition, SparkContext, TaskContext }
+import org.apache.spark.SparkFirehoseListener
 import org.apache.spark.rdd.RDD
-import org.apache.spark.scheduler.{ SparkListener, SparkListenerJobEnd, SparkListenerJobStart }
+import org.apache.spark.scheduler.{ SparkListener, SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerExecutorRemoved, SparkListenerUnpersistRDD, SparkListenerApplicationEnd }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.util.CollectionAccumulator
@@ -49,7 +50,9 @@ class ScanRDD(@transient private val sc: SparkContext,
   @volatile private var scanner: Scanner = _
   
   /** Custom spark listener to control setup  */
-  @transient private val vectorJobqueue = new SparkListener() {
+  @transient private val vectorJobqueue = new VectorJobManager()
+    
+  protected class VectorJobManager() extends SparkListener { 
     import scala.collection.mutable.Queue
     import scala.collection.mutable.HashMap
     
@@ -58,7 +61,6 @@ class ScanRDD(@transient private val sc: SparkContext,
     private val jobrefs = new HashMap[Int, (Future[Int], DataStreamClient, Scanner)]
     private var client: DataStreamClient = _
     private var partAccum: CollectionAccumulator[Int] = _
-    
     
     override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
       if (jobStart.stageInfos.exists(_.rddInfos.exists(_.id == ScanRDD.this.id))) {
@@ -96,22 +98,21 @@ class ScanRDD(@transient private val sc: SparkContext,
     })
     
     override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = if (jobrefs.contains(jobEnd.jobId)) {
-      logDebug("Job end cleanup")
+      logDebug(s"Job ${jobEnd.jobId} cleanup")
       val (unloadOperation, client, scan) = jobrefs.remove(jobEnd.jobId).get
       try {
-        Await.result(unloadOperation, Duration.create(10, "ms"))
+        Await.result(unloadOperation, Duration.create(100, "ms"))
       } catch {
         case e: Exception => {
           logDebug("Client could not cleanly disconnect from Vector, manually closing datastreams")
           scan.touchDatastreams(partAccum.value.asScala.toList)
         }
       } finally {
-        logDebug("Closing remaining client connection")
+        scan.closeAll()
         client.close()
-        logDebug(s"Unload vector job ended @ ${jobEnd.time}.")
-        accumulator.reset()
+        logDebug(s"Unload vector job ${jobEnd.jobId} ended @ ${jobEnd.time}.")
+        partAccum.reset()
         sc.removeSparkListener(this)
-        
       }
     }
   }
@@ -128,9 +129,9 @@ class ScanRDD(@transient private val sc: SparkContext,
   }
 
   override protected def getPartitions: Array[Partition] = {
-    sc.addSparkListener(vectorJobqueue)
     vectorJobqueue.setAccumulator(accumulator)
     readConf = initializeReadconf(vectorJobqueue.getClient())
+    sc.addSparkListener(vectorJobqueue)
     vpartitions = readConf.size
     (0 until vpartitions).map(idx => new Partition { def index = idx }).toArray
   }

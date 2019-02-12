@@ -470,6 +470,33 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       row3 = dataframe.filter(dataframe.col("s").rlike("ghi")).first()
       row3(0) == 3 should be(true)
       
+      row3 = dataframe.filter(dataframe.col("s").rlike("ghi")).first()
+      row3(0) == 3 should be(true)
+      
+    }
+  }
+  
+  test("generate table/string filter rlike") { fixture =>
+    val schema = StructTypeUtil.createSchema("i" -> IntegerType, "s" -> StringType)
+    val data = Seq(Row(1, "abc"),
+                   Row(2, "def  "),
+                   Row(3, "  ghi"))
+    val fieldMapping = Map("i" -> "i", "s" -> "s")
+    val rdd = fixture.sc.parallelize(data)
+    
+    withTable(func => Unit) { tableName =>
+      rdd.loadVector(schema, connectionProps, tableName, fieldMap = Some(fieldMapping), createTable = true)
+      
+      val sqlContext = fixture.spark.sqlContext
+      val vectorRel = VectorRelation(TableRef(connectionProps, tableName), Some(schema), sqlContext, Map.empty[String, String])
+      val dataframe = sqlContext.baseRelationToDataFrame(vectorRel)
+      
+      var row1 = dataframe.filter(dataframe.col("s").rlike("abc")).first()
+      row1(0) == 1 should be(true)
+      
+      row1 = dataframe.filter(dataframe.col("s").rlike("ghi")).first()
+      row1(0) == 3 should be(true)
+      
     }
   }
   
