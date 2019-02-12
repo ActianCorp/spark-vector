@@ -21,9 +21,8 @@ import scala.concurrent.duration.Duration
 import scala.language.reflectiveCalls
 
 import org.apache.spark.{ Partition, SparkContext, TaskContext }
-import org.apache.spark.SparkFirehoseListener
 import org.apache.spark.rdd.RDD
-import org.apache.spark.scheduler.{ SparkListener, SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart, SparkListenerExecutorRemoved, SparkListenerUnpersistRDD, SparkListenerApplicationEnd }
+import org.apache.spark.scheduler.{ SparkListener, SparkListenerEvent, SparkListenerJobEnd, SparkListenerJobStart }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.util.CollectionAccumulator
