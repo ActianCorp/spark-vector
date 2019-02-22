@@ -51,6 +51,7 @@ class ScanRDD(@transient private val sc: SparkContext,
   
   /** Custom spark listener to control setup  */
   @transient private val vectorJobqueue = new VectorJobManager()
+  VectorJobManager.register(sc, vectorJobqueue);
     
   protected class VectorJobManager() extends SparkListener with Serializable { 
     import scala.collection.mutable.Queue
@@ -61,7 +62,6 @@ class ScanRDD(@transient private val sc: SparkContext,
     private val jobrefs = new HashMap[Int, (Future[Int], DataStreamClient, Scanner)]
     private var client: DataStreamClient = _
     private var partAccum: CollectionAccumulator[Int] = _
-    private var state = 0;
     
     override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
       if (jobStart.stageInfos.exists(_.rddInfos.exists(_.id == ScanRDD.this.id))) {
@@ -86,7 +86,6 @@ class ScanRDD(@transient private val sc: SparkContext,
         Thread.sleep(1)
       }
       
-      jobrefs.clear()
       val jobId = jobqueue.dequeue()
       closeResourceOnFailure(getClient) {
         val unloadOp = client.startUnload(selectQuery, whereParams)
@@ -96,7 +95,6 @@ class ScanRDD(@transient private val sc: SparkContext,
       }
       // clear client reference
       client = null
-      state = 1;
     })
     
     override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = if (jobrefs.contains(jobEnd.jobId)) {
@@ -114,15 +112,9 @@ class ScanRDD(@transient private val sc: SparkContext,
         client.close()
         logDebug(s"Unload vector job ${jobEnd.jobId} ended @ ${jobEnd.time}.")
         partAccum.reset()
-        state = 2;
       }
     }
     
-    def waitForJobEnd(): Unit = {
-      while (state != 2) {
-        Thread.sleep(1000);
-      }
-    }
   }
   
   object VectorJobManager {
@@ -142,22 +134,17 @@ class ScanRDD(@transient private val sc: SparkContext,
   }
 
   override protected def getPartitions: Array[Partition] = {
-    vectorJobqueue.setAccumulator(accumulator)
-    readConf = initializeReadconf(vectorJobqueue.getClient())
-    VectorJobManager.register(sc, vectorJobqueue);
-    val listenerManager = Future {vectorJobqueue.waitForJobEnd()}
-    listenerManager onSuccess {
-      case t => VectorJobManager.deregister(sc, vectorJobqueue)
-    }
-    vpartitions = readConf.size
+    if (vpartitions == 0)
+      vpartitions = 8;
     (0 until vpartitions).map(idx => new Partition { def index = idx }).toArray
   }
 
   override protected def getPreferredLocations(split: Partition): Seq[String] = {
     if (split.index == 0) {
       // Need to ensure partitions are initialized
-      getPartitions
       // Only need to setup once per read for all partitions
+      readConf = initializeReadconf(vectorJobqueue.getClient())
+      vectorJobqueue.setAccumulator(accumulator)
       vectorJobqueue.readyJob(readConf)
     }
     Seq(readConf.vectorEndpoints(split.index).host)
@@ -167,4 +154,5 @@ class ScanRDD(@transient private val sc: SparkContext,
     accumulator.add(split.index)
     scanner.compute(split, taskContext)
   }
+
 }

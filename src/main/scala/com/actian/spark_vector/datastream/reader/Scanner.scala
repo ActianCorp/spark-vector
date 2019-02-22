@@ -55,7 +55,7 @@ class Scanner(@transient private val sc: SparkContext,
     val untouched = List.range(0, readConf.size).diff(parts)
     untouched.foreach ( p =>
       try {
-        reader.read(p).close() //Need to ensure all the streams have been closed except the one used by this instance
+        reader.touch(p) //Need to ensure all the streams have been closed except the one used by this instance
         logDebug(s"Closed partition $p Vector transfer datastream")
       } catch {
         case e: Exception => logDebug("Exception while closing unused Vector transfer datastream " + e.toString())
@@ -66,7 +66,6 @@ class Scanner(@transient private val sc: SparkContext,
   def closeAll(failure: Option[Throwable] = None): Unit = {
     failure.foreach(logError("Failure during task completion, closing RowReader", _))
     if (it != null) {
-      it.drop(it.size)
       close(it, "RowReader")
       it = null;
     }
