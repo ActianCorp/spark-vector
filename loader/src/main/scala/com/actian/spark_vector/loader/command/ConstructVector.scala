@@ -22,10 +22,13 @@ import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.vector.VectorOps._
 import com.actian.spark_vector.vector.VectorJDBC
+import com.actian.spark_vector.vector.VectorConnectionProperties
+import com.actian.spark_vector.vector.TableSchemaGenerator
 import com.actian.spark_vector.loader.options.{ UserOptions, VectorOptions }
 import com.actian.spark_vector.loader.parsers.Args
+
 import resource.managed
-import com.actian.spark_vector.vector.VectorConnectionProperties
+
 
 object ConstructVector {
   /**
@@ -47,11 +50,17 @@ object ConstructVector {
       case Args.csvLoad.longName => CSVRead.registerTempTable(config, session.sqlContext)
       case Args.parquetLoad.longName => ParquetRead.registerTempTable(config, session.sqlContext)
       case Args.orcLoad.longName => OrcRead.registerTempTable(config, session.sqlContext)
+      case Args.jsonLoad.longName => JSONRead.registerTempTable(config, session.sqlContext)
       case m => throw new IllegalArgumentException(s"Invalid configuration mode: ${m}")
     }
     
     val source = session.sql(select)
     val conn = VectorOptions.getConnectionProps(config.vector)
+    if (config.general.createTable.getOrElse(false)) {
+      /* Create a new Table in SQL context */
+      val jdbc = new VectorJDBC(conn)
+      jdbc.createTable(config.vector.targetTable, source.schema)
+    }
     val mapping = getFieldMapping(source.schema, config.general.colsToLoad.getOrElse(Seq[String]()), conn, config.vector.targetTable)
     val df = checkSchemaDefaults(source, mapping, conn, config.vector.targetTable)
     df.rdd.loadVector(df.schema, conn, config.vector.targetTable, config.vector.preSQL, config.vector.postSQL, Option(mapping))

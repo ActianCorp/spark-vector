@@ -19,10 +19,13 @@ case class UserOptions(
   mode: String = "",
   general: GeneralOptions = GeneralOptions(),
   csv: CSVOptions = CSVOptions(),
-  vector: VectorOptions = VectorOptions())
-
+  vector: VectorOptions = VectorOptions(),
+  json: JSONOptions = JSONOptions()
+  )
+  /* Options for User */
 object UserOptions {
   def updateVector[T](inj: (VectorOptions, T) => VectorOptions)(v: T, uo: UserOptions): UserOptions = uo.copy(vector = inj(uo.vector, v))
   def updateCSV[T](inj: (CSVOptions, T) => CSVOptions)(v: T, uo: UserOptions): UserOptions = uo.copy(csv = inj(uo.csv, v))
-  def updateGeneral[T](inj: (GeneralOptions, T) => GeneralOptions)(v: T, uo: UserOptions): UserOptions = uo.copy(general = inj(uo.general, v))
+  def updateGeneral[T](inj: (GeneralOptions, T) => GeneralOptions)(v: T, uo: UserOptions): UserOptions = uo.copy(general = inj(uo.general, v)) 
+  def updateJSON[T](inj: (JSONOptions, T) => JSONOptions)(v: T, uo: UserOptions): UserOptions = uo.copy(json = inj(uo.json, v))
 }

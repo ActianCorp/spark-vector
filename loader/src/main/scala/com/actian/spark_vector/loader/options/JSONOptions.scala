@@ -1,5 +1,5 @@
-/*
- * Copyright 2016 Actian Corporation
+ /*
+ * Copyright 2019 Actian Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
  */
 package com.actian.spark_vector.loader.options
 
-case class GeneralOptions(
-  sourceFile: String = "",
-  colsToLoad: Option[Seq[String]] = None, 
-  createTable: Option[Boolean] = None)
+case class JSONOptions(
+  header: Option[Seq[String]] = None,
+  primitivesAsString: Option[Boolean] = None,
+  allowComments: Option[Boolean] = None,
+  allowUnquoted: Option[Boolean] = None,
+  allowSingleQuotes: Option[Boolean] = None,
+  allowLeadingZeros: Option[Boolean] = None,
+  allowEscapingAny: Option[Boolean] = None,
+  allowUnquotedControlChars: Option[Boolean] = None,
+  multiline: Option[Boolean] = None,
+  parseMode: Option[String] = None)
+  
