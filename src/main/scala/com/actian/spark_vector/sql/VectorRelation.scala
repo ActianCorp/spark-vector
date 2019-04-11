@@ -98,7 +98,7 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
     if (overwrite) {
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
-    require(data.schema == this.schema, "data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+    require(data.schema == this.schema, s"data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
     
     val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
     filteredData.rdd.loadVector(data.schema, columnMetadata, conf)

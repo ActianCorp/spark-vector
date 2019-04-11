@@ -53,7 +53,7 @@ sealed case class ArgOption[T: Read, O](
  *   --help
  *         This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
  *         
- * Command: load [csv|parquet|orc]
+ * Command: load [csv|parquet|orc|json]
  * Read a file and load into Vector
  * 
  * Command: load csv [options]
@@ -62,6 +62,8 @@ sealed case class ArgOption[T: Read, O](
  *         Source file
  *   -cols <value> | --cols <value>
  *         Comma separated string containing only column names to load
+ *   -ct <value> | --createTable <value>
+ *         Whether the table should be created (default false)
  *   -vh <value> | --vectorHost <value>
  *         Vector host name
  *   -vi <value> | --vectorInstance <value>
@@ -168,6 +170,53 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
+ *         
+ * Command: load json [options]
+ * Load a JSON file
+ *   -sf <value> | --sourceFile <value>
+ *         Source file
+ *   -cols <value> | --cols <value>
+ *         Comma separated string containing only column names to load
+ *   -vh <value> | --vectorHost <value>
+ *         Vector host name
+ *   -vi <value> | --vectorInstance <value>
+ *         Vector instance
+ *   -vd <value> | --vectorDatabase <value>
+ *         Vector database
+ *   -vo <value> | --vectorPort <value>
+ *   			 Vector port
+ *   -vu <value> | --vectorUser <value>
+ *         Vector user
+ *   -vp <value> | --vectorPass <value>
+ *         Vector password
+ *   -tt <value> | --vectorTargetTable <value>
+ *         Vector target table
+ *   -preSQL <value> | --preSQL <value>
+ *         Queries to execute in Vector before loading, separated by ';'
+ *   -postSQL <value> | --postSQL <value>
+ *         Queries to execute in Vector after loading, separated by ';'
+ *         
+ *   -h <value> | --header <value>
+ *         Comma separated string with JSON column names and datatypes, e.g. "col1 int, col2 string,"
+ *   -ps <value> | --primitivesAsString <value>
+ *         Infer all primitve values as a string type (default false)
+ *   -ac <value> | --allowComments <value>
+ *         Ignores Java/C++ style comments in JSON records (default false)
+ *   -au <value> | --allowUnquoted <value>
+ *         Allow unquoted JSON field names in the record (default false)
+ *   -as <value> | --allowSingleQuotes
+ *         Allow single quotes in addition to double quotes (default false)
+ *   -al <value> | --allowLeadingZeros
+ *         Allow leading zeros in numbers (default false)
+ *   -ae <value> | --allowEscapingAny
+ *         Allow accepting quoting of all characters using backslash quoting mechanism (default false)
+ *   -ml <value> | --multiline
+ *         Parse one record, which may span multiple lines, per file (default false)
+ *   -pm <value> | --parseMode <value>
+ *         Set parse mode for dealing with corrupt records during parsing (default PERMISSIVE)
+ *         PERMISSIVE - sets other fields to null in corrupted records
+ *         DROPMALFORMED - ignore corrupted records
+ *         FAILFAST - throws an exception on corrupted record
  * }}}
  */
 object Args {
@@ -187,7 +236,8 @@ object Args {
   val csvLoad = new ArgDescription("csv", "csv", "Load a csv file")
   val parquetLoad = new ArgDescription("parquet", "parquet", "Load a parquet file")
   val orcLoad = new ArgDescription("orc", "orc", "Load an orc file")
-
+  val jsonLoad = new ArgDescription("json", "json", "Load a json file")
+ 
   // Vector arguments
   val vectorHost = ArgOption[String, String](
     "vectorHost", "vh", "Vector host name", _.vector.host, updateVector((o, v) => o.copy(host = v)), true)
@@ -215,8 +265,10 @@ object Args {
     "sourceFile", "sf", "Source file", _.general.sourceFile, updateGeneral((o, v) => o.copy(sourceFile = v.replace('\\', '/'))), true)
   val colsForLoad = ArgOption[String, Option[Seq[_]]](
     "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",").map(_.trim())))), false)
-
-  val generalArgs = Seq(inputFile, colsForLoad)
+  val createTable = ArgOption[Boolean, Option[Boolean]](
+    "createTable", "ct", "Whether the table should be created", _.general.createTable, updateGeneral((o, v) => o.copy(createTable = Option(v))), false)
+  
+  val generalArgs = Seq(inputFile, colsForLoad, createTable)
 
   // CSV arguments
   val hRow = ArgOption[Boolean, Option[Boolean]](
@@ -234,7 +286,7 @@ object Args {
   val commentChar = ArgOption[Char, Option[Char]](
     "commentChar", "cc", "CSV comment character", _.csv.commentChar, updateCSV((o, v) => o.copy(commentChar = Option(v))), false)
   val ignoreLeading = ArgOption[Boolean, Option[Boolean]](
-    "ignoreLeadingWS", "il", " Whether leading whitespaces on values are skipped", _.csv.ignoreLeading, updateCSV((o, v) => o.copy(ignoreLeading = Option(v))), false)
+    "ignoreLeadingWS", "il", "Whether leading whitespaces on values are skipped", _.csv.ignoreLeading, updateCSV((o, v) => o.copy(ignoreLeading = Option(v))), false)
   val ignoreTrailing = ArgOption[Boolean, Option[Boolean]](
     "ignoreTrailingWS", "it", "Whether trailing whitespaces on values are skipped", _.csv.ignoreTrailing, updateCSV((o, v) => o.copy(ignoreTrailing = Option(v))), false) 
   val nullValue = ArgOption[String, Option[String]](
@@ -253,17 +305,44 @@ object Args {
     "parseMode", "pm", "Set parse mode for dealing with corrupt records during parsing", _.csv.parseMode, updateCSV((o, v) => o.copy(parseMode = Option(v))), false)
   val header = ArgOption[String, Option[Seq[_]]](
     "header", "h", "Comma separated string with CSV column names and datatypes, e.g. \"col1 int, col2 string,\"", _.csv.header, updateCSV((o, v) => o.copy(header = Some(v.split(",")))), false)
- 
+
+	// JSON arguments
+  val primitivesAsStr = ArgOption[Boolean, Option[Boolean]](
+    "primitivesAsString", "ps", "Infer all primitive values as a string type", _.json.primitivesAsString, updateJSON((o, v) => o.copy(primitivesAsString = Option(v))), false)
+  val allowComments = ArgOption[Boolean, Option[Boolean]](
+    "allowComments", "ac", "Ignores Java/C++ style comments in JSON records", _.json.allowComments, updateJSON((o, v) => o.copy(allowComments = Option(v))), false)
+  val allowUnquoted = ArgOption[Boolean, Option[Boolean]](
+    "allowUnquoted", "ac", "Allow unquoted JSON field names in the record", _.json.allowUnquoted, updateJSON((o, v) => o.copy(allowUnquoted = Option(v))), false)
+  val allowSingleQuotes = ArgOption[Boolean, Option[Boolean]](
+    "allowSingleQuotes", "as", "Allow single quotes in addition to double quotes", _.json.allowSingleQuotes, updateJSON((o, v) => o.copy(allowSingleQuotes = Option(v))), false)
+  val allowLeadingZeros = ArgOption[Boolean, Option[Boolean]](
+    "allowLeadingZeros", "as", "Allow leading zeros in numbers", _.json.allowLeadingZeros, updateJSON((o, v) => o.copy(allowLeadingZeros = Option(v))), false)
+  val allowEscapingAny = ArgOption[Boolean, Option[Boolean]](
+    "allowEscapingAny", "as", "Allow accepting quoting of all characters using backslash quoting mechanism", _.json.allowEscapingAny, updateJSON((o, v) => o.copy(allowEscapingAny = Option(v))), false)
+  val allowUnqCtrlChars = ArgOption[Boolean, Option[Boolean]](
+    "allowUnquotedControlChars", "auc", "Whether unquoted control characters are allowed in strings", _.json.allowUnquotedControlChars, updateJSON((o, v) => o.copy(allowUnquotedControlChars = Option(v))), false)
+  val multiline = ArgOption[Boolean, Option[Boolean]](
+    "multiline", "ml", "Parse one record, which may span multiple lines, per file", _.json.multiline, updateJSON((o, v) => o.copy(multiline = Option(v))), false)
+  val parseModeJson = ArgOption[String, Option[String]](
+    "parseMode", "pm", "Set parse mode for dealing with corrupt records during parsing", _.json.parseMode, updateJSON((o, v) => o.copy(parseMode = Option(v))), false)
+  val headerJson = ArgOption[String, Option[Seq[_]]](
+    "header", "h", "Comma separated string with JSON column names and datatypes, e.g. \"col1 int, col2 string,\"", _.json.header, updateJSON((o, v) => o.copy(header = Some(v.split(",")))), false)
+  
   val csvArgs = Seq(header, hRow, inferSchema, encode, separatorChar, quoteChar, escapeChar, commentChar, 
     ignoreLeading, ignoreTrailing, nullValue, nanValue, positiveInf, negativeInf, dateFormat, timestampFormat, parseMode)
+  val jsonArgs = Seq(headerJson, primitivesAsStr, allowComments, allowUnquoted, allowSingleQuotes, allowLeadingZeros, allowEscapingAny, allowUnqCtrlChars, multiline, parseModeJson)
   val parquetArgs = Seq.empty[ArgOption[_, _]]
   val orcArgs = Seq.empty[ArgOption[_, _]]
 
   val csvOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ csvArgs
   val parquetOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ parquetArgs
   val orcOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ orcArgs
-
-  val modeToOptions = Map(csvLoad.longName -> csvOptions, parquetLoad.longName -> parquetOptions, orcLoad.longName -> orcOptions)
+  val jsonOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ jsonArgs
+  val modeToOptions = Map(
+      csvLoad.longName -> csvOptions, 
+      parquetLoad.longName -> parquetOptions, 
+      orcLoad.longName -> orcOptions,  
+      jsonLoad.longName -> jsonOptions)
 }
 
 object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.0-SNAPSHOT.jar>") {
@@ -291,7 +370,13 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
         .action((_, options) => options.copy(mode = orcLoad.longName))
         .abbr(orcLoad.shortName)
         .text(orcLoad.description)
-        .children(orcOptions.map(_.asOpt(this)): _*))
+        .children(orcOptions.map(_.asOpt(this)): _*),        
+      cmd(jsonLoad.longName)
+        .action((_, options) => options.copy(mode = jsonLoad.longName))
+        .abbr(jsonLoad.shortName)
+        .text(jsonLoad.description)
+        .children(jsonOptions.map(_.asOpt(this)): _*))
+        
 
   checkConfig { options =>
     if (options.mode.isEmpty || options.mode == load.longName) {

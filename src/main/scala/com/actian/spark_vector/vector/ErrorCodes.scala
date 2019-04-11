@@ -55,4 +55,7 @@ object ErrorCodes {
   val AuthError = 17
   /** Invalid data type */
   val InvalidDataType = 18
+  /** Target table already exist */
+  val TableAlreadyExist = 19 
+  
 }

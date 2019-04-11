@@ -24,9 +24,11 @@ import com.actian.spark_vector.sql.VectorRelation
 import com.actian.spark_vector.Profiling
 import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.util.ResourceUtil.RichExtractableManagedResource
-import com.actian.spark_vector.vector.ErrorCodes.{ InvalidDataType, NoSuchTable, SqlException, SqlExecutionError }
+import com.actian.spark_vector.vector.ErrorCodes.{ InvalidDataType, NoSuchTable, SqlException, SqlExecutionError, TableAlreadyExist }
 
 import resource.managed
+import org.apache.spark.sql.types.StructType
+
 
 /** Iterator over an ResultSet */
 abstract class ResultSetIterator[T](result: ResultSet) extends Iterator[T] {
@@ -142,7 +144,30 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   } else {
     false
   }
-
+  
+  /**
+   * Creates a Table in SQL context with the given table-name and schema.
+   * Throws an exception if table already exists
+   * 
+   * @param tableName A non empty string representing the SQL table name.
+   * @param schema The required schema.
+   */
+  def createTable(tableName: String, schema: StructType): Unit = {
+      if (!tableName.isEmpty) {
+        val sqlStatement = TableSchemaGenerator.generateTableSQL(tableName, schema)
+        try {
+          executeStatement(sqlStatement)
+        } catch {
+          case exc: Exception =>
+            logError(s"Exception encountered while attempting to create Table '${tableName}'", exc)
+            val message = exc.getLocalizedMessage
+            if (message.contains("Duplicate object name")) {
+              throw new VectorException(TableAlreadyExist,s"SQL Exception encountered while creating Table '${tableName}': ${message}")
+            }
+        }         
+      }    
+  }
+    
   /**
    * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
    * as there are columns in the table. Each element contains the name, type, nullability, precision
