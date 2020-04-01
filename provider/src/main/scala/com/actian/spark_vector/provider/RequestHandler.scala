@@ -36,6 +36,8 @@ import com.actian.spark_vector.vector.VectorNet
 import play.api.libs.json.{ JsError, Json }
 import resource.managed
 import com.actian.spark_vector.vector.PredicatePushdown
+import org.apache.spark.sql.types.StructField
+import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 
 /**
  * Handler for requests from Vector
@@ -138,18 +140,32 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   
   /** Parse a Spark ddl schema and create a schema object */
   private def parseSchema(schemaString: String): Option[StructType] = {
-    try {
-      if (!schemaString.isEmpty()) {
-        var schema = new StructType()
-        schemaString.split(',').map(_.trim.split("\\s+")).foreach(t => schema = schema.add(t(0), t(1)))
-        logDebug(s"Parsed custom schema for external source: $schema.simpleString")
-        return Option(schema)
+    def mkField(name: String, `type`: String, nullable: Boolean): StructField =
+      StructField(name, CatalystSqlParser.parseDataType(`type`), nullable)
+    def parseField(line: String): StructField =
+      line.trim.split("\\s+").toList match {
+        case List(n, t) => mkField(n, t, true)
+        case List(n, t, rest@_*) =>
+          rest.mkString(" ").toLowerCase match {
+            case "not null" => mkField(n, t, false)
+            case unknown => throw new IllegalArgumentException(s"Unknown field modifier: '$unknown'.")
+          }
+        case _ => throw new IllegalArgumentException(s"Illegal field spec: '$line'.")
       }
-    } catch {
+    schemaString.trim match {
+      case "" => None
+      case schemaString =>
+    try {
+          val schema = StructType(schemaString.split(',').map(parseField))
+          logDebug(s"Parsed custom schema for external source: ${schema.simpleString}")
+          Some(schema)
+      }
+        catch {
       case exc: Exception =>
          logWarning(s"Unable to parse schema for external source: $schemaString. Attempting read with default options.", exc)
+            None
+        }
     }
-    None
   }
 
   /**
@@ -221,7 +237,11 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
         val filters = getAllFilters(part)
         if (filters.nonEmpty)
           df = df.filter(filters.reduceLeft(_ and _))
-        TempTable("src", df)
+        //As described in https://issues.apache.org/jira/browse/SPARK-10848, during
+        //DataFrame creation by the reader, the nullable information is internally overwritten.
+        //That is why it is explicitly set again.
+        val schemaDf = schemaOpt.fold(df)(schema => spark.createDataFrame(df.rdd, schema))
+        TempTable("src", schemaDf)
       }
     }
   }
