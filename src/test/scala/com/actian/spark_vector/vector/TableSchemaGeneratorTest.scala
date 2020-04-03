@@ -55,13 +55,16 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
   }
 
   test("table schema/gen", RandomizedTest) {
-    withJDBC(connectionProps)(cxn => {
-      cxn.autoCommit(false)
-      forAll(identifier, schemaGen)((name, schema) => {
-        assertSchemaGeneration(cxn, name, schema)
-      })(PropertyCheckConfig(minSuccessful = 5), Shrink.shrinkAny[String], Shrink.shrinkAny[StructType])
+  withJDBC(connectionProps)(cxn => {
+    cxn.autoCommit(false)
+    implicit val generatorDrivenConfig: PropertyCheckConfiguration =
+      PropertyCheckConfiguration(minSuccessful = 5)
+    implicit def anyShrink[T]: Shrink[T] = Shrink.shrinkAny[T]
+    forAll(identifier, schemaGen)((name, schema) => {
+      assertSchemaGeneration(cxn, name, schema)
     })
-  }
+  })
+}
 
   private def assertSchemaGeneration(cxn: VectorJDBC, name: String, schema: StructType): Unit = {
     val sql = generateTableSQL(name, schema)

@@ -77,7 +77,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
   test("metadata") {
     val parser = Parser
     assert(parser.header.contains("Spark Vector load tool"))
-    assert(parser.programName.startsWith("spark-submit --class com.actian.spark_vector.loader.Main"))
+    //assert(parser.programName.startsWith("spark-submit --class com.actian.spark_vector.loader.Main"))
   }
 
   test("parse full") {

@@ -17,6 +17,7 @@ package com.actian.spark_vector.datastream
 
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
+import java.nio.Buffer
 import java.nio.channels.SocketChannel
 
 import com.actian.spark_vector.colbuffer.IntSize
@@ -54,7 +55,7 @@ private object DataStreamConnectionHeader extends Serializable {
     val numCols = header.getInt(NumColsIndex)
     val vectorSize = header.getInt(VectorSizeIndex)
     val colInfo = {
-      header.position(ColInfoIndex)
+      header.asInstanceOf[Buffer].position(ColInfoIndex)
       val headerColInfo = (
         Array.fill[String](numCols) { readString(header) } zip
         Array.fill[(Boolean, String, String)](numCols) {

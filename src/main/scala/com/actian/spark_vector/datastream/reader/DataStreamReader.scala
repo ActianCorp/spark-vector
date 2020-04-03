@@ -17,6 +17,7 @@ package com.actian.spark_vector.datastream.reader
 
 import scala.annotation.tailrec
 
+import java.nio.Buffer
 import java.nio.{ ByteOrder, ByteBuffer }
 import java.nio.channels.SocketChannel
 
@@ -89,15 +90,15 @@ object DataStreamReader extends Logging {
     val buffer = reuseBufferOpt.getOrElse(ByteBuffer.allocateDirect(len))
     logTrace(s"${if (!reuseBufferOpt.isEmpty) "Reusing" else "Creating a new"} byte buffer of size ${buffer.capacity}")
     var i = 0
-    buffer.clear()
-    buffer.limit(len)
+    buffer.asInstanceOf[Buffer].clear()
+    buffer.asInstanceOf[Buffer].limit(len)
     while (i < len && socket.isConnected) {
       val j = socket.read(buffer)
       if (j <= 0) throw new Exception(
         s"Connection to Vector end point has been closed or amount of data communicated does not match the message length")
       i += j
     }
-    buffer.flip()
+    buffer.asInstanceOf[Buffer].flip()
     buffer
   }
 

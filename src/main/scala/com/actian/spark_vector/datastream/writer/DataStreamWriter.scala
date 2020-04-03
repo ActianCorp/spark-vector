@@ -16,6 +16,7 @@
 package com.actian.spark_vector.datastream.writer
 
 import java.io.{ ByteArrayOutputStream, DataOutputStream }
+import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
@@ -85,7 +86,7 @@ object DataStreamWriter extends Logging {
    * the position is at 0. To flip a `ByteBuffer` before writing, use `writeByteBuffer`
    */
   def writeByteBufferNoFlip(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = closeResourceOnFailure(socket) {
-    while (buffer.hasRemaining()) socket.write(buffer)
+    while (buffer.asInstanceOf[Buffer].hasRemaining()) socket.write(buffer)
   }
 
   /** Writes an integer to the socket */
@@ -103,7 +104,7 @@ object DataStreamWriter extends Logging {
    * a `ByteBuffer` without flipping, use `writeByteBufferNoFlip`
    */
   private def writeByteBuffer(buffer: ByteBuffer)(implicit socket: SocketChannel): Unit = {
-    buffer.flip()
+    buffer.asInstanceOf[Buffer].flip()
     writeByteBufferNoFlip(buffer)
   }
 
@@ -113,7 +114,7 @@ object DataStreamWriter extends Logging {
     logTrace(s"Writing a byte stream of size ${buffer.limit()}")
     lenByteBuffer.putInt(buffer.limit() + 4)
     writeByteBuffer(lenByteBuffer)
-    buffer.position(buffer.limit())
+    buffer.asInstanceOf[Buffer].position(buffer.asInstanceOf[Buffer].limit())
     writeByteBuffer(buffer)
   }
 

@@ -39,7 +39,7 @@ class Scanner(@transient private val sc: SparkContext,
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
   
   override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
-    taskContext.addTaskCompletionListener { _ => closeAll() }
+    taskContext.addTaskCompletionListener[Unit]{ _ => closeAll() }
     taskContext.addTaskFailureListener { (_, e) => closeAll(Option(e)) }
     logDebug("Computing partition " + split.index)
     try {

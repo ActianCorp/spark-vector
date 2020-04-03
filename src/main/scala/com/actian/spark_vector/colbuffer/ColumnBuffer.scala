@@ -27,6 +27,7 @@ import com.actian.spark_vector.vector.VectorDataType
 import com.actian.spark_vector.datastream.padding
 
 import java.nio.ByteBuffer
+import java.nio.Buffer
 import java.nio.ByteOrder
 import java.nio.BufferOverflowException
 
@@ -94,7 +95,7 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
   }
 
   override def position(): Int = {
-    var ret = values.position()
+    var ret = values.asInstanceOf[Buffer].position()
     if (col.nullable) {
       ret += markers.position()
     }
@@ -102,14 +103,14 @@ class WriteColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[T, _]) exten
   }
 
   def flip(): Unit = {
-    values.flip()
+    values.asInstanceOf[Buffer].flip()
     if (col.nullable) {
       markers.flip()
     }
   }
 
   override def clear(): Unit = {
-    values.clear()
+    values.asInstanceOf[Buffer].clear()
     if (col.nullable) {
       markers.clear()
     }
@@ -134,8 +135,8 @@ class ReadColumnBuffer[@specialized T: ClassTag](col: ColumnBuffer[_, T]) extend
     if (col.nullable) {
       source.get(markers, 0, nLimit)
     }
-    var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position, col.alignSize)
-    source.position(source.position + pad)
+    var pad = padding(IntSize /* messageLength, not incl. in source position */ + source.position(), col.alignSize)
+    source.position(source.position() + pad)
     while (rightPos < nLimit) {
       isNullValue(rightPos) = if (col.nullable) markers(rightPos) == NullMarker else false
       values(rightPos) = col.get(source) // This returns a deserialized value to us

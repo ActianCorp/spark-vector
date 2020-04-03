@@ -1,12 +1,13 @@
 resolvers += Classpaths.sbtPluginReleases
 resolvers += Resolver.url("hmrc-sbt-plugin-releases", url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
+resolvers += Resolver.sonatypeRepo("snapshots")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-git-stamp" % "5.2.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.4.0-RC1-142-90456e06")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.4")
+addSbtPlugin("uk.gov.hmrc" % "sbt-git-stamp" % "latest.integration")
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.3.0")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "latest.integration")
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.13.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "latest.integration")
 
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
+addSbtPlugin("org.scalastyle" % "scalastyle-sbt-plugin" % "latest.integration")

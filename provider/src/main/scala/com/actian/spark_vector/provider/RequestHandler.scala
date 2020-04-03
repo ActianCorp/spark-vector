@@ -63,7 +63,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     }
     logDebug(s"Got new json request: ${json}")
     Json.fromJson[Job](Json.parse(json)).fold(errors => {
-      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
+      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toJson(errors)}")
     }, job => job)
   } flatMap { job =>
     logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")
@@ -139,7 +139,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     part.options.getOrElse(Map.empty[String, String]).filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
   
   /** Parse a Spark ddl schema and create a schema object */
-  private def parseSchema(schemaString: String): Option[StructType] = {
+  /* private def parseSchema(schemaString: String): Option[StructType] = {
     def mkField(name: String, `type`: String, nullable: Boolean): StructField =
       StructField(name, CatalystSqlParser.parseDataType(`type`), nullable)
     def parseField(line: String): StructField =
@@ -166,7 +166,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
             None
         }
     }
-  }
+  } */
 
   /**
    * Given a job part, return the format of the external table, according to the following logic:
@@ -215,7 +215,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   }
 
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
-  private def getExternalTable(part: JobPart): SparkSqlTable = {
+  /* private def getExternalTable(part: JobPart): SparkSqlTable = {
     val options = getOptions(part)
     val extraOptions = getExtraOptions(part)
     val format = getFormat(part)
@@ -243,6 +243,20 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
         val schemaDf = schemaOpt.fold(df)(schema => spark.createDataFrame(df.rdd, schema))
         TempTable("src", schemaDf)
       }
+    }
+  } */
+
+  private def getExternalTable(part: JobPart): SparkSqlTable = {
+    val format = getFormat(part)
+    
+    format match {
+      case "hive" => HiveTable(part.external_reference)
+      case _ =>
+         val options = getOptions(part)
+         val schemaSpec = getExtraOptions(part).get("schema")
+         val filters = getAllFilters(part)
+         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters)
+         TempTable("src", df)
     }
   }
 

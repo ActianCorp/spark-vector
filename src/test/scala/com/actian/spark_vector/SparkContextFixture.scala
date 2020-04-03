@@ -17,14 +17,14 @@ package com.actian.spark_vector
 
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.sql.SparkSession
-import org.scalatest.{ fixture, Outcome }
-
+import org.scalatest.Outcome
+import org.scalatest.fixture.TestSuite
 /**
  * Provides a SparkContext fixture to tests that require one. Creates a new SparkContext for
  * each test and tears it down when the test completes. This allows each test that uses Spark
  * to create a unique event log also as needed for later analysis.
  */
-trait SparkContextFixture { this: fixture.Suite =>
+trait SparkContextFixture { this: TestSuite =>
   case class FixtureParam(spark: SparkSession) {
     val sc = spark.sparkContext
   }

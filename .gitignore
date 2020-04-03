@@ -15,3 +15,11 @@ project/project
 bin
 loader/bin
 provider/bin
+*.class
+*.semanticdb
+.metals/
+.bloop/
+.vscode/
+metastore_db/
+*.log
+metals.sbt
