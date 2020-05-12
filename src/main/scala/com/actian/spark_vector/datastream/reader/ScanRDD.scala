@@ -135,7 +135,15 @@ class ScanRDD(@transient private val sc: SparkContext,
 
   override protected def getPartitions: Array[Partition] = {
     if (vpartitions == 0)
-      vpartitions = 8;
+     {
+      val defaultNumberOfPartitions = sc.defaultParallelism
+      var maxNumberOfExecutors = defaultNumberOfPartitions
+      if(sc.getConf.contains("spark.executor.instances"))
+      {
+        maxNumberOfExecutors = sc.getConf.get("spark.executor.instances").toInt
+      }
+      vpartitions = scala.math.min(defaultNumberOfPartitions, maxNumberOfExecutors)
+    }
     (0 until vpartitions).map(idx => new Partition { def index = idx }).toArray
   }
 
