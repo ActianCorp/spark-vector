@@ -532,8 +532,8 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                              instance "${connectionProps.instance}",
                              database "${connectionProps.database}",
                              table "${tableName}",
-                             user "${connectionProps.user.get}",
-                             password "${connectionProps.password.get}",
+                             user "${connectionProps.user.getOrElse("")}",
+                             password "${connectionProps.password.getOrElse("")}",
                              port "${connectionProps.port}"
                            )""")
 
@@ -834,7 +834,8 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                           host "${connectionProps.host}",
                           instance "${connectionProps.instance}",
                           database "${connectionProps.database}",
-                          user="${connectionProps.user.get}", password="${connectionProps.password.get}",
+                          user="${connectionProps.user.getOrElse("")}",
+                          password="${connectionProps.password.getOrElse("")}",
                           table "${tableName}"
                           )""")
         val res = fixture.spark.sqlContext.sql("""select * from vector_table""")
