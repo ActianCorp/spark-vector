@@ -216,33 +216,16 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
 
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
-    val options = getOptions(part)
-    val extraOptions = getExtraOptions(part)
     val format = getFormat(part)
     
     format match {
       case "hive" => HiveTable(part.external_reference)
-      case _ => {
-        val schemaOpt = parseSchema(extraOptions.getOrElse("schema", ""))
-        val reader = schemaOpt match {
-          case Some(schema) => spark.read.options(options).schema(schema)
-          case None => spark.read.options(options)
-        }
-        var df = format match {
-          case "parquet" => reader.parquet(part.external_reference)
-          case "csv" => reader.csv(part.external_reference)
-          case "orc" => reader.orc(part.external_reference)
-          case _ => reader.format(format).load(part.external_reference)
-        }
-        val filters = getAllFilters(part)
-        if (filters.nonEmpty)
-          df = df.filter(filters.reduceLeft(_ and _))
-        //As described in https://issues.apache.org/jira/browse/SPARK-10848, during
-        //DataFrame creation by the reader, the nullable information is internally overwritten.
-        //That is why it is explicitly set again.
-        val schemaDf = schemaOpt.fold(df)(schema => spark.createDataFrame(df.rdd, schema))
-        TempTable("src", schemaDf)
-      }
+      case _ =>
+         val options = getOptions(part)
+         val schemaSpec = getExtraOptions(part).get("schema")
+         val filters = getAllFilters(part)
+         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters)
+         TempTable("src", df)
     }
   }
 
