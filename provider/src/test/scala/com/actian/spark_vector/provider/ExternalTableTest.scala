@@ -25,13 +25,13 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     }
   }
 
-  private def csvDataFrame(schemaSpec: Option[String], header: Boolean)(implicit spark: SparkSession): DataFrame = {
+  private def csvDataFrame(schemaSpec: Option[String], header: Boolean, columnInfos: Option[Seq[ColumnInfo]])(implicit spark: SparkSession): DataFrame = {
     val opts: Map[String, String] = if(header) Map("header" -> "true") else Map.empty
-    externalTableDataFrame(spark, csvPath, "csv", schemaSpec, opts, Seq.empty)
+    externalTableDataFrame(spark, csvPath, "csv", schemaSpec, opts, Seq.empty, columnInfos)
   }
 
-  test("csv, no schema, no header") { implicit spark =>
-    val df = csvDataFrame(None, false)
+  test("csv, no schema, no header, no column infos") { implicit spark =>
+    val df = csvDataFrame(None, false, None)
     val fields = df.schema.fields
     fields.length should be (2)
     forAll(fields) { f =>
@@ -40,18 +40,8 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     }
   }
 
-  test("csv, no schema, with header") { implicit spark =>
-    val df = csvDataFrame(None, true)
-    df.schema.fields should be (
-      Seq(
-        StructField("name", StringType, true),
-        StructField("salary", StringType, true)
-      )
-    )
-  }
-
-  test("csv, nullable schema, no header") { implicit spark =>
-    val df = csvDataFrame(Some("name STRING, salary INT"), false)
+  test("csv, no schema, with header, no column infos") { implicit spark =>
+    val df = csvDataFrame(None, true, None)
     df.schema.fields should be (
       Seq(
         StructField("name", StringType, true),
@@ -60,8 +50,8 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     )
   }
 
-  test("csv, nullable schema, with header") { implicit spark =>
-    val df = csvDataFrame(Some("name STRING, salary INT"), true)
+  test("csv, nullable schema, no header, no column infos") { implicit spark =>
+    val df = csvDataFrame(Some("name STRING, salary INT"), false, None)
     df.schema.fields should be (
       Seq(
         StructField("name", StringType, true),
@@ -70,8 +60,18 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     )
   }
 
-  test("csv, nullable schema, incompatible with header") { implicit spark =>
-    val df = csvDataFrame(Some("foo INT, bar STRING"), true)
+  test("csv, nullable schema, with header, no column infos") { implicit spark =>
+    val df = csvDataFrame(Some("name STRING, salary INT"), true, None)
+    df.schema.fields should be (
+      Seq(
+        StructField("name", StringType, true),
+        StructField("salary", IntegerType, true)
+      )
+    )
+  }
+
+  test("csv, nullable schema, incompatible with header, no column infos") { implicit spark =>
+    val df = csvDataFrame(Some("foo INT, bar STRING"), true, None)
     df.schema.fields should be (
       Seq(
         StructField("foo", IntegerType, true),
@@ -80,8 +80,8 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     )
   }
 
-  test("csv, non-nullable schema, no header") { implicit spark =>
-    val df = csvDataFrame(Some("name STRING NOT NULL, salary INT NOT NULL"), false)
+  test("csv, non-nullable schema, no header, no column infos") { implicit spark =>
+    val df = csvDataFrame(Some("name STRING NOT NULL, salary INT NOT NULL"), false, None)
     df.schema.fields should be (
       Seq(
         StructField("name", StringType, false),
@@ -90,4 +90,15 @@ class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
     )
   }
 
+  test("csv, no schema, with header, with column infos") { implicit spark =>
+    val columnInfos = Seq(new ColumnInfo("name", new LogicalType("char", 25, 25), "StringType", false, None),
+                          new ColumnInfo("salary", new LogicalType("integer", 25, 25), "IntegerType", false, None) )
+    val df = csvDataFrame(None, true, Some(columnInfos))
+    df.schema.fields should be (
+      Seq(
+        StructField("name", StringType, false),
+        StructField("salary", IntegerType, false)
+      )
+    )
+  }
 }

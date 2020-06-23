@@ -229,7 +229,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
          val options = getOptions(part)
          val schemaSpec = getExtraOptions(part).get("schema")
          val filters = getAllFilters(part)
-         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters)
+         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters, Some(part.column_infos))
          TempTable("src", df)
     }
   }
