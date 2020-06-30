@@ -16,8 +16,10 @@
 package com.actian.spark_vector.provider
 
 import org.apache.spark.sql._
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.internal.Logging
 
-object ExternalTable {
+object ExternalTable extends Logging {
 
   def externalTableDataFrame(
     spark: SparkSession,
@@ -25,15 +27,25 @@ object ExternalTable {
     format: String,
     schemaSpec: Option[String],
     options: Map[String, String],
-    filters: Seq[Column]
+    filters: Seq[Column],
+    columnInfos: Option[Seq[ColumnInfo]]
   ): DataFrame = {
-    val schema = schemaSpec.flatMap(SchemaParser.parseSchema)
-    val reader = schema.foldLeft(spark.read.options(options))(_.schema(_))
+
+    def createSchema(x: Seq[ColumnInfo]): StructType = 
+    {
+      val schema = StructType(x.map(_.toColumnMetadata).map(_.structField))
+      logDebug(s"Using schema deduced from column infos:${schema.simpleString}")
+      schema
+    }
+
+    val schema = schemaSpec.fold(columnInfos.fold[Option[StructType]](None)(x => Some(createSchema(x))))(SchemaParser.parseSchema(_))
+    val readerWithOptions = spark.read.options(options)
+    val readerWithOptionsAndSchema = schema.fold(readerWithOptions.option("inferSchema", "true"))(readerWithOptions.schema(_))
     val df = format match {
-      case "parquet" => reader.parquet(extRef)
-      case "csv" => reader.csv(extRef)
-      case "orc" => reader.orc(extRef)
-      case _ => reader.format(format).load(extRef)
+      case "parquet" => readerWithOptionsAndSchema.parquet(extRef)
+      case "csv" => readerWithOptionsAndSchema.csv(extRef)
+      case "orc" => readerWithOptionsAndSchema.orc(extRef)
+      case _ => readerWithOptionsAndSchema.format(format).load(extRef)
     }
     val filtered = filters.reduceLeftOption(_ and _).foldLeft(df)(_.filter(_))
     // enforce schema, workaround for https://issues.apache.org/jira/browse/SPARK-10848

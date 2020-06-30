@@ -126,7 +126,10 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
 
   /** Given a job part, retrieve its options, if any, or else an empty Map */
   private def getOptions(part: JobPart): Map[String, String] = {
-    var options = part.options.getOrElse(Map.empty[String, String]).filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
+    var options = part.options.getOrElse(Map.empty[String, String])
+                  .map({case (k,v) => k.toLowerCase -> v})
+                  .filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
+
     if (part.format.contains("csv") && !options.contains("header")) {
       options + ("header" -> "true");
     } else {
@@ -136,7 +139,9 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
 
   /** Given a job part, retrieve its extra options, if any, or else an empty Map */
   private def getExtraOptions(part: JobPart): Map[String, String] =
-    part.options.getOrElse(Map.empty[String, String]).filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
+    part.options.getOrElse(Map.empty[String, String])
+    .map({case (k,v) => k.toLowerCase -> v})
+    .filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
   
   /** Parse a Spark ddl schema and create a schema object */
   private def parseSchema(schemaString: String): Option[StructType] = {
@@ -224,7 +229,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
          val options = getOptions(part)
          val schemaSpec = getExtraOptions(part).get("schema")
          val filters = getAllFilters(part)
-         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters)
+         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters, Some(part.column_infos))
          TempTable("src", df)
     }
   }
