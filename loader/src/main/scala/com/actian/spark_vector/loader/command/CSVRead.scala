@@ -22,15 +22,23 @@ import com.actian.spark_vector.sql.sparkQuote
 import com.actian.spark_vector.util.Logging
 
 object CSVRead extends Logging {
+
+  private def escapeBackslash(input: Char): String = {
+    if (input == '\\')
+      s"""\\\\""" 
+    else
+      input.toString()
+  }
+
   private def parseOptions(options: UserOptions): String = {
     Seq(
       Some(s"""sep "${options.csv.separatorChar.getOrElse(",")}""""),
       options.csv.headerRow.filter(identity).map(_ => """header "true""""),
       options.csv.inferSchema.filter(identity).map(_ => s"""inferSchema "true""""),
       options.csv.encoding.map(v => s"""encoding "${v}""""),
-      options.csv.quoteChar.map(c => if (c != '\'') s"quote '$c'" else s"""quote "$c""""),
-      options.csv.escapeChar.map(c => if (c != '\'') s"""escape '$c'""" else s"""escape "$c""""),
-      options.csv.commentChar.map(c => if (c != '\'') s"comment '$c'" else s"""comment "$c""""),
+      options.csv.quoteChar.map(c => if (c != '\'') s"quote '${escapeBackslash(c)}'" else s"""quote "$c""""),
+      options.csv.escapeChar.map(c => if (c != '\'') s"escape '${escapeBackslash(c)}'" else s"""escape "$c""""),
+      options.csv.commentChar.map(c => if (c != '\'') s"comment '${escapeBackslash(c)}'" else s"""comment "$c""""),
       options.csv.ignoreLeading.filter(identity).map(_ => """ignoreLeadingWhiteSpace "true""""),
       options.csv.ignoreTrailing.filter(identity).map(_ => """ignoreTrailingWhiteSpace "true""""),
       options.csv.nullValue.map(v => s"""nullValue "${v}""""),
