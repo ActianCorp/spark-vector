@@ -67,13 +67,13 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
           }
           val numRows = rs.getLong(1)
           logDebug(s"Create empty RDD from the count(*) of ${numRows} row(s).")
-          sqlContext.sparkContext.emptyRDD[Row]
+          sqlContext.sparkContext.range(0L, numRows).map(_ => InternalRow.empty).asInstanceOf[RDD[Row]]
         }
       }
     } else {
       val (selectColumns, selectTableMetadata) = (requiredColumns.mkString(","), pruneColumns(requiredColumns, tableMetadata))
       logInfo(s"Execute Vector prepared query: select ${selectColumns} from ${tableRef.table} ${whereClause}")
-      Vector.unloadVector(sqlContext.sparkContext, tableRef.table, tableRef.toConnectionProps, 
+      Vector.unloadVector(sqlContext.sparkContext, tableRef.table, tableRef.toConnectionProps,
         selectTableMetadata, selectColumns, whereClause, whereParams).asInstanceOf[RDD[Row]]
     }
   }
@@ -99,11 +99,11 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
     require(data.schema == this.schema, s"data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
-    
+
     val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
     filteredData.rdd.loadVector(data.schema, columnMetadata, conf)
   }
-  
+
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
     val requiredColumnMetadata = pruneColumns(requiredColumns, columnMetadata)
     Vector.unloadVector(sqlContext.sparkContext, columnMetadata, conf).asInstanceOf[RDD[Row]]
@@ -138,10 +138,10 @@ private[spark_vector] object VectorRelation {
 
   /** Quote the column name so that it can be used in VectorSQL statements */
   def quote(name: String): String = name.split("\\.").map("\"" + _ + "\"").mkString(".")
-  
+
   /** Quote the column name with single quotes so that it can be used in VectorSQL where statements */
   def singleQuote(name: String): String = name.split("\\.").map("'" + _ + "'").mkString(".")
-  
+
   /** Unquote a vector string literal **/
   def unquoteLiteral(s: String): String = {
     if (s.head == '\'' && s.head == s.last) {
