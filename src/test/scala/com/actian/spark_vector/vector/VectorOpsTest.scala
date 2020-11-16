@@ -525,7 +525,6 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                            USING com.actian.spark_vector.sql.DefaultSource
                            OPTIONS (
                              host "${connectionProps.host}",
-                             instance "${connectionProps.instance}",
                              database "${connectionProps.database}",
                              table "${tableName}",
                              user "${connectionProps.user.getOrElse("")}",
@@ -700,7 +699,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     props.setProperty("user", connectionProps.user.getOrElse(""))
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
-      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps, tableName, props)
 
       // spark only connects to 1 of the vector endpoints/partitions in this case.
       // until other datastream connections are opened and closed the jdbc 'insert into external table...'
@@ -717,7 +716,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     props.setProperty("user", connectionProps.user.getOrElse(""))
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
-      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps, tableName, props)
 
       val run1 = df.rdd.collect().sortBy(r => r(0).toString()).toSeq
       val run2 = df.rdd.collect().sortBy(r => r(0).toString()).toSeq
@@ -730,7 +729,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     props.setProperty("user", connectionProps.user.getOrElse(""))
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
-      val df = fixture.spark.read.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      val df = fixture.spark.read.vector(connectionProps, tableName, props)
       val data = df.collect().sortBy(r => r(0).toString()).map(_.toSeq).toSeq
       val (expectedrdd, schema) = admitRDD(fixture.sc)
       val expected = expectedrdd.collect.map(_.toSeq).toSeq
@@ -758,7 +757,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
       val colmetadata = VectorUtil.getTableSchema(connectionProps, tableName)
       val actualschema = StructType(colmetadata.map(_.structField))
       val df = fixture.spark.createDataFrame(rdd, actualschema)
-      df.write.vector(connectionProps.host, connectionProps.instance, connectionProps.database, tableName, props)
+      df.write.vector(connectionProps, tableName, props)
 
       VectorJDBC.withJDBC(connectionProps) { cxn =>
         cxn.querySingleResult(s"select count(*) from $tableName") should be(Some(6))
@@ -828,7 +827,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
                           USING com.actian.spark_vector.sql.DefaultSource
                           OPTIONS (
                           host "${connectionProps.host}",
-                          instance "${connectionProps.instance}",
+                          port "${connectionProps.port}",
                           database "${connectionProps.database}",
                           user="${connectionProps.user.getOrElse("")}",
                           password="${connectionProps.password.getOrElse("")}",
@@ -850,7 +849,7 @@ test("II-6289 - count(1)") { sparkFixture =>
         sparkFixture.spark.sql(s"""CREATE TEMPORARY view ${tableName}
                                    USING com.actian.spark_vector.sql.DefaultSource
                                    OPTIONS (host "${connectionProps.host}",
-                                   instance "${connectionProps.instance}",
+                                   port "${connectionProps.port}",
                                    database "${connectionProps.database}",
                                    user="${connectionProps.user.getOrElse("")}",
                                    password="${connectionProps.password.getOrElse("")}",

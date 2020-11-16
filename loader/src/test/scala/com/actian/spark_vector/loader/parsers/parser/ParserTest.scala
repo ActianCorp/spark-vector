@@ -125,6 +125,49 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
     }
   }
 
+  test("JDBC port specification") {
+    val parser = Parser
+    val base = Seq(
+      load.longName,
+      csvLoad.longName,
+      longKey(vectorHost), "vector.test",
+      longKey(vectorDatabase), "testdb",
+      longKey(vectorUser), "johndoe",
+      longKey(vectorPassword), "p@55",
+      longKey(vectorTargetTable), "testtbl",
+      longKey(inputFile), """c:\tmp\test.csv""")
+    val portValuesSets = Seq(None, Some(""), Some("VW"), Some("VW7"), Some("9999"))
+    val keyMapperCandidates = Seq(LongKeyMapper, ShortKeyMapper)
+
+    val testData = for {
+        keymapper <- keyMapperCandidates
+        portValueInstance <- portValuesSets
+        portValueOffset <- portValuesSets
+        portValueJDBC <- portValuesSets
+    } yield (keymapper, portValueInstance, portValueOffset, portValueJDBC)
+
+    val table = Table(
+      ("keymapper", "portValueInstance", "portValueOffset", "portValueJDBC"),
+      testData: _*)
+
+    forAll(table)( (keymapper, portValueInstance, portValueOffset, portValueJDBC) => {
+        var testsequence: Seq[String] = Seq();
+        if(portValueInstance.isDefined) testsequence ++= Seq(keymapper(vectorInstance), portValueInstance.get)
+        if(portValueOffset.isDefined) testsequence ++= Seq(keymapper(vectorInstOffset), portValueOffset.get)
+        if(portValueJDBC.isDefined) testsequence ++= Seq(keymapper(vectorJDBCPort), portValueJDBC.get)
+        testsequence = base ++ testsequence
+
+        (portValueInstance, portValueOffset, portValueJDBC) match {
+            case (None, None, None) | (_, Some(_), Some(_)) | (Some(_), _, Some(_)) |
+                 (Some(""), _, _) | (_, Some(""), _) | (_, _, Some("")) |
+                 (Some("VW7"), _, _) | (_, Some("VW7"), _) |
+                 (_, Some("VW"), _) | (_, _, Some("VW")) |
+                 (Some("9999"), _, _) | (None, Some("9999"), _) => parser.parse(testsequence, UserOptions()) shouldBe None
+            case _ => parser.parse(testsequence, UserOptions()) shouldBe defined
+        }
+    })
+  }
+
   private def valueStr(value: Any): String =
     value match {
       case Some(v) => v.toString

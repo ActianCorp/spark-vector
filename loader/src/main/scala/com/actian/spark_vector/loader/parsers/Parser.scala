@@ -52,10 +52,10 @@ sealed case class ArgOption[T: Read, O](
  * Spark Vector load
  *   --help
  *         This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
- *         
+ *
  * Command: load [csv|parquet|orc|json]
  * Read a file and load into Vector
- * 
+ *
  * Command: load csv [options]
  * Load a csv file
  *   -sf <value> | --sourceFile <value>
@@ -68,10 +68,12 @@ sealed case class ArgOption[T: Read, O](
  *         Vector host name
  *   -vi <value> | --vectorInstance <value>
  *         Vector instance
+ *   -vo <value> | --vectorInstOffset <value>
+ *         Vector JDBC instance offset
+ *   -vj <value> | --vectorJDBCPort <value>
+ *         Vector JDBC port
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
- *   -vo <value> | --vectorPort <value>
- *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -82,7 +84,7 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
- *         
+ *
  *   -h <value> | --header <value>
  *         Comma separated string with CSV column names and datatypes, e.g. "col1 int, col2 string,"
  *   -sh <value> | --skipHeader <value>
@@ -120,7 +122,7 @@ sealed case class ArgOption[T: Read, O](
  *         PERMISSIVE - sets other fields to null in corrupted records
  *         DROPMALFORMED - ignore corrupted records
  *         FAILFAST - throws an exception on corrupted record
- *         
+ *
  * Command: load parquet [options]
  * Load a parquet file
  *   -sf <value> | --sourceFile <value>
@@ -131,10 +133,12 @@ sealed case class ArgOption[T: Read, O](
  *         Vector host name
  *   -vi <value> | --vectorInstance <value>
  *         Vector instance
+ *   -vo <value> | --vectorInstOffset <value>
+ *         Vector JDBC instance offset
+ *   -vj <value> | --vectorJDBCPort <value>
+ *         Vector JDBC port
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
- *   -vo <value> | --vectorPort <value>
- *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -145,7 +149,7 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
- *         
+ *
  * Command: load orc [options]
  * Load an orc file
  *   -sf <value> | --sourceFile <value>
@@ -156,10 +160,12 @@ sealed case class ArgOption[T: Read, O](
  *         Vector host name
  *   -vi <value> | --vectorInstance <value>
  *         Vector instance
+ *   -vo <value> | --vectorInstOffset <value>
+ *         Vector JDBC instance offset
+ *   -vj <value> | --vectorJDBCPort <value>
+ *         Vector JDBC port
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
- *   -vo <value> | --vectorPort <value>
- *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -170,7 +176,7 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
- *         
+ *
  * Command: load json [options]
  * Load a JSON file
  *   -sf <value> | --sourceFile <value>
@@ -181,10 +187,12 @@ sealed case class ArgOption[T: Read, O](
  *         Vector host name
  *   -vi <value> | --vectorInstance <value>
  *         Vector instance
+ *   -vo <value> | --vectorInstOffset <value>
+ *         Vector JDBC instance offset
+ *   -vj <value> | --vectorJDBCPort <value>
+ *         Vector JDBC port
  *   -vd <value> | --vectorDatabase <value>
  *         Vector database
- *   -vo <value> | --vectorPort <value>
- *   			 Vector port
  *   -vu <value> | --vectorUser <value>
  *         Vector user
  *   -vp <value> | --vectorPass <value>
@@ -195,7 +203,7 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
- *         
+ *
  *   -h <value> | --header <value>
  *         Comma separated string with JSON column names and datatypes, e.g. "col1 int, col2 string,"
  *   -ps <value> | --primitivesAsString <value>
@@ -237,16 +245,18 @@ object Args {
   val parquetLoad = new ArgDescription("parquet", "parquet", "Load a parquet file")
   val orcLoad = new ArgDescription("orc", "orc", "Load an orc file")
   val jsonLoad = new ArgDescription("json", "json", "Load a json file")
- 
+
   // Vector arguments
   val vectorHost = ArgOption[String, String](
     "vectorHost", "vh", "Vector host name", _.vector.host, updateVector((o, v) => o.copy(host = v)), true)
-  val vectorInstance = ArgOption[String, String](
-    "vectorInstance", "vi", "Vector instance", _.vector.instance, updateVector((o, v) => o.copy(instance = v)), true)
+  val vectorInstance = ArgOption[String, Option[String]](
+    "vectorInstance", "vi", "Vector instance", _.vector.instance, updateVector((o, v) => o.copy(instance = Some(v))), false)
+  val vectorInstOffset = ArgOption[String, Option[String]](
+    "vectorInstOffset", "vo", "Vector JDBC instance offset", _.vector.instanceOffset, updateVector((o, v) => o.copy(instanceOffset = Some(v))), false)
+  val vectorJDBCPort = ArgOption[String, Option[String]](
+    "vectorJDBCPort", "vj", "Vector JDBC port", _.vector.jdbcPort, updateVector((o, v) => o.copy(jdbcPort = Some(v))), false)
   val vectorDatabase = ArgOption[String, String](
     "vectorDatabase", "vd", "Vector database", _.vector.database, updateVector((o, v) => o.copy(database = v)), true)
-  val vectorPort = ArgOption[String, String](
-    "vectorPort", "vo", "Vector port", _.vector.port, updateVector((o, v) => o.copy(port = v)), false)
   val vectorUser = ArgOption[String, Option[String]](
     "vectorUser", "vu", "Vector user", _.vector.user, updateVector((o, v) => o.copy(user = Some(v))), false)
   val vectorPassword = ArgOption[String, Option[String]](
@@ -258,7 +268,7 @@ object Args {
   val postSQL = ArgOption[Seq[String], Option[Seq[String]]](
     "postSQL", "postSQL", "Queries to execute in Vector after loading, separated by ';'", _.vector.postSQL, updateVector((o, v) => o.copy(postSQL = Some(v))), false)
 
-  val vectorArgs = Seq(vectorHost, vectorInstance, vectorDatabase, vectorPort, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
+  val vectorArgs = Seq(vectorHost, vectorInstance, vectorInstOffset, vectorJDBCPort, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
 
   // Generic arguments
   val inputFile = ArgOption[String, String](
@@ -267,7 +277,7 @@ object Args {
     "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",").map(_.trim())))), false)
   val createTable = ArgOption[Boolean, Option[Boolean]](
     "createTable", "ct", "Whether the table should be created", _.general.createTable, updateGeneral((o, v) => o.copy(createTable = Option(v))), false)
-  
+
   val generalArgs = Seq(inputFile, colsForLoad, createTable)
 
   // CSV arguments
@@ -288,7 +298,7 @@ object Args {
   val ignoreLeading = ArgOption[Boolean, Option[Boolean]](
     "ignoreLeadingWS", "il", "Whether leading whitespaces on values are skipped", _.csv.ignoreLeading, updateCSV((o, v) => o.copy(ignoreLeading = Option(v))), false)
   val ignoreTrailing = ArgOption[Boolean, Option[Boolean]](
-    "ignoreTrailingWS", "it", "Whether trailing whitespaces on values are skipped", _.csv.ignoreTrailing, updateCSV((o, v) => o.copy(ignoreTrailing = Option(v))), false) 
+    "ignoreTrailingWS", "it", "Whether trailing whitespaces on values are skipped", _.csv.ignoreTrailing, updateCSV((o, v) => o.copy(ignoreTrailing = Option(v))), false)
   val nullValue = ArgOption[String, Option[String]](
     "nullValue", "nv", "String representation of a null value", _.csv.nullValue, updateCSV((o, v) => o.copy(nullValue =  Option(v))), false)
   val nanValue = ArgOption[String, Option[String]](
@@ -306,7 +316,7 @@ object Args {
   val header = ArgOption[String, Option[Seq[_]]](
     "header", "h", "Comma separated string with CSV column names and datatypes, e.g. \"col1 int, col2 string,\"", _.csv.header, updateCSV((o, v) => o.copy(header = Some(v.split(",")))), false)
 
-	// JSON arguments
+    // JSON arguments
   val primitivesAsStr = ArgOption[Boolean, Option[Boolean]](
     "primitivesAsString", "ps", "Infer all primitive values as a string type", _.json.primitivesAsString, updateJSON((o, v) => o.copy(primitivesAsString = Option(v))), false)
   val allowComments = ArgOption[Boolean, Option[Boolean]](
@@ -327,8 +337,8 @@ object Args {
     "parseMode", "pm", "Set parse mode for dealing with corrupt records during parsing", _.json.parseMode, updateJSON((o, v) => o.copy(parseMode = Option(v))), false)
   val headerJson = ArgOption[String, Option[Seq[_]]](
     "header", "h", "Comma separated string with JSON column names and datatypes, e.g. \"col1 int, col2 string,\"", _.json.header, updateJSON((o, v) => o.copy(header = Some(v.split(",")))), false)
-  
-  val csvArgs = Seq(header, hRow, inferSchema, encode, separatorChar, quoteChar, escapeChar, commentChar, 
+
+  val csvArgs = Seq(header, hRow, inferSchema, encode, separatorChar, quoteChar, escapeChar, commentChar,
     ignoreLeading, ignoreTrailing, nullValue, nanValue, positiveInf, negativeInf, dateFormat, timestampFormat, parseMode)
   val jsonArgs = Seq(headerJson, primitivesAsStr, allowComments, allowUnquoted, allowSingleQuotes, allowLeadingZeros, allowEscapingAny, allowUnqCtrlChars, multiline, parseModeJson)
   val parquetArgs = Seq.empty[ArgOption[_, _]]
@@ -339,9 +349,9 @@ object Args {
   val orcOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ orcArgs
   val jsonOptions: Seq[ArgOption[_, _]] = generalArgs ++ vectorArgs ++ jsonArgs
   val modeToOptions = Map(
-      csvLoad.longName -> csvOptions, 
-      parquetLoad.longName -> parquetOptions, 
-      orcLoad.longName -> orcOptions,  
+      csvLoad.longName -> csvOptions,
+      parquetLoad.longName -> parquetOptions,
+      orcLoad.longName -> orcOptions,
       jsonLoad.longName -> jsonOptions)
 }
 
@@ -370,13 +380,13 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
         .action((_, options) => options.copy(mode = orcLoad.longName))
         .abbr(orcLoad.shortName)
         .text(orcLoad.description)
-        .children(orcOptions.map(_.asOpt(this)): _*),        
+        .children(orcOptions.map(_.asOpt(this)): _*),
       cmd(jsonLoad.longName)
         .action((_, options) => options.copy(mode = jsonLoad.longName))
         .abbr(jsonLoad.shortName)
         .text(jsonLoad.description)
         .children(jsonOptions.map(_.asOpt(this)): _*))
-        
+
 
   checkConfig { options =>
     if (options.mode.isEmpty || options.mode == load.longName) {
@@ -394,7 +404,15 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
         if (cur.extractor(options).isEmpty) acc :+ cur.longName else acc
       })
     if (missing.isEmpty) {
-      success
+        val instance = "[a-zA-Z]+".r
+        val offset = "[0-9]+".r
+        val port = "[a-zA-Z]*[0-9]+".r
+        (options.vector.instance, options.vector.instanceOffset, options.vector.jdbcPort) match {
+            case (Some(instance()), None, None) |
+                 (Some(instance()), Some(offset()), None) |
+                 (None, None, Some(port())) => success
+            case _ => failure("Error is: EITHER instance id (vi) and optional instance offset (vo) OR real JDBC port number (vj) required!")
+        }
     } else {
       failure("Errors are: " + missing.map(n => s"${n} missing").mkString(";"))
     }

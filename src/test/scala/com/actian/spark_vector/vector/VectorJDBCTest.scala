@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector.vector
 
-import java.sql.SQLNonTransientConnectionException
+import java.sql.{SQLNonTransientConnectionException, SQLException}
 
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
@@ -23,6 +23,8 @@ import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture._
 import com.actian.spark_vector.vector.VectorJDBC._
+import org.apache.spark.Success
+import org.scalacheck.Test.Failed
 
 /**
  * Tests of VectorJDBC
@@ -72,11 +74,15 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   }
 
   test("bad connection") {
-    val badCxnProps = VectorConnectionProperties("host", "instance", "database", Some("user"), Some("pw"))
-    intercept[SQLNonTransientConnectionException] {
-      withJDBC(badCxnProps) { cxn =>
+    val badCxnProps = VectorConnectionProperties("host", JDBCPort(Some("instance"), None, None), "database", Some("user"), Some("pw"))
+    try {
+        withJDBC(badCxnProps) { cxn =>
         assert(false, "should not get here")
       }
+    }
+    catch {
+        case  _ : SQLNonTransientConnectionException | _ : SQLException => Success
+        case _ : Throwable => Failed
     }
   }
 
