@@ -74,7 +74,7 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   }
 
   test("bad connection") {
-    val badCxnProps = VectorConnectionProperties("host", JDBCPort(Some("instance"), None, None), "database", Some("user"), Some("pw"))
+    val badCxnProps = VectorConnectionProperties("host", JDBCPort(Some("VW"), None, None), "database", Some("user"), Some("pw"))
     try {
         withJDBC(badCxnProps) { cxn =>
         assert(false, "should not get here")

@@ -17,6 +17,8 @@ package com.actian.spark_vector.loader.parsers
 
 import com.actian.spark_vector.loader.options._
 
+import com.actian.spark_vector.vector.JDBCPort
+
 import scopt.{ OptionDef, Read }
 
 sealed class ArgDescription(val longName: String, val shortName: String, val description: String)
@@ -47,17 +49,17 @@ sealed case class ArgOption[T: Read, O](
  *
  * {{{
  * Spark Vector load tool 2.0.0
- * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.1.jar> [load] [options]
+ * Usage: spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.1.jar> load [csv|parquet|orc|json] [common options] [format specific options]
  *
  * Spark Vector load
  *   --help
  *         This tool can be used to load CSV/Parquet/ORC files through Spark to Vector
  *
- * Command: load [csv|parquet|orc|json]
+ * Command: load [csv|parquet|orc|json] [common options] [format specific options]
  * Read a file and load into Vector
  *
- * Command: load csv [options]
- * Load a csv file
+ * Common options:
+ *
  *   -sf <value> | --sourceFile <value>
  *         Source file
  *   -cols <value> | --cols <value>
@@ -84,6 +86,8 @@ sealed case class ArgOption[T: Read, O](
  *         Queries to execute in Vector before loading, separated by ';'
  *   -postSQL <value> | --postSQL <value>
  *         Queries to execute in Vector after loading, separated by ';'
+ *
+ * CSV specific options:
  *
  *   -h <value> | --header <value>
  *         Comma separated string with CSV column names and datatypes, e.g. "col1 int, col2 string,"
@@ -123,86 +127,7 @@ sealed case class ArgOption[T: Read, O](
  *         DROPMALFORMED - ignore corrupted records
  *         FAILFAST - throws an exception on corrupted record
  *
- * Command: load parquet [options]
- * Load a parquet file
- *   -sf <value> | --sourceFile <value>
- *         Source file
- *   -cols <value> | --cols <value>
- *         Comma separated string containing only column names to load
- *   -vh <value> | --vectorHost <value>
- *         Vector host name
- *   -vi <value> | --vectorInstance <value>
- *         Vector instance
- *   -vo <value> | --vectorInstOffset <value>
- *         Vector JDBC instance offset
- *   -vj <value> | --vectorJDBCPort <value>
- *         Vector JDBC port
- *   -vd <value> | --vectorDatabase <value>
- *         Vector database
- *   -vu <value> | --vectorUser <value>
- *         Vector user
- *   -vp <value> | --vectorPass <value>
- *         Vector password
- *   -tt <value> | --vectorTargetTable <value>
- *         Vector target table
- *   -preSQL <value> | --preSQL <value>
- *         Queries to execute in Vector before loading, separated by ';'
- *   -postSQL <value> | --postSQL <value>
- *         Queries to execute in Vector after loading, separated by ';'
- *
- * Command: load orc [options]
- * Load an orc file
- *   -sf <value> | --sourceFile <value>
- *         Source file
- *   -cols <value> | --cols <value>
- *         Comma separated string containing only column names to load
- *   -vh <value> | --vectorHost <value>
- *         Vector host name
- *   -vi <value> | --vectorInstance <value>
- *         Vector instance
- *   -vo <value> | --vectorInstOffset <value>
- *         Vector JDBC instance offset
- *   -vj <value> | --vectorJDBCPort <value>
- *         Vector JDBC port
- *   -vd <value> | --vectorDatabase <value>
- *         Vector database
- *   -vu <value> | --vectorUser <value>
- *         Vector user
- *   -vp <value> | --vectorPass <value>
- *         Vector password
- *   -tt <value> | --vectorTargetTable <value>
- *         Vector target table
- *   -preSQL <value> | --preSQL <value>
- *         Queries to execute in Vector before loading, separated by ';'
- *   -postSQL <value> | --postSQL <value>
- *         Queries to execute in Vector after loading, separated by ';'
- *
- * Command: load json [options]
- * Load a JSON file
- *   -sf <value> | --sourceFile <value>
- *         Source file
- *   -cols <value> | --cols <value>
- *         Comma separated string containing only column names to load
- *   -vh <value> | --vectorHost <value>
- *         Vector host name
- *   -vi <value> | --vectorInstance <value>
- *         Vector instance
- *   -vo <value> | --vectorInstOffset <value>
- *         Vector JDBC instance offset
- *   -vj <value> | --vectorJDBCPort <value>
- *         Vector JDBC port
- *   -vd <value> | --vectorDatabase <value>
- *         Vector database
- *   -vu <value> | --vectorUser <value>
- *         Vector user
- *   -vp <value> | --vectorPass <value>
- *         Vector password
- *   -tt <value> | --vectorTargetTable <value>
- *         Vector target table
- *   -preSQL <value> | --preSQL <value>
- *         Queries to execute in Vector before loading, separated by ';'
- *   -postSQL <value> | --postSQL <value>
- *         Queries to execute in Vector after loading, separated by ';'
+ * JSON specific options:
  *
  *   -h <value> | --header <value>
  *         Comma separated string with JSON column names and datatypes, e.g. "col1 int, col2 string,"
@@ -404,13 +329,13 @@ object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.
         if (cur.extractor(options).isEmpty) acc :+ cur.longName else acc
       })
     if (missing.isEmpty) {
-        val instance = "[a-zA-Z]+".r
-        val offset = "[0-9]+".r
-        val port = "[a-zA-Z]*[0-9]+".r
+        val instance = JDBCPort.instanceRegex.r
+        val offset = JDBCPort.offsetOrPortRegex.r
+        val port = JDBCPort.fullPortRegex.r
         (options.vector.instance, options.vector.instanceOffset, options.vector.jdbcPort) match {
-            case (Some(instance()), None, None) |
-                 (Some(instance()), Some(offset()), None) |
-                 (None, None, Some(port())) => success
+            case (Some(instance(_*)), None, None) |
+                 (Some(instance(_*)), Some(offset(_*)), None) |
+                 (None, None, Some(port(_*))) => success
             case _ => failure("Error is: EITHER instance id (vi) and optional instance offset (vo) OR real JDBC port number (vj) required!")
         }
     } else {

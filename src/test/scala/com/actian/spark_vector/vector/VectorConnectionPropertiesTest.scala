@@ -22,9 +22,11 @@ class VectorConnectionPropertiesTest extends FunSuite with Matchers with Propert
   val validCombos = Table(
     ("host",          "instance", "instanceOffset", "port",       "database",   "user",      "password",  "expectedURL"),
     ("host.com",      Some("VH"), None,             None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH7/db"),
-    ("host.com",      Some("VH"), Some("8"),        None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH8/db"),
+	("host.com",      Some("VH"), Some("8"),        None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH8/db"),
+	("host.com",      Some("A1"), Some("8"),        None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:A18/db"),
     ("some.host.com", None,       None,             Some("9000"), "db",         None,         None,       "jdbc:ingres://some.host.com:9000/db"),
-    ("justhost",      None,       None,             Some("VW8"),  "mydatabase", None,         None,       "jdbc:ingres://justhost:VW8/mydatabase"))
+	("justhost",      None,       None,             Some("VW8"),  "mydatabase", None,         None,       "jdbc:ingres://justhost:VW8/mydatabase"),
+	("justhost",      None,       None,             Some("A18"),  "mydatabase", None,         None,       "jdbc:ingres://justhost:A18/mydatabase"))
 
   val invalidCombos = Table(
     (null, "database"),
@@ -45,7 +47,8 @@ class VectorConnectionPropertiesTest extends FunSuite with Matchers with Propert
     (None,       Some("7"),        Some("9")),
     (Some("8"),  None,             None    ),
     (Some("VW"), Some("A"),        None    ),
-    (None,       None,             Some("VW")))
+	(None,       None,             Some("VW")),
+	(None,       None,             Some("W1")))
 
   test("valid URL and values") {
     forAll(validCombos) { (host: String, instance: Option[String], instanceOffset: Option[String], port: Option[String], database: String, user: Option[String], password: Option[String], expectedURL: String) =>

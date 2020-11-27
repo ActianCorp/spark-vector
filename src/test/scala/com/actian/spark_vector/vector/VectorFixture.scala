@@ -30,7 +30,7 @@ trait VectorFixture {
   def connectionProps: VectorConnectionProperties = {
     val host = System.getProperty("vector.host", "")
     val instance = System.getProperty("vector.instance", "")
-    val instanceOffset = System.getProperty("vector.instanceOffset", "7")
+    val instanceOffset = System.getProperty("vector.instanceOffset", JDBCPort.defaultInstanceOffset)
     val jdbcPort = System.getProperty("vector.jdbcPort", "")
     val database = System.getProperty("vector.database", "")
     val user = System.getProperty("vector.user", "")

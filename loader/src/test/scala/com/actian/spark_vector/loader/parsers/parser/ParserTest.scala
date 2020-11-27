@@ -136,7 +136,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
       longKey(vectorPassword), "p@55",
       longKey(vectorTargetTable), "testtbl",
       longKey(inputFile), """c:\tmp\test.csv""")
-    val portValuesSets = Seq(None, Some(""), Some("VW"), Some("VW7"), Some("9999"))
+    val portValuesSets = Seq(None, Some(""), Some("VW"), Some("VW7"), Some("9999"), Some("A1"))
     val keyMapperCandidates = Seq(LongKeyMapper, ShortKeyMapper)
 
     val testData = for {
@@ -162,6 +162,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
                  (Some(""), _, _) | (_, Some(""), _) | (_, _, Some("")) |
                  (Some("VW7"), _, _) | (_, Some("VW7"), _) |
                  (_, Some("VW"), _) | (_, _, Some("VW")) |
+                 (_, Some("A1"), _) | (_, _, Some("A1")) |
                  (Some("9999"), _, _) | (None, Some("9999"), _) => parser.parse(testsequence, UserOptions()) shouldBe None
             case _ => parser.parse(testsequence, UserOptions()) shouldBe defined
         }
