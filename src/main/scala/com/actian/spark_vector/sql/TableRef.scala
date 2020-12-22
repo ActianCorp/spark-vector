@@ -15,26 +15,29 @@
  */
 package com.actian.spark_vector.sql
 
-import com.actian.spark_vector.vector.VectorConnectionProperties
+import com.actian.spark_vector.vector.{VectorConnectionProperties, JDBCPort}
+import scala.annotation.meta.param
 
 /** A reference to a `Vector` table */
-case class TableRef(host: String, instance: String, database: String, port: String, user: Option[String], password: Option[String], table: String, cols: Seq[String]) {
-  def toConnectionProps: VectorConnectionProperties = VectorConnectionProperties(host, instance, database, user, password, port)
+case class TableRef(host: String, port: JDBCPort, database: String, user: Option[String], password: Option[String], table: String, cols: Seq[String]) {
+  def toConnectionProps: VectorConnectionProperties = VectorConnectionProperties(host, port, database, user, password)
 }
 
 object TableRef {
   def apply(parameters: Map[String, String]): TableRef = {
     val host = parameters("host")
-    val instance = parameters("instance")
+    val instance = parameters.get("instance")
     val database = parameters("database")
     val table = parameters("table")
-    val port = if (parameters.contains("port")) parameters("port") else "7"
-    val user = if (parameters.contains("user")) Some(parameters("user")) else None
-    val password = if (parameters.contains("password")) Some(parameters("password")) else None
+    val instanceOffset = parameters.get("instanceOffset")
+    val port = parameters.get("port")
+    val user = parameters.get("user");
+    val password = parameters.get("password")
     val colsToLoad = parameters.get("cols").map(_.split(",").map(_.trim).toSeq).getOrElse(Nil)
-    TableRef(host, instance, database, port, user, password, table, colsToLoad)
+
+    TableRef(host, JDBCPort(instance, instanceOffset, port), database, user, password, table, colsToLoad)
   }
 
   def apply(connectionProps: VectorConnectionProperties, table: String): TableRef = TableRef(connectionProps.host,
-    connectionProps.instance, connectionProps.database, connectionProps.port, connectionProps.user, connectionProps.password, table, Nil)
+    connectionProps.port, connectionProps.database, connectionProps.user, connectionProps.password, table, Nil)
 }

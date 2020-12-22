@@ -27,15 +27,16 @@ object VectorTempTable {
 
   private def parseOptions(config: UserOptions): Map[String, String] = {
     val base = Seq("host" -> config.vector.host,
-      "instance" -> config.vector.instance,
-      "database" -> config.vector.database,
-      "port" -> config.vector.port,
-      "table" -> config.vector.targetTable)
+        "database" -> config.vector.database,
+        "table" -> config.vector.targetTable)
+    val jdbcConfig = Seq(config.vector.instance.map("instance" -> _),
+        config.vector.instanceOffset.map("instanceOffset" -> _),
+        config.vector.jdbcPort.map("port" -> _)).flatten
     val optional = Seq(config.vector.user.map("user" -> _),
       config.vector.password.map("password" -> _)).flatten ++
       config.vector.preSQL.map(generateSQLOption("loadpresql", _)).getOrElse(Nil) ++
       config.vector.postSQL.map(generateSQLOption("loadpostsql", _)).getOrElse(Nil)
-    (base ++ optional).toMap
+    (base ++ jdbcConfig ++ optional).toMap
   }
 
   /**

@@ -64,10 +64,10 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
   }
 
   private def assertSchemaGeneration(cxn: VectorJDBC, name: String, schema: StructType): Unit = {
-    val sql = generateTableSQL(name, schema)
+    val sql = generateTableSQL(name.toLowerCase(), schema)
     try {
       cxn.executeStatement(sql)
-      val columnsAsFields = cxn.columnMetadata(name).map(_.structField)
+      val columnsAsFields = cxn.columnMetadata(name.toLowerCase()).map(_.structField)
       columnsAsFields.size should be(schema.fields.length)
       Inspectors.forAll(columnsAsFields.zip(schema.fields)) {
         case (columnField, origField) => {
@@ -77,7 +77,7 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
           // TODO ensure field metadata consistency
         }
       }
-      cxn.dropTable(name)
+      cxn.dropTable(name.toLowerCase())
     } finally {
       cxn.rollback()
     }

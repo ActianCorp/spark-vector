@@ -20,44 +20,72 @@ import org.scalatest.prop.PropertyChecks
 
 class VectorConnectionPropertiesTest extends FunSuite with Matchers with PropertyChecks {
   val validCombos = Table(
-    ("host", "instance", "database", "user", "password", "expectedURL"),
-    ("host.com", "VH", "db", Some("user"), Some("pw"), "jdbc:ingres://host.com:VH7/db"),
-    ("some.host.com", "VW", "db", None, None, "jdbc:ingres://some.host.com:VW7/db"),
-    ("justhost", "99", "mydatabase", None, None, "jdbc:ingres://justhost:997/mydatabase"))
+    ("host",          "instance", "instanceOffset", "port",       "database",   "user",      "password",  "expectedURL"),
+    ("host.com",      Some("VH"), None,             None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH7/db"),
+	("host.com",      Some("VH"), Some("8"),        None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH8/db"),
+	("host.com",      Some("A1"), Some("8"),        None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:A18/db"),
+    ("some.host.com", None,       None,             Some("9000"), "db",         None,         None,       "jdbc:ingres://some.host.com:9000/db"),
+	("justhost",      None,       None,             Some("VW8"),  "mydatabase", None,         None,       "jdbc:ingres://justhost:VW8/mydatabase"),
+	("justhost",      None,       None,             Some("A18"),  "mydatabase", None,         None,       "jdbc:ingres://justhost:A18/mydatabase"))
 
   val invalidCombos = Table(
-    ("host", "instance", "database"),
-    (null, "VW", "database"),
-    ("", "VW", "database"),
-    ("host.com", null, "db"),
-    ("host.com", "", "db"),
-    ("host.com", "VW", null),
-    ("host.com", "VW", ""))
+    (null, "database"),
+    ("", "database"),
+    ("host.com", null),
+    ("host.com", ""))
+
+  val invalidCombos2 = Table(
+    ("instance", "instanceOffset", "port"  ),
+    (None,       None,             None    ),
+    (Some(""),   None,             None    ),
+    (Some("VW"), None,             Some("7")),
+    (Some("VW"), Some("7"),        Some("7")),
+    (Some("VW"), Some(""),         None    ),
+    (Some("VW"), Some(""),         Some("")),
+    (Some("VW"), None,             Some("")),
+    (None,       None,             Some("")),
+    (None,       Some("7"),        Some("9")),
+    (Some("8"),  None,             None    ),
+    (Some("VW"), Some("A"),        None    ),
+	(None,       None,             Some("VW")),
+	(None,       None,             Some("W1")))
 
   test("valid URL and values") {
-    forAll(validCombos) { (host: String, instance: String, database: String, user: Option[String], password: Option[String], expectedURL: String) =>
-      // With user & password
-      val props = VectorConnectionProperties(host, instance, database, user, password)
-      validate(props, host, instance, database, user, password, expectedURL)
+    forAll(validCombos) { (host: String, instance: Option[String], instanceOffset: Option[String], port: Option[String], database: String, user: Option[String], password: Option[String], expectedURL: String) =>
+        var jdbcPort: Option[JDBCPort] = None
+        noException shouldBe thrownBy {
+            jdbcPort = Some(JDBCPort(instance, instanceOffset, port))
+        }
+        // With user & password
+          val props = VectorConnectionProperties(host, jdbcPort.get, database, user, password)
+          validate(props, host, jdbcPort.get, database, user, password, expectedURL)
 
-      // Without user & password
-      val props2 = VectorConnectionProperties(host, instance, database)
-      validate(props2, host, instance, database, None, None, expectedURL)
+          // Without user & password
+          val props2 = VectorConnectionProperties(host, jdbcPort.get, database)
+          validate(props2, host, jdbcPort.get, database, None, None, expectedURL)
     }
   }
 
-  test("invalid vector properties") {
-    forAll(invalidCombos) { (host: String, instance: String, database: String) =>
+  test("invalid host or database") {
+    forAll(invalidCombos) { (host: String, database: String) =>
       a[IllegalArgumentException] should be thrownBy {
-        VectorConnectionProperties(host, instance, database)
+        VectorConnectionProperties(host, JDBCPort(None, None, Some("9999")), database)
       }
     }
   }
 
-  private def validate(props: VectorConnectionProperties, host: String, instance: String, database: String, user: Option[String], password: Option[String], expectedURL: String): Unit = {
+  test("invalid instance or instanceOffset or port") {
+    forAll(invalidCombos2) { (instance: Option[String], instanceOffset: Option[String], port: Option[String]) =>
+        a[IllegalArgumentException] should be thrownBy {
+            val jdbcPort = JDBCPort(instance, instanceOffset, port)
+        }
+    }
+  }
+
+  private def validate(props: VectorConnectionProperties, host: String, port: JDBCPort, database: String, user: Option[String], password: Option[String], expectedURL: String): Unit = {
     props.toJdbcUrl should be(expectedURL)
     props.host should be(host)
-    props.instance should be(instance)
+    props.port.value should be(port.value)
     props.database should be(database)
     props.user should be(user)
     props.password should be(password)

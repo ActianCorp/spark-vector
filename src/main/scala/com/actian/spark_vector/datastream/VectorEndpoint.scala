@@ -19,6 +19,7 @@ import scala.util.Try
 
 import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.vector.VectorJDBC
+import com.actian.spark_vector.vector.ColumnMetadata
 
 /** Information to connect to a VectorEndpoint (DataStream) */
 case class VectorEndpoint(host: String, port: Int, username: String, password: String) extends Serializable
@@ -30,13 +31,11 @@ case class VectorEndpoint(host: String, port: Int, username: String, password: S
  */
 object VectorEndpoint extends Logging {
   private val hostDbColumn = "host"
+  private val qhostDbColumn = "qhost"
   private val portDbColumn = "port"
   private val usernameDbColumn = "username"
   private val passwordDbColumn = "password"
-
   private val dataStreamsTable = "iivwtable_datastreams"
-
-  private val getVectorEndPointSql: String = s"select $hostDbColumn, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
 
   def apply(seq: Seq[Any], jdbcHost: String = "localhost"): Option[VectorEndpoint] = seq match {
     case Seq(host: String, port: String, username: String, password: String) =>
@@ -50,8 +49,25 @@ object VectorEndpoint extends Logging {
     case _ => None
   }
 
+  /** If possible, we try to use the fully qualified hostname (qhost) instead of the
+   * simple hostname (host) in order to avoid issues in a Kubernetes setup. However,
+   * depending on the VH version, the qhost column might not be available yet as it
+   * was first introduced with VH 6.1.0.
+   */
+  private def extractHostColumnName(col_meta: Seq[ColumnMetadata]): String = {
+    val res = col_meta.filter(col => { col.name == qhostDbColumn || col.name == hostDbColumn})
+    res match {
+        case Seq(_, ColumnMetadata(`qhostDbColumn`,_,_,_,_,_)) => qhostDbColumn
+        case Seq(ColumnMetadata(`qhostDbColumn`,_,_,_,_,_), _*) => qhostDbColumn
+        case Seq(ColumnMetadata(`hostDbColumn`,_,_,_,_,_)) => hostDbColumn
+        case _ => throw new IllegalStateException(s"Table $dataStreamsTable is missing a host column!")
+    }
+  }
+
   /** Issues a query through JDBC to obtain connection information from the `DataStreams` system table */
   def fromDataStreamsTable(cxn: VectorJDBC): IndexedSeq[VectorEndpoint] = {
+    val col_meta = cxn.columnMetadata(dataStreamsTable)
+    val getVectorEndPointSql: String = s"select ${extractHostColumnName(col_meta)}, $portDbColumn, $usernameDbColumn, $passwordDbColumn from $dataStreamsTable"
     logDebug(s"Running sql query ${getVectorEndPointSql} to get the datastream endpoints' info.")
     val resultSet = cxn.query(getVectorEndPointSql)
     val ret = resultSet
