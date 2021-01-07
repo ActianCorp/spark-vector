@@ -17,7 +17,9 @@ package com.actian.spark_vector.vector
 
 import java.sql.{SQLNonTransientConnectionException, SQLException}
 
-import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
+import org.scalatest.BeforeAndAfter
 
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.vector.ErrorCodes._
@@ -30,7 +32,7 @@ import org.scalacheck.Test.Failed
  * Tests of VectorJDBC
  */
 @IntegrationTest
-class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with VectorFixture {
+class VectorJDBCTest extends AnyFunSuite with BeforeAndAfter with Matchers with VectorFixture {
   private val doesNotExistTable = "this_table_does_not_exist"
   private val typeTable = "test_types"
   private val testTable = "test_vector"

@@ -26,31 +26,31 @@ import com.actian.spark_vector.datastream.VectorEndpointConf
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API` when the endpoint connections are known ahead of time
  */
-class Scanner(@transient private val sc: SparkContext, 
-              val readConf: VectorEndpointConf, 
-              val reader: DataStreamReader) 
+class Scanner(@transient private val sc: SparkContext,
+              val readConf: VectorEndpointConf,
+              val reader: DataStreamReader)
               extends RDD[InternalRow](sc, Nil) {
-  
+
   /** Custom row iterator for reading `DataStream`s in row format */
   @volatile private var it: RowReader = _
-  
+
   override protected def getPartitions = (0 until readConf.size).map(idx => new Partition { def index = idx }).toArray
 
   override protected def getPreferredLocations(split: Partition) = Seq(readConf.vectorEndpoints(split.index).host)
-  
+
   override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
-    taskContext.addTaskCompletionListener { _ => closeAll() }
-    taskContext.addTaskFailureListener { (_, e) => closeAll(Option(e)) }
+    taskContext.addTaskCompletionListener[Unit]({ _ => closeAll()})
+    taskContext.addTaskFailureListener({ (_, e) => closeAll(Option(e)) })
     logDebug("Computing partition " + split.index)
     try {
       it = reader.read(split.index)
       it
-    } catch { case e: Exception => 
+    } catch { case e: Exception =>
       logDebug("Exception occurred when attempting to read from stream. If termination was abnormal an additional exception will be thrown.", e)
       Iterator.empty
     }
   }
-  
+
   def touchDatastreams(parts: List[Int] = List[Int]()) {
     val untouched = List.range(0, readConf.size).diff(parts)
     untouched.foreach ( p =>
@@ -62,7 +62,7 @@ class Scanner(@transient private val sc: SparkContext,
       }
     )
   }
-  
+
   def closeAll(failure: Option[Throwable] = None): Unit = {
     failure.foreach(logError("Failure during task completion, closing RowReader", _))
     if (it != null) {
@@ -70,9 +70,9 @@ class Scanner(@transient private val sc: SparkContext,
       it = null;
     }
   }
-  
+
   private def close[T <: { def close() }](c: T, resourceName: String): Unit = if (c != null) {
     try { c.close } catch { case e: Exception => logWarning(s"Exception closing $resourceName", e) }
   }
-  
+
 }

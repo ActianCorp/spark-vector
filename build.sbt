@@ -6,23 +6,23 @@ lazy val extraBuildSettings = sys.props.get("buildNr").map(nr => Seq(packageOpti
 lazy val commonSettings = Seq(
     organization := "com.actian",
     version := "master",
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.12",
     libraryDependencies ++= commonDeps,
     fork in Test := true,
     test in assembly := {},
     scalacOptions ++= Seq( "-unchecked", "-deprecation" , "-feature"),
-    EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     // no scala version suffix on published artifact
     crossPaths := false
 ) ++ gitStampSettings ++ extraBuildSettings
 
 lazy val commonDeps = Seq(
-    "org.apache.spark" %% "spark-core" % "2.2.0" % "provided",
-    "org.apache.spark" %% "spark-sql" % "2.2.0"  % "provided",
-    "org.apache.spark" %% "spark-hive" % "2.2.0" % "provided",
-    "org.scalatest" %% "scalatest" % "2.2.3" % "test",
-    "org.scalacheck" %% "scalacheck" % "1.12.2" % "test",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "test"
+    "org.apache.spark" %% "spark-core" % "3.0.1" % "provided",
+    "org.apache.spark" %% "spark-sql" % "3.0.1"  % "provided",
+    "org.apache.spark" %% "spark-hive" % "3.0.1" % "provided",
+	"org.scalatest" %% "scalatest" % "3.2.2" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.14.1" % "test",
+	"org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
+	"org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test"
 )
 
 lazy val connectorDeps = Seq(
@@ -30,12 +30,12 @@ lazy val connectorDeps = Seq(
 )
 
 lazy val loaderDeps = Seq(
-    "com.github.scopt" %% "scopt" % "3.3.0",
-    "com.typesafe" % "config" % "1.3.0"
+    "com.github.scopt" %% "scopt" % "4.0.0",
+    "com.typesafe" % "config" % "1.4.1"
 )
 
 lazy val providerDeps = Seq(
-    "com.typesafe.play" %% "play-json" % "2.3.10"
+    "com.typesafe.play" %% "play-json" % "2.9.1"
 )
 
 lazy val root = (project in file("."))

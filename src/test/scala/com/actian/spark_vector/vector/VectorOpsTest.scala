@@ -16,6 +16,7 @@
 package com.actian.spark_vector.vector
 
 import java.sql.{ Date, Timestamp }
+import java.time.LocalDate
 
 import org.apache.spark.SparkException
 import org.apache.spark.sql.types.{ BooleanType, DateType, DecimalType, DoubleType, IntegerType, ShortType, StringType, StructField, StructType, TimestampType }
@@ -27,8 +28,10 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.sources.Filter
 
 import org.scalacheck.Gen
-import org.scalatest.{ Inspectors, Matchers, fixture }
-import org.scalatest.prop.PropertyChecks
+import org.scalatest.matchers.should._
+import org.scalatest.funsuite.FixtureAnyFunSuite
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.Inspectors
 
 import com.actian.spark_vector.{ DataGens, Profiling, RDDFixtures, SparkContextFixture }
 import com.actian.spark_vector.test.IntegrationTest
@@ -43,7 +46,7 @@ import com.actian.spark_vector.colbuffer.util.MillisecondsInDay
 
 /** Test VectorOps */
 @IntegrationTest
-class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Matchers with PropertyChecks with RDDFixtures
+class VectorOpsTest extends FixtureAnyFunSuite with SparkContextFixture with Matchers with ScalaCheckPropertyChecks with RDDFixtures
     with VectorFixture with Logging with Profiling {
   private val doesNotExistTable = "this_table_does_not_exist"
 
@@ -418,9 +421,9 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
   }
 
   test("generate table/date constancy") { fixture =>
-    val schema = StructTypeUtil.createSchema("t" -> DateType)
-    var data = for (i <- -1800 to 200 by 10; j <- 0 to 11; k <- 1 to 28 by 9) yield Row(new Date(i, j, k))
-    data = data ++ Seq(Row(new Date(-1899, 0, 1)), Row(new Date(8099, 11, 31)))
+	val schema = StructTypeUtil.createSchema("t" -> DateType)
+    var data = for (i <- 100 to 2100 by 10; j <- 1 to 12; k <- 1 to 28 by 9) yield Row(Date.valueOf(LocalDate.of(i, j, k)))
+    data = data ++ Seq(Row(Date.valueOf(LocalDate.of(1, 1, 1))), Row(Date.valueOf(LocalDate.of(9999, 12, 31))))
     assertTableGeneration(fixture, schema, data, Map("t" -> "t"))
   }
 

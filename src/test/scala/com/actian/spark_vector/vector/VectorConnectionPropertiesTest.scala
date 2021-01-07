@@ -15,10 +15,12 @@
  */
 package com.actian.spark_vector.vector
 
-import org.scalatest.{FunSuite, Matchers}
-import org.scalatest.prop.PropertyChecks
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
 
-class VectorConnectionPropertiesTest extends FunSuite with Matchers with PropertyChecks {
+import org.scalatest.prop.TableDrivenPropertyChecks
+
+class VectorConnectionPropertiesTest extends AnyFunSuite with Matchers with TableDrivenPropertyChecks {
   val validCombos = Table(
     ("host",          "instance", "instanceOffset", "port",       "database",   "user",      "password",  "expectedURL"),
     ("host.com",      Some("VH"), None,             None,         "db",         Some("user"), Some("pw"), "jdbc:ingres://host.com:VH7/db"),

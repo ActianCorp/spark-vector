@@ -15,12 +15,14 @@
  */
 package com.actian.spark_vector.datastream
 
-import org.scalatest.{FunSuite, Matchers, PrivateMethodTester}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
+import org.scalatest.PrivateMethodTester
 import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.vector.{VectorJDBC, VectorFixture, ColumnMetadata}
 
 @IntegrationTest
-class VectorEndpointTest extends FunSuite with Matchers with VectorFixture with PrivateMethodTester {
+class VectorEndpointTest extends AnyFunSuite with Matchers with VectorFixture with PrivateMethodTester {
     test("iivwtable_datastreams contains host and/or qhost") {
         VectorJDBC.withJDBC(connectionProps) { cxn =>
             noException shouldBe thrownBy{

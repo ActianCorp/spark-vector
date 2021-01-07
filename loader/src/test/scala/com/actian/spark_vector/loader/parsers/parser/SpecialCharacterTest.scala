@@ -1,6 +1,7 @@
 package com.actian.spark_vector.loader.parsers
 
 import org.scalatest._
+import org.scalatest.funsuite.FixtureAnyFunSuite
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import com.actian.spark_vector.loader.command.CSVRead
@@ -13,7 +14,7 @@ import com.actian.spark_vector.loader.options.UserOptions
 import resource._
 import collection.JavaConverters._
 
-class SpecialCharacterTest extends fixture.FunSuite {
+class SpecialCharacterTest extends FixtureAnyFunSuite {
 
     override type FixtureParam = SparkSession
 
@@ -32,7 +33,7 @@ class SpecialCharacterTest extends fixture.FunSuite {
         val schema = StructType( Seq(
             StructField(name = "c1", dataType = IntegerType, nullable = false),
             StructField(name = "c2", dataType = StringType, nullable = false)))
-        val loadCommand: Array[String] = Array("load", "csv", "-sf", "../testdata/escaping.csv", 
+        val loadCommand: Array[String] = Array("load", "csv", "-sf", "../testdata/escaping.csv",
             "-vh", "localhost", "-vi", "VW", "-vd", "testdb", "-tt", "sl_m3812", "-pm", "PERMISSIVE",
             "-sc", ",", "-is", "true", "-qc", "\"", "-ec", "\\", "-h","c1 int, c2 string,")
 

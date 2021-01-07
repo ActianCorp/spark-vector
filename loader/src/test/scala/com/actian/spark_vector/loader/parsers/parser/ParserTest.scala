@@ -16,8 +16,10 @@
 package com.actian.spark_vector.loader.parsers
 
 import com.actian.spark_vector.loader.options.UserOptions
-import org.scalatest.prop.PropertyChecks
-import org.scalatest.{ Matchers, Inspectors, FunSuite }
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest._
+import matchers.should._
 
 object ParserTest {
   type ArgMap = Map[ArgOption[_, _], Any]
@@ -37,7 +39,7 @@ object ParserTest {
   }
 }
 
-class ParserTest extends FunSuite with Matchers with PropertyChecks {
+class ParserTest extends AnyFunSuite with Matchers with ScalaCheckPropertyChecks {
 
   import ParserTest._
   import ArgOption._
@@ -49,25 +51,25 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
     vectorInstance -> "VH",
     vectorDatabase -> "testdb",
     vectorTargetTable -> "testtbl",
-    inputFile -> "/tmp/test.csv")
+    genInputFile -> "/tmp/test.csv")
 
   val optionalValues: ArgMap = Map(
-    hRow -> true,
-    inferSchema -> false,
-    encode -> "UTF-16",
-    separatorChar -> '|',
-    quoteChar -> '\'',
-    escapeChar -> '~',
-    commentChar -> '\\',
-    ignoreLeading -> true,
-    ignoreTrailing -> true,
-    nullValue -> "N/A",
-    nanValue  -> "nan",
-    positiveInf -> "+I",
-    negativeInf -> "-I",
-    dateFormat -> "dd/MM/yyyy",
-    timestampFormat -> "dd/MM/yyyy/HH:mm:ss",
-    parseMode -> "failfast",
+    csvHRow -> true,
+    csvInferSchema -> false,
+    csvEncode -> "UTF-16",
+    csvSeparatorChar -> '|',
+    csvQuoteChar -> '\'',
+    csvEscapeChar -> '~',
+    csvCommentChar -> '\\',
+    csvIgnoreLeading -> true,
+    csvIgnoreTrailing -> true,
+    csvNullValue -> "N/A",
+    csvNanValue  -> "nan",
+    csvPositiveInf -> "+I",
+    csvNegativeInf -> "-I",
+    csvDateFormat -> "dd/MM/yyyy",
+    csvTimestampFormat -> "dd/MM/yyyy/HH:mm:ss",
+    csvParseMode -> "failfast",
     vectorUser -> "johndoe",
     vectorPassword -> "p@55")
 
@@ -75,9 +77,10 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
     requiredValues ++ optionalValues
 
   test("metadata") {
-    val parser = Parser
+	val parser = Parser
+	val name = parser.usage
     assert(parser.header.contains("Spark Vector load tool"))
-    assert(parser.programName.startsWith("spark-submit --class com.actian.spark_vector.loader.Main"))
+    assert(parser.usage.contains("spark-submit --class com.actian.spark_vector.loader.Main"))
   }
 
   test("parse full") {
@@ -118,7 +121,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
       longKey(vectorUser), "johndoe",
       longKey(vectorPassword), "p@55",
       longKey(vectorTargetTable), "testtbl",
-      longKey(inputFile), """c:\tmp\test.csv""")
+      longKey(genInputFile), """c:\tmp\test.csv""")
     parser.parse(args, UserOptions()) match {
       case None => fail("Could not parse args")
       case Some(options) => options.general.sourceFile should be("c:/tmp/test.csv")
@@ -135,7 +138,7 @@ class ParserTest extends FunSuite with Matchers with PropertyChecks {
       longKey(vectorUser), "johndoe",
       longKey(vectorPassword), "p@55",
       longKey(vectorTargetTable), "testtbl",
-      longKey(inputFile), """c:\tmp\test.csv""")
+      longKey(genInputFile), """c:\tmp\test.csv""")
     val portValuesSets = Seq(None, Some(""), Some("VW"), Some("VW7"), Some("9999"), Some("A1"))
     val keyMapperCandidates = Seq(LongKeyMapper, ShortKeyMapper)
 

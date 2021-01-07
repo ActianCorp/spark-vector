@@ -15,3 +15,9 @@ project/project
 bin
 loader/bin
 provider/bin
+*.class
+/.bloop
+/.metals
+/.vscode
+*/.bloop/
+metals.sbt

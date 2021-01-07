@@ -63,7 +63,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     }
     logDebug(s"Got new json request: ${json}")
     Json.fromJson[Job](Json.parse(json)).fold(errors => {
-      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toFlatJson(errors)}")
+      throw new IllegalArgumentException(s"Invalid JSON receive: $json.\nThe errors are: ${JsError.toJson(errors)}")
     }, job => job)
   } flatMap { job =>
     logInfo(s"Received request for tr_id:${job.transaction_id}, query_id:${job.query_id}")

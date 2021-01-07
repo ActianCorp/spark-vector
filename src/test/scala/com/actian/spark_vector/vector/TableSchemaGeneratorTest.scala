@@ -18,8 +18,11 @@ package com.actian.spark_vector.vector
 import org.apache.spark.sql.types._
 import org.scalacheck.Gen.identifier
 import org.scalacheck.Shrink
-import org.scalatest.{ FunSuite, Inspectors, Matchers }
-import org.scalatest.prop.PropertyChecks
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
+import org.scalatest.Inspectors
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.prop.Configuration
 
 import com.actian.spark_vector.vector.VectorJDBC.withJDBC;
 import com.actian.spark_vector.DataTypeGens.schemaGen
@@ -27,10 +30,12 @@ import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.test.tags.RandomizedTest
 
 @IntegrationTest
-class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyChecks with VectorFixture {
+class TableSchemaGeneratorTest extends AnyFunSuite with Matchers with ScalaCheckDrivenPropertyChecks with VectorFixture {
   import com.actian.spark_vector.DataTypeGens._
   import com.actian.spark_vector.vector.TableSchemaGenerator._
   import org.scalacheck.Gen._
+
+  override implicit val generatorDrivenConfig = PropertyCheckConfiguration(minSuccessful = 5)
 
   val defaultFields: Seq[StructField] = Seq(
     StructField("a", BooleanType, true),
@@ -59,7 +64,7 @@ class TableSchemaGeneratorTest extends FunSuite with Matchers with PropertyCheck
       cxn.autoCommit(false)
       forAll(identifier, schemaGen)((name, schema) => {
         assertSchemaGeneration(cxn, name, schema)
-      })(PropertyCheckConfig(minSuccessful = 5), Shrink.shrinkAny[String], Shrink.shrinkAny[StructType])
+      })
     })
   }
 

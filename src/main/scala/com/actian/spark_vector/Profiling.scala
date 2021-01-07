@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector
 
-import scala.collection.mutable.Stack
+import scala.collection.immutable.List
 import scala.language.implicitConversions
 
 import com.actian.spark_vector.util.Logging
@@ -27,7 +27,7 @@ case class ProfAcc(val name: String, var acc: Long = 0) {
 }
 
 /** Contains all [[ProfAcc]]s defined and which of those are currently accumulating/measuring time (as a stack) */
-case class ProfAccMap(accs: Map[String, ProfAcc], started: Stack[ProfAcc] = Stack.empty[ProfAcc])
+case class ProfAccMap(accs: Map[String, ProfAcc], var started: List[ProfAcc] = Nil)
 
 /**
  * Trait to be used when profiling is needed. To profile a section of the code, the following steps should be followed:
@@ -47,12 +47,12 @@ trait Profiling {
    */
   def profile(acc: ProfAcc)(implicit pmap: ProfAccMap): Unit = {
     acc.acc -= System.nanoTime()
-    pmap.started.push(acc)
+    pmap.started = acc :: pmap.started
   }
 
   /** Finish profiling the current section of code, as determined by the most recent [[profile]] call */
   def profileEnd(implicit pmap: ProfAccMap): Unit = {
-    val last = pmap.started.pop()
+    val last = pmap.started.head
     last.acc += System.nanoTime()
   }
 
