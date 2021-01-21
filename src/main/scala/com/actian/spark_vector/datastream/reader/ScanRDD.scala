@@ -35,57 +35,57 @@ import com.actian.spark_vector.vector.{ ColumnMetadata, VectorConnectionProperti
 /**
  * `Vector` RDD to load data into `Spark` through `Vector`'s `Datastream API`
  */
-class ScanRDD(@transient private val sc: SparkContext, 
-              val connectionProps: VectorConnectionProperties, 
-              val table: String, 
-              val tableColumnMetadata: Seq[ColumnMetadata], 
-              val selectQuery: String, 
-              val whereParams: Seq[Any] = Nil, 
-              private var vpartitions: Int = 0) 
+class ScanRDD(@transient private val sc: SparkContext,
+              val connectionProps: VectorConnectionProperties,
+              val table: String,
+              val tableColumnMetadata: Seq[ColumnMetadata],
+              val selectQuery: String,
+              val whereParams: Seq[Any] = Nil,
+              private var vpartitions: Int = 0)
               extends RDD[InternalRow](sc, Nil) {
-  
+
   private val accumulator = sc.collectionAccumulator[Int]
-  
-  /** Custom scanner that contains specific connection info **/ 
+
+  /** Custom scanner that contains specific connection info **/
   @volatile private var scanner: Scanner = _
-  
+
   /** Custom spark listener to control setup  */
   @transient private val vectorJobqueue = new VectorJobManager()
   VectorJobManager.register(sc, vectorJobqueue);
-    
-  protected class VectorJobManager() extends SparkListener with Serializable { 
+
+  protected class VectorJobManager() extends SparkListener with Serializable {
     import scala.collection.mutable.Queue
     import scala.collection.mutable.HashMap
-    
+
     private val partList = Set.empty[Int]
     private val jobqueue = Queue.empty[Int]
     private val jobrefs = new HashMap[Int, (Future[Int], DataStreamClient, Scanner)]
     private var client: DataStreamClient = _
     private var partAccum: CollectionAccumulator[Int] = _
-    
+
     override def onJobStart(jobStart: SparkListenerJobStart): Unit = {
       if (jobStart.stageInfos.exists(_.rddInfos.exists(_.id == ScanRDD.this.id))) {
         jobqueue.enqueue(jobStart.jobId)
       }
     }
-    
+
     def getClient(): DataStreamClient = synchronized ({
       if (client == null) {
         client = new DataStreamClient(connectionProps, table)
       }
       client
     })
-    
+
     def setAccumulator(accumulator: CollectionAccumulator[Int]) = {
       partAccum = accumulator
     }
-    
+
     def readyJob(readConf: VectorEndpointConf): Unit = synchronized ({
       // Need to wait for job to start
       while (jobqueue.size == 0) {
         Thread.sleep(1)
       }
-      
+
       val jobId = jobqueue.dequeue()
       closeResourceOnFailure(getClient) {
         val unloadOp = client.startUnload(selectQuery, whereParams)
@@ -96,7 +96,7 @@ class ScanRDD(@transient private val sc: SparkContext,
       // clear client reference
       client = null
     })
-    
+
     override def onJobEnd(jobEnd: SparkListenerJobEnd): Unit = if (jobrefs.contains(jobEnd.jobId)) {
       logDebug(s"Job ${jobEnd.jobId} cleanup")
       val (unloadOperation, client, scan) = jobrefs.remove(jobEnd.jobId).get
@@ -114,18 +114,18 @@ class ScanRDD(@transient private val sc: SparkContext,
         partAccum.reset()
       }
     }
-    
+
   }
-  
+
   object VectorJobManager {
     def register(sc: SparkContext, listener: VectorJobManager): Unit = sc.addSparkListener(listener)
     def deregister(sc: SparkContext, listener: VectorJobManager): Unit = sc.removeSparkListener(listener)
   }
-  
+
   private var _readConf: VectorEndpointConf = VectorEndpointConf(IndexedSeq())
   protected def readConf = _readConf
   protected def readConf_= (value: VectorEndpointConf):Unit = _readConf = value
-  
+
   private def initializeReadconf(client: DataStreamClient): VectorEndpointConf = {
     client.prepareUnloadDataStreams(vpartitions)
     val conf =  client.getVectorEndpointConf
@@ -135,7 +135,15 @@ class ScanRDD(@transient private val sc: SparkContext,
 
   override protected def getPartitions: Array[Partition] = {
     if (vpartitions == 0)
-      vpartitions = 8;
+     {
+      val defaultNumberOfPartitions = sc.defaultParallelism
+      var maxNumberOfExecutors = defaultNumberOfPartitions
+      if(sc.getConf.contains("spark.executor.instances"))
+      {
+        maxNumberOfExecutors = sc.getConf.get("spark.executor.instances").toInt
+      }
+      vpartitions = scala.math.min(defaultNumberOfPartitions, maxNumberOfExecutors)
+    }
     (0 until vpartitions).map(idx => new Partition { def index = idx }).toArray
   }
 
@@ -149,7 +157,7 @@ class ScanRDD(@transient private val sc: SparkContext,
     }
     Seq(readConf.vectorEndpoints(split.index).host)
   }
-  
+
   override def compute(split: Partition, taskContext: TaskContext): Iterator[InternalRow] = {
     accumulator.add(split.index)
     scanner.compute(split, taskContext)

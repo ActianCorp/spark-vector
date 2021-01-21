@@ -126,7 +126,10 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
 
   /** Given a job part, retrieve its options, if any, or else an empty Map */
   private def getOptions(part: JobPart): Map[String, String] = {
-    var options = part.options.getOrElse(Map.empty[String, String]).filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
+    var options = part.options.getOrElse(Map.empty[String, String])
+                  .map({case (k,v) => k.toLowerCase -> v})
+                  .filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
+
     if (part.format.contains("csv") && !options.contains("header")) {
       options + ("header" -> "true");
     } else {
@@ -136,8 +139,10 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
 
   /** Given a job part, retrieve its extra options, if any, or else an empty Map */
   private def getExtraOptions(part: JobPart): Map[String, String] =
-    part.options.getOrElse(Map.empty[String, String]).filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
-  
+    part.options.getOrElse(Map.empty[String, String])
+    .map({case (k,v) => k.toLowerCase -> v})
+    .filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
+
   /** Parse a Spark ddl schema and create a schema object */
   private def parseSchema(schemaString: String): Option[StructType] = {
     def mkField(name: String, `type`: String, nullable: Boolean): StructField =
@@ -194,55 +199,38 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
       throw new IllegalStateException(s"Reading ${format} sources requires Hive support. To enable this, set spark.vector.provider.hive to true in the spark_provider.conf file")
     case _ =>
   }
-  
+
   /** Get a list of the filters that should be applied to the columns */
   private def getAllFilters(part: JobPart): Seq[Column] = {
     val extraOptions = getExtraOptions(part)
     val baseFilter = extraOptions.getOrElse("filter", "")
     if (!baseFilter.isEmpty())
       expr(baseFilter) +: PredicatePushdown.getFilters(part.column_infos.map(_.toColumnMetadata), spark.sparkContext)
-    else 
+    else
       PredicatePushdown.getFilters(part.column_infos.map(_.toColumnMetadata), spark.sparkContext)
   }
-  
+
   /** Gets all filters as a spark sql string */
   private def getWhereString(part: JobPart): String = {
     val filters = getAllFilters(part)
     if (filters.nonEmpty)
       "where " + filters.reduceLeft(_ and _).expr.sql
-    else 
+    else
       ""
   }
 
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
-    val options = getOptions(part)
-    val extraOptions = getExtraOptions(part)
     val format = getFormat(part)
-    
+
     format match {
       case "hive" => HiveTable(part.external_reference)
-      case _ => {
-        val schemaOpt = parseSchema(extraOptions.getOrElse("schema", ""))
-        val reader = schemaOpt match {
-          case Some(schema) => spark.read.options(options).schema(schema)
-          case None => spark.read.options(options)
-        }
-        var df = format match {
-          case "parquet" => reader.parquet(part.external_reference)
-          case "csv" => reader.csv(part.external_reference)
-          case "orc" => reader.orc(part.external_reference)
-          case _ => reader.format(format).load(part.external_reference)
-        }
-        val filters = getAllFilters(part)
-        if (filters.nonEmpty)
-          df = df.filter(filters.reduceLeft(_ and _))
-        //As described in https://issues.apache.org/jira/browse/SPARK-10848, during
-        //DataFrame creation by the reader, the nullable information is internally overwritten.
-        //That is why it is explicitly set again.
-        val schemaDf = schemaOpt.fold(df)(schema => spark.createDataFrame(df.rdd, schema))
-        TempTable("src", schemaDf)
-      }
+      case _ =>
+         val options = getOptions(part)
+         val schemaSpec = getExtraOptions(part).get("schema")
+         val filters = getAllFilters(part)
+         val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters, Some(part.column_infos))
+         TempTable("src", df)
     }
   }
 

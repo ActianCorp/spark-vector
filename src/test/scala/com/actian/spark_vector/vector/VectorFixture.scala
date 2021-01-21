@@ -30,12 +30,14 @@ trait VectorFixture {
   def connectionProps: VectorConnectionProperties = {
     val host = System.getProperty("vector.host", "")
     val instance = System.getProperty("vector.instance", "")
+    val instanceOffset = System.getProperty("vector.instanceOffset", JDBCPort.defaultInstanceOffset)
+    val jdbcPort = System.getProperty("vector.jdbcPort", "")
     val database = System.getProperty("vector.database", "")
     val user = System.getProperty("vector.user", "")
     val password = System.getProperty("vector.password", "")
-    val port = System.getProperty("vector.port", "7")
 
-    VectorConnectionProperties(host, instance, database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty), port)
+    VectorConnectionProperties(host, JDBCPort(Some(instance).filter(!_.isEmpty), Some(instanceOffset).filter(!_.isEmpty), Some(jdbcPort).filter(!_.isEmpty)),
+        database, Some(user).filter(!_.isEmpty), Some(password).filter(!_.isEmpty))
   }
 
   def nameNodeAddr = System.getProperty("vector.namenode.address", "hdfs://hornet:8020/")
@@ -45,8 +47,8 @@ trait VectorFixture {
     val colDefs = columnMD.map(columnMD => {
       Seq[String](columnMD.name, columnMD.typeName, if (!columnMD.nullable) "not null" else "").mkString(" ")
     }).mkString("(", ", ", ")")
-    
-    val partitions = if (connectionProps.instance.toUpperCase().contains("H")) {
+
+    val partitions = if (connectionProps.port.value.toUpperCase().contains("H")) {
       // TODO: Need to determine best way to dynamically specify partitions for tests
       " WITH NOPARTITION"
     } else {
@@ -88,7 +90,7 @@ trait VectorFixture {
   def admitRDDWithNulls(sparkContext: SparkContext): (RDD[Row], StructType) =
     createAdmitRDD(sparkContext, admitDataWithNulls)
 
-  def admitDataStatements(): Seq[Any] = 
+  def admitDataStatements(): Seq[Any] =
     admitData.map(_.mkString("(", ",", ")"))
 
   private val admitData = Seq(

@@ -15,21 +15,22 @@
  */
 package com.actian.spark_vector.loader.options
 
-import com.actian.spark_vector.vector.VectorConnectionProperties
+import com.actian.spark_vector.vector.{VectorConnectionProperties, JDBCPort}
 
 case class VectorOptions(
   host: String = "",
-  instance: String = "",
+  instance: Option[String] = None,
   database: String = "",
   user: Option[String] = None,
   password: Option[String] = None,
-  port: String = "7",
+  instanceOffset: Option[String] = None,
+  jdbcPort: Option[String] = None,
   targetTable: String = "",
   preSQL: Option[Seq[String]] = None,
   postSQL: Option[Seq[String]] = None)
-  
-object VectorOptions {
-  def getConnectionProps(vo: VectorOptions): VectorConnectionProperties =
-    VectorConnectionProperties(vo.host,  vo.instance, vo.database, vo.user, vo.password, vo.port)
 
+object VectorOptions {
+  def getConnectionProps(vo: VectorOptions): VectorConnectionProperties = {
+    VectorConnectionProperties(vo.host,  JDBCPort(vo.instance, vo.instanceOffset, vo.jdbcPort), vo.database, vo.user, vo.password)
+  }
 }
