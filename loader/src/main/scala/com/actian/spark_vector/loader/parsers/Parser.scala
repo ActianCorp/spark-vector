@@ -278,10 +278,10 @@ object Args {
       jsonLoad.longName -> jsonOptions)
 }
 
-object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.1.jar>") {
+object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-master.jar>") {
   import Args._
 
-  head("Spark Vector load tool", "2.0.0")
+  head("Spark Vector load tool", "3.0.0")
   note("Spark Vector load")
   help("help").text("This tool can be used to load CSV/Parquet/ORC files through Spark to Vector")
   cmd(load.longName)

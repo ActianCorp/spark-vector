@@ -10,6 +10,16 @@ lazy val commonSettings = Seq(
     libraryDependencies ++= commonDeps,
     fork in Test := true,
     test in assembly := {},
+    assemblyMergeStrategy in assembly := {
+        case x if x.contains("module-info") =>
+            MergeStrategy.first
+        case x => {
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        }
+    },
+    //Example configuration in order to talk to a local vector instance for testint purpose
+    //javaOptions ++= Seq("-Dvector.host=localhost", "-Dvector.instance=VW", "-Dvector.database=testdb", "-Dvector.user=", "-Dvector.password="),
     scalacOptions ++= Seq( "-unchecked", "-deprecation" , "-feature"),
     // no scala version suffix on published artifact
     crossPaths := false
@@ -19,10 +29,10 @@ lazy val commonDeps = Seq(
     "org.apache.spark" %% "spark-core" % "3.0.1" % "provided",
     "org.apache.spark" %% "spark-sql" % "3.0.1"  % "provided",
     "org.apache.spark" %% "spark-hive" % "3.0.1" % "provided",
-	"org.scalatest" %% "scalatest" % "3.2.2" % "test",
+    "org.scalatest" %% "scalatest" % "3.2.2" % "test",
     "org.scalacheck" %% "scalacheck" % "1.14.1" % "test",
-	"org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
-	"org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test"
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % "test",
+    "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test"
 )
 
 lazy val connectorDeps = Seq(
