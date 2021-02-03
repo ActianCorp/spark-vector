@@ -187,83 +187,83 @@ object Args {
     "vectorPass", "vp", "Vector password", _.vector.password, updateVector((o, v) => o.copy(password = Some(v))), false)
   val vectorTargetTable = ArgOption[String, String](
     "vectorTargetTable", "tt", "Vector target table", _.vector.targetTable, updateVector((o, v) => o.copy(targetTable = v)), true)
-  val preSQL = ArgOption[Seq[String], Option[Seq[String]]](
+  val vectorPreSQL = ArgOption[Seq[String], Option[Seq[String]]](
     "preSQL", "preSQL", "Queries to execute in Vector before loading, separated by ';'", _.vector.preSQL, updateVector((o, v) => o.copy(preSQL = Some(v))), false)
-  val postSQL = ArgOption[Seq[String], Option[Seq[String]]](
+  val vectorPostSQL = ArgOption[Seq[String], Option[Seq[String]]](
     "postSQL", "postSQL", "Queries to execute in Vector after loading, separated by ';'", _.vector.postSQL, updateVector((o, v) => o.copy(postSQL = Some(v))), false)
 
-  val vectorArgs = Seq(vectorHost, vectorInstance, vectorInstOffset, vectorJDBCPort, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable, preSQL, postSQL)
+  val vectorArgs = Seq(vectorHost, vectorInstance, vectorInstOffset, vectorJDBCPort, vectorDatabase, vectorUser, vectorPassword, vectorTargetTable, vectorPreSQL, vectorPostSQL)
 
   // Generic arguments
-  val inputFile = ArgOption[String, String](
+  val genInputFile = ArgOption[String, String](
     "sourceFile", "sf", "Source file", _.general.sourceFile, updateGeneral((o, v) => o.copy(sourceFile = v.replace('\\', '/'))), true)
-  val colsForLoad = ArgOption[String, Option[Seq[_]]](
+  val genColsForLoad = ArgOption[String, Option[Seq[_]]](
     "cols", "cols", "Comma separated string containing only column names to load", _.general.colsToLoad, updateGeneral((o, v) => o.copy(colsToLoad = Some(v.split(",").map(_.trim())))), false)
-  val createTable = ArgOption[Boolean, Option[Boolean]](
+  val genCreateTable = ArgOption[Boolean, Option[Boolean]](
     "createTable", "ct", "Whether the table should be created", _.general.createTable, updateGeneral((o, v) => o.copy(createTable = Option(v))), false)
-  val generalArgs = Seq(inputFile, colsForLoad, createTable)
+  val generalArgs = Seq(genInputFile, genColsForLoad, genCreateTable)
 
   // CSV arguments
-  val hRow = ArgOption[Boolean, Option[Boolean]](
+  val csvHRow = ArgOption[Boolean, Option[Boolean]](
     "skipHeader", "sh", "Skip header row", _.csv.headerRow, updateCSV((o, v) => o.copy(headerRow = Option(v))), false)
-  val inferSchema = ArgOption[Boolean, Option[Boolean]](
+  val csvInferSchema = ArgOption[Boolean, Option[Boolean]](
     "inferSchema", "is", "Infer the CSV input schema automatically", _.csv.inferSchema, updateCSV((o, v) => o.copy(inferSchema = Option(v))), false)
-  val encode = ArgOption[String, Option[String]](
+  val csvEncode = ArgOption[String, Option[String]](
     "encoding", "en", "CSV text encoding", _.csv.encoding, updateCSV((o, v) => o.copy(encoding = Option(v))), false)
-  val separatorChar = ArgOption[Char, Option[Char]](
+  val csvSeparatorChar = ArgOption[Char, Option[Char]](
     "separatorChar", "sc", "CSV field separator character", _.csv.separatorChar, updateCSV((o, v) => o.copy(separatorChar = Option(v))), false)
-  val quoteChar = ArgOption[Char, Option[Char]](
+  val csvQuoteChar = ArgOption[Char, Option[Char]](
     "quoteChar", "qc", "CSV quote character", _.csv.quoteChar, updateCSV((o, v) => o.copy(quoteChar = Option(v))), false)
-  val escapeChar = ArgOption[Char, Option[Char]](
+  val csvEscapeChar = ArgOption[Char, Option[Char]](
     "escapeChar", "ec", "CSV escape character", _.csv.escapeChar, updateCSV((o, v) => o.copy(escapeChar = Option(v))), false)
-  val commentChar = ArgOption[Char, Option[Char]](
+  val csvCommentChar = ArgOption[Char, Option[Char]](
     "commentChar", "cc", "CSV comment character", _.csv.commentChar, updateCSV((o, v) => o.copy(commentChar = Option(v))), false)
-  val ignoreLeading = ArgOption[Boolean, Option[Boolean]](
+  val csvIgnoreLeading = ArgOption[Boolean, Option[Boolean]](
     "ignoreLeadingWS", "il", "Whether leading whitespaces on values are skipped", _.csv.ignoreLeading, updateCSV((o, v) => o.copy(ignoreLeading = Option(v))), false)
-  val ignoreTrailing = ArgOption[Boolean, Option[Boolean]](
+  val csvIgnoreTrailing = ArgOption[Boolean, Option[Boolean]](
     "ignoreTrailingWS", "it", "Whether trailing whitespaces on values are skipped", _.csv.ignoreTrailing, updateCSV((o, v) => o.copy(ignoreTrailing = Option(v))), false)
-  val nullValue = ArgOption[String, Option[String]](
+  val csvNullValue = ArgOption[String, Option[String]](
     "nullValue", "nv", "String representation of a null value", _.csv.nullValue, updateCSV((o, v) => o.copy(nullValue =  Option(v))), false)
-  val nanValue = ArgOption[String, Option[String]](
+  val csvNanValue = ArgOption[String, Option[String]](
     "nanValue", "nnv", "String representation of a non-number value", _.csv.nanValue, updateCSV((o, v) => o.copy(nanValue = Option(v))), false)
-  val positiveInf = ArgOption[String, Option[String]](
+  val csvPositiveInf = ArgOption[String, Option[String]](
     "positiveInf", "pi", "String representation of a positive infinity value", _.csv.positiveInf, updateCSV((o, v) => o.copy(positiveInf = Option(v))), false)
-  val negativeInf = ArgOption[String, Option[String]](
+  val csvNegativeInf = ArgOption[String, Option[String]](
     "negativeInf", "ni", "String representation of a negative infinity value", _.csv.negativeInf, updateCSV((o, v) => o.copy(negativeInf = Option(v))), false)
-  val dateFormat = ArgOption[String, Option[String]](
+  val csvDateFormat = ArgOption[String, Option[String]](
     "dateFormat", "df", "CSV date format string", _.csv.dateFormat, updateCSV((o, v) => o.copy(dateFormat = Option(v))), false)
-  val timestampFormat = ArgOption[String, Option[String]](
+  val csvTimestampFormat = ArgOption[String, Option[String]](
     "timestampFormat", "tf", "CSV timestamp format string", _.csv.timestampFormat, updateCSV((o, v) => o.copy(timestampFormat = Option(v))), false)
-  val parseMode = ArgOption[String, Option[String]](
+  val csvParseMode = ArgOption[String, Option[String]](
     "parseMode", "pm", "Set parse mode for dealing with corrupt records during parsing", _.csv.parseMode, updateCSV((o, v) => o.copy(parseMode = Option(v))), false)
-  val header = ArgOption[String, Option[Seq[_]]](
+  val csvHeader = ArgOption[String, Option[Seq[_]]](
     "header", "h", "Comma separated string with CSV column names and datatypes, e.g. \"col1 int, col2 string,\"", _.csv.header, updateCSV((o, v) => o.copy(header = Some(v.split(",")))), false)
 
     // JSON arguments
-  val primitivesAsStr = ArgOption[Boolean, Option[Boolean]](
+  val jsonPrimitivesAsStr = ArgOption[Boolean, Option[Boolean]](
     "primitivesAsString", "ps", "Infer all primitive values as a string type", _.json.primitivesAsString, updateJSON((o, v) => o.copy(primitivesAsString = Option(v))), false)
-  val allowComments = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowComments = ArgOption[Boolean, Option[Boolean]](
     "allowComments", "ac", "Ignores Java/C++ style comments in JSON records", _.json.allowComments, updateJSON((o, v) => o.copy(allowComments = Option(v))), false)
-  val allowUnquoted = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowUnquoted = ArgOption[Boolean, Option[Boolean]](
     "allowUnquoted", "ac", "Allow unquoted JSON field names in the record", _.json.allowUnquoted, updateJSON((o, v) => o.copy(allowUnquoted = Option(v))), false)
-  val allowSingleQuotes = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowSingleQuotes = ArgOption[Boolean, Option[Boolean]](
     "allowSingleQuotes", "as", "Allow single quotes in addition to double quotes", _.json.allowSingleQuotes, updateJSON((o, v) => o.copy(allowSingleQuotes = Option(v))), false)
-  val allowLeadingZeros = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowLeadingZeros = ArgOption[Boolean, Option[Boolean]](
     "allowLeadingZeros", "as", "Allow leading zeros in numbers", _.json.allowLeadingZeros, updateJSON((o, v) => o.copy(allowLeadingZeros = Option(v))), false)
-  val allowEscapingAny = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowEscapingAny = ArgOption[Boolean, Option[Boolean]](
     "allowEscapingAny", "as", "Allow accepting quoting of all characters using backslash quoting mechanism", _.json.allowEscapingAny, updateJSON((o, v) => o.copy(allowEscapingAny = Option(v))), false)
-  val allowUnqCtrlChars = ArgOption[Boolean, Option[Boolean]](
+  val jsonAllowUnqCtrlChars = ArgOption[Boolean, Option[Boolean]](
     "allowUnquotedControlChars", "auc", "Whether unquoted control characters are allowed in strings", _.json.allowUnquotedControlChars, updateJSON((o, v) => o.copy(allowUnquotedControlChars = Option(v))), false)
-  val multiline = ArgOption[Boolean, Option[Boolean]](
+  val jsonMultiline = ArgOption[Boolean, Option[Boolean]](
     "multiline", "ml", "Parse one record, which may span multiple lines, per file", _.json.multiline, updateJSON((o, v) => o.copy(multiline = Option(v))), false)
-  val parseModeJson = ArgOption[String, Option[String]](
+  val jsonParseModeJson = ArgOption[String, Option[String]](
     "parseMode", "pm", "Set parse mode for dealing with corrupt records during parsing", _.json.parseMode, updateJSON((o, v) => o.copy(parseMode = Option(v))), false)
-  val headerJson = ArgOption[String, Option[Seq[_]]](
+  val jsonHeaderJson = ArgOption[String, Option[Seq[_]]](
     "header", "h", "Comma separated string with JSON column names and datatypes, e.g. \"col1 int, col2 string,\"", _.json.header, updateJSON((o, v) => o.copy(header = Some(v.split(",")))), false)
 
-  val csvArgs = Seq(header, hRow, inferSchema, encode, separatorChar, quoteChar, escapeChar, commentChar,
-    ignoreLeading, ignoreTrailing, nullValue, nanValue, positiveInf, negativeInf, dateFormat, timestampFormat, parseMode)
-  val jsonArgs = Seq(headerJson, primitivesAsStr, allowComments, allowUnquoted, allowSingleQuotes, allowLeadingZeros, allowEscapingAny, allowUnqCtrlChars, multiline, parseModeJson)
+  val csvArgs = Seq(csvHeader, csvHRow, csvInferSchema, csvEncode, csvSeparatorChar, csvQuoteChar, csvEscapeChar, csvCommentChar,
+    csvIgnoreLeading, csvIgnoreTrailing, csvNullValue, csvNanValue, csvPositiveInf, csvNegativeInf, csvDateFormat, csvTimestampFormat, csvParseMode)
+  val jsonArgs = Seq(jsonHeaderJson, jsonPrimitivesAsStr, jsonAllowComments, jsonAllowUnquoted, jsonAllowSingleQuotes, jsonAllowLeadingZeros, jsonAllowEscapingAny, jsonAllowUnqCtrlChars, jsonMultiline, jsonParseModeJson)
   val parquetArgs = Seq.empty[ArgOption[_, _]]
   val orcArgs = Seq.empty[ArgOption[_, _]]
 
@@ -278,10 +278,10 @@ object Args {
       jsonLoad.longName -> jsonOptions)
 }
 
-object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-2.1.jar>") {
+object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-master.jar>") {
   import Args._
 
-  head("Spark Vector load tool", "2.0.0")
+  head("Spark Vector load tool", "3.0.0")
   note("Spark Vector load")
   help("help").text("This tool can be used to load CSV/Parquet/ORC files through Spark to Vector")
   cmd(load.longName)

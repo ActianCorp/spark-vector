@@ -1,12 +1,14 @@
 package com.actian.spark_vector.provider
 
 import org.scalatest._
-import org.scalatest.prop._
+import org.scalatest.funsuite.FixtureAnyFunSuite
 import org.apache.spark.sql.SparkSession
 import resource._
 import org.apache.spark.SparkConf
+import matchers.should._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class CaseInsensivitiyTest extends fixture.FunSuite with Matchers with PrivateMethodTester with TableDrivenPropertyChecks
+class CaseInsensivitiyTest extends FixtureAnyFunSuite with Matchers with PrivateMethodTester with ScalaCheckPropertyChecks
 {
     override type FixtureParam = SparkSession
 

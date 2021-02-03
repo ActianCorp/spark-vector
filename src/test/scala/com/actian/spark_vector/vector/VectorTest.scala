@@ -19,8 +19,9 @@ import org.apache.hadoop.fs.Path
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.types.{ StringType, StructField, StructType }
 
-import org.scalatest.{ FunSuite, Matchers }
-import org.scalatest.prop.PropertyChecks
+import org.scalatest.matchers.should._
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import com.actian.spark_vector.test.tags.IntegrationTest
 import com.actian.spark_vector.test.util.StructTypeUtil
@@ -29,7 +30,7 @@ import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorUtil.Field2Column
 import com.actian.spark_vector.vector.VectorFixture.withTable
 
-class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorFixture with Logging {
+class VectorTest extends AnyFunSuite with Matchers with ScalaCheckPropertyChecks with VectorFixture with Logging {
   test("getTableSchema for existing table", IntegrationTest) {
     def createTable(tableName: String): Unit = {
       VectorJDBC.withJDBC(connectionProps) { cxn =>

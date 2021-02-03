@@ -23,7 +23,7 @@ import com.actian.spark_vector.datastream.{ padding, DataStreamConnector }
 import com.actian.spark_vector.colbuffer.WriteColumnBuffer
 
 /** The `VectorSink` that flushes `ByteBuffer`s to a `Vector DataStream`'s socket */
-private[writer] case class DataStreamSink(implicit socket: SocketChannel) extends Serializable {
+private[writer] case class DataStreamSink()(implicit socket: SocketChannel) extends Serializable {
   import DataStreamWriter._
 
   private final val BinaryDataCode = 5 /* X100CPT_BINARY_DATA_V2 */

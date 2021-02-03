@@ -1,26 +1,25 @@
 package com.actian.spark_vector.provider
 
+import resource._
 import org.apache.spark._
 import org.apache.spark.sql._
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.types.StructField
 import org.scalatest._
+import org.scalatest.funsuite.FixtureAnyFunSuite
+import matchers.should._
+import com.actian.spark_vector.provider.ExternalTable._
 
-class ExternalTableTest extends fixture.FunSuite with Matchers with Inspectors {
-
-  import ExternalTable._
-  import resource._
+class ExternalTableTest extends FixtureAnyFunSuite with Matchers with Inspectors {
 
   override type FixtureParam = SparkSession
 
   val csvPath: String = "../testdata/employees.csv"
 
   override protected def withFixture(test: OneArgTest): Outcome = {
-    val conf = new SparkConf()
+      val conf = new SparkConf()
       .setMaster("local[1]")
       .setAppName("external table test")
-    managed(SparkSession.builder.config(conf).getOrCreate()).acquireAndGet { spark =>
+      managed(SparkSession.builder.config(conf).getOrCreate()).acquireAndGet { spark =>
       withFixture(test.toNoArgTest(spark))
     }
   }

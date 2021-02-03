@@ -2,9 +2,11 @@ package com.actian.spark_vector.provider
 
 import org.apache.spark.sql.types._
 import org.scalatest._
+import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.prop._
+import matchers.should._
 
-class SchemaParserTest extends FunSuite with Matchers with TableDrivenPropertyChecks {
+class SchemaParserTest extends AnyFunSuite with Matchers with TableDrivenPropertyChecks {
 
   import SchemaParser._
 

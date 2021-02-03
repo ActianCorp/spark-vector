@@ -15,7 +15,7 @@
  */
 package com.actian.spark_vector.vector
 
-import java.sql.{ Connection, DriverManager, PreparedStatement, ResultSet, Statement }
+import java.sql.{ Connection, DriverManager, PreparedStatement, ResultSet, Statement, Types }
 import java.util.Properties
 
 import org.apache.spark.sql.Row
@@ -144,11 +144,11 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   } else {
     false
   }
-  
+
   /**
    * Creates a Table in SQL context with the given table-name and schema.
    * Throws an exception if table already exists
-   * 
+   *
    * @param tableName A non empty string representing the SQL table name.
    * @param schema The required schema.
    */
@@ -164,10 +164,10 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
             if (message.contains("Duplicate object name")) {
               throw new VectorException(TableAlreadyExist,s"SQL Exception encountered while creating Table '${tableName}': ${message}")
             }
-        }         
-      }    
+        }
+      }
   }
-    
+
   /**
    * Retrieve the `ColumnMetadata`s for table `tableName` as a sequence containing as many elements
    * as there are columns in the table. Each element contains the name, type, nullability, precision
@@ -191,7 +191,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
           column.next()
           column.getString("DECIMAL_DIGITS").toInt
         } else metaData.getScale(columnIndex)
-        
+
         new ColumnMetadata(columnName,
           typeName,
           metaData.isNullable(columnIndex) == 1,
@@ -204,7 +204,7 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
       logError(s"Unable to retrieve metadata for table '${tableName}'", exc)
       throw new VectorException(NoSuchTable, s"Unable to query target table '${tableName}': ${exc.getLocalizedMessage}")
   }
-  
+
   /**
    * Retrieve the default values for table `tableName` as a mapping of column names to defaults.
    */
@@ -215,13 +215,13 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
     withPreparedStatement(sql, statement => {
       val rs = statement.executeQuery()
       val cc = rs.getMetaData.getColumnCount
-      
+
       val iter = ResultSetIterator(rs)(toRow)
       (for (row <- iter) yield {
         if (row(2).toString.trim == "BOOLEAN")
           //Spark 2.1 cannot cast strings to booleans during null replacement.
           (row(0).toString.trim -> row(1).toString.trim.toLowerCase.toBoolean)
-        else 
+        else
           (row(0).toString.trim -> unquoteLiteral(row(1).toString))
       }).toMap
     })

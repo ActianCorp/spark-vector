@@ -19,18 +19,27 @@ import scala.util.Random
 
 import org.scalacheck.Gen
 import org.scalacheck.Prop.{ forAllNoShrink, propBoolean }
-import org.scalatest.{ Finders, FunSuite, Matchers }
-import org.scalatest.prop.Checkers.{ check, generatorDrivenConfig, minSuccessful }
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
+import org.scalatestplus.scalacheck.Checkers._
 
 import com.actian.spark_vector.util.Logging
 import com.actian.spark_vector.test.tags.RandomizedTest
 
+class TestBipartiteAssignment(
+    override protected val nA: Int,
+    override protected val nB: Int,
+	override protected val edges: IndexedSeq[IndexedSeq[Int]]
+) extends BipartiteAssignment {
+  override protected val target: Seq[Int] = Seq.fill(nB)(nA / nB)
+}
+
 /** Tests of DataStreamPartitionAssignment */
-class DataStreamPartitionAssignmentTest extends FunSuite with Matchers with Logging {
+class DataStreamPartitionAssignmentTest extends AnyFunSuite with Matchers with Logging {
   private val perfectMatchParamsGen = for {
     nB <- Gen.choose(1, 60)
     nA <- Gen.choose(1, 24).map(_ * nB) /* to be sure they split evenly */
-    replFactor <- Gen.choose(1, Math.ceil(nB / 2).toInt)
+    replFactor <- Gen.choose(1, Math.ceil(nB.toDouble / 2).toInt)
     edges <- Gen.listOfN(nA, Gen.listOfN(replFactor - 1, Gen.choose(0, nB - 1)))
       .map(l => (0 until l.size).map(a => Random.shuffle((l(a) :+ (a % nB)).distinct.toIndexedSeq))) /* make sure that there is a match that evenly splits the partitions among nodes */
   } yield (nA, nB, edges)
@@ -71,12 +80,7 @@ class DataStreamPartitionAssignmentTest extends FunSuite with Matchers with Logg
       forAllNoShrink(perfectMatchParamsGen) {
         case (numA, numB, e) =>
           numA > 0 && numB > 0 ==> {
-            val assignment = new BipartiteAssignment {
-              val nA = numA
-              val nB = numB
-              val edges = e
-              val target = Seq.fill(nB)(numA / numB)
-            }
+            val assignment = new TestBipartiteAssignment(numA, numB, e)
             val ret = assignment.matching.map(_.size)
             ret.max == numA / numB
           }

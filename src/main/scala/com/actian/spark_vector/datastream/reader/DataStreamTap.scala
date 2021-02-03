@@ -23,7 +23,7 @@ import java.nio.ByteBuffer
 import java.nio.channels.SocketChannel
 
 /** The `VectorTap` that reads `Vector` vectors from a `Vector DataStream`'s socket as `ByteBuffer`s */
-private[reader] case class DataStreamTap(implicit val socket: SocketChannel) extends Logging with Serializable {
+private[reader] case class DataStreamTap()(implicit val socket: SocketChannel) extends Logging with Serializable {
   import DataStreamReader._
 
   private final val SuccessCode = 0 // X100CPT_SUCCESS

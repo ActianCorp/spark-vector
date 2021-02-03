@@ -111,8 +111,8 @@ trait VectorOps {
 
     // Used to encode InternalRow to external Row objects
     private def externalizeRDD(rdd: RDD[InternalRow], schema: StructType): RDD[Row] = {
-      val encoder = RowEncoder(schema).resolveAndBind()
-      rdd.map(encoder.fromRow(_))
+      val encoder = RowEncoder(schema).resolveAndBind().createDeserializer()
+      rdd.map(encoder)
     }
   }
 

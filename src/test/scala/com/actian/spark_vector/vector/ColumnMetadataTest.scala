@@ -23,11 +23,12 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalacheck.Gen.{choose, identifier}
 import org.scalacheck.Prop.{forAll, propBoolean}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should._
 
 import com.actian.spark_vector.test.tags.RandomizedTest
 
-class ColumnMetadataTest extends FunSuite with Matchers {
+class ColumnMetadataTest extends AnyFunSuite with Matchers {
   // Generate random column metadata and ensure the resultant StructField's are valid
   test("generated", RandomizedTest) {
     forAll(columnMetadataGen)(colMD => {

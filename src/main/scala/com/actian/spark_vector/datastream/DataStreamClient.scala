@@ -26,6 +26,8 @@ import com.actian.spark_vector.util.ResourceUtil.closeResourceOnFailure
 import com.actian.spark_vector.vector.{ VectorConnectionProperties, VectorJDBC }
 import com.actian.spark_vector.vector.VectorException
 import com.actian.spark_vector.vector.ErrorCodes
+import scala.util.Failure
+import scala.util.Success
 
 /**
  * A client to prepare loading and issue the load `SQL` query to Vector
@@ -63,8 +65,9 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
   private def executeSql(sql: String, params: Seq[Any] = Nil): Future[Int] = {
     logDebug(s"Executing SQL: ${sql}  with parameters: ${params}")
     val f = Future { if (params.isEmpty) jdbc.executeStatement(sql) else jdbc.executePreparedStatement(sql, params) }
-    f onFailure {
-      case t =>
+    f.onComplete {
+      case Success(_) => //proceed
+      case Failure(t) =>
         logTrace(s"The query '${sql}' has been terminated. " +
                   "If termination was abnormal an additional exception will be thrown by the executor.", t)
         // FIXME: use rollback() instead when Vector will actually close the DataStreams after unrolling
@@ -91,7 +94,7 @@ case class DataStreamClient(vectorProps: VectorConnectionProperties, table: Stri
     jdbc.rollback
     jdbc.close
   })
-  
+
   /** Close the `JDBC` connection*/
   def close(): Unit = synchronized(if (!jdbc.isClosed) {
     logDebug("Close DataStreamClient")
