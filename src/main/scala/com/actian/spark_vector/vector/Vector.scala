@@ -26,7 +26,7 @@ import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.StructType
 
 import com.actian.spark_vector.datastream.{ DataStreamClient, VectorEndpointConf }
-import com.actian.spark_vector.datastream.reader.{ DataStreamReader, Scanner, ScanRDD }
+import com.actian.spark_vector.datastream.reader.{ DataStreamReader, Scanner, Scan }
 import com.actian.spark_vector.datastream.writer.{ DataStreamWriter, InsertRDD }
 import com.actian.spark_vector.util.{ Logging, RDDUtil, ResourceUtil }
 import com.actian.spark_vector.sql.VectorRelation
@@ -36,7 +36,7 @@ private[spark_vector] object Vector extends Logging {
   import VectorUtil._
   import RDDUtil._
   import ResourceUtil._
-  
+
   private def prepareRDD(rdd: RDD[Row],
     rddSchema: StructType,
     targetSchema: StructType,
@@ -125,7 +125,7 @@ private[spark_vector] object Vector extends Logging {
     val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
     load(inputRDD, tableColumnMetadata, writeConf)
   }
-  
+
   /**
    * Given a `Spark Context` try to unload a Vector table (name is omitted since it isn't needed).
    * This should only be used in specific circumstances since the RDD it creates cannot be reused.
@@ -176,8 +176,8 @@ private[spark_vector] object Vector extends Logging {
     whereClause: String = "",
     whereParams: Seq[Any] = Nil,
     partitions: Int = 0): RDD[InternalRow] = {
-    
+
     var selectQuery = s"select ${selectColumns} from ${table} ${whereClause}"
-    new ScanRDD(sc, vectorProps, table, tableColumnMetadata, selectQuery, whereParams, partitions)
+    new Scan(sc, vectorProps, table, tableColumnMetadata, selectQuery, whereParams, partitions)
   }
 }

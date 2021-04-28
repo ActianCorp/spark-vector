@@ -724,6 +724,24 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     }
   }
 
+   test("Vector-to-Spark-to-Vector loop") { fixture =>
+    import fixture.spark.implicits._
+    val props = new java.util.Properties()
+    props.setProperty("user", connectionProps.user.getOrElse(""))
+    props.setProperty("password", connectionProps.password.getOrElse(""))
+    withTable(createLoadAdmitTable) { tableName =>
+      val df = fixture.spark.read.vector(connectionProps, tableName, props)
+      val dummy = df.map(r => r, df.encoder)
+      withTable(createAdmitTable) { tableNameInsert =>
+        dummy.write.vector(connectionProps, tableNameInsert, props)
+        val re_read = fixture.spark.read.vector(connectionProps, tableNameInsert, props)
+        val run1 = df.rdd.collect().sortBy(r => r(0).toString()).toSeq
+        val run2 = re_read.rdd.collect().sortBy(r => r(0).toString()).toSeq
+        run1.equals(run2) should be(true)
+      }
+    }
+  }
+
   test("dataframe reader") { fixture =>
     val props = new java.util.Properties()
     props.setProperty("user", connectionProps.user.getOrElse(""))
