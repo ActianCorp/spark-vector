@@ -21,3 +21,5 @@ provider/bin
 /.vscode
 */.bloop/
 metals.sbt
+spark_info_file
+.DS_STORE

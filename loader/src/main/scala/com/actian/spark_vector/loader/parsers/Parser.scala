@@ -12,11 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Maintainer: francis.gropengieser@actian.com
  */
 package com.actian.spark_vector.loader.parsers
 
+import com.actian.spark_vector.BuildInfo
 import com.actian.spark_vector.loader.options._
-
 import com.actian.spark_vector.vector.JDBCPort
 
 import scopt.{ OptionDef, Read }
@@ -278,10 +280,10 @@ object Args {
       jsonLoad.longName -> jsonOptions)
 }
 
-object Parser extends scopt.OptionParser[UserOptions]("spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-master.jar>") {
+object Parser extends scopt.OptionParser[UserOptions](s"""spark-submit --class com.actian.spark_vector.loader.Main <spark_vector_loader-assembly-${BuildInfo.version}.jar>""") {
   import Args._
 
-  head("Spark Vector load tool", "3.0.0")
+  head("Spark Vector load tool", BuildInfo.version)
   note("Spark Vector load")
   help("help").text("This tool can be used to load CSV/Parquet/ORC files through Spark to Vector")
   cmd(load.longName)

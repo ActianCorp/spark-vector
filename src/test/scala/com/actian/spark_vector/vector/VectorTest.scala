@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Maintainer: francis.gropengieser@actian.com
  */
 package com.actian.spark_vector.vector
 
@@ -66,7 +68,7 @@ class VectorTest extends AnyFunSuite with Matchers with ScalaCheckPropertyChecks
 
   private def validatePath(sc: SparkContext, path: Path): Boolean = {
     val fs = path.getFileSystem(sc.hadoopConfiguration)
-    if (fs.exists(path) && fs.isDirectory(path)) true else false
+    if (fs.exists(path) && fs.getFileStatus(path).isDirectory()) true else false
   }
 
   test("applyFieldMap") {

@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Maintainer: francis.gropengieser@actian.com
  */
 package com.actian.spark_vector.vector
 
@@ -30,8 +32,8 @@ trait VectorFixture {
   def connectionProps: VectorConnectionProperties = {
     val host = System.getProperty("vector.host", "")
     val instance = System.getProperty("vector.instance", "")
-    val instanceOffset = System.getProperty("vector.instanceOffset", JDBCPort.defaultInstanceOffset)
     val jdbcPort = System.getProperty("vector.jdbcPort", "")
+    val instanceOffset = System.getProperty("vector.instanceOffset", if (jdbcPort.isEmpty) JDBCPort.defaultInstanceOffset else "")
     val database = System.getProperty("vector.database", "")
     val user = System.getProperty("vector.user", "")
     val password = System.getProperty("vector.password", "")
