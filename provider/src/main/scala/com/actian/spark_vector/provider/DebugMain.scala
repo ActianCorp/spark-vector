@@ -61,7 +61,7 @@ object DebugMain extends App with Logging {
   }
   for {
     server <- managed(
-      ServerSocketChannel.open.bind(new InetSocketAddress(65500))
+      ServerSocketChannel.open.bind(new InetSocketAddress(0))
     )
   } {
 
