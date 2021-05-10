@@ -1,7 +1,7 @@
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import sbt.Package.ManifestAttributes
 
-val RELEASE_VERSION = "master"
+val RELEASE_VERSION = "3.0"
 val DEFAULT_SCALA_VERSION = "2.12.13"
 val SPARK_VERSION = "3.1.1"
 
