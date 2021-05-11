@@ -10,18 +10,14 @@ This connector works with both Vector SMP and VectorH MPP.
 
 ## Requirements
 
-This library has different versions for Spark 1.5+ and 2.1+
+This library has different versions for Spark 1.5+, 2.1+ and 3.1.1.
 
 | Spark Version | Compatible version of Vector Data Source for Spark |
 | ------------- | -------------------------------------------------- |
-| `1.5 - 1.6.3` | [`1.0`](https://github.com/ActianCorp/spark-vector/tree/1.0.x) |
-| `2.1 - 2.3`   | [`2.0`](https://github.com/ActianCorp/spark-vector/tree/2.0.x) |
-| `2.2+`        | `2.1`  (this version)                              |
-
-This version also requires Vector(H) 5.0 or higher
-This library requires:
-* Vector(H) 5.0 or higher
-* Spark 2.2 or higher
+| `1.5 - 1.6.3` | [`1.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F1.0.x) |
+| `2.1 - 2.3`   | [`2.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F2.0.x) |
+| `2.2+`        | [`2.1`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F2.1.x) |
+| `3.1.1`       | [`3.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F3.0.x) |
 
 ## Building (from source)
 
@@ -32,7 +28,7 @@ The Vector data source for Apache Spark is built with [sbt](http://www.scala-sbt
 ## Using with Spark shell/submit
 This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-2.1.jar
+    spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-3.0.jar
 
 Assuming that there is a Vector installation on node `vectorhost`, instance `VI` and database `databasename`
 
@@ -135,7 +131,7 @@ The Spark-Vector loader is a command line client utility that provides the abili
 Loading CSV files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.1.jar load csv -sf hdfs://namenode:port/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load csv -sf hdfs://namenode:port/tmp/file.csv
 -vh vectorhost -vi VI -vd databasename -tt vector_table -sc " "
 ```
 
@@ -144,7 +140,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading Parquet files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.1.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
@@ -153,7 +149,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading ORC files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.1.jar load orc -sf hdfs://namenode:port/tmp/file.orc
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load orc -sf hdfs://namenode:port/tmp/file.orc
 -vh vectorhost -vi VI -vd databasename -tt vector_table
 ```
 
@@ -162,7 +158,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 The entire list of options is available [here](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.parsers.Args$) or can be retrieved with:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-2.1.jar load --help
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load --help
 ```
 
 ### Spark-Vector provider
@@ -188,6 +184,6 @@ The Spark-Vector provider is a Spark application serves Vector requests for exte
 
 ## License
 
-Copyright 2016 Actian Corporation.
+Copyright 2021 Actian Corporation.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
