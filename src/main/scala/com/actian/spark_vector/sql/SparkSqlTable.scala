@@ -18,7 +18,7 @@ package com.actian.spark_vector.sql
 import java.util.concurrent.atomic.AtomicLong
 import org.apache.spark.sql.DataFrame
 
-sealed trait SparkSqlTable {
+trait SparkSqlTable {
   def tableName: String
   def quotedName: String = sparkQuote(tableName)
   def close(): Unit

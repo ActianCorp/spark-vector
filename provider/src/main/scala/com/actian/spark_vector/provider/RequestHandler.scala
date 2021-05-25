@@ -21,6 +21,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.compat.Platform.EOL
 import scala.util.{ Failure, Success }
+import scala.util.matching.Regex
 
 import org.apache.spark.sql.{ Column, DataFrame, Row, SaveMode, SparkSession }
 import org.apache.spark.sql.functions.expr
@@ -38,6 +39,7 @@ import resource.managed
 import com.actian.spark_vector.vector.PredicatePushdown
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
+import resource.ManagedResource
 
 /**
  * Handler for requests from Vector
@@ -219,6 +221,16 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
       ""
   }
 
+  private def getStagingTableSQL(part: JobPart): (String, String) = {
+    val extraOptions = getExtraOptions(part)
+    val sql = extraOptions.getOrElse("staging", "")
+    val Pattern = """(.*)EXTERNAL_TABLE(.*)""".r
+    sql match {
+      case Pattern(before, after) => (before, after)
+      case _ => ("","")
+    }
+  }
+
   /** Given job part, return the corresponding SparkSqlTable that one may then "select * from" */
   private def getExternalTable(part: JobPart): SparkSqlTable = {
     val format = getFormat(part)
@@ -234,17 +246,31 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     }
   }
 
+  private def getStagingTable(part: JobPart, sourceTable: String): Option[SparkSqlTable] = {
+    val stagingSql = getStagingTableSQL(part)
+    stagingSql match {
+      case ("","") => None
+      case(s1, s2) => {
+        val df = spark.sql(s1 + sourceTable + s2)
+        Some(TempTable("staging", df))
+      }
+      case _ => None
+    }
+  }
+
   /** Handle a job part of type "scan" by inserting into the VectorDF all tuples read from the external table. */
   private def handleScan(part: JobPart): Unit = {
     require(part.operator_type == "scan")
     for {
       externalTable <- managed(getExternalTable(part))
+      stagingTable <- getStagingTable(part, externalTable.quotedName).fold[ManagedResource[SparkSqlTable]](managed(new SparkSqlTable{ override def tableName: String = "Dummy"; override def close(): Unit = {}}))(x => managed(x))
       vectorTable <- managed(TempTable(part.external_table_name, getVectorDF(part)))
     } {
+      val tableName = if (stagingTable.tableName != "Dummy") stagingTable.quotedName else externalTable.quotedName
       //Need to apply any filters for hive tables here
       val whereClause = if (getFormat(part).equals("hive")) getWhereString(part) else ""
       if (part.column_infos.isEmpty) {
-        val selectCountStarStatement = s"select count(*) from ${externalTable.quotedName} ${whereClause}"
+        val selectCountStarStatement = s"select count(*) from ${tableName} ${whereClause}"
         val numTuples = spark.sql(selectCountStarStatement).first().getLong(0)
         val numEndpoints = part.datastream.streams_per_node.map(_.nr).sum
         val rddNoCols = spark.sparkContext.range(0L, numTuples, numSlices = numEndpoints).map(_ => Row.empty)
@@ -252,7 +278,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
         dfNoCols.write.mode(SaveMode.Append).insertInto(vectorTable.tableName)
       } else {
         val cols = colsSelectStatement(Some(part.column_infos.map(_.column_name)))
-        val selectStatement = s"select $cols from ${externalTable.quotedName} ${whereClause}"
+        val selectStatement = s"select $cols from ${tableName} ${whereClause}"
         val wholeStatement = s"insert into table ${vectorTable.quotedName} $selectStatement"
         logDebug(s"SparkSql statement issued for reading external data into vector: $wholeStatement")
         spark.sql(wholeStatement)

@@ -77,7 +77,7 @@ private[provider] case class JobPart(part_id: String,
     VectorEndpointConf(endpoints.toIndexedSeq)
   }
   
-  def extraOptions = Set("filter", "schema")
+  def extraOptions = Set("filter", "schema", "staging")
 }
 
 private[provider] object JobPart {
