@@ -263,10 +263,10 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     require(part.operator_type == "scan")
     for {
       externalTable <- managed(getExternalTable(part))
-      stagingTable <- getStagingTable(part, externalTable.quotedName).fold[ManagedResource[SparkSqlTable]](managed(new SparkSqlTable{ override def tableName: String = "Dummy"; override def close(): Unit = {}}))(x => managed(x))
+      stagingTable <- getStagingTable(part, externalTable.quotedName).fold[ManagedResource[SparkSqlTable]](managed(new SkeletonTable()))(x => managed(x))
       vectorTable <- managed(TempTable(part.external_table_name, getVectorDF(part)))
     } {
-      val tableName = if (stagingTable.tableName != "Dummy") stagingTable.quotedName else externalTable.quotedName
+      val tableName = if (!stagingTable.isInstanceOf[SkeletonTable]) stagingTable.quotedName else externalTable.quotedName
       //Need to apply any filters for hive tables here
       val whereClause = if (getFormat(part).equals("hive")) getWhereString(part) else ""
       if (part.column_infos.isEmpty) {

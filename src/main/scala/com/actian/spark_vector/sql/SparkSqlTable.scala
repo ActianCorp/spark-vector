@@ -18,10 +18,15 @@ package com.actian.spark_vector.sql
 import java.util.concurrent.atomic.AtomicLong
 import org.apache.spark.sql.DataFrame
 
-trait SparkSqlTable {
+sealed trait SparkSqlTable {
   def tableName: String
   def quotedName: String = sparkQuote(tableName)
   def close(): Unit
+}
+
+class SkeletonTable extends SparkSqlTable{ 
+  override def tableName: String = "" 
+  override def close(): Unit = {}
 }
 
 case class HiveTable(override val tableName: String) extends SparkSqlTable {
