@@ -36,7 +36,7 @@ class StagingTableTest
 				|'table' = '${tableName}',
     			|'user'='${connectionProps.user.getOrElse("")}',
     			|'password'='${connectionProps.password.getOrElse("")}',
-				|'staging' = 'select id, replace(text, "e", "i") as text from EXTERNAL_TABLE')""".stripMargin
+				|'staging' = 'select id, replace(text, "e", "i") as text from THIS_TABLE')""".stripMargin
     val select = s"""select * from ${extTableName}"""
 
     noException shouldBe thrownBy(VectorJDBC.withJDBC(connectionProps)(cxn => {

@@ -18,7 +18,26 @@ import scala.io.Source
   */
 trait ProviderFixture { this: FixtureTestSuite =>
 
+  /** Returns the master URL for the spark-submit.
+    *
+    * @return master URL.
+    */
   def master: String
+
+  /** Returns the time the test shall wait for the spark provider to come up.
+    *
+    * @return waiting time.
+    */
+  def waitForProviderStartup: FiniteDuration
+
+  /** Returns the port that should  be used for remote debugging the
+    * spawned spark provider.
+    * Note: By default, remote debugging is disabled. If you want to enable,
+    * override this method with returning a port number >0.
+    *
+    * @return debug port number (default: 0)
+    */
+  def enableDebuggerAttachPort: Int = 0
 
   def providerJar: String = System.getProperty("provider.jar", "")
   def providerSparkInfoFile: String =
@@ -71,13 +90,19 @@ trait ProviderFixture { this: FixtureTestSuite =>
           providerJar
         )
 
+    if (enableDebuggerAttachPort > 0)
+      launcher.setConf(
+        "spark.driver.extraJavaOptions",
+        s"""-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=${enableDebuggerAttachPort}"""
+      )
+
     var provider: Process = null
     try {
       provider = launcher.launch()
       val reader = new BufferedReader(
         Source.fromInputStream(provider.getInputStream()).reader()
       )
-      val deadline = 60.seconds.fromNow
+      val deadline = waitForProviderStartup.fromNow
       var found = false
       while (!found) {
         if (
@@ -111,4 +136,5 @@ trait ProviderFixture { this: FixtureTestSuite =>
   */
 trait LocalProviderFixture extends ProviderFixture { this: FixtureTestSuite =>
   override def master: String = "local[*]"
+  override def waitForProviderStartup: FiniteDuration = 60.second
 }

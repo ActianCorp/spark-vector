@@ -224,7 +224,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   private def getStagingTableSQL(part: JobPart): (String, String) = {
     val extraOptions = getExtraOptions(part)
     val sql = extraOptions.getOrElse("staging", "")
-    val Pattern = """(.*)EXTERNAL_TABLE(.*)""".r
+    val Pattern = """(.*)THIS_TABLE(.*)""".r
     sql match {
       case Pattern(before, after) => (before, after)
       case _ => ("","")
