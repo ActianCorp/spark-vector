@@ -24,6 +24,11 @@ sealed trait SparkSqlTable {
   def close(): Unit
 }
 
+class SkeletonTable extends SparkSqlTable{ 
+  override def tableName: String = "" 
+  override def close(): Unit = {}
+}
+
 case class HiveTable(override val tableName: String) extends SparkSqlTable {
   override def close(): Unit = {}
 }
