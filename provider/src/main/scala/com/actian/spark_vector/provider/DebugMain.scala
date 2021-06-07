@@ -28,19 +28,65 @@ import java.io.PrintWriter
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.nio.channels.ServerSocketChannel
+import scopt.OParser
+import com.actian.spark_vector.BuildInfo
+import java.security.InvalidParameterException
 
-/** Main for localhost debugging with a single, node-local spark master.
+/** Main for debugging and testing.
   * Vector credentials are directly written into the spark_info_file which can directly
   * be fed into a Vector instance. There is no need to do iisuspark or start_provider
   * from Vector side.
   */
 object DebugMain extends App with Logging {
   import ProviderAuth._
+
+  /** Configuration parameters which can be passed in
+    * as arguments to [[com.actian.spark_vector.provider.DebugMain]].
+    *
+    * @param master Spark master.
+    * @param pathSparkInfo Path to spark info file.
+    */
+  case class CommandLineOptions(
+      val master: String = "local",
+      val pathSparkInfo: String = ""
+  )
+
+  val tmpbuilder = OParser.builder[CommandLineOptions]
+  val parser = {
+    import tmpbuilder._
+    OParser.sequence(
+      programName(
+        s"""spark-submit --class com.actian.spark_vector.provider.DebugMain <spark_vector_provider-assembly-${BuildInfo.version}.jar>"""
+      ),
+      head(
+        s"""Spark-Vector external tables provider, version: ${BuildInfo.version}"""
+      ),
+      opt[String]('m', "master")
+        .optional()
+        .action((x, c) => c.copy(master = x))
+        .text("Optional master (default: local."),
+      opt[String]('p', "pathSparkInfo")
+        .required()
+        .action((x, c) => c.copy(pathSparkInfo = x))
+        .text("Path to spark info file."),
+      help("help").text("Print this usage text!")
+    )
+  }
+
+  private val cmdOptions: CommandLineOptions =
+    OParser.parse(parser, args, CommandLineOptions()) match {
+      case None =>
+        throw new InvalidParameterException(
+          "Wrong usage: Please call with --help to see all options."
+        )
+      case Some(config) => config
+    }
+
   private val conf = new SparkConf()
     .setAppName("Spark-Vector external tables provider")
     .set("spark.task.maxFailures", "1")
     .set("spark.sql.caseSensitive", "false")
-    .setMaster("local")
+    .setMaster(cmdOptions.master)
 
   logInfo(
     s"Starting Spark-Vector provider with config options: ${conf.getAll.toMap}"
@@ -67,12 +113,8 @@ object DebugMain extends App with Logging {
 
     val writer = new PrintWriter(
       new File(
-        "spark_info_file"
+        cmdOptions.pathSparkInfo
       )
-    )
-
-    logInfo(
-      s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}"
     )
 
     writer.write(
@@ -82,6 +124,14 @@ object DebugMain extends App with Logging {
     writer.write(s"vector_provider_username=${handler.auth.username}\n")
     writer.write(s"vector_provider_password=${handler.auth.password}\n")
     writer.close()
+
+    logInfo(
+      s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}"
+    )
+    
+    println(
+      s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}"
+    )
 
     while (true) handler.handle(server.accept)
   }
