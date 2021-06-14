@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-spark-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
+data:
+  log4j.properties: |
+    log4j.rootCategory=ERROR, console
+    log4j.appender.console=org.apache.log4j.ConsoleAppender
+    log4j.appender.console.target=System.err
+    log4j.appender.console.layout=org.apache.log4j.PatternLayout
+    log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
+    log4j.logger.org.spark-project.jetty=WARN
+    log4j.logger.org.spark-project.jetty.util.component.AbstractLifeCycle=ERROR
+    log4j.logger.com.actian.spark_vector.provider=INFO
+  spark-driver-pod.yaml: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: {{ .Release.Name }}-spark-driver
+      namespace: {{ .Release.Namespace }}
+      labels:
+        release: {{ .Release.Name }}
+        component: spark-driver
+    spec:
+      serviceAccountName: {{ .Release.Name }}-spark-user
+      {{- if .Values.driver.nodeSelector }}
+      nodeSelector:
+      {{- range $key, $value := $.Values.driver.nodeSelector }}
+        {{ $key}}: {{ $value }}
+      {{- end }}
+      {{- end}}
+      containers:
+        - name: {{ .Release.Name }}-spark-driver
+          volumeMounts:
+          - name: spark-config
+            mountPath: /spark-config
+          {{- range .Values.spark.secretMounts }}
+          {{- if .secretName }}
+          - name: {{ .volumeName }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}
+      volumes:
+        - name: spark-config
+          configMap:
+            name: {{ .Release.Name }}-spark-config
+      {{- range .Values.spark.secretMounts }}
+      {{- if .secretName }}
+        - name: {{ .volumeName }}
+          secret:
+            secretName: {{ .secretName }}
+      {{- end }}
+      {{- end }}
+  spark-executor-pod.yaml: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: {{ .Release.Name }}-spark-executor
+      namespace: {{ .Release.Namespace }}
+      labels:
+        release: {{ .Release.Name }}
+        component: spark-executor
+    spec:
+      {{- if .Values.executor.nodeSelector }}
+      nodeSelector:
+      {{- range $key, $value := $.Values.executor.nodeSelector }}
+        {{ $key}}: {{ $value }}
+      {{- end }}
+      {{- end}}
+      containers:
+        - name: {{ .Release.Name }}-spark-executor
+          volumeMounts:
+          - name: spark-config
+            mountPath: /spark-config
+          {{- range .Values.spark.secretMounts }}
+          {{- if .secretName }}
+          - name: {{ .volumeName }}
+            mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}
+      volumes:
+        - name: spark-config
+          configMap:
+            name: {{ .Release.Name }}-spark-config
+      {{- range .Values.spark.secretMounts }}
+      {{- if .secretName }}
+        - name: {{ .volumeName }}
+          secret:
+            secretName: {{ .secretName }}
+      {{- end }}
+      {{- end }}
+  spark_provider.conf: |
+    spark.kubernetes.authenticate.driver.serviceAccountName={{ .Release.Name }}-spark-user
+    spark.kubernetes.namespace={{ .Release.Namespace }}
+    spark.kubernetes.container.image={{ .Values.provider.image }}
+    spark.kubernetes.container.image.pullPolicy={{ .Values.provider.imagePullPolicy }}
+    spark.kubernetes.driver.pod.name={{ .Release.Name }}-spark-driver
+    spark.kubernetes.executor.podNamePrefix={{ .Release.Name }}-spark
+    spark.executor.memory {{ .Values.executor.mem }}
+    spark.executor.cores {{ .Values.executor.cores }}
+    spark.dynamicAllocation.enabled true
+    spark.shuffle.service.enabled true
+    {{- if .Values.spark.extraConfValues }}
+    {{- range $value := $.Values.spark.extraConfValues }}
+    {{ $value }}
+    {{- end }}
+    {{- end}}
