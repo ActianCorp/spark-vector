@@ -18,7 +18,7 @@ class StagingTableTest
     with ScalaCheckPropertyChecks
     with LocalProviderFixture {
 
-  test("Staging with string replace") { f =>
+  test("II-7604 - Staging with string replace") { f =>
     val values: Seq[Seq[Any]] = Seq(Seq(1, "test"))
     val expected: Seq[Seq[Any]] = Seq(Seq(1, "tist"))
     val tableName = s"staging_test"

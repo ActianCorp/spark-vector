@@ -145,36 +145,6 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     .map({case (k,v) => k.toLowerCase -> v})
     .filterKeys(k => part.extraOptions.contains(k.toLowerCase()))
 
-  /** Parse a Spark ddl schema and create a schema object */
-  private def parseSchema(schemaString: String): Option[StructType] = {
-    def mkField(name: String, `type`: String, nullable: Boolean): StructField =
-      StructField(name, CatalystSqlParser.parseDataType(`type`), nullable)
-    def parseField(line: String): StructField =
-      line.trim.split("\\s+").toList match {
-        case List(n, t) => mkField(n, t, true)
-        case List(n, t, rest@_*) =>
-          rest.mkString(" ").toLowerCase match {
-            case "not null" => mkField(n, t, false)
-            case unknown => throw new IllegalArgumentException(s"Unknown field modifier: '$unknown'.")
-          }
-        case _ => throw new IllegalArgumentException(s"Illegal field spec: '$line'.")
-      }
-    schemaString.trim match {
-      case "" => None
-      case schemaString =>
-    try {
-          val schema = StructType(schemaString.split(',').map(parseField))
-          logDebug(s"Parsed custom schema for external source: ${schema.simpleString}")
-          Some(schema)
-      }
-        catch {
-      case exc: Exception =>
-         logWarning(s"Unable to parse schema for external source: $schemaString. Attempting read with default options.", exc)
-            None
-        }
-    }
-  }
-
   /**
    * Given a job part, return the format of the external table, according to the following logic:
    * 1) return the explicit part.format, if specified
