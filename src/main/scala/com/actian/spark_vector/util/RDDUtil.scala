@@ -52,4 +52,23 @@ object RDDUtil {
     val inputNamesToIdx = (0 until inputType.fields.size).map { idx => inputType.fieldNames(idx) -> idx }.toMap
     Some((0 until targetType.fields.size).map { idx => targetToInput.get(targetType.fieldNames(idx)).map(inputNamesToIdx.get(_)).flatten })
   }
+
+  /**
+    * Helper function for loading data into a Vector table.
+    * Checks whether two unordered schemes are identical except of column ordering and
+    * returns an identity mapping of the column names.
+    *
+    * @param tableSchema Schema of the target table.
+    * @param dataSchema Schema of the source data.
+    * @return Column mapping from source data to target table.
+    * @throws An IllegalArgumentException in case both schemes do not match.
+    */
+  def getFieldMappingForUnorderedSchemes(tableSchema: StructType, dataSchema: StructType): Map[String, String] = {
+    val dataSchemaSorted = StructType(dataSchema.sortBy(x => x.name))
+    val tableSchemaSorted = StructType(tableSchema.sortBy(x => x.name))
+
+    require(dataSchemaSorted == tableSchemaSorted, s"data schema is different than table schema. \ndata schema: ${dataSchemaSorted} \n table schema: ${tableSchemaSorted}\n")
+
+    (0 to tableSchemaSorted.size - 1).map(i => dataSchemaSorted(i).name -> tableSchemaSorted(i).name).toMap
+  }
 }
