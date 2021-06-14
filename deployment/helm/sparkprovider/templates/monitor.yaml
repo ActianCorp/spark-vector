@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-spark-monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
+    component: spark-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      release: {{ .Release.Name }}
+      component: spark-monitor
+  template:
+    metadata:
+      labels:
+        release: {{ .Release.Name }}
+        component: spark-monitor
+    spec:
+      serviceAccountName: {{ .Release.Name }}-spark-user
+      containers:
+      - name: {{ .Release.Name }}-spark-monitor
+        image: {{ .Values.monitor.image }}
+        imagePullPolicy: {{ .Values.monitor.imagePullPolicy }}
+        command: [ "/bin/bash", "-c" ]
+        args:
+        - |
+          /spark/bin/spark-submit --master k8s://https://kubernetes.default.svc \
+          --deploy-mode cluster \
+          --conf spark.kubernetes.driver.podTemplateFile=/spark-config/spark-driver-pod.yaml \
+          --conf spark.kubernetes.executor.podTemplateFile=/spark-config/spark-executor-pod.yaml \
+          --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=/spark-config/log4j.properties \
+          --properties-file /spark-config/spark_provider.conf \
+          --class com.actian.spark_vector.provider.SparkProviderKubernetes \
+          local:///opt/spark/jars/spark_vector_provider.jar -p {{ .Values.provider.port }} -s {{ .Release.Name }}-spark-provider-secret -n {{ .Release.Namespace }}
+        volumeMounts:
+        - name: spark-config
+          mountPath: /spark-config
+      {{- if .Values.monitor.nodeSelector }}
+      nodeSelector:
+      {{- range $key, $value := $.Values.monitor.nodeSelector }}
+        {{ $key}}: {{ $value }}
+      {{- end }}
+      {{- end}}
+      volumes:
+        - name: spark-config
+          configMap:
+            name: {{ .Release.Name }}-spark-config
