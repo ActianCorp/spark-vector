@@ -27,4 +27,6 @@ spec:
         args:
         - |
           /spark/bin/spark-submit --kill {{ .Release.Namespace }}:{{ .Release.Name }}-spark-driver* \
-          --master k8s://https://kubernetes.default.svc
+          --master k8s://https://kubernetes.default.svc && \
+          kubectl delete configmap -l 'spark-role=executor' -n {{ .Release.Namespace }} && \
+          kubectl delete secret {{ .Release.Name }}-spark-provider-secret -n {{ .Release.Namespace }}
