@@ -37,6 +37,9 @@ spec:
         volumeMounts:
         - name: spark-config
           mountPath: /spark-config
+        {{- if .Values.spark.additionalVolumeMounts }}
+        {{- toYaml .Values.spark.additionalVolumeMounts | nindent 8}}
+        {{- end }}
       {{- if .Values.monitor.nodeSelector }}
       nodeSelector:
       {{- range $key, $value := $.Values.monitor.nodeSelector }}
@@ -47,3 +50,7 @@ spec:
         - name: spark-config
           configMap:
             name: {{ .Release.Name }}-spark-config
+          name: spark-config
+        {{- if .Values.spark.additionalVolumes }}
+        {{- toYaml .Values.spark.additionalVolumes | nindent 8}}
+        {{- end }}
