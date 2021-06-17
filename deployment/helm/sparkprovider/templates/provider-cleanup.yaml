@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-clean-up
+  labels:
+    release: {{ .Release.Name }}
+    component: clean-up
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+     name: {{ .Release.Name }}-clean-up
+     labels:
+       release: {{ .Release.Name }}
+       component: clean-up
+    spec:
+      serviceAccountName: {{ .Release.Name }}-spark-user
+      restartPolicy: Never
+      containers:
+      - name: {{ .Release.Name }}-clean-up
+        image: {{ .Values.monitor.image }}
+        imagePullPolicy: {{ .Values.monitor.imagePullPolicy }}
+        command: [ "/bin/bash", "-c" ]
+        args:
+        - |
+          /spark/bin/spark-submit --kill {{ .Release.Namespace }}:{{ .Release.Name }}-spark-driver* \
+          --master k8s://https://kubernetes.default.svc
