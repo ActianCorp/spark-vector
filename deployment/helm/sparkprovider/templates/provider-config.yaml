@@ -37,22 +37,15 @@ data:
           volumeMounts:
           - name: spark-config
             mountPath: /spark-config
-          {{- range .Values.spark.secretMounts }}
-          {{- if .secretName }}
-          - name: {{ .volumeName }}
-            mountPath: {{ .mountPath }}
-          {{- end }}
+          {{- if .Values.spark.additionalVolumeMounts }}
+          {{- toYaml .Values.spark.additionalVolumeMounts | nindent 10}}
           {{- end }}
       volumes:
         - name: spark-config
           configMap:
             name: {{ .Release.Name }}-spark-config
-      {{- range .Values.spark.secretMounts }}
-      {{- if .secretName }}
-        - name: {{ .volumeName }}
-          secret:
-            secretName: {{ .secretName }}
-      {{- end }}
+      {{- if .Values.spark.additionalVolumes }}
+      {{- toYaml .Values.spark.additionalVolumes | nindent 8}}
       {{- end }}
   spark-executor-pod.yaml: |
     apiVersion: v1
@@ -75,22 +68,15 @@ data:
           volumeMounts:
           - name: spark-config
             mountPath: /spark-config
-          {{- range .Values.spark.secretMounts }}
-          {{- if .secretName }}
-          - name: {{ .volumeName }}
-            mountPath: {{ .mountPath }}
-          {{- end }}
+          {{- if .Values.spark.additionalVolumeMounts }}
+          {{- toYaml .Values.spark.additionalVolumeMounts | nindent 10}}
           {{- end }}
       volumes:
         - name: spark-config
           configMap:
             name: {{ .Release.Name }}-spark-config
-      {{- range .Values.spark.secretMounts }}
-      {{- if .secretName }}
-        - name: {{ .volumeName }}
-          secret:
-            secretName: {{ .secretName }}
-      {{- end }}
+      {{- if .Values.spark.additionalVolumes }}
+      {{- toYaml .Values.spark.additionalVolumes | nindent 8}}
       {{- end }}
   spark_provider.conf: |
     spark.kubernetes.authenticate.driver.serviceAccountName={{ .Release.Name }}-spark-user

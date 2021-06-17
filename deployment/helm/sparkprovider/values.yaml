@@ -25,10 +25,14 @@ executor:
 
 # Spark configuration values
 spark:
-  # Array of extra configuration values which are put into spark_provider_conf
-  extraConfValues:
-    # ["example=true"]
-  secretMounts:
-  - secretName:
-    volumeName:
-    mountPath:
+  # Array of extra configuration values which are put into spark_provider.conf
+  extraConfValues: # ["example=true"]
+  # Can contain a sequence of Kubernetes volume definitions, e.g. for using secrets, buckets,...
+  additionalVolumes:
+  #- name: test
+  #  configMap:
+  #    name: test
+  # Can contain a sequence of Kubernetes volume mount definitions, e.g. for mounting secrets, buckets,...
+  additionalVolumeMounts:
+  #- name: test
+  #  mountPath: /test
