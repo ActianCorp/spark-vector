@@ -1,0 +1,38 @@
+# Spark monitor configuration
+monitor:
+  nodeSelector:
+    role: master
+  image: usau-fgrm-01:31320/spark-monitor:latest
+  imagePullPolicy: Always
+
+# Spark vector provider configuration
+provider:
+  image: usau-fgrm-01:31320/spark-provider:latest
+  imagePullPolicy: Always
+  port: 65500
+
+# Spark driver configuration
+driver:
+  nodeSelector:
+    role: master
+
+# Spark executor configuration
+executor:
+  nodeSelector:
+    role: worker
+  mem: 2G
+  cores: 2
+
+# Spark configuration values
+spark:
+  # Array of extra configuration values which are put into spark_provider.conf
+  extraConfValues: # ["example=true"]
+  # Can contain a sequence of Kubernetes volume definitions, e.g. for using secrets, buckets,...
+  additionalVolumes:
+  #- name: test
+  #  configMap:
+  #    name: test
+  # Can contain a sequence of Kubernetes volume mount definitions, e.g. for mounting secrets, buckets,...
+  additionalVolumeMounts:
+  #- name: test
+  #  mountPath: /test
