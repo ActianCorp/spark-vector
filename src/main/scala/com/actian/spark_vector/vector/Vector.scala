@@ -119,10 +119,11 @@ private[spark_vector] object Vector extends Logging {
    * @param rddSchema the Catalyst schema of the data
    * @param tableColumnMetadata the expected Vector table column data type information
    * @param writeConf datastream configuration for writing
+   * @param fieldMap optional column names mapping from source rdd to target vector table
    */
-  def loadVector(rdd: RDD[Row], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf): Unit = {
+  def loadVector(rdd: RDD[Row], rddSchema: StructType, tableColumnMetadata: Seq[ColumnMetadata], writeConf: VectorEndpointConf, fieldMap: Option[Map[String, String]]): Unit = {
     val tableSchema = VectorRelation.structType(tableColumnMetadata)
-    val inputRDD = prepareRDD(rdd, rddSchema, tableSchema)
+    val inputRDD = prepareRDD(rdd, rddSchema, tableSchema, fieldMap)
     load(inputRDD, tableColumnMetadata, writeConf)
   }
 
