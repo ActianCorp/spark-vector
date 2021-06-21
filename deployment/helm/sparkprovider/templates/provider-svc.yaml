@@ -12,3 +12,8 @@ spec:
     spark-role: driver
     release: {{ .Release.Name }}
     component: spark-driver
+  ports:
+  - name: spark-ui
+    protocol: TCP
+    port: 4040
+    targetPort: 4040

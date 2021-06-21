@@ -26,7 +26,8 @@ spec:
         command: [ "/bin/bash", "-c" ]
         args:
         - |
+          export SPARK_APPLICATION_ID="$(kubectl exec -n {{ .Release.Namespace }} {{ .Release.Name }}-spark-driver -- sh -c 'echo $SPARK_APPLICATION_ID')" && \
           /spark/bin/spark-submit --kill {{ .Release.Namespace }}:{{ .Release.Name }}-spark-driver* \
           --master k8s://https://kubernetes.default.svc && \
-          kubectl delete configmap -l 'spark-role=executor' -n {{ .Release.Namespace }} && \
+          kubectl delete configmap -l "spark-app-selector=$SPARK_APPLICATION_ID" -n {{ .Release.Namespace }} && \
           kubectl delete secret {{ .Release.Name }}-spark-provider-secret -n {{ .Release.Namespace }}
