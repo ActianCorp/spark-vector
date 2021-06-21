@@ -1,0 +1,7 @@
+apiVersion: v1
+name: Spark Vector Provider
+version: 0.0.1
+home: https://github.com/ActianCorp/spark-vector
+maintainers:
+  - name: Francis Gropengießer
+    email: francis.gropengieser@actian.com
