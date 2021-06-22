@@ -70,10 +70,12 @@ trait VectorOps {
      * @param tableColumnMetadata A list of ColumnMetadata structures, one for each column of the given table describing
      * the schema of the Vector table
      * @param writeConf Write configuration to be used to connect to the `DataStream` API
+     * @param fieldMap optional column names mapping from source rdd to target vector table
      */
     def loadVector(schema: StructType,
       tableColumnMetadata: Seq[ColumnMetadata],
-      writeConf: VectorEndpointConf): Unit = Vector.loadVector(rdd, schema, tableColumnMetadata, writeConf)
+      writeConf: VectorEndpointConf,
+      fieldMap: Option[Map[String, String]]): Unit = Vector.loadVector(rdd, schema, tableColumnMetadata, writeConf, fieldMap)
   }
 
   /**
