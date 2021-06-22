@@ -11,7 +11,18 @@ lazy val commonSettings = Seq(
     fork in Test := true,
     test in assembly := {},
     scalacOptions ++= Seq( "-unchecked", "-deprecation" , "-feature"),
-    EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
+    //Example configuration in order to talk to a local vector instance for testing purposes
+    /*
+    javaOptions in Test ++= Seq(
+        "-Dvector.host=localhost",
+        "-Dvector.jdbcPort=27839",
+        "-Dvector.database=testdb",
+        "-Dvector.user=actian",
+        "-Dvector.password=actian",
+        "-Dprovider.sparkHome=/Users/fgropengieser/libs/spark-3.1.1-bin-hadoop3.2",
+        "-Dprovider.jar=/Users/fgropengieser/project/spark_vector_main/provider/target/spark_vector_provider-assembly-master.jar",
+        "-Dprovider.sparkInfoFile=/Users/fgropengieser/docker/shared_folders/spark-provider/spark_info_file"
+    ),*/
     // no scala version suffix on published artifact
     crossPaths := false
 ) ++ gitStampSettings ++ extraBuildSettings

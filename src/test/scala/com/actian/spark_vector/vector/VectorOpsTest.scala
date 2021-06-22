@@ -731,7 +731,7 @@ class VectorOpsTest extends fixture.FunSuite with SparkContextFixture with Match
     props.setProperty("password", connectionProps.password.getOrElse(""))
     withTable(createLoadAdmitTable) { tableName =>
       val df = fixture.spark.read.vector(connectionProps, tableName, props)
-      val dummy = df.map(r => r, df.encoder)
+      val dummy =  fixture.spark.createDataFrame(df.rdd.map(row => row), df.schema)
       withTable(createAdmitTable) { tableNameInsert =>
         dummy.write.vector(connectionProps, tableNameInsert, props)
         val re_read = fixture.spark.read.vector(connectionProps, tableNameInsert, props)

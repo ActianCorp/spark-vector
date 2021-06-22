@@ -23,6 +23,7 @@ import org.apache.spark.sql.catalyst.InternalRow
 
 import com.actian.spark_vector.datastream.VectorEndpointConf
 import com.actian.spark_vector.util.Logging
+import com.actian.spark_vector.util.RDDUtil
 import com.actian.spark_vector.vector.{ ColumnMetadata, VectorJDBC, VectorOps }
 import com.actian.spark_vector.vector.PredicatePushdown
 import com.actian.spark_vector.vector.Vector
@@ -41,7 +42,8 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {
     logDebug("insert(): data: " + data)
-    require(data.schema == this.schema, s"data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+
+    val mapping = RDDUtil.getFieldMappingForUnorderedSchemes(this.schema, data.schema)
 
     if (overwrite) {
       VectorJDBC.withJDBC(tableRef.toConnectionProps) { _.executeStatement(s"delete from ${quote(tableRef.table)}") }
@@ -51,7 +53,7 @@ private[spark_vector] class VectorRelation(tableRef: TableRef,
     val preSQL = getSQL(LoadPreSQL, options)
     val postSQL = getSQL(LoadPostSQL, options)
     /** TODO: Could expose other options in Spark parameters */
-    val rowCount = data.rdd.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL))
+    val rowCount = data.rdd.loadVector(data.schema, tableRef.toConnectionProps, tableRef.table, Some(preSQL), Some(postSQL), Some(mapping))
     logInfo(s"Loaded ${rowCount} records into table ${tableRef.table}")
   }
 
@@ -98,10 +100,11 @@ private[spark_vector] class VectorRelationWithSpecifiedSchema(columnMetadata: Se
     if (overwrite) {
       throw new UnsupportedOperationException("Cannot overwrite a VectorRelation with user specified schema")
     }
-    require(data.schema == this.schema, s"data.schema is different than this.schema. \ndata.schema: ${data.schema} \n this.schema: ${this.schema}\n")
+
+    val mapping = RDDUtil.getFieldMappingForUnorderedSchemes(this.schema, data.schema)
 
     val filteredData = PredicatePushdown.applyFilters(data, columnMetadata, sqlContext.sparkContext)
-    filteredData.rdd.loadVector(data.schema, columnMetadata, conf)
+    filteredData.rdd.loadVector(data.schema, columnMetadata, conf, Some(mapping))
   }
 
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
