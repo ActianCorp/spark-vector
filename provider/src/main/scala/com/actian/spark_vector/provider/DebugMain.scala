@@ -64,7 +64,7 @@ object DebugMain extends App with Logging {
       opt[String]('m', "master")
         .optional()
         .action((x, c) => c.copy(master = x))
-        .text("Optional master (default: local."),
+        .text("Optional master (default: local)."),
       opt[String]('p', "pathSparkInfo")
         .required()
         .action((x, c) => c.copy(pathSparkInfo = x))
@@ -97,6 +97,7 @@ object DebugMain extends App with Logging {
     builder = builder.enableHiveSupport()
   }
   private val session = builder.getOrCreate()
+
   private lazy val handler = new RequestHandler(
     session,
     ProviderAuth(generateUsername, generatePassword)
@@ -128,7 +129,7 @@ object DebugMain extends App with Logging {
     logInfo(
       s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}"
     )
-    
+
     println(
       s"Spark-Vector provider initialized and starting listening for requests on port ${server.socket.getLocalPort}"
     )
