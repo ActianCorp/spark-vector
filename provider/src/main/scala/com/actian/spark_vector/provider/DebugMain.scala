@@ -95,6 +95,7 @@ object DebugMain extends App with Logging {
     builder = builder.enableHiveSupport()
   }
   private val session = builder.getOrCreate()
+
   private lazy val handler = new RequestHandler(
     session,
     ProviderAuth(generateUsername, generatePassword)

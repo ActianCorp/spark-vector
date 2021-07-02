@@ -28,6 +28,7 @@ import com.actian.spark_vector.vector.ErrorCodes.{ InvalidDataType, NoSuchTable,
 
 import resource.managed
 import org.apache.spark.sql.types.StructType
+import com.actian.spark_vector.SecurityChecks
 
 
 /** Iterator over an ResultSet */
@@ -65,6 +66,8 @@ class VectorJDBC(cxnProps: VectorConnectionProperties) extends Logging {
   import resource._
   import VectorJDBC._
   import VectorRelation.{ quote, singleQuote, unquoteLiteral }
+
+  SecurityChecks.checkUserPasswordProvided(cxnProps)
 
   private implicit class SparkPreparedStatement(statement: PreparedStatement) {
     def setParams(params: Seq[Any]): PreparedStatement = {

@@ -71,6 +71,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     var jobPartAccum: Future[Unit] = Future[Unit] {}
     for { part <- job.parts } {
       jobPartAccum = jobPartAccum flatMap (_ => Future[Unit] {
+        SecurityChecks.checkUserPasswordProvided(part)
         part.operator_type match {
           case "scan" => handleScan(part)
           case "insert" => handleInsert(part)
@@ -122,19 +123,6 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   private def getVectorDF(part: JobPart): DataFrame = {
     val rel = VectorRelation(part.column_infos.map(_.toColumnMetadata), part.conf, spark.sqlContext)
     spark.baseRelationToDataFrame(rel)
-  }
-
-  /** Given a job part, retrieve its options, if any, or else an empty Map */
-  private def getOptions(part: JobPart): Map[String, String] = {
-    var options = part.options.getOrElse(Map.empty[String, String])
-                  .map({case (k,v) => k.toLowerCase -> v})
-                  .filterKeys(k => !part.extraOptions.contains(k.toLowerCase()))
-
-    if (part.format.contains("csv") && !options.contains("header")) {
-      options + ("header" -> "true");
-    } else {
-      options;
-    }
   }
 
   /** Given a job part, retrieve its extra options, if any, or else an empty Map */
@@ -196,7 +184,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
     format match {
       case "hive" => HiveTable(part.external_reference)
       case _ =>
-         val options = getOptions(part)
+         val options = Utils.getOptions(part)
          val schemaSpec = getExtraOptions(part).get("schema")
          val filters = getAllFilters(part)
          val df = ExternalTable.externalTableDataFrame(spark, part.external_reference, format, schemaSpec, options, filters, Some(part.column_infos))
@@ -234,7 +222,7 @@ class RequestHandler(spark: SparkSession, val auth: ProviderAuth) extends Loggin
   private def handleInsert(part: JobPart): Unit = {
     require(part.operator_type == "insert")
     val df = getVectorDF(part)
-    val options = getOptions(part)
+    val options = Utils.getOptions(part)
     val format = getFormat(part)
     /** TODO(): Make this user configurable? */
     val mode = SaveMode.Append

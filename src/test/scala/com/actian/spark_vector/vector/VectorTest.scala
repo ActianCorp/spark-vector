@@ -56,7 +56,7 @@ class VectorTest extends FunSuite with Matchers with PropertyChecks with VectorF
   test("getTableSchema with bad cxn props", IntegrationTest) {
     withTable(func => Unit) { tableName =>
       val ex = intercept[VectorException] {
-        VectorUtil.getTableSchema(VectorConnectionProperties("host", JDBCPort(Some("VW"), None, None), "db"), tableName)
+        VectorUtil.getTableSchema(connectionProps.copy(host = "host", port = JDBCPort(Some("VW"), None, None), database ="db"), tableName)
       }
 
       ex.errorCode should be(SqlException)
