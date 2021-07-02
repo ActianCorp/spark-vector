@@ -31,11 +31,9 @@ class CaseInsensivitiyTest extends FixtureAnyFunSuite with Matchers with Private
             (Map("HEADER"-> "true"), Map("header"-> "true")),
             (Map("Header"-> "true"), Map("header"-> "true"))
         )
-        val getOptions = PrivateMethod[Map[String, String]]('getOptions)
-        val handler = new RequestHandler(spark , ProviderAuth("test", "test"))
         forAll(scenarios) { (inp, res) =>
             val jobPart = new JobPart("1", "test", "test op", "path", Some("csv"), Seq(new ColumnInfo("test", new LogicalType("Int", 4, 4), "Int", false, None)), Some(inp), new DataStream("test", "test", Seq(new StreamPerNode(1, 1, "test"))))
-            handler invokePrivate getOptions(jobPart) should be (res)
+            Utils.getOptions(jobPart) should be (res)
         }
     }
 
