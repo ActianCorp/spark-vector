@@ -19,8 +19,8 @@ lazy val commonSettings = Seq(
         "-Dvector.database=testdb",
         "-Dvector.user=actian",
         "-Dvector.password=actian",
-        "-Dprovider.sparkHome=/Users/fgropengieser/libs/spark-3.1.1-bin-hadoop3.2",
-        "-Dprovider.jar=/Users/fgropengieser/project/spark_vector_main/provider/target/spark_vector_provider-assembly-master.jar",
+        "-Dprovider.sparkHome=/Users/fgropengieser/libs/spark-2.2.0-bin-hadoop2.7",
+        "-Dprovider.jar=/Users/fgropengieser/project/spark_vector_2.1/provider/target/spark_vector_provider-assembly-2.1.jar",
         "-Dprovider.sparkInfoFile=/Users/fgropengieser/docker/shared_folders/spark-provider/spark_info_file"
     ),*/
     // no scala version suffix on published artifact

@@ -23,12 +23,9 @@ import com.actian.spark_vector.test.IntegrationTest
 import com.actian.spark_vector.vector.ErrorCodes._
 import com.actian.spark_vector.vector.VectorFixture._
 import com.actian.spark_vector.vector.VectorJDBC._
-import org.apache.spark.Success
-import org.scalacheck.Test.Failed
 
-/**
- * Tests of VectorJDBC
- */
+/** Tests of VectorJDBC
+  */
 @IntegrationTest
 class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with VectorFixture {
   private val doesNotExistTable = "this_table_does_not_exist"
@@ -41,7 +38,9 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
       cxn.dropTable(typeTable)
       cxn.executeStatement(createTableStatement(typeTable, allTypesColumnMD))
       cxn.dropTable(testTable)
-      cxn.executeStatement(s"create table $testTable (col1 integer not null) with nopartition")
+      cxn.executeStatement(
+        s"create table $testTable (col1 integer not null) with nopartition"
+      )
     }
   }
 
@@ -74,16 +73,40 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   }
 
   test("bad connection") {
-    val badCxnProps = VectorConnectionProperties("host", JDBCPort(Some("VW"), None, None), "database", Some("user"), Some("pw"))
+    val badCxnProps = VectorConnectionProperties(
+      "host",
+      JDBCPort(Some("VW"), None, None),
+      "database",
+      Some("user"),
+      Some("pw")
+    )
     try {
-        withJDBC(badCxnProps) { cxn =>
+      withJDBC(badCxnProps) { cxn =>
         assert(false, "should not get here")
       }
+    } catch {
+      case _: SQLNonTransientConnectionException | _: SQLException =>
+      case _: Throwable                                            => assert(false, "should not get here")
     }
-    catch {
-        case  _ : SQLNonTransientConnectionException | _ : SQLException => Success
-        case _ : Throwable => Failed
-    }
+  }
+
+  test("II-7782") {
+    val badCons = Seq(
+      connectionProps.copy(user = None),
+      connectionProps.copy(user = Some("")),
+      connectionProps.copy(password = None),
+      connectionProps.copy(password = Some(""))
+    )
+    badCons.map(conPrps => {
+      try {
+        withJDBC(conPrps) { cxn =>
+          assert(false, "should not get here")
+        }
+      } catch {
+        case _: SecurityException =>
+        case _: Throwable         => assert(false, "should not get here")
+      }
+    })
   }
 
   test("empty SQL statements") {
@@ -91,7 +114,9 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
   }
 
   test("single SQL statements") {
-    executeStatements(connectionProps)(Seq(s"insert into $testTable values (1)"))
+    executeStatements(connectionProps)(
+      Seq(s"insert into $testTable values (1)")
+    )
 
     VectorJDBC.withJDBC(connectionProps) { cxn =>
       val rowCount = cxn.querySingleResult(s"select count(*) from $testTable")
@@ -131,4 +156,3 @@ class VectorJDBCTest extends FunSuite with BeforeAndAfter with Matchers with Vec
     }
   }
 }
-
