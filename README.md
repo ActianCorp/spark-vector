@@ -2,11 +2,18 @@
 # Vector Data Source for Apache Spark
 
 A library to integrate Vector with [Spark](https://spark.apache.org/), allowing you to load data from Spark into Vector in parallel and to consume the results of Vector based computations in Spark(SQL).
-This connector works with both Vector SMP and VectorH MPP.
+This connector works with both Vector SMP and VectorH MPP. It is built with [sbt](http://www.scala-sbt.org/).
 
-## API documentation
+## Documentation
+### Spark-Vector Data Source
 
-[Vector Data Source for Apache Spark](http://actiancorp.github.io/spark-vector/#com.actian.spark_vector.package) Scaladocs.
+    sbt doc
+### Spark-Vector Loader
+
+    sbt loader/doc
+### Spark-Vector Provider
+
+    sbt provider/doc
 
 ## Requirements
 
@@ -14,18 +21,17 @@ This library has different versions for Spark 1.5+, 2.1+ and 3.1.1.
 
 | Spark Version | Compatible version of Vector Data Source for Spark |
 | ------------- | -------------------------------------------------- |
-| `1.5 - 1.6.3` | [`1.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F1.0.x) |
-| `2.1 - 2.3`   | [`2.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F2.0.x) |
-| `2.2+`        | [`2.1`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F2.1.x) |
-| `3.1.1`       | [`3.0`](https://alm.actian.com/bitbucket/projects/SVC/repos/spark-vector/browse?at=refs%2Fheads%2F3.0.x) |
+| `1.5 - 1.6.3` | `1.0` |
+| `2.1 - 2.3`   | `2.0` |
+| `2.2+`        | `2.1` |
+| `3.1.1`       | `3.0` |
 
-## Building (from source)
-
-The Vector data source for Apache Spark is built with [sbt](http://www.scala-sbt.org/). To build, run:
+## Spark-Vector Data Source
+### Building
 
     sbt assembly
 
-## Using with Spark shell/submit
+### Using with Spark shell/submit
 This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
     spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-3.0.jar
@@ -41,7 +47,9 @@ OPTIONS (
     host "vectorhost",
     instance "VI",
     database "databasename",
-    table "vector_table"
+    table "vector_table",
+    user "user",
+    password "password"
 )""")
 ```
 
@@ -82,14 +90,14 @@ The `OPTIONS` clause of the SparkSQL statement can contain:
  </tr>
  <tr>
     <td><tt>user</tt></td>
-    <td>No</td>
-    <td>empty string</td>
+    <td>Yes</td>
+    <td>None</td>
    <td>User name to use when connecting to Vector</td>
  </tr>
  <tr>
     <td><tt>password</tt></td>
-    <td>No</td>
-    <td>empty string</td>
+    <td>Yes</td>
+    <td>None</td>
     <td>Password to use when connecting to Vector</td>
  </tr>
  <tr>
@@ -114,74 +122,68 @@ The `OPTIONS` clause of the SparkSQL statement can contain:
  </tr>
 </table>
 
-### Spark-Vector Loader
+## Spark-Vector Loader
 
-The Spark-Vector loader is a command line client utility that provides the ability to load CSV,Parquet and ORC files through Spark into Vector, using the Spark-Vector connector.
+The Spark-Vector loader is a command line client utility that provides the ability to load CSV, Parquet and ORC files through Spark into Vector, using the Spark-Vector connector.
 
-#### Building
+### Building
 
     sbt loader/assembly
-
-#### API documentation
-
-[Loader scaladocs](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.package)
-
-#### Usage: CSV
+### Usage: CSV
 
 Loading CSV files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load csv -sf hdfs://namenode:port/tmp/file.csv
--vh vectorhost -vi VI -vd databasename -tt vector_table -sc " "
+-vh vectorhost -vi VI -vd databasename -tt vector_table -sc " " -vu <user> -vp <password>
 ```
 
-#### Usage: Parquet
+### Usage: Parquet
 
 Loading Parquet files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
--vh vectorhost -vi VI -vd databasename -tt vector_table
+-vh vectorhost -vi VI -vd databasename -tt vector_table -vu <user> -vp <password>
 ```
 
-#### Usage: ORC
+### Usage: ORC
 
 Loading ORC files into Vector with Spark:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load orc -sf hdfs://namenode:port/tmp/file.orc
--vh vectorhost -vi VI -vd databasename -tt vector_table
+-vh vectorhost -vi VI -vd databasename -tt vector_table -vu <user> -vp <password>
 ```
 
-#### List of options
+### List of options
 
-The entire list of options is available [here](http://actiancorp.github.io/spark-vector/loader/#com.actian.spark_vector.loader.parsers.Args$) or can be retrieved with:
+A full list of of options can be retrieved with:
 
 ```
 spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load --help
 ```
 
-### Spark-Vector provider
+## Spark-Vector provider
 
-The Spark-Vector provider is a Spark application serves Vector requests for external data sources.
+The Spark-Vector provider is a Spark application which serves Vector requests for external data sources. Documentation can be found [here](https://docs.actian.com/vector/6.0/index.html#page/User%2F14._Using_External_Tables.htm%23ww418048).
 
-#### Building
+### Building
 
     sbt provider/assembly
 
-#### API docs
-
-[Provider scaladoc](http://actiancorp.github.io/spark-vector/provider/#com.actian.spark_vector.provider.package)
-
-
 ## Unit testing
+### Spark-Vector Data Source
 
-    sbt '; set javaOptions ++= "-Dvector.host=vectorhost -Dvector.instance=VI -Dvector.database=databasename -Dvector.user= -Dvector.password=".split(" ").toSeq; test'
+    sbt '; set javaOptions ++= "-Dvector.host=<host> -Dvector.instance=<instance ID> -Dvector.database=<database> -Dvector.user=<user> -Dvector.password=<password> -Dprovider.sparkHome=<path to spark distribution> -Dprovider.jar=<path to spark_vector_provider assembly jar> -Dprovider.sparkInfoFile=<path to spark_info_file shared with Vector>".split(" ").toSeq; test'
 
 ### Spark-Vector Loader
 
     sbt loader/test
 
+### Spark-Vector Provider
+
+    sbt provider/test
 ## License
 
 Copyright 2021 Actian Corporation.
