@@ -34,7 +34,7 @@ This library has different versions for Spark 1.5+, 2.1+ and 3.1.1.
 ### Using with Spark shell/submit
 This module can be added to Spark using the `--driver-class-path` command line option. Spark shell example (assuming `$SPARK_VECTOR` is the root directory of spark-vector):
 
-    spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-3.0.jar
+    spark-shell --driver-class-path $SPARK_VECTOR/target/spark-vector-assembly-master.jar
 
 Assuming that there is a Vector installation on node `vectorhost`, instance `VI` and database `databasename`
 
@@ -134,7 +134,7 @@ The Spark-Vector loader is a command line client utility that provides the abili
 Loading CSV files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load csv -sf hdfs://namenode:port/tmp/file.csv
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-master.jar load csv -sf hdfs://namenode:port/tmp/file.csv
 -vh vectorhost -vi VI -vd databasename -tt vector_table -sc " " -vu <user> -vp <password>
 ```
 
@@ -143,7 +143,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading Parquet files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-master.jar load parquet -sf hdfs://namenode:port/tmp/file.parquet
 -vh vectorhost -vi VI -vd databasename -tt vector_table -vu <user> -vp <password>
 ```
 
@@ -152,7 +152,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 Loading ORC files into Vector with Spark:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load orc -sf hdfs://namenode:port/tmp/file.orc
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-master.jar load orc -sf hdfs://namenode:port/tmp/file.orc
 -vh vectorhost -vi VI -vd databasename -tt vector_table -vu <user> -vp <password>
 ```
 
@@ -161,7 +161,7 @@ spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/ta
 A full list of of options can be retrieved with:
 
 ```
-spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-3.0.jar load --help
+spark-submit --class com.actian.spark_vector.loader.Main $SPARK_VECTOR/loader/target/spark_vector_loader-assembly-master.jar load --help
 ```
 
 ## Spark-Vector provider
